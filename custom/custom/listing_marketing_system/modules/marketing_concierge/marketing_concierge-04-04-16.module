@@ -1,0 +1,638 @@
+<?php
+/**
+ * Implements hook_init()
+ */
+function marketing_concierge_init(){
+	drupal_add_css(drupal_get_path('module', 'marketing_concierge') . '/css/marketing_concierge.css');
+	if(arg(1)=='dashboard' || arg(2)=='dashboard'){
+		drupal_add_css(drupal_get_path('module', 'lms_dashboard') . '/css/dashboard.css');
+	}
+}
+
+/**
+* Implementation of hook_menu
+*/
+function marketing_concierge_menu() {
+  $items = array();
+  //menu for Marketing Coordinator Dashboard
+ $items['lms/mc/dashboard'] = array(
+	'title'				=>	'Marketing Coordinator Dashboard',
+	'description'		=>	'Dashboard for Marketing Coordinator',
+	'page callback'		=>	'marketing_office_dashboard',
+	'access callback'	=> 	'mc_dashboard_access',
+  );
+   $items['mc-active-orders'] = array(
+	'title'				=>	'Marketing Concierge Active Orders',
+	'description'		=>	'Listings of active orders',
+	'page callback'		=>	'mc_listing_active_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['mc-pending-orders'] = array(
+	'title'				=>	'Marketing Concierge Pending Orders',
+	'description'		=>	'Listings of pending orders',
+	'page callback'		=>	'mc_listing_pending_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['mc-completed-orders'] = array(
+	'title'				=>	'Marketing Concierge Completed Orders',
+	'description'		=>	'Listings of Completed orders',
+	'page callback'		=>	'mc_listing_completed_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['mc-new-orders'] = array(
+	'title'				=>	'Marketing Concierge New Orders',
+	'description'		=>	'Listings of New orders',
+	'page callback'		=>	'mc_listing_new_orders',
+	'access callback'	=> 	TRUE,
+  );
+ return $items;
+}
+
+/**
+* Implements hook_block_info().
+*/
+function marketing_concierge_block_info() {
+  $blocks = array();
+  $blocks['mc-new-order'] = array(
+    'info' => t('New Orders'),
+  );
+  $blocks['mc-active-order'] = array(
+    'info' => t('New Orders'),
+  );
+  $blocks['mc-pending-order'] = array(
+    'info' => t('New Orders'),
+  );
+  $blocks['mc-completed-order'] = array(
+    'info' => t('New Orders'),
+  );
+  
+  return $blocks;
+}
+/**
+* Implements hook_block_view().
+*/
+function marketing_concierge_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+	case 'mc-new-order':
+      $block['subject'] = '';
+      $block['content'] = marketing_concierge_new_order();
+      break;
+	case 'mc-active-order':
+      $block['subject'] = '';
+      $block['content'] = marketing_concierge_active_order();
+      break;
+	case 'mc-pending-order':
+      $block['subject'] = '';
+      $block['content'] = marketing_concierge_pending_order();
+      break;
+	case 'mc-completed-order':
+      $block['subject'] = '';
+      $block['content'] = marketing_concierge_completed_order();
+      break;
+	  }
+  return $block;
+}
+
+
+/**
+ * Callback function mc_dashboard_access()
+ * to set the access of Marketing Coordinator 
+ * Dashboard page "cbone_office_dashboard"
+ * @return TRUE/FALSE
+ **/
+function mc_dashboard_access() {
+	global $user;
+	$mc_roles= array("Marketing Coordinator", "Administrator");
+	//$roles_result = array_intersect($roles, $user->roles);
+	foreach ($mc_roles as $mc_role) {
+		if (in_array($mc_role, $user->roles)) {
+		  return TRUE;
+		}
+	}	
+	return FALSE; 
+}
+
+/*
+Function to get user id for node
+*/
+
+function get_marketing_cordinator_uid(){
+	global $user, $base_url;
+	$user_id='';
+		$query=db_select('node', 'n')->distinct();
+		$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+		$query->fields('n', array('nid', 'uid'))
+			->fields('fmc', array('entity_id', 'field_lms_marketing_coordinator_uid'));
+		$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+		$result= $query->execute()->fetchAll();
+		
+		return $result;
+		//echo '<pre>';
+		//print_r($result);
+		//echo '</pre>';
+	
+}
+
+/**
+ * Callback function marketing_office_dashboard()
+ * to displayed the Dashboard page to view listing
+ * @return $output
+ **/
+function marketing_office_dashboard() {
+	global $user;
+	$output = '';
+	//$var = get_marketing_cordinator_uid();
+	//print '<pre>';
+	//print_r($var);
+	//echo '</pre>';
+	$recent_block = module_invoke('lms_dashboard', 'block_view', 'recent-activity');
+	$recent_orders ='<div class="recent_orders dashboard_order"><h3 class="block-title">Recent Activity</h3>'. render($recent_block['content']). '</div>';
+	
+	$quiz_block = module_invoke('lms_dashboard', 'block_view', 'daily-quiz');
+	$daily_quiz ='<div class="daily_quiz dashboard_order"><h3 class="block-title">Daily Quiz</h3>'. render($quiz_block['content']). '</div>';
+	
+	$new_block = module_invoke('marketing_concierge', 'block_view', 'mc-new-order');
+	$new_orders ='<div class="new_orders dashboard_order"><h3 class="block-title">New Orders</h3>'. render($new_block['content']). '</div>';
+	
+	$active_block = module_invoke('marketing_concierge', 'block_view', 'mc-active-order');
+	$active_orders ='<div class="active_orders dashboard_order"><h3 class="block-title">Active Orders</h3>'. render($active_block['content']). '</div>';
+	
+	$pending_block = module_invoke('marketing_concierge', 'block_view', 'mc-pending-order');
+	$pending_orders ='<div class="pending_orders dashboard_order"><h3 class="block-title">Pending Orders</h3>'. render($pending_block['content']). '</div>';
+	
+	$completed_block = module_invoke('marketing_concierge', 'block_view', 'mc-completed-order');
+	$completed_orders ='<div class="completed_orders dashboard_order"><h3 class="block-title">Completed Orders</h3>'. render($completed_block['content']). '</div>';
+	
+	$service_block = module_invoke('service_links', 'block_view', 'service_links');
+	$service_orders ='<div class="social_service dashboard_order"><h3 class="block-title">Social Media Links</h3>'. render($service_block['content']). '</div>';
+	
+	
+	$output.='<div class="left_block_sections">'.$recent_orders.' '.$service_orders.' '.$daily_quiz.'</div><div class="right_block_sections">'.$new_orders.' '.$active_orders.' '.$pending_orders.' '.$completed_orders.'</div>';
+	return $output;
+}
+
+/*
+function to get list of new order lsit for marketing coordinator
+*/
+function marketing_concierge_new_order(){
+global $user, $base_url;
+$output='';
+$output.='<div class="listings">';
+		$users=user_load($user->uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+	$output.='</div>';
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->fields('n', array('nid', 'title'));
+	$query->fields('lr', array('entity_id'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->range(0,5);
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<div class="user_listings"><ul>';
+		foreach($result as $value){
+		
+				$order = commerce_order_load($value->entity_id);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				
+				$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($value->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		
+		}
+		$output.='</ul></div>';
+		$more_link=  $base_url.'/mc-new-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No record found for new orders';
+	}
+	$output.='</div>';
+	return $output;	
+}
+
+/*
+function to get list of active order lsit for marketing coordinator
+*/
+function marketing_concierge_active_order(){
+global $user, $base_url;
+		$output='';
+
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fms', 'n.nid = fms.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('fms.field_mc_status_ref_tid', 212, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->range(0,5);
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$more_link=  $base_url.'/mc-active-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No record found for active orders';
+	}
+	return $output;	
+}
+
+/*
+function to get list of pending order lsit for marketing coordinator
+*/
+function marketing_concierge_pending_order(){
+global $user, $base_url;
+	$output='';
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fms', 'n.nid = fms.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('fms.field_mc_status_ref_tid', 211, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->range(0,5);
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$more_link=  $base_url.'/mc-pending-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No record found for pending orders';
+	}
+	return $output;	
+}
+
+/*
+function to get list of completed order lsit for marketing coordinator
+*/
+function marketing_concierge_completed_order(){
+global $user, $base_url;
+	$output='';
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fms', 'n.nid = fms.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('fms.field_mc_status_ref_tid', 215, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->range(0,5);
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$more_link=  $base_url.'/mc-completed-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No record found for Completed orders';
+	}
+	return $output;	
+}
+
+/**
+ * Callback function mc_listing_active_orders()
+ * to displayed the Active Order listings
+ * @return $output
+ **/
+function mc_listing_active_orders() {
+	global $user, $base_url;
+	$output = '';
+	$output='<div class="active_orders dashboard_order"><h3 class="block-title">Active Orders</h3>';
+	$output.='<div class="listings">';
+		$users=user_load($user->uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+	$output.='</div>';
+	
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fms', 'n.nid = fms.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->fields('lr', array('entity_id'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('fms.field_mc_status_ref_tid', 212, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<div class="user_listings"><ul>';
+		foreach($result as $value){
+		
+				$order = commerce_order_load($value->entity_id);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				
+			$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($value->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		
+		}
+		$output.='</ul></div>';
+	}
+	else{
+		$output.='No record found for Active orders';
+	}
+	$output.='</div></div>';
+	return $output;
+}
+
+/**
+ * Callback function mc_listing_pending_orders()
+ * to displayed the Pending Order listings
+ * @return $output
+ **/
+function mc_listing_pending_orders() {
+	global $user, $base_url;
+	$output = '';
+	$output='<div class="pending_orders dashboard_order"><h3 class="block-title">Pending Orders</h3>';
+	$output.='<div class="listings">';
+		$users=user_load($user->uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+	$output.='</div>';
+	
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fms', 'n.nid = fms.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->fields('lr', array('entity_id'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('fms.field_mc_status_ref_tid', 211, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<div class="user_listings"><ul>';
+		foreach($result as $value){
+		
+				$order = commerce_order_load($value->entity_id);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				
+			$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($value->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		
+		}
+		$output.='</ul></div>';
+	}
+	else{
+		$output.='No record found for Pending orders';
+	}
+	$output.='</div></div>';
+	return $output;	
+}
+
+/**
+ * Callback function mc_listing_pending_orders()
+ * to displayed the Completed Order listings
+ * @return $output
+ **/
+function mc_listing_completed_orders() {
+	global $user, $base_url;
+	$output = '';
+	$output='<div class="completed_orders dashboard_order"><h3 class="block-title">Completed Orders</h3>';
+	$output.='<div class="listings">';
+		$users=user_load($user->uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+	$output.='</div>';
+	
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fms', 'n.nid = fms.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->fields('lr', array('entity_id'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('fms.field_mc_status_ref_tid', 215, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<div class="user_listings"><ul>';
+		foreach($result as $value){
+		
+				$order = commerce_order_load($value->entity_id);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				
+			$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($value->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		
+		}
+		$output.='</ul></div>';
+	}
+	else{
+		$output.='No record found for Completed orders';
+	}
+	$output.='</div></div>';
+	return $output;		
+}
+
+/**
+ * Callback function mc_listing_new_orders()
+ * to displayed the New Order listings
+ * @return $output
+ **/
+function mc_listing_new_orders() {
+	global $user, $base_url;
+	$output = '';
+	$output='<div class="new_orders dashboard_order"><h3 class="block-title">New Orders</h3>';
+	$output.='<div class="listings">';
+		$users=user_load($user->uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+	$output.='</div>';
+	
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_marketing_coordinator', 'fmc', 'n.nid = fmc.entity_id');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->fields('n', array('nid', 'title'));
+	$query->fields('lr', array('entity_id'));
+	$query->condition('fmc.field_lms_marketing_coordinator_uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<div class="user_listings"><ul>';
+		foreach($result as $value){
+		
+				$order = commerce_order_load($value->entity_id);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				
+			$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($value->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		
+		}
+		$output.='</ul></div>';
+	}
+	else{
+		$output.='No record found for New orders';
+	}
+	$output.='</div></div>';
+	return $output;	
+}

@@ -1,0 +1,61 @@
+form.admin-search-form .form-item{display: inline-block; padding-right: 10px;}
+table.multi-section tbody td{vertical-align: top;}
+
+.cbone-multi-section .sub-section-title {height: 430px;}
+.cbone-multi-section .sub-section-title  h3{height: 400px; color: #fff;
+font-family: "Raleway"; font-size: 5.0em; letter-spacing: 8px; text-align: center; margin-left: auto; margin-right: auto; padding-top: 200px; padding-bottom: 230px; width: 50%;}/*background-color: rgba(0,0,0,0.5); */
+.cbone-multi-section .sub-section-body p{margin-left: auto; margin-right: auto; padding-bottom: 30px; text-align: center; width: 70%;}
+.cbone-multi-section  .sub-section-wrapper {background-color: #fff; padding-top: 30px;}
+.sub-section-icons-wrapper {background-color: #fff;}
+.sub-section-icons-wrapper ul.sub-section-icons {text-align: center; width: 88%; padding: 0px; margin: 0px; margin-left: auto; margin-right: auto;}
+.sub-section-icons-wrapper ul.sub-section-icons li{display: inline-block; width: 150px; list-style: none; padding: 0px; margin: 0px; height: 92px;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons7{width: 90%;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons7 li{width: 13%;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons6{width: 75%;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons6 li{width: 15%;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons5{width: 65%;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons5 li{width: 18%;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons4{width: 55%;}
+.sub-section-icons-wrapper ul.sub-section-icons.icons4 li{width: 23%;}
+/*@media only screen and (max-device-width: 991px) {
+	.sub-section-icons-wrapper ul.sub-section-icons li{width: 24%;}
+	.cbone-multi-section .sub-section-title  h3{width: 100%;}
+}*/
+@media only screen 
+and (min-device-width : 375px) 
+and (max-device-width : 736px) 
+and (orientation : landscape) {
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7, .sub-section-icons-wrapper ul.sub-section-icons.icons6, .sub-section-icons-wrapper ul.sub-section-icons.icons5, .sub-section-icons-wrapper ul.sub-section-icons.icons4{width: 90%;}
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7 li, .sub-section-icons-wrapper ul.sub-section-icons.icons6 li, .sub-section-icons-wrapper ul.sub-section-icons.icons5 li, .sub-section-icons-wrapper ul.sub-section-icons.icons4 li{width: 23%;}
+}
+@media only screen 
+and (min-device-width : 375px) 
+and (max-device-width : 736px) 
+and (orientation : portrait) {
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7, .sub-section-icons-wrapper ul.sub-section-icons.icons6, .sub-section-icons-wrapper ul.sub-section-icons.icons5, .sub-section-icons-wrapper ul.sub-section-icons.icons4{width: 90%;}
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7 li, .sub-section-icons-wrapper ul.sub-section-icons.icons6 li, .sub-section-icons-wrapper ul.sub-section-icons.icons5 li, .sub-section-icons-wrapper ul.sub-section-icons.icons4 li{width: 32%;}
+}
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : landscape) { 
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7, .sub-section-icons-wrapper ul.sub-section-icons.icons6, .sub-section-icons-wrapper ul.sub-section-icons.icons5, .sub-section-icons-wrapper ul.sub-section-icons.icons4{width: 90%;}
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7 li, .sub-section-icons-wrapper ul.sub-section-icons.icons6 li, .sub-section-icons-wrapper ul.sub-section-icons.icons5 li, .sub-section-icons-wrapper ul.sub-section-icons.icons4 li{width: 14%;}
+}
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : portrait) { 
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7, .sub-section-icons-wrapper ul.sub-section-icons.icons6, .sub-section-icons-wrapper ul.sub-section-icons.icons5, .sub-section-icons-wrapper ul.sub-section-icons.icons4{width: 90%;}
+	.sub-section-icons-wrapper ul.sub-section-icons.icons7 li, .sub-section-icons-wrapper ul.sub-section-icons.icons6 li, .sub-section-icons-wrapper ul.sub-section-icons.icons5 li, .sub-section-icons-wrapper ul.sub-section-icons.icons4 li{width: 20%;}
+}
+/*03-01-17*/
+p.add-multi-section a span{font-size: 18px; font-weight: bold;}
+/*03-01-17*/
+/*04-01-17*/
+.node-type-section #block-cbone-admin-section-block .block.block-views {height: 950px;}
+.node-type-section #block-cbone-admin-section-block .block.block-views .content{padding-top: 250px;}
+.node-type-section #block-cbone-admin-section-block .cbone-multi-section .sub-section-title{height: auto;}
+.node-type-section #block-cbone-admin-section-block .cbone-multi-section .sub-section-title  h3{padding: 100px 0px 30px 0px; background: #fff; margin: 0px; text-transform: uppercase; line-height: 1em; color: #474F59; height: auto; width: auto;}
+
+/*04-01-17*/

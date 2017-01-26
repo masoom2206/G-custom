@@ -1,0 +1,684 @@
+<?php
+/**
+ * @file
+ * Contains CB|ONE admin configuration.
+ */
+/**
+ * Implementation of hook_menu
+ */
+function cbone_admin_menu() {
+	$items = array();
+	//$items['dms/marketing'] = array(
+  //Menu for CB|ONE admin configuration
+	$items['admin/config/cbone'] = array(
+		'title'				=> 'CB|ONE admin configuration',
+		'description'		=> 'CB|ONE admin configuration page.',
+		'page callback'		=> 'system_admin_menu_block_page',
+		'access arguments'	=> array('access administration pages'),
+		'file'				=> 'system.admin.inc',
+		'file path'			=> drupal_get_path('module', 'system'),
+	);
+	$items['admin/config/cbone/section'] = array(
+		'title'				=> 'Overview - Multi-Section pages',
+		'description'		=> 'CB|ONE Multi-Section configuration page.',
+		'page callback'		=> 'cbone_multi_section_pages',
+		'weight'			=> 1,
+		'access arguments'	=> array('access administration pages'),
+		'file'				=> 'includes/multi_section.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['admin/config/cbone/home'] = array(
+		'title'				=> 'Overview - Dynamic Front Page',
+		'description'		=> 'Dynamic front page for multiple region.',
+		'page callback'		=> 'cbone_dynamic_front_pages',
+		'weight'			=> 1,
+		'access arguments'	=> array('access administration pages'),
+		'file'				=> 'includes/front_pages.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['front-page'] = array(
+		'title'				=> '',
+		'description'		=> 'CB|ONE Dynamic Front Page',
+		'page callback'		=> 'cbone_home_page',
+		'access callback'	=> TRUE,
+	);
+	return $items;
+}
+
+/**
+ * Implements hook_init()
+ */
+function cbone_admin_init(){
+	drupal_add_js(drupal_get_path('module', 'cbone_admin') . '/js/jquery-live.js');
+	drupal_add_js(drupal_get_path('module', 'cbone_admin') . '/js/cbone_admin.js');
+	if(arg(0) == 'admin' && arg(1) == 'config' && arg(2) == 'cbone') {
+		drupal_add_css(drupal_get_path('module', 'cbone_admin') . '/css/multi_section.css');
+	}
+	else if(arg(0) == 'node' && is_numeric(arg(1)) && arg(2) != 'edit') {
+		$node_detail = node_load(arg(1));
+		if($node_detail->type == 'multi_section_page' || $node_detail->type == 'section') {
+			drupal_add_css(drupal_get_path('module', 'cbone_admin') . '/css/multi_section.css');
+		}
+		else if($node_detail->type == 'details') {
+			drupal_add_css(drupal_get_path('module', 'cbone_admin') . '/css/detail_page.css');
+		}
+	}
+	if(arg(0) == 'front-page') {
+		drupal_add_css(drupal_get_path('module', 'cbone_admin') . '/css/front-page.css');
+	}
+	drupal_add_css(drupal_get_path('module', 'cbone_admin') . '/css/cbone_admin.css');
+}
+/**
+ * Implements hook_node_access().
+ */
+function cbone_admin_node_access($node, $op, $account) {
+	global $user;
+	$user_detail = user_load($account->uid);
+	$roles = array_map('strtolower', $user_detail->roles);
+	$nid = is_string($node) ? arg(1) : $node->nid;
+	$node_detail = node_load($nid);
+	if ($op == 'view' && $node_detail->type == 'multi_section_page') {
+		if($account->uid == 0){
+			return NODE_ACCESS_DENY;
+		}
+		else if($account->uid == 1) {
+			return NODE_ACCESS_ALLOW;
+		}
+		else if(in_array("siteadmin", $roles)) {
+			return NODE_ACCESS_ALLOW;
+		}
+		else if($account->uid > 1) {
+			$any_roles = drupal_map_assoc(content_access_per_node_setting($op, $node));
+			$diff_roles = array_intersect_key($user_detail->roles, $any_roles);
+			if(!empty($diff_roles) && isset($node_detail->field_region['und']['0']['tid'])) {
+				$region_access = section_region_access($node_detail->nid);
+				if($region_access) {
+					return NODE_ACCESS_ALLOW;
+				}
+				else {
+					return NODE_ACCESS_DENY;
+				}
+			}
+		}
+	}
+}
+/**
+ * Implements hook_form_alter().
+ */
+function cbone_admin_form_alter(&$form, &$form_state, $form_id) {
+	if($form_id == 'node_delete_confirm'){
+		$node_detail = node_load(arg(1));
+		if($node_detail->type == 'multi_section_page') {
+			$form['description']['#markup'] = t('Are you sure you wish to delete this section page? Note: The individual attached nodes will not be deleted.');
+		}
+	}
+	else if($form_id == 'multi_section_page_node_form' || $form_id == 'section_node_form' || $form_id == 'front_page_node_form'){
+		if(isset($form['field_sub_section']['und']['0']['field_section_reference']['und'])){
+			$sub_sections = array();
+			if(isset($form['#node']->nid)){
+				$node = $form['#node'];
+				foreach($node->field_sub_section['und'] as $sub_section) {
+					$sub_sections[] = $sub_section['value'];
+				}
+			}
+			$query = db_select('field_data_field_section_reference', 'sr');
+			$query->fields('sr', array('field_section_reference_target_id', 'field_section_reference_target_id'));
+			$query->condition('sr.bundle', 'field_sub_section', 'LIKE');
+			if(!empty($sub_sections)){
+				$query->condition('sr.entity_id', $sub_sections, 'NOT IN');
+			}
+			$selected_nids = $query->execute()->fetchCol();
+			
+			$query2 = db_select('node', 'n');
+			$query2->fields('n', array('nid', 'title'));
+			$query2->condition('n.type', array('section', 'step_by_step_section'), 'IN');
+			$query2->condition('n.status', 1, '=');
+			if(!empty($details_nids)) {
+				$query2->condition('n.nid', $selected_nids, 'NOT IN');
+			}
+			$query2->orderBy('n.title', 'ASC');
+			$results = $query2->execute();
+			$remain_options = array();
+			foreach($results as $result){
+				$remain_options[$result->nid] = $result->title.' ('.$result->nid.')';
+			}
+			$firstItem = array('_none' => '- None -');
+			$remain_options = $firstItem + $remain_options;
+			if (isset($form_state['triggering_element'])) {
+				$x = 0;
+				$sub_sections = $form_state['values']['field_sub_section']['und'];
+				foreach($sub_sections as $key => $section_reference) {
+					if(is_numeric($section_reference['field_section_reference']['und']['0']['target_id'])){
+						$target_id = $section_reference['field_section_reference']['und']['0']['target_id'];
+						$form['field_sub_section']['und'][$x]['field_section_reference']['und']['#options'] = $remain_options;
+						unset($remain_options[$target_id]);
+						$x++;
+					}
+				}
+				$form['field_sub_section']['und'][$x]['field_section_reference']['und']['#options'] = $remain_options;
+			}
+			else {
+				foreach($form['field_sub_section']['und'] as $key => $data) {
+					if(is_numeric($key)){
+						$form['field_sub_section']['und'][$key]['field_section_reference']['und']['#options'] = $remain_options;
+					}
+				}
+			}
+			$form['#validate'][] = 'multi_section_page_form_validation';
+		}
+		if(isset($form['field_section_icons']['und']['0']['field_detail_page_reference']['und'])){
+			if($form_id == 'multi_section_page_node_form') {
+				$field_section_icons_bundle = 'multi_section_page';
+			}
+			else if($form_id == 'section_node_form') {
+				$field_section_icons_bundle = 'section';
+			}
+			else if($form_id == 'front_page_node_form') {
+				$field_section_icons_bundle = 'front_page';
+			}
+			$detail_page = array();
+			if(isset($form['#node']->nid)){
+				$node = $form['#node'];
+				foreach($node->field_section_icons['und'] as $section_icons) {
+					$detail_page[] = $section_icons['value'];
+				}
+			}
+			$query = db_select('field_data_field_detail_page_reference', 'dr');
+			$query->join('field_data_field_section_icons', 'si', 'dr.entity_id = si.field_section_icons_value');
+			$query->condition('si.bundle', $field_section_icons_bundle, 'LIKE');
+			$query->fields('dr', array('field_detail_page_reference_target_id'));
+			$query->condition('dr.bundle', 'field_section_icons', 'LIKE');
+			if(!empty($detail_page)){
+				$query->condition('dr.entity_id', $detail_page, 'NOT IN');
+			}
+			$details_nids = $query->execute()->fetchCol();
+			
+			$query2 = db_select('node', 'n');
+			$query2->fields('n', array('nid', 'title'));
+			$query2->condition('n.type', 'details', '=');
+			$query2->condition('n.status', 1, '=');
+			if(!empty($details_nids)) {
+				$query2->condition('n.nid', $details_nids, 'NOT IN');
+			}
+			$query2->orderBy('n.title', 'ASC');
+			//$remain_options = $query2->execute()->fetchallKeyed();
+			$results = $query2->execute();
+			$remain_options = array();
+			foreach($results as $result){
+				$remain_options[$result->nid] = $result->title.' ('.$result->nid.')';
+			}
+			$firstItem = array('_none' => '- None -');
+			$remain_options = $firstItem + $remain_options;
+			if (isset($form_state['triggering_element'])) {
+				$x = 0;
+				$details = $form_state['values']['field_section_icons']['und'];
+				foreach($details as $key => $detail_reference) {
+					if(is_numeric($detail_reference['field_detail_page_reference']['und']['0']['target_id'])){
+						$target_id = $detail_reference['field_detail_page_reference']['und']['0']['target_id'];
+						$form['field_section_icons']['und'][$x]['field_detail_page_reference']['und']['#options'] = $remain_options;
+						unset($remain_options[$target_id]);
+						$x++;
+					}
+				}
+				$form['field_section_icons']['und'][$x]['field_detail_page_reference']['und']['#options'] = $remain_options;
+			}
+			else {
+				foreach($form['field_section_icons']['und'] as $key => $data) {
+					if(is_numeric($key)){
+						$form['field_section_icons']['und'][$key]['field_detail_page_reference']['und']['#options'] = $remain_options;
+					}
+				}
+			}
+			$form['#validate'][] = 'section_form_validation';
+		}
+	}
+}
+/**
+ * Implements hook_validate()
+ */
+function multi_section_page_form_validation(&$form, &$form_state) {
+	//print "<pre>";print_r($form_state['values']['field_sub_section']);exit;
+	$section_nids = array();
+	$sub_sections = $form_state['values']['field_sub_section']['und'];
+	foreach($sub_sections as $key => $section_reference) {
+		if(is_numeric($section_reference['field_section_reference']['und']['0']['target_id'])){
+			$target_id = $section_reference['field_section_reference']['und']['0']['target_id'];
+			if(!empty($section_nids)) {
+				if(in_array($target_id, $section_nids)) {
+					form_set_error('field_sub_section][und]['.$key.'][field_section_reference][und', 'This section has already been used.');					
+				}
+			}
+			$section_nids[] = $section_reference['field_section_reference']['und']['0']['target_id'];
+		}
+	}
+}
+/**
+ * Implements hook_validate()
+ */
+function section_form_validation(&$form, &$form_state) {
+	//print "<pre>";print_r($form_state['values']['field_sub_section']);exit;
+	$detail_nids = array();
+	$details = $form_state['values']['field_section_icons']['und'];
+	foreach($details as $key => $detail_reference) {
+		if(is_numeric($detail_reference['field_detail_page_reference']['und']['0']['target_id'])){
+			$target_id = $detail_reference['field_detail_page_reference']['und']['0']['target_id'];
+			if(!empty($detail_nids)) {
+				if(in_array($target_id, $detail_nids)) {
+					form_set_error('field_section_icons][und]['.$key.'][field_detail_page_reference][und', 'This section has already been used.');					
+				}
+			}
+			$detail_nids[] = $detail_reference['field_detail_page_reference']['und']['0']['target_id'];
+		}
+	}
+}
+/**
+ * Implements hook_theme().
+ */
+function cbone_admin_theme() {
+	return array(
+		'multi_section_main' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/multi_section_main', // do not include .tpl.php
+		),
+		'multi_section_sub' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/multi_section_sub', // do not include .tpl.php
+		),
+		'detail_page' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/detail_page', // do not include .tpl.php
+		),
+		'home_page' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/home_page', // do not include .tpl.php
+		),
+	);
+}
+/**
+ * Implements hook_block_info().
+ **/
+function cbone_admin_block_info() {
+	$blocks = array();
+	$blocks['multi_section_main_block'] = array(
+		'info' => t('Multi Section Main Block'),
+	);
+	$blocks['multi_section_sub_block'] = array(
+		'info' => t('Multi Section Sub Block'),
+	);
+	$blocks['section_block'] = array(
+		'info' => t('CB|ONE Section Block'),
+	);
+	$blocks['detail_page_block'] = array(
+		'info' => t('CB|ONE Detail Page Block'),
+	);
+	$blocks['home_page_block'] = array(
+		'info' => t('CB|ONE Home Page Block'),
+	);
+	return $blocks;
+}
+/**
+ * Implements hook_block_view().
+ **/
+function cbone_admin_block_view($delta='') {
+	$block = array();
+	switch($delta) {
+		case 'multi_section_main_block' :
+			$block['content'] = cbone_multi_section_main_block();
+		break;
+		case 'multi_section_sub_block' :
+			$block['content'] = cbone_multi_section_sub_block();
+		break;
+		case 'section_block' :
+			$block['content'] = cbone_section_block();
+		break;
+		case 'detail_page_block' :
+			$block['content'] = cbone_detail_page_block();
+		break;
+		case 'home_page_block' :
+			$block['content'] = cbone_home_page_block();
+		break;
+	}
+	return $block;
+}
+/**
+ * Callback function cbone_multi_section_main_block()
+ * to displayed multi-section page main block
+ * @return @output
+ **/
+function cbone_multi_section_main_block(){
+	global $user;
+	$nid = arg(1);
+	$data = array();
+	$node_detail = node_load($nid);
+	//$data['node'] = $node_detail;
+	$data['nid'] = $node_detail->nid;
+	$data['title'] = $node_detail->title;
+	//$data['body'] = isset($node_detail->body['und']['0']['value']) ? $node_detail->body['und']['0']['value'] : '';
+	$body = field_get_items('node', $node_detail, 'body');
+	$data['body'] = $body['0']['value'];
+	$data['banner'] = isset($node_detail->field_section_background_image['und']['0']['uri']) ? file_create_url($node_detail->field_section_background_image['und']['0']['uri']) : '';
+	$data['icons'] = array();
+	if(isset($node_detail->field_section_icons['und']['0']['value'])) {
+		foreach($node_detail->field_section_icons['und'] as $section_icons){
+			$icon_array = array();
+			$icons = field_collection_field_get_entity($section_icons);
+			$icon_array['sort'] = isset($icons->field_sort['und']['0']['value']) ? $icons->field_sort['und']['0']['value'] : '';
+			$icon_array['icon'] = isset($icons->field_icon_image['und']['0']['uri']) ? file_create_url($icons->field_icon_image['und']['0']['uri']) : '';
+			if(isset($icons->field_detail_page_reference['und']['0']['target_id'])) {
+				$icon_array['link'] = '/node/'.$icons->field_detail_page_reference['und']['0']['target_id'];
+			}
+			else {
+				$icon_array['link'] = isset($icons->field_icon_link['und']['0']['value']) ? $icons->field_icon_link['und']['0']['value'] : '';
+			}			
+			$icon_array['title'] = isset($icons->field_icon_title['und']['0']['value']) ? $icons->field_icon_title['und']['0']['value'] : '';
+			$data['icons'][] = $icon_array;
+		}
+		//sort function call from "document_management_system.module" file
+		$data['icons'] = document_list_orderby($data['icons'], 'sort', SORT_ASC);
+	}
+	$output = theme('multi_section_main', array('var_name' => $data));
+	return $output;
+}
+/**
+ * Callback function cbone_multi_section_sub_block()
+ * to displayed multi-section page sub block
+ * @return @output
+ **/
+function cbone_multi_section_sub_block(){
+	global $user;
+	$output = '';
+	$nid = arg(1);
+	$data = array();
+	$node_detail = node_load($nid);
+	//$data['node'] = $node_detail;
+	if(isset($node_detail->field_sub_section['und']['0']['value'])) {
+		foreach($node_detail->field_sub_section['und'] as $sub_section){
+			$section_reference = field_collection_field_get_entity($sub_section);
+			$section_nid = $section_reference->field_section_reference['und']['0']['target_id'];
+			$region_access = section_region_access($section_nid);
+			if($region_access) {
+				$output .= cbone_section_block($section_nid);
+			}
+		}
+	}
+	return $output;
+}
+/**
+ * Callback function cbone_section_block()
+ * to displayed section node as block
+ * @return @output
+ **/
+function cbone_section_block($section_nid = NULL){
+	$output = '';
+	$nid = ($section_nid == NULL) ? arg(1) : $section_nid;
+	$nids = array(510, 511, 519, 88, 113, 520, 117);
+	if(!in_array($nid, $nids)) {
+		$section_node = node_load($nid);
+		if($section_node->type == 'section') {
+			$data['nid'] = $section_node->nid;
+			$data['title'] = $section_node->title;
+			$body = field_get_items('node', $section_node, 'body');
+			$data['body'] = $body['0']['value'];
+			$data['banner'] = isset($section_node->field_section_background_image['und']['0']['uri']) ? file_create_url($section_node->field_section_background_image['und']['0']['uri']) : '';
+			$data['parallax'] = isset($section_node->field_parallax_effect['und']['0']['value']) ? 1 : 0;
+			$data['favorites'] = isset($section_node->field_add_favorites_icon['und']['0']['value']) ? 1 : 0;
+			$data['percent_completed'] = isset($section_node->field_track_percent_completed['und']['0']['value']) ? 1 : 0;
+			$data['fav_completed'] = '';
+			if(isset($section_node->field_fav_completed_class['und']['0']['value'])) {
+				$fav_completed_class = $section_node->field_fav_completed_class['und']['0']['value'];
+				$percent = custom_percent_meter_status($section_node->nid, 2, 'percent');
+				if($fav_completed_class == 'fav-completed-white' && $percent == 100){
+					$data['fav_completed'] = '<img src="/sites/default/files/images/icon/flag/completed_gray.png" border="0">';
+				}
+				else if($fav_completed_class == 'fav-completed-white' && $percent < 100){
+					$data['fav_completed'] = '<img src="/sites/default/files/images/icon/flag/not-completed-gray.png" border="0">';
+				}
+				else if($fav_completed_class == 'fav-completed-gray' && $percent == 100){
+					$data['fav_completed'] = '<img src="/sites/default/files/images/icon/flag/completed-white.png" border="0">';
+				}
+				else if($fav_completed_class == 'fav-completed-gray' && $percent < 100){
+					$data['fav_completed'] = '<img src="/sites/default/files/images/icon/flag/not-completed-white.png" border="0">';
+				}
+			}
+			//Select icons from sectio node
+			$items = field_get_items('node', $section_node, 'field_section_icons');
+			if(!empty($items)){
+				foreach($items as $item){
+					$section_icons = field_collection_field_get_entity($item);
+					$icon_array = array();
+					$icon_array['sort'] = isset($section_icons->field_sort['und']['0']['value']) ? $section_icons->field_sort['und']['0']['value'] : '';
+					$icon_array['icon'] = isset($section_icons->field_icon_image['und']['0']['uri']) ? file_create_url($section_icons->field_icon_image['und']['0']['uri']) : '';
+					if(isset($section_icons->field_detail_page_reference['und']['0']['target_id'])) {
+						$icon_array['link'] = '/node/'.$section_icons->field_detail_page_reference['und']['0']['target_id'];
+					}
+					else {
+						$icon_array['link'] = isset($section_icons->field_icon_link['und']['0']['value']) ? $section_icons->field_icon_link['und']['0']['value'] : '';
+					}
+					$icon_array['title'] = isset($section_icons->field_icon_title['und']['0']['value']) ? $section_icons->field_icon_title['und']['0']['value'] : '';
+					$data['icons'][] = $icon_array;
+				}
+			}
+			//sort function call from "document_management_system.module" file
+			$data['icons'] = document_list_orderby($data['icons'], 'sort', SORT_ASC);
+			$output = theme('multi_section_sub', array('var_name' => $data));
+			return $output;
+		}
+		else {
+			drupal_access_denied();
+			module_invoke_all('exit');
+			drupal_exit();
+		}
+	}
+}
+/**
+ * Callback function cbone_detail_page_block()
+ * to displayed section node as block
+ * @return @output
+ **/
+function cbone_detail_page_block(){
+	$output = '';
+	$nid = arg(1);
+	$detail_page_node = node_load($nid);
+	//if($detail_page_node->type == 'section') {
+		$data['nid'] = $detail_page_node->nid;
+		$data['title'] = $detail_page_node->title;
+		$body = field_get_items('node', $detail_page_node, 'body');
+		$data['body'] = $body['0']['value'];
+		$data['banner'] = isset($detail_page_node->field_banner_image['und']['0']['uri']) ? file_create_url($detail_page_node->field_banner_image['und']['0']['uri']) : '';
+		//Select section title for breadcrumbs
+
+		$query = db_select('node', 'n');
+		$query->join('field_data_field_section_icons', 'si', 'si.entity_id = n.nid');
+		$query->join('field_data_field_detail_page_reference', 'dr', 'dr.entity_id = si.field_section_icons_value');
+		$query->fields('n', array('nid', 'title'));
+		$query->condition('si.bundle', 'section', '=');
+		$query->condition('dr.field_detail_page_reference_target_id', $nid, '=');
+		$section_detail = $query->execute()->fetchAssoc();
+		$multi_section_detail = array();
+		if(!empty($section_detail)) {
+			$query2 = db_select('node', 'n');
+			$query2->join('field_data_field_sub_section', 'ss', 'ss.entity_id = n.nid');
+			$query2->join('field_data_field_section_reference', 'sr', 'sr.entity_id = ss.field_sub_section_value');
+			$query2->fields('n', array('nid', 'title'));
+			$query2->condition('ss.bundle', 'multi_section_page', '=');
+			$query2->condition('sr.field_section_reference_target_id', $section_detail['nid'], '=');
+			$multi_section_detail = $query2->execute()->fetchAssoc();
+		}
+		
+		$breadcrumb[] = l('Home', '/');
+		if(!empty($multi_section_detail)){
+			$section_title_link = strtolower(str_replace(" ", "-", $section_detail['title']));
+			$breadcrumb[] = l($multi_section_detail['title'], 'node/'.$multi_section_detail['nid']);
+			$breadcrumb[] = '<a href="/multisection/'.$multi_section_detail['nid'].'#'.$section_title_link.'">'.$section_detail['title'].'</a>';
+		}
+		$breadcrumb[] = $detail_page_node->title;
+		$data['breadcrumb'] = implode(' >> ', $breadcrumb);
+		$output = theme('detail_page', array('var_name' => $data));
+		return $output;
+	/*}
+	else {
+		drupal_access_denied();
+		module_invoke_all('exit');
+		drupal_exit();
+	}*/
+}
+/**
+ * Callback function section_region_access()
+ * to match the section region with user region.
+ * @return TRUE/FALSE
+ **/
+function section_region_access($nid){
+	global $user;
+	$access = FALSE;
+	if($user->uid == 1) {
+		$access = TRUE;
+	}
+	else {
+		$vid = db_query('SELECT vid FROM taxonomy_vocabulary WHERE name like :name', array(':name' => 'Region'))->fetchField();
+		$node_detail = node_load($nid);
+		$area_tid = array();
+		if(isset($node_detail->field_region['und']['0']['tid'])) {
+			foreach($node_detail->field_region['und'] as $tids) {
+				$area_tid[] = $tids['tid'];
+				$parents = taxonomy_get_tree($vid, $tids['tid'], $max_depth = NULL);
+				if(!empty($parents)) {
+					foreach($parents as $parent) {
+						$area_tid[] = $parent->tid;
+					}
+				}
+			}
+		}
+		if(!empty($area_tid)) {
+			$area_tid = array_unique($area_tid);
+			$count = db_query("SELECT COUNT( * ) FROM field_data_field_region WHERE bundle = 'user' AND entity_id = :uid AND field_region_tid IN ( :area_tid )", array(':uid' => $user->uid, ':area_tid' => $area_tid))->fetchField();
+			if($count > 0) {
+				$access = TRUE;
+			}
+		}
+	}
+	return $access;
+}
+
+/**
+ * Callback function cbone_home_page for admin
+ * to displayed the dynamic front pages.
+ **/
+function cbone_home_page(){
+	global $user;
+	if($user->uid == 0){
+		drupal_goto('node/115');
+	}
+	return '';
+}
+/**
+ * Callback function cbone_home_page_block for admin
+ * to displayed the dynamic front pages.
+ **/
+function cbone_home_page_block(){
+	global $user;
+	$output = '';
+	$user_detail = user_load($user->uid);
+	//print "<pre>";print_r($user_regions);exit;
+	if(count($user_detail->field_region['und']) > 1 && !isset($_GET['region'])){
+		$items = array();
+		$title = 'Kindly select region!';
+		foreach($user_detail->field_region['und'] as $field_region){
+			$user_regions = taxonomy_term_load($field_region['tid']);
+			$items[] = l($user_regions->name, 'front-page', array('query' => array('region' => $user_regions->tid)));
+		}
+		$variables = array(
+			'items' => $items,
+			'title' => $title,
+			'type' => 'ul',
+			'attributes' => array(),
+		);
+		$data['items'] = $variables;
+		$data['banner'] = '/sites/all/modules/custom/cbone_admin/banner/default-banner.jpg';
+		//$output = theme_item_list($variables);
+	}
+	else {
+		//field_region
+		if(isset($_GET['region'])) {
+			$region = $_GET['region'];
+		}
+		else {
+			$region = $user_detail->field_region['und']['0']['tid'];
+		}
+		$query = db_select('field_data_field_region', 'r');
+		$query->fields('r', array('entity_id'));
+		$query->condition('r.bundle', 'front_page', '=');
+		$query->condition('r.field_region_tid', $region, '=');
+		$nid = $query->execute()->fetchField();
+		if(!empty($nid)){
+			$data = array();
+			$node_detail = node_load($nid);
+			//$data['node'] = $node_detail;
+			$data['nid'] = $node_detail->nid;
+			$data['title'] = $node_detail->title;
+			$body = field_get_items('node', $node_detail, 'body');
+			$data['body'] = $body['0']['value'];
+			$data['hashtag'] = isset($node_detail->field_front_page_hashtag['und']['0']['value']) ? $node_detail->field_front_page_hashtag['und']['0']['value'] : '';
+			if(isset($node_detail->field_section_background_image['und']['0']['uri'])) {
+				$banner_count = count($node_detail->field_section_background_image['und']) - 1;
+				if(isset($_COOKIE['front_page_banner']) && $_COOKIE['front_page_banner'] < $banner_count){
+					$front_page_banner = $_COOKIE['front_page_banner'] + 1;
+					//$_COOKIE['front_page_banner'] = $front_page_banner;
+					setcookie("front_page_banner", $front_page_banner);
+				}
+				else {
+					$front_page_banner = 0;
+					//$_COOKIE['front_page_banner'] = $front_page_banner;
+					setcookie("front_page_banner", $front_page_banner);
+				}
+				$data['banner'] = file_create_url($node_detail->field_section_background_image['und'][$front_page_banner]['uri']);
+			}
+			else {
+				$data['banner'] = '/sites/all/modules/custom/cbone_admin/banner/default-banner.jpg';
+			}
+
+			$data['logo'] = isset($node_detail->field_front_page_logo['und']['0']['uri']) ? file_create_url($node_detail->field_front_page_logo['und']['0']['uri']) : '';
+			$data['icons'] = array();
+			if(isset($node_detail->field_section_icons['und']['0']['value'])) {
+				foreach($node_detail->field_section_icons['und'] as $section_icons){
+					$icon_array = array();
+					$icons = field_collection_field_get_entity($section_icons);
+					$icon_array['sort'] = isset($icons->field_sort['und']['0']['value']) ? $icons->field_sort['und']['0']['value'] : '';
+					$icon_array['icon'] = isset($icons->field_icon_image['und']['0']['uri']) ? file_create_url($icons->field_icon_image['und']['0']['uri']) : '';
+					if(isset($icons->field_detail_page_reference['und']['0']['target_id'])) {
+						$icon_array['link'] = '/node/'.$icons->field_detail_page_reference['und']['0']['target_id'];
+					}
+					else {
+						$icon_array['link'] = isset($icons->field_icon_link['und']['0']['value']) ? $icons->field_icon_link['und']['0']['value'] : '';
+					}
+					$icon_array['link'] = isset($icons->field_icon_link['und']['0']['value']) ? $icons->field_icon_link['und']['0']['value'] : '';
+					$icon_array['title'] = isset($icons->field_icon_title['und']['0']['value']) ? $icons->field_icon_title['und']['0']['value'] : '';
+					$data['icons'][] = $icon_array;
+				}
+				//sort function call from "document_management_system.module" file
+				$data['icons'] = document_list_orderby($data['icons'], 'sort', SORT_ASC);
+			}
+		}
+		else if(count($user_detail->field_region['und']) == 1){
+			$items = array();
+			$title = 'Kindly select region!';
+			foreach($user_detail->field_region['und'] as $field_region){
+				$user_regions = taxonomy_term_load($field_region['tid']);
+				$items[] = l($user_regions->name, 'front-page', array('query' => array('region' => $user_regions->tid)));
+			}
+			$variables = array(
+				'items' => $items,
+				'title' => $title,
+				'type' => 'ul',
+				'attributes' => array(),
+			);
+			$data['items'] = $variables;
+			$data['banner'] = '/sites/all/modules/custom/cbone_admin/banner/default-banner.jpg';		
+			//$output = theme_item_list($variables);
+		}
+		else {
+			drupal_goto('front-page');
+		}
+	}
+	$output = theme('home_page', array('var_name' => $data));
+	return $output;
+}

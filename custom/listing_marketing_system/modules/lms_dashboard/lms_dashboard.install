@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function lms_dashboard_schema() {
+  //Saved approved pdf
+  $schema['mc_notification_messages'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'MC messages serial id',
+      ),
+      'office_id' => array(
+        'description'   => 'The mc office Id',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'lnid' => array(
+        'description'   => 'The listing nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'pdf_type' => array(
+        'description'   => 'The listing PDF type',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'notification_title' => array(
+        'description'   => 'The mc notification title',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'notification_message' => array(
+        'description'   => 'MC message text',
+        'type'          => 'text',
+		'size' 			=> 'big',
+        'not null'      => TRUE,
+      ),
+      'mc_status' => array(
+        'description'   => 'The mc status',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'read_status' => array(
+        'description'   => 'read = 1/un-read = 0',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'created' => array(
+        'description'   => 'Time when the message send.',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  return $schema;
+}

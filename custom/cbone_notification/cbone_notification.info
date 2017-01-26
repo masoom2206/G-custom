@@ -1,0 +1,9 @@
+name = Manage Notification
+description = "Allows users to subscribe to a group notification."
+package = "Custom"
+core = 7.x
+version = "7.x-2.x-custom"
+core = "7.x"
+project = "cbone_notification"
+dependencies[] = htmlmail
+dependencies[] = mailsystem

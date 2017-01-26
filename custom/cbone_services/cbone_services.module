@@ -1,0 +1,549 @@
+<?php
+// cbone_services.module
+/**
+* Implementation of hook_menu
+*/
+function cbone_services_menu() {
+  $items = array();
+  //menu for pro brochures the Listing
+	$items['vendor/order-confirmation'] = array(
+		'title'				=> 'Vendor Order Confirmation',
+		'description'		=> 'Vendor Order Confirmation',
+		'page callback'		=> 'cbone_vendor_order_confirm',
+		'access callback'	=> TRUE,
+	);
+	$items['vendor/order-track'] = array(
+		'title'				=> 'Vendor Order Track',
+		'description'		=> 'Vendor Order Track',
+		'page callback'		=> 'cbone_vendor_order_track',
+		'access callback'	=> TRUE,
+	);
+	$items['admin/config/marketing-concierge/mc-settings/submitted-pdf'] = array(
+		'title'				=> 'Submitted PDF',
+		'description'		=> 'Submitted PDF to default Vender',
+		'weight'			=> 5,
+		'page callback'		=> 'mc_submitted_pdf',
+		'access arguments'	=> array('access administration pages'),
+		'file'				=> 'includes/submitted-pdf.inc',
+		'type'				=> MENU_LOCAL_TASK,
+	);
+	$items['vendor-order-test'] = array(
+		'title'				=> 'Vendor Order Test',
+		'description'		=> 'Vendor Order Test',
+		'page callback'		=> 'cbone_vendor_order_test',
+		'access callback'	=> TRUE,
+	);
+ return $items;
+}
+/**
+ * Implementation of hook_services_resources().
+ */
+function cbone_services_services_resources() {
+	return array(
+		'pro_brochures' => array(
+			'operations' => array(
+				'retrieve' => array(
+					'help' => 'Pro Brochures PDF',        
+					'file' => array('type' => 'inc', 'module' => 'cbone_services', 'name' => 'includes/cbone_services'),
+					'callback' => '_pro_brochures_retrieve',
+					'access callback' => 'cbone_services_access',
+					//'access callback' => 'services_access_menu',
+					//'access callback' => '_pro_brochures_access',
+					//'access arguments' => array('view'),
+					//'access arguments append' => TRUE,
+					'args' => array(
+						array(
+							'name' => 'lnid',
+							'type' => 'int',
+							'description' => 'The nid of the listing node',
+							'source' => array('path' => '0'),
+							'optional' => FALSE,
+						),
+						array(
+							'name' => 'pnid',
+							'type' => 'int',
+							'description' => 'The nid of the mcpdf node',
+							'source' => array('path' => '1'),
+							'optional' => FALSE,
+						),
+						array(
+							'name' => 'auth',
+							'type' => 'string',
+							'description' => 'The secrect key of vender',
+							'source' => array('path' => '2'),
+							'optional' => FALSE,
+						),
+					),
+				),
+			),
+		),
+		'postcards' => array(
+			'operations' => array(
+				'retrieve' => array(
+					'help' => 'Post Cards PDF',        
+					'file' => array('type' => 'inc', 'module' => 'cbone_services', 'name' => 'includes/cbone_services'),
+					'callback' => '_postcards_retrieve',
+					'access callback' => 'cbone_services_access',
+					//'access arguments' => array(2),
+					//'access callback' => 'services_access_menu',
+					//'access callback' => '_pro_brochures_access',
+					//'access arguments' => array('view'),
+					//'access arguments append' => TRUE,
+					'args' => array(
+						array(
+							'name' => 'lnid',
+							'type' => 'int',
+							'description' => 'The nid of the listing node',
+							'source' => array('path' => '0'),
+							'optional' => FALSE,
+						),
+						array(
+							'name' => 'pnid',
+							'type' => 'int',
+							'description' => 'The nid of the mcpdf node',
+							'source' => array('path' => '1'),
+							'optional' => FALSE,
+						),
+						array(
+							'name' => 'auth',
+							'type' => 'string',
+							'description' => 'The secrect key of vender',
+							'source' => array('path' => '2'),
+							'optional' => FALSE,
+						),
+					),
+				),
+			),
+		),
+	);
+}
+/**
+ * Implements hook_node_insert()
+ * to generate and save Secret Key for vendor
+ **/
+function cbone_services_node_insert($node) {
+	if($node->is_new && $node->type == 'vendor') {
+		if(!isset($node->field_secret_key['und']['0']['value'])){
+			//$node = node_load($node->nid);
+			$secret_key = md5($node->nid);
+			$node->field_secret_key['und']['0']['value'] = $secret_key;
+			//node_save($node);
+		}
+		//$nid = $node->nid;
+		//generate_vendor_secret_key($nid);
+	}
+}
+/**
+ * Callback function generate_vendor_secret_key()
+ * to generate and save Secret Key
+ * for vendor in vender node
+ **/
+function generate_vendor_secret_key($nid) {
+	$vendor_node = node_load($nid);
+	$secret_key = md5($vendor_node->nid);
+	$vendor_node->field_secret_key['und']['0']['value'] = $secret_key;
+	node_save($vendor_node);exit(0);
+	return $vendor_node->nid;
+}
+/**
+ * Implements hook_node_presave()
+ * to generate and save Secret Key for vendor
+ **/
+function cbone_services_node_presave($node) {
+	if (isset($node->nid) && $node->type == 'vendor') {
+		if(!isset($node->field_secret_key['und']['0']['value'])){
+			$secret_key = md5($node->nid);
+			$node->field_secret_key['und']['0']['value'] = $secret_key;
+		}
+	}
+}
+/**
+ * Callback function cbone_vendor_order_confirm()
+ * URL access by vender to confirm the JSON data received
+ **/
+function cbone_vendor_order_confirm() {
+	//print "<pre>";print_r($_REQUEST);exit;
+	$default_vendor = variable_get('mc_print_vendor', '0');
+	$vendor_detail = node_load($default_vendor);
+	$vender_auth = $vendor_detail->field_secret_key['und']['0']['value'];
+	if($vender_auth == $_REQUEST['auth']){
+		//Insert in custom table cbone_listing_approve_pdf after confirm about JSON file
+		$mc_pdf_detail = node_load($_REQUEST['pdf']);
+		$mc_pdf_detail->field_vendor_order_id['und']['0']['value'] = $_REQUEST['vendor_order_id'];
+		if($_REQUEST['vendor_order_status'] == 'accepted') {
+			$mcpdf_tid = array_shift(taxonomy_get_term_by_name('Print job in progress', 'marketing_concierge_pdf_status'))->tid;
+			$mc_pdf_detail->field_mc_pdf_status['und']['0']['tid'] = $mcpdf_tid;
+			$mc_status = 'Print job in progress';
+		}
+		else if($_REQUEST['vendor_order_status'] == 'error') {
+			$mcpdf_tid = array_shift(taxonomy_get_term_by_name('Returned to MC - Vender Error', 'marketing_concierge_pdf_status'))->tid;
+			$mc_pdf_detail->field_mc_pdf_status['und']['0']['tid'] = $mcpdf_tid;
+			$mc_pdf_detail->field_vendor_message['und']['0']['value'] = $_REQUEST['vendor_message'];
+			$mc_status = 'Returned to MC - Vender Error';
+		}
+		node_save($mc_pdf_detail);
+		db_merge('cbone_listing_approve_pdf')
+			->key(array('pnid' => $_REQUEST['pdf'], 'vendor_order_id' => $_REQUEST['vendor_order_id']))
+			->fields(array(
+				'pnid' => $_REQUEST['pdf'],
+				'vendor_order_id' => $_REQUEST['vendor_order_id'],
+				'vendor_order_status' => $_REQUEST['vendor_order_status'],
+				'vendor_message' => $_REQUEST['vendor_message'],
+				'confirm' => REQUEST_TIME,
+			))
+			->execute();
+		$query = db_select('cbone_listing_approve_pdf', 'apdf')
+			->fields('apdf')
+			->condition('pnid', $mc_pdf_detail->nid, '=');
+		$print_detail = $query->execute()->fetchObject();
+		$listing_node = node_load($print_detail->lnid);
+		if($_REQUEST['vendor_order_status'] == 'error') {
+			if($print_detail->pdf_section == 'pro-brochure') {
+				$term_name = 'Returned to MC - Vendor Error - Pro Brochure';
+			}
+			else if($print_detail->pdf_section == 'post-card'){
+				if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'listed'){
+					$term_name = 'Returned to MC - Vendor Error - Just Listed Postcard';
+				}
+				else if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'sold'){
+					$term_name = 'Returned to MC - Vendor Error - Just Sold Postcard';
+				}
+			}
+			$mail_mc_status = $term_name;
+		}
+		else if($_REQUEST['vendor_order_status'] == 'accepted') {
+			if($print_detail->pdf_section == 'pro-brochure') {
+				$term_name = 'Print Processing - Pro Brochure';
+			}
+			else if($print_detail->pdf_section == 'post-card'){
+				if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'listed'){
+					$term_name = 'Print Processing - Just Listed Postcard';
+				}
+				else if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'sold'){
+					$term_name = 'Print Processing - Just Sold Postcard';
+				}
+			}
+			$mail_mc_status = 'Print Processing';
+		}
+		$listing_tid = array_shift(taxonomy_get_term_by_name($term_name, 'marketing_concierge_status'))->tid;
+		$listing_node->field_mc_status_ref['und']['0']['tid'] = $listing_tid;
+		node_save($listing_node);
+		/*$query = db_select('mc_notifications', 'mcn')
+			->fields('mcn')
+			->condition('mc_status', $mc_status, '=')
+			->condition('title', 'Printer error', '=');
+		$mc_notification = $query->execute()->fetchObject();
+		if(!empty($mc_notification)) {*/
+		mc_status_notifications($print_detail->lnid, $mail_mc_status, $print_detail->pdf_section, $print_detail->pnid);
+			//$message = mc_notifications_vendor_token_replace($mc_notification->body, $print_detail->lnid, $print_detail->pnid, $print_detail->pdf_section);
+			//insert_office_dashboard_notifications($print_detail->lnid, $mc_notification->title, $mc_notification->body, 'Returned to MC - Vender Error');
+			//email message (shown below) will be sent to the Marketing Coordinator.
+		//}
+		drupal_set_message(t('Thank you, order confirm'));
+		$response = array('Thank you, order confirm.');
+		drupal_json_output($response);
+		//return 'Thank you, order confirm.';
+	}
+	else {
+		$response = array('You are not authorize to access this page.');
+		drupal_json_output($response);
+	}
+}
+/**
+ * Callback function cbone_vendor_order_track()
+ * URL access by vender after shipped the order to office
+ **/
+function cbone_vendor_order_track() {
+	$default_vendor = variable_get('mc_print_vendor', '0');
+	$vendor_detail = node_load($default_vendor);
+	$vender_auth = $vendor_detail->field_secret_key['und']['0']['value'];
+	if($vender_auth == $_REQUEST['auth']){
+		//Insert in custom table cbone_listing_approve_pdf after confirm about JSON file
+		$mc_pdf_detail = node_load($_REQUEST['pdf']);
+		//$mc_pdf_detail->field_vendor_order_id['und']['0']['value'] = $_REQUEST['vendor_order_id'];
+		$mcpdf_tid = array_shift(taxonomy_get_term_by_name('Order Complete', 'marketing_concierge_pdf_status'))->tid;
+		$mc_pdf_detail->field_mc_pdf_status['und']['0']['tid'] = $mcpdf_tid;
+		$mc_pdf_detail->field_shipping_tracking['und']['0']['value'] = $_REQUEST['shipment_tracking'];
+		node_save($mc_pdf_detail);
+		//Send mail to Agent
+		$query = db_select('cbone_listing_approve_pdf', 'apdf')
+			->fields('apdf')
+			->condition('pnid', $_REQUEST['pdf'], '=')
+			->condition('vendor_order_id', $_REQUEST['vendor_order_id'], '=');
+		//$lnid = $query->execute()->fetchField();
+		$print_detail = $query->execute()->fetchObject();		
+		$listing_node = node_load($print_detail->lnid);
+		if($print_detail->pdf_section == 'pro-brochure') {
+			$term_name = 'Print Order Shipped - Pro Brochure';
+		}
+		else if($print_detail->pdf_section == 'post-card'){
+			if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'listed'){
+				$term_name = 'Print Order Shipped - Just Listed Postcard';
+			}
+			else if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'sold'){
+				$term_name = 'Print Order Shipped - Just Sold Postcard';
+			}
+		}
+		$listing_tid = array_shift(taxonomy_get_term_by_name($term_name, 'marketing_concierge_status'))->tid;
+		$listing_node->field_mc_status_ref['und']['0']['tid'] = $listing_tid;
+		node_save($listing_node);
+		//mc_status_notifications($listing_node->nid, 'Order Complete');
+		//save the status
+		db_merge('cbone_listing_approve_pdf')
+			->key(array('pnid' => $_REQUEST['pdf'], 'vendor_order_id' => $_REQUEST['vendor_order_id']))
+			->fields(array(
+				'pnid' => $_REQUEST['pdf'],
+				'vendor_order_id' => $_REQUEST['vendor_order_id'],
+				'vendor_order_status' => $_REQUEST['vendor_order_status'],
+				'shipment_tracking' => $_REQUEST['shipment_tracking'],
+				'shipped' => REQUEST_TIME,
+			))
+			->execute();
+		mc_status_notifications($print_detail->lnid, $term_name, $print_detail->pdf_section, $print_detail->pnid);
+		drupal_set_message(t('Thank you, order confirm'));
+		$response = array('Thank you, shipment confirm.');
+		drupal_json_output($response);
+		//return 'Thank you, order confirm';
+	}
+	else {
+		$response = array('You are not authorize to access this page.');
+		drupal_json_output($response);
+	}
+}
+/** Gets a pdf node object by listing nid.
+ *
+ * @param int $nid
+ * @return object
+ */
+function cbone_get_brochures_pdf($lnid, $pnid) {
+	$pdf_section = 'pro brochure';
+	$data = cbone_get_pdf_detail($lnid, $pnid, $pdf_section);
+	return $data;
+}
+/** Gets a pdf node object by listing nid.
+ *
+ * @param int $nid
+ * @return object
+ */
+function cbone_get_postcards_pdf($lnid, $pnid) {
+	$pdf_section = 'post card';
+	$data = cbone_get_pdf_detail($lnid, $pnid, $pdf_section);
+	return $data;
+}
+/**
+ * Callback function cbone_get_pdf_detail()
+ * return pdf_section detail
+ */
+function cbone_get_pdf_detail($lnid, $pnid, $pdf_section) {
+	//listing nid/node
+	$listing_node = node_load($lnid);
+	$agent_uid = isset($listing_node->field_lms_agent_uid['und']['0']['uid']) ? $listing_node->field_lms_agent_uid['und']['0']['uid'] : $listing_node->uid;
+	$agent_detail = user_load($agent_uid);
+	$mc_uid  = $listing_node->field_lms_marketing_coordinator['und']['0']['uid'];
+	$mc_detail = user_load($mc_uid);
+	//Listing office
+	$office_nid = $listing_node->field_office_ref['und']['0']['nid'];
+	$office_node = node_load($office_nid);
+	//mcpdf Node/NID
+	/*$mcpdf_tid = array_shift(taxonomy_get_term_by_name('Print Processing', 'marketing_concierge_pdf_status'))->tid;
+	$query = db_select('field_data_field_mc_pdf_status', 'mcs');
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'lr.entity_id = mcs.entity_id');
+	$query->innerJoin('field_data_field_template_reference', 'tr', 'tr.entity_id = mcs.entity_id');
+	$query->innerJoin('field_data_field_pdf_section', 'pdfs', 'pdfs.entity_id = tr.field_template_reference_nid');
+	$query->fields('mcs', array('entity_id'));
+	$query->condition('mcs.field_mc_pdf_status_tid', $mcpdf_tid, '=');
+	$query->condition('lr.field_lms_listing_reference_nid', $lnid, '=');
+	$query->condition('lr.bundle', 'mc_pdf', 'LIKE');
+	$query->condition('pdfs.field_pdf_section_value', $pdf_section, 'LIKE');
+	$mc_pdf_nid = $query->execute()->fetchField();
+	$mc_pdf_node = node_load($mc_pdf_nid);*/
+	$mc_pdf_node = node_load($pnid);
+	//template name
+	$mc_pdf_template_nid = $mc_pdf_node->field_template_reference['und']['0']['nid'];
+	$mc_pdf_template_node = node_load($mc_pdf_template_nid);
+	//PDF File
+	$pdf_uri = file_create_url($mc_pdf_node->field_generated_pdf['und']['0']['uri']);
+	//Order Id	
+	$query = db_select('field_data_field_lms_listing_reference', 'lr');
+	$query->fields('lr', array('entity_id'));
+	$query->condition('lr.field_lms_listing_reference_nid', $lnid, '=');
+	$query->condition('lr.bundle', 'commerce_order', 'LIKE');
+	$Order_id = $query->execute()->fetchField();
+	$order = commerce_order_load($Order_id);
+	//print "<pre>";print_r($order);exit;
+	$line_item = commerce_line_item_load($order->commerce_line_items['und']['0']['line_item_id']);
+	//$product = commerce_product_load($line_item->commerce_product['und']['0']['product_id']);
+	foreach ($order->commerce_line_items['und'] as $key => $value) {
+    $line_item_id = $value['line_item_id'];
+    $line_item = commerce_line_item_load($line_item_id);
+    $product_id = $line_item->commerce_product['und']['0']['product_id'];
+    $product = commerce_product_load($product_id);
+    $product_id_array = array(1,2,3,7);
+    if ( in_array($product_id, $product_id_array) ) {
+      $banner = file_create_url($product->field_mc_product_banner['und']['0']['uri']);
+      $logo = file_create_url($product->field_mc_image['und']['0']['uri']);
+      $title = $product->title;
+      $package_data = get_package_configuration_data_v2($product_id);
+    }
+  }
+	//Mailing List
+	$just_listed = isset($order->field_just_listed_mail_list['und']['0']['uri']) ? file_create_url($order->field_just_listed_mail_list['und']['0']['uri']) : '';
+	$just_sold = isset($order->field_just_sold_mail_list['und']['0']['uri']) ? file_create_url($order->field_just_sold_mail_list['und']['0']['uri']) : '';
+	
+	$output = array(
+		'order_identifiers' => array(
+			'order_id' => $Order_id,
+			'pdf_reference_id' => $pnid,
+		),
+		'product' => array(
+			'product_package' => $title,
+			'product_type' => ucwords($pdf_section),
+			'design' => $mc_pdf_template_node->title,
+		),
+		'pdf_link' => array(
+			'pdf_uri' => $pdf_uri,
+		),
+		'agent_name_and_contact' => array(
+			'agent_first_name' => isset($agent_detail->field_first_name['und']['0']['value']) ? $agent_detail->field_first_name['und']['0']['value'] : '',
+			'agent_last_name' => isset($agent_detail->field_last_name['und']['0']['value']) ? $agent_detail->field_last_name['und']['0']['value'] : '',
+			'agent_phone' => isset($agent_detail->field_phone_direct['und']['0']['value']) ? $agent_detail->field_phone_direct['und']['0']['value'] : '',
+			'agent_email' => isset($agent_detail->field_person_email['und']['0']['value']) ? $agent_detail->field_person_email['und']['0']['value'] : $agent_detail->mail,
+		),
+		'marketing_coordinator_name_and_contact_info' => array(
+			'mc_first_name' => isset($mc_detail->field_first_name['und']['0']['value']) ? $mc_detail->field_first_name['und']['0']['value'] : '',
+			'mc_last_name' => isset($mc_detail->field_last_name['und']['0']['value']) ? $mc_detail->field_last_name['und']['0']['value'] : '',
+			'mc_phone' => isset($mc_detail->field_phone_direct['und']['0']['value']) ? $mc_detail->field_phone_direct['und']['0']['value'] : '',
+			'mc_email' => isset($mc_detail->field_person_email['und']['0']['value']) ? $mc_detail->field_person_email['und']['0']['value'] : $mc_detail->mail,
+		),
+		'shipping_information' => array(
+			'shipping_name' => $office_node->title,
+			'shipping_address' => isset($office_node->field_office_address['und']['0']['value']) ? $office_node->field_office_address['und']['0']['value'] : '',
+			'shipping_city' => isset($office_node->field_office_city['und']['0']['value']) ? $office_node->field_office_city['und']['0']['value'] : '',
+			'shipping_state' => isset($office_node->field_office_state['und']['0']['value']) ? $office_node->field_office_state['und']['0']['value'] : '',
+			'shipping_zip' => isset($office_node->field_office_zip['und']['0']['value']) ? $office_node->field_office_zip['und']['0']['value'] : '',
+			'shipping_phone' => isset($office_node->field_office_phone['und']['0']['value']) ? $office_node->field_office_phone['und']['0']['value'] : '',
+		),
+	);
+	//if(isset($order->field_mail_to_a_radius['und']['0']['value']) && $order->field_mail_to_a_radius['und']['0']['value'] == 1) {
+	if(isset($order->field_direct_mail_postcards['und']['0']['value']) && $order->field_direct_mail_postcards['und']['0']['value'] == 'mail_radius_surrounding_property') {
+		$output['mail_to_radius'] = array(
+			'radius_address' => isset($listing_node->field_lms_listing_address['und']['0']['value']) ? $listing_node->field_lms_listing_address['und']['0']['value'] : '',
+			'radius_address_unit' => isset($listing_node->field_lms_address_unit['und']['0']['value']) ? $listing_node->field_lms_address_unit['und']['0']['value'] : '',
+			'radius_city' => isset($listing_node->field_lms_listing_city['und']['0']['value']) ? $listing_node->field_lms_listing_city['und']['0']['value'] : '',
+			'radius_state' => isset($listing_node->field_lms_listing_state['und']['0']['value']) ? $listing_node->field_lms_listing_state['und']['0']['value'] : '',
+			'radius_zip' => isset($listing_node->field_lms_listing_zip['und']['0']['value']) ? $listing_node->field_lms_listing_zip['und']['0']['value'] : '',
+		);
+	}
+	if($pdf_section == 'pro brochure') {
+		/*$output['mailing_list'] = array(
+			'mailing_list_uri' => array(
+				'just_listed' => $just_listed,
+				'just_sold' => $just_sold,
+			),
+		);*/
+		$output['extra_prints'] = array(
+			'extra_pro_brochures' => isset($order->field_just_pro_brochure['und']['0']['value']) ? $order->field_just_pro_brochure['und']['0']['value'] : 0,
+		);
+	}
+	else if($pdf_section == 'post card') {
+		if($mc_pdf_node->field_postcard_type['und'][0]['value'] == 'listed') {
+			$output['mailing_list'] = array(
+				'mailing_list_uri' => $just_listed,
+			);
+			/*$output['extra_prints'] = array(
+				'extra_just_listed_postcards' => isset($order->field_just_listed_postcard['und']['0']['value']) ? $order->field_just_listed_postcard['und']['0']['value'] : 0,
+			);*/
+			
+			$total_listing = $package_data->just_listed + $order->field_additional_ono_mailed_just['und'][0]['value'];
+			$output['order_quantity'] = array(
+			    'order_quantity' => isset($total_listing) ? $total_listing : 0,
+			);
+			$ship = $order->field_ship_to_office_just_sold['und']['0']['value'];
+			$output['ship_to_office'] = array(
+			  'ship_to_office' => isset($order->field_ship_to_office_just_sold) ? (int)$ship : 0,
+			);
+			
+		}
+		else if($mc_pdf_node->field_postcard_type['und'][0]['value'] == 'sold') {
+			$output['mailing_list'] = array(
+				'mailing_list_uri' => $just_sold,
+			);
+			/*$output['extra_prints'] = array(
+				'extra_just_sold_postcards' => isset($order->field_just_sold_postcard['und']['0']['value']) ? $order->field_just_sold_postcard['und']['0']['value'] : 0,
+			);*/
+
+			$total_sold = $package_data->just_sold + $order->field_additional_non_mailed_just['und'][0]['value'];
+			$output['order_quantity'] = array(
+			    'order_quantity' => isset($total_sold) ? $total_sold : 0,
+			);
+			$ship = $order->field_ship_to_office_just_sold['und']['0']['value'];
+			$output['ship_to_office'] = array(
+			  'ship_to_office' => isset($order->field_ship_to_office_just_sold) ?  (int)$ship : 0,
+			);
+			
+		}
+	}
+	$output['paper_preference'] = array(
+	  'paper_preference' => isset($order->field_paper_preference['und'][0]['value']) ?  $order->field_paper_preference['und'][0]['value'] : '',
+	);
+	$output['brochure_size'] = array(
+	  'brochure_size' => isset($order->field_brochure_size['und'][0]['value']) ?  $order->field_brochure_size['und'][0]['value'] : '',
+	);
+	return $output;
+}
+
+/**
+ * Callback function cbone_vendor_order_test()
+ * to test the vendor callback function from cbone
+ * //vendor-order-test
+ **/
+function cbone_vendor_order_test() {
+	/*// Order Conform
+	$form_url = "https://www.cbone.me/vendor/order-confirmation";
+	//?orderID=39&pdf=56060&vendor_order_id=00&vendor_order_status=accepted&vendor_message=Okay&auth=value
+	$data_to_post = array();
+	$data_to_post['orderID'] = 12;
+	$data_to_post['pdf'] = 113370;
+	$data_to_post['vendor_order_id'] = 34;
+	$data_to_post['vendor_order_status'] = 'accepted';
+	$data_to_post['vendor_message'] = 'Good';
+	$data_to_post['auth'] = 'b01effeea43c9d19bfd3b2069ad4417f';
+
+	$curl = curl_init();
+	curl_setopt($curl,CURLOPT_URL, $form_url);
+	curl_setopt($curl,CURLOPT_POST, sizeof($data_to_post));
+	curl_setopt($curl,CURLOPT_POSTFIELDS, $data_to_post);
+	$result = curl_exec($curl);
+	curl_close($curl);*/
+	
+	// shipment Conform
+	$form_url = "https://dev.cbone.me/vendor/order-track";
+//?pdf=56060&vendor_order_id=00&shipment_tracking=https://example.com&vendor_order_status=error&vendor_message=Okay&auth=value
+	$data_to_post = array();
+	$data_to_post['pdf'] = 113370;
+	$data_to_post['vendor_order_id'] = 193;
+	$data_to_post['shipment_tracking'] = 'http://www.example.com';
+	$data_to_post['vendor_order_status'] = 'shipped';
+	$data_to_post['vendor_message'] = 'Shipped';
+	$data_to_post['auth'] = 'b01effeea43c9d19bfd3b2069ad4417f';
+
+	$curl = curl_init();
+	curl_setopt($curl,CURLOPT_URL, $form_url);
+	curl_setopt($curl,CURLOPT_POST, sizeof($data_to_post));
+	curl_setopt($curl,CURLOPT_POSTFIELDS, $data_to_post);
+	$result = curl_exec($curl);
+	curl_close($curl);
+
+}
+
+function get_package_configuration_data_v2($product_id) {
+  $result = '';
+  if (isset($product_id)) {
+    $result = db_select('mc_package_configuration', 'n')
+      ->fields('n')
+      ->condition('product_id', $product_id,'=')
+      ->execute()
+      ->fetchObject();
+  }
+  return $result;
+}

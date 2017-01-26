@@ -1,0 +1,16 @@
+name = "CB|ONE Flags Feature"
+description = "CB|ONE Flags Feature"
+core = "7.x"
+package = "CB|ONE Flags"
+
+
+files[] = cbone_flags.module
+files[] = includes/views/cbone_flags_handler_field_flag.inc
+files[] = includes/views/cbone_handler_field_listing_pc_meter.inc
+files[] = includes/views/cbone_complete_img_handler.inc
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE Flags"
+datestamp = ""
+

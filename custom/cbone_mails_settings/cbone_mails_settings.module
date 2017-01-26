@@ -1,0 +1,172 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function cbone_mails_settings_menu() {
+  $items = array();
+  //Menu for admin to Update subscription mail template
+  $items['admin/config/cbone-mail'] = array(
+    'title'        => 'Cbone PDF Mail',
+    'description'    => 'Cbone Mail configuration.',
+    'page callback'    => 'system_admin_menu_block_page',
+    'access arguments'  => array('access administration pages'),
+    'file'        => 'system.admin.inc',
+    'file path'      => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/cbone-mail/mail-notifications'] = array(
+    'title'        => 'PDF Mails',
+    'description'    => 'Mails Message List.',
+    'weight'      => 1,
+    'page callback'    => 'mail_message_list',
+    'access arguments'  => array('access administration pages'),
+    'file'        => 'includes/mail_message.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/cbone-mail/mail-notifications/message'] = array(
+    'title' => 'Notifications Message List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/config/cbone-mail/mail-notifications/message/add-mail'] = array(
+    'title'        => 'Add Mail Data',
+    'description'    => 'Add Mail Data',
+    'weight'      => 3,
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('add_mail_data_message_form'),
+    'access arguments'  => array('access administration pages'),
+    'file'        => 'includes/mail_message.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-pdf-mail/message-body/%'] = array(
+	  'title'				=>	'Cbone Mail Preview',
+	  'description'		=>	'Cbone Mail Preview',
+	  'page callback'		=>	'cbone_mail_preview_message_body',
+	  'page arguments'	=> array(2),
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/cbone_mail_preview_message.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function  cbone_mails_settings_token_info() {
+  $type = array(
+    'name' => t('PDF Mail Token'),
+    'description' => t('Tokens related MC Notifications Message.'),
+    'needs-data' => 'mail_token_data',
+  );
+  $mail_token['pdf_url'] = array(
+    'name' => t('Seller Report PDF URL'),
+  );
+  $mail_token['field_preferred_name'] = array(
+    'name' => t('Preferred agent name [field_preferred_name] of the primary agent'),
+  );
+  $mail_token['colisting_agent_name'] = array(
+    'name' => t('Co-listing agent name if associated with the listing'),
+  );
+  $mail_token['team_name'] = array(
+    'name' => t('Team name if associated with the listing'),
+  );
+  $mail_token['lms_listing_title'] = array(
+    'name' => t('Listing (lms_listing: title)'),
+  );
+  $mail_token['lms_listing_address'] = array(
+    'name' => t('Listing address'),
+  );
+  $mail_token['lms_listing_city'] = array(
+    'name' => t('Listing city'),
+  );
+  $mail_token['seller_name'] = array(
+    'name' => t('Seller Name '),
+  );
+  $mail_token['intro_copy'] = array(
+    'name' => t('Intro Copy '),
+  );
+  $mail_token['completed_item'] = array(
+    'name' => t('Completed Item'),
+  );
+  $mail_token['conclusion_copy'] = array(
+    'name' => t('Conclusion Copy'),
+  );
+  $mail_token['year'] = array(
+    'name' => t('Current Year'),
+  );
+  $mail_token['pdf_link'] = array(
+    'name' => t('Download PDF URL'),
+  );
+  $mail_token['agent_images'] = array(
+    'name' => t('Agent\'s Images'),
+  );
+  $mail_token['agents_info'] = array(
+    'name' => t('Agent\'s info'),
+  );
+  $mail_token['token_active_key'] = array(
+    'name' => t('Token Active Key'),
+  );
+  return array(
+    'types' => array('mail_token_data' => $type),
+    'tokens' => array('mail_token_data' => $mail_token),
+  );
+}
+
+/*
+ * Implements hook_tokens().
+ */
+function cbone_mails_settings_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+  if ($type == 'mail_token_data') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'pdf_url':
+          $replacements[$original] = $data['data']['pdf_url'];
+          break;
+        case 'field_preferred_name':
+          $replacements[$original] = $data['data']['field_preferred_name'];
+        break;
+        case 'colisting_agent_name':
+          $replacements[$original] = $data['data']['colisting_agent_name'];
+          break;
+        case 'team_name':
+          $replacements[$original] = $data['data']['team_name'];
+        break;
+        case 'lms_listing_title':
+          $replacements[$original] = $data['data']['lms_listing_title'];
+        break;
+        case 'lms_listing_address':
+          $replacements[$original] = $data['data']['lms_listing_address'];
+        break;
+        case 'lms_listing_city':
+          $replacements[$original] = $data['data']['lms_listing_city'];
+        break;
+        case 'seller_name':
+          $replacements[$original] = $data['data']['seller_name'];
+        break;
+        case 'intro_copy':
+          $replacements[$original] = $data['data']['intro_copy'];
+        break;
+        case 'completed_item':
+          $replacements[$original] = $data['data']['completed_item'];
+        break;
+        case 'conclusion_copy':
+          $replacements[$original] = $data['data']['conclusion_copy'];
+        break; 
+        case 'year':
+          $replacements[$original] = $data['data']['year'];
+        break;
+        case 'pdf_link':
+          $replacements[$original] = $data['data']['pdf_link'];
+        break;
+        case 'agent_images':
+          $replacements[$original] = $data['data']['agent_images'];
+        break;
+        case 'agents_info':
+          $replacements[$original] = $data['data']['agents_info'];
+        break;
+      }
+    }
+  }
+  return $replacements;
+}

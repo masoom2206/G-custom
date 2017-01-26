@@ -1,0 +1,13 @@
+name = "CB|ONE Marketing Concierge Notifications Configuration tool"
+description = "CB|ONE Marketing Concierge Notifications Configuration tool for admin and siteadmin"
+core = "7.x"
+package = "CB|ONE MC"
+configure = "admin/config/marketing-concierge/mc-notifications"
+
+;dependencies[] = text
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE MC"
+datestamp = ""
+

@@ -1,0 +1,5 @@
+name = Comment subject length
+description = Increases maximum length of comment subject.
+version = "7.x"
+core = "7.x"
+project = "comment_subject_length"

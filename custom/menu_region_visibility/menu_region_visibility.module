@@ -1,0 +1,199 @@
+<?php
+
+
+
+/**
+ * Implements hook_menu_link_alter().
+ *
+ * In order to have our menu_item_visibility_translated_menu_link_alter()
+ * function called by _menu_link_translate(), we have to manually set this
+ * menu link as 'altered'. Unfortunately this alters all menu links and we need
+ * to figure out a better solution in order to not globally alter all links.
+ */
+function menu_region_visibility_menu_link_alter(&$item) {
+  $item['options']['alter'] = TRUE;
+
+  // Because menu_link_save() may skip calling hook_menu_link_update(), we need
+  // to force it to be invoked. See http://drupal.org/node/1013856.
+  if (!empty($item['mlid'])) {
+    _menu_region_visibility_menu_link_update($item);
+  }
+}
+
+/*
+ * Before a menu item gets displayed, the core calls the hook:
+ * hook_translated_menu_link_alter(&$item, $map);
+ * (but only if $item['options']['alter'] is TRUE)
+ *
+ * This function is used to alter the access right based on
+ * the region definition of the item.
+ */
+/**
+ * Implements hook_translated_menu_link_alter().
+ **/
+function menu_region_visibility_translated_menu_link_alter(&$item, $map) {
+  global $user;
+	$area_tid = array();
+	$user_detail = user_load($user->uid);
+	if(isset($user_detail->field_region['und'][0]['tid'])) {
+		foreach($user_detail->field_region['und'] as $tids) {
+			$area_tid[] = $tids['tid'];
+		}
+	}
+
+  if (!empty($item['access'])) {
+    // Menu administrators can see all links.
+    if (strpos(current_path(), 'admin/structure/menu/manage/' . $item['menu_name']) === 0 && user_access('administer menu')) {
+      return;
+    }
+
+    // @todo Convert this into a proper hook so modules can extend visibility.
+    $item['visibility'] = menu_region_visibility_load($item['mlid']);
+    if (!empty($item['visibility']['regions']) && !array_intersect($item['visibility']['regions'], $area_tid)) {
+      $item['access'] = FALSE;
+    }
+  }
+}
+
+/**
+ * Load all visibility data for a menu link.
+ */
+function menu_region_visibility_load($mlid) {
+  $region = array();
+  if (!empty($mlid)) {
+    $region['regions'] = db_query("SELECT tid FROM {menu_links_visibility_region} WHERE mlid = :mlid", array(':mlid' => $mlid))->fetchCol();
+    module_invoke_all('menu_region_visibility_load', $region, $mlid);
+  }
+  return $region;
+}
+
+/**
+ * Implements hook_menu_link_insert()
+ */
+function menu_region_visibility_menu_link_insert($link) {
+//print "<pre>";print_r($link);exit;
+  if (!empty($link['regions']) && $regions = array_filter($link['regions'])) {
+    $query = db_insert('menu_links_visibility_region');
+    $query->fields(array('mlid', 'tid'));
+    foreach ($regions as $tid) {
+      $query->values(array('mlid' => $link['mlid'], 'tid' => $tid));
+    }
+    $query->execute();
+  }
+}
+
+/**
+ * Implements hook_menu_link_update()
+ *
+ * Disabled as a hook until http://drupal.org/node/1013856 is fixed.
+ */
+function _menu_region_visibility_menu_link_update($link) {
+  db_delete('menu_links_visibility_region')
+    ->condition('mlid', $link['mlid'])
+    ->execute();
+
+  menu_region_visibility_menu_link_insert($link);
+}
+
+/**
+ * Implements hook_menu_link_delete()
+ */
+function menu_region_visibility_menu_link_delete($link) {
+  db_delete('menu_links_visibility_region')
+    ->condition('mlid', $link['mlid'])
+    ->execute();
+}
+
+/**
+ * Implements hook_user_role_delete()
+ *
+function menu_region_visibility_user_role_delete($role) {
+  db_delete('menu_links_visibility_region')
+    ->condition('rid', $role->rid)
+    ->execute();
+}*/
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function menu_region_visibility_form_menu_edit_item_alter(&$form, &$form_state) {
+  // region settings.
+  $vid = db_query('SELECT vid FROM taxonomy_vocabulary WHERE name like :name', array(':name' => 'Region'))->fetchField();
+  //$region_tids = db_query("SELECT tid, name FROM {taxonomy_term_data} WHERE vid = :vid", array(':vid' => $vid))->fetchAllKeyed();
+  /*$region_tids = array();
+  $query1 = db_query("SELECT * FROM taxonomy_term_data td INNER JOIN taxonomy_term_hierarchy th ON th.tid = td.tid WHERE vid = :vid AND th.parent = :parent", array(':vid' => $vid, ':parent' => 0));
+  foreach($query1 as $parents1) {
+	$region_tids[$parents1->tid] = $parents1->name;
+	$query2 = db_query("SELECT * FROM taxonomy_term_data td INNER JOIN taxonomy_term_hierarchy th ON th.tid = td.tid WHERE vid = :vid AND th.parent = :parent", array(':vid' => $vid, ':parent' => $parents1->tid));
+	foreach($query2 as $parents2) {
+		$region_tids[$parents2->tid] = $parents2->name;
+	}	
+  }*/
+  
+  $region = menu_region_visibility_load($form['mlid']['#value']);
+  
+  $form['region_title'] = array(
+    '#type' => 'item',
+    '#title' => t('Region settings'),
+  );
+  $form['regions'] = array(
+    '#type' => 'vertical_tabs',
+    '#attached' => array(
+      'js' => array(
+        'vertical-tabs' => drupal_get_path('module', 'menu_region_visibility') . '/menu_region_visibility.js',
+      ),
+    ),
+  );
+
+
+  // Per-role region.
+  $form['regions']['region'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Region'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'regions',
+    '#weight' => 10,
+  );
+  /*$form['regions']['region']['regions'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Show menu link for specific region'),
+    '#default_value' => isset($region['regions']) ? $region['regions'] : array(),
+    '#options' => $region_tids,
+    '#description' => t('Show this menu link only for the selected role(s). If you select no roles, the menu link will be visible to all users.'),
+  );*/
+  $default_value = array();
+  $mlid = $form['mlid']['#value'];
+  if($mlid != 0){
+	$query = db_select("menu_links_visibility_region", "vr");
+	$query->fields("vr", array('tid', 'tid'));
+	$query->condition("vr.mlid", $mlid, '=');
+	$default_value = $query->execute()->fetchAllKeyed();
+  }
+  $term_reference_tree_path = drupal_get_path('module', 'term_reference_tree');
+  $form['regions']['region']['regions'] = array(
+      '#title' => t('Show menu link for specific region'),
+      '#type' => 'checkbox_tree',
+      '#max_choices' => 999,
+      '#max_depth' => 999,
+      '#field_name' => 'regions',
+      '#leaves_only' => 0,
+      '#start_minimized' => FALSE,
+      '#depth' => 0,
+      '#vocabulary' => taxonomy_vocabulary_load($vid),
+      '#parent_tid' => 0,
+      '#value_key' => 'tid',
+      '#select_parents' => FALSE,
+      '#attached' => array(
+          'js' => array($term_reference_tree_path . '/term_reference_tree.js'),
+          'css' => array($term_reference_tree_path . '/term_reference_tree.css')
+      ),
+      '#attributes' => array('class' => array('field-widget-term-reference-tree')),
+      '#element_validate' => array('_term_reference_tree_widget_validate'),
+      '#value' => array(),
+      '#filter_view' => '',
+      '#token_display' => '',
+	  '#default_value' => $default_value,
+	  '#description' => t('Show this menu link only for the selected region(s). If you select no region, the menu link will be visible to all region.'),
+    );
+}

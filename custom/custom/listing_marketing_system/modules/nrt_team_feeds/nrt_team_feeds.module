@@ -1,0 +1,342 @@
+<?php
+error_reporting(E_ALL);
+/**
+ * Implements hook_menu()
+ *
+ **/
+function nrt_team_feeds_menu(){
+	$menu = array();
+	
+	$menu['feeds/sales-team-feeds'] = array(
+		'title' => 'Sales Teams Feeds',
+		'description' => 'Sales Teams Feeds.',
+		'page callback' => 'sales_team_feeds_import',
+		'access callback'	=> TRUE,
+	);
+	$menu['feeds/sales-team-member-feeds'] = array(
+		'title' => 'Sales Teams Member Feeds',
+		'description' => 'Sales Teams Teams Feeds.',
+		'page callback' => 'sales_team_member_feeds_import',
+		'access callback'	=> TRUE,
+	);
+	$menu['admin/config/lst/feed-result'] = array(
+		'title'				=> 'CBOne LMS Sales Team Feed Result List',
+		'description'		=> 'CBOne LMS Sales Team Feed result list.',
+		'page callback'		=> 'cbone_lms_sales_team_feed_result_list',
+		'weight'			=> 2,
+		//'access arguments'	=> array('access administration pages'),
+		'access callback' => 'user_has_access_role',
+		'access arguments' => array(array('Siteadmin', 'Administrator')),
+		'file'				=> 'includes/cbone_lms_sales_team_feed_result.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	return $menu;
+}
+
+/**
+ * Callback function sales_team_feeds_import() for creating  * and updating the sales team Nodes by feed. 
+ **/
+function sales_team_feeds_import() {
+	global $base_url, $user;
+	$current_date = date('Ymd');
+	if(isset($_GET['date']) && $_GET['date'] != '') {
+		$date = $_GET['date'];
+	}
+	else {
+		$date = $current_date;
+	}
+	
+	$lms_feed = taxonomy_get_term_by_name('NRT Team Groups feed');
+	$tid = array_shift($lms_feed)->tid;
+	$listing_term = taxonomy_term_load($tid);
+	$path = isset($listing_term->field_local_destination_path['und']['0']['value']) ? $listing_term->field_local_destination_path['und']['0']['value'] : '';
+	$retention = isset($listing_term->field_results_retention['und']['0']['value']) ? $listing_term->field_results_retention['und']['0']['value'] : '';
+	$notification_email = isset($listing_term->field_notification_email['und']['0']['value']) ? $listing_term->field_notification_email['und']['0']['value'] : '';
+	//Delete saved processing results
+	$retention_time = strtotime(date('Y-m-d', strtotime('-'.$retention.' days')));
+	$num_deleted = db_delete('sales_team_feed_processing_results')
+		->condition('feed_timestamp', $retention_time, '<')
+		->condition('feed_type', 'NRT Team Groups feed', '=')
+		->execute();
+	
+
+	if($path !='' && is_dir($path)) { // check file path exists or empty
+	$scanned_directory = array_diff(scandir($path), array('..', '.'));
+
+		foreach($scanned_directory as $values) {
+
+			$substr = substr($values, 10, -4);
+			if($substr == $date) {
+				$file_name = $values;
+			}
+		}
+
+		$file_path = $path.'/'.$file_name;
+
+		
+			if(is_file($file_path)) {	// Check file exists
+				$handle = fopen($file_path, "r");
+				$feed_data = fread($handle, filesize($file_path));
+				fclose($handle);
+				$vehicle_data_arr = explode("\n", $feed_data);
+				unset($vehicle_data_arr[0]);
+				foreach($vehicle_data_arr as $record) {
+					
+					//$data = explode(",", $record);
+					$data = str_getcsv($record);
+					$final_data = str_replace('"','',$data);
+					if(!empty($final_data)) {
+						$metro_id = trim($final_data[0]);
+						$team_id = trim($final_data[1]);
+						$teamname = trim($final_data[3]);
+						$teamemail = trim($final_data[4]);
+						$teamwebsiteurl = trim($final_data[5]);
+						$teamphotourl = trim($final_data[2]);
+					
+						//Check Existence in database
+						$exist_team_id = db_query("SELECT count(*) as count FROM field_data_field_nrt_team_id WHERE field_nrt_team_id_value = :team_id", array(":team_id" => $team_id))->fetchField();
+						
+						##  Check Existence in database
+						
+						if(trim($final_data[0]) == '625' && $exist_team_id['count'] == 0){
+							$message = '';
+						
+							$insert_error = 0;
+							$update_error = 0;
+
+							if(empty($team_id)) {
+								$insert_error = 1;
+								$update_error = 1;
+								$team_id = null;
+								$message = 'NRT Team ID is missing in feed. Listing skipped.';
+								lms_sales_team_feed_processing_result_error($file_name,$team_id,$metro_id,$message);
+							}
+							else if(!is_numeric($team_id)) {
+								$insert_error = 1;
+								$update_error = 1;
+								$message = 'NRT Team ID '.$team_id.' must be an integer. Listing skipped.';
+								lms_sales_team_feed_processing_result_error($file_name,$team_id,$metro_id,$message);
+							}
+							else{						
+								$node = new stdClass();
+								$node->type = 'lms_sales_team';
+								$node->title = check_plain($teamname);
+								node_object_prepare($node);
+								$node->uid = $user->uid;
+								$node->language = LANGUAGE_NONE;
+								$ext = pathinfo($teamphotourl, PATHINFO_EXTENSION);		
+								$filefilename = 'team-'.$team_id.'.'.$ext;									
+								$file_temp = file_get_contents($teamphotourl);
+								$file_temp = file_save_data($file_temp, 'public://' . basename($filefilename), FILE_EXISTS_RENAME);											
+								 $node->field_sales_team_photo = array(
+								  'und' => array(
+									0 => array(
+									  'fid' => $file_temp->fid,
+									  'filename' => $file_temp->filename,
+									  'filemime' => $file_temp->filemime,
+									  'uid' => 1,
+									  'uri' => $file_temp->uri,
+									  'status' => 1,
+									  'display' => 1
+									)
+								  )
+								);
+								$node->field_stf_metro_id['und'][0]['value'] = trim($metro_id);
+								$node->field_nrt_team_id['und'][0]['value'] = trim($team_id);
+								$node->field_team_email['und'][0]['value'] = $teamemail;
+								$node->field_team_website['und'][0]['url'] = $teamwebsiteurl;
+								node_save($node);
+								echo "NRT Team Groups feed has been imported successfully";
+								if($node->nid) {						
+									lms_sales_team_feed_processing_result($file_name,$team_id,$metro_id,$node->nid);
+								}									
+							}
+						}
+						else{
+							if(trim($final_data[0]) == '625' && $exist_team_id['count'] > 0){	
+								$message = 'Team id ('.$team_id.') already exists. Listing processing skipped.';
+								lms_sales_team_feed_processing_result_error($file_name,$team_id,'625',$message);
+							}
+						}							
+					}
+				}
+			
+			}
+				else if($path == '' || !is_dir($path)) {
+					$message = 'Listing path is missing or invalid. Listing processing skipped.';
+					lms_sales_team_feed_processing_result_error($path,null,null,$message);
+				}
+			//}
+		//}
+		
+	}	
+}
+function sales_team_member_feeds_import(){
+	global $base_url, $user;
+	$current_date = date('Ymd');
+	if(isset($_GET['date']) && $_GET['date'] != '') {
+		$date = $_GET['date'];
+	}
+	else {
+		$date = $current_date;
+	}
+	
+	$lms_feed = taxonomy_get_term_by_name('NRT Team Members feed');
+	$tid = array_shift($lms_feed)->tid;
+	$listing_term = taxonomy_term_load($tid);
+	$path = isset($listing_term->field_local_destination_path['und']['0']['value']) ? $listing_term->field_local_destination_path['und']['0']['value'] : '';
+	$retention = isset($listing_term->field_results_retention['und']['0']['value']) ? $listing_term->field_results_retention['und']['0']['value'] : '';
+	$notification_email = isset($listing_term->field_notification_email['und']['0']['value']) ? $listing_term->field_notification_email['und']['0']['value'] : '';
+	//Delete saved processing results
+	$retention_time = strtotime(date('Y-m-d', strtotime('-'.$retention.' days')));
+	$num_deleted = db_delete('sales_team_feed_processing_results')
+		->condition('feed_timestamp', $retention_time, '<')
+		->condition('feed_type', 'NRT Team Members feed', '=')
+		->execute();
+	
+
+	if($path !='' && is_dir($path)) { // check file path exists or empty
+		$scanned_directory = scandir($path);
+		foreach($scanned_directory as $values) {
+			$substr = substr($values, 17, -4);
+			if(trim($substr) == trim($date)) {
+					$file_name = $values;
+			}
+		}
+		$file_path = $path.'/'.$file_name;
+				if(is_file($file_path)) {	// Check file exists
+					$handle = fopen($file_path, "r");
+					$feed_data = fread($handle, filesize($file_path));
+					fclose($handle);
+					$vehicle_data_arr = explode("\n", $feed_data);
+					
+					$count = 0;
+					foreach($vehicle_data_arr as $record) {
+					$count++;
+						//$data = explode(",", $record);
+						$data = str_getcsv($record);
+						if ($count == 1 || count($data) <= 1) continue;
+						$final_data = str_replace('"','',$data);
+						$team_id = trim($final_data[0]);
+						$prs_id = trim($final_data[1]);
+						$prim_number = trim($final_data[2]);
+						$check_team_id = db_query("select entity_id from field_data_field_nrt_team_id where field_nrt_team_id_value = :team_id", array(":team_id" => $team_id))->fetchField();
+
+						if(!empty($check_team_id)) {
+							$check_uid_exists = db_query("SELECT person.entity_id FROM field_data_field_escalet_prsid person LEFT JOIN users u on person.entity_id = u.uid WHERE person.field_escalet_prsid_value = :UniqueID", array(":UniqueID" => $prs_id))->fetchField();
+							
+							if(!empty($check_uid_exists)) {
+								$check_uid_exists_in_og_membership = db_query("SELECT etid FROM og_membership WHERE gid = :gid and etid = :etid", array(':gid' => $check_team_id,':etid' => $check_uid_exists))->fetchField();
+							
+								if(empty($check_uid_exists_in_og_membership)) {
+								
+									// Get the nid using team_id							
+									$gid = $check_team_id;
+									
+									// Get the uid
+									$uid = $check_uid_exists;
+									$account = user_load($uid);
+									$values = array(
+										'entity_type' => 'user',
+										'entity' => $account,
+										'state' => OG_STATE_ACTIVE,
+									   );
+									$d = og_group('node', $gid, $values);
+									if($prim_number == 1){
+										$mynode=node_load($check_team_id);
+										$mynode->uid=$uid;
+										node_save($mynode);
+										$get_group_admin_rid = db_query("SELECT rid FROM og_role WHERE name = :name and group_bundle = :group_bundle", array(':name' => 'administrator member',':group_bundle' => 'lms_sales_team'))->fetchField();
+										og_role_grant('node', $check_team_id, $uid, $get_group_admin_rid);
+										lms_sales_team_member_feed_processing_result($file_name,$gid,$prs_id,$prim_number,$uid);
+										og_ungroup('node', $check_team_id, 'user', 1);
+																				
+									}
+									else{
+										$get_group_member_rid = db_query("SELECT rid FROM og_role WHERE name = :name and group_bundle = :group_bundle", array(':name' => 'member',':group_bundle' => 'lms_sales_team'))->fetchField();
+										lms_sales_team_member_feed_processing_result($file_name,$gid,$prs_id,$prim_number,$uid);
+										og_ungroup('node', $check_team_id, 'user', 1);
+																	
+									}
+								}
+								else{
+									$message = 'User ('.$check_uid_exists_in_og_membership.') already belong to Team ID('.$team_id.'). Listing processing skipped.';
+									//$file,$nrt_team_id,$person_id,$prim_num,$error_msg og_ungroup('node', $gid, 'user', $uid);
+									lms_sales_team_member_feed_processing_result_error($file_name,$team_id,$prs_id,$prim_number,$message);
+									//echo "pp";
+									og_ungroup('node', $check_team_id, 'user', 1);									
+								}
+							} 						
+						} 
+						else{
+							$message = 'TeamID ('.$team_id.') in the Team Members feed does not match. Listing processing skipped.';
+							lms_sales_team_member_feed_processing_result_error($file_name,$team_id,$prs_id,$prim_number,$message);
+							echo $message.'</br>';
+						}
+					}
+				}
+				else if($path == '' || !is_dir($path)) {
+					$message = 'Listing path is missing or invalid. Listing processing skipped.';
+					lms_sales_team_member_feed_processing_result_error($path,null,null,null,$message);
+					echo $message.'</br>';
+				}
+	}
+}
+
+function lms_sales_team_feed_processing_result_error($file,$nrt_team_id,$metro_id,$error_msg){
+	$result_id = db_insert('sales_team_feed_processing_results')
+		->fields(array(
+			'feed_file_name' => $file,
+			'feed_type' => 'NRT Team Groups feed',
+			'feed_timestamp' => REQUEST_TIME,
+			'field_nrt_team_id' => $nrt_team_id,
+			'field_stf_metro_id' => $metro_id,
+			'feed_result_status' => 'Fail',
+			'feed_result_message' => $error_msg,
+		))
+		->execute();
+}
+
+function lms_sales_team_feed_processing_result($file,$nrt_team_id,$metro_id,$nid){
+	$result_id = db_insert('sales_team_feed_processing_results')
+		->fields(array(
+			'feed_file_name' => $file,
+			'feed_type' => 'NRT Team Groups feed',
+			'feed_timestamp' => REQUEST_TIME,
+			'field_nrt_team_id' => $nrt_team_id,
+			'field_stf_metro_id' => $metro_id,
+			'feed_result_status' => 'Success',
+			'feed_result_message' => 'Listing node '.$nid.' created',
+		))
+		->execute();
+}
+
+function lms_sales_team_member_feed_processing_result_error($file,$nrt_team_id,$person_id,$prim_num,$error_msg){
+	$result_id = db_insert('sales_team_member_feed_processing_results')
+		->fields(array(
+			'feed_file_name' => $file,
+			'feed_type' => 'NRT Team Members feed',
+			'feed_timestamp' => REQUEST_TIME,
+			'field_nrt_team_id' => $nrt_team_id,
+			'field_person_id' => $person_id,
+			'field_prim_num' => $prim_num,
+			'feed_result_status' => 'Fail',
+			'feed_result_message' => $error_msg,
+		))
+		->execute();
+}
+
+function lms_sales_team_member_feed_processing_result($file,$nrt_team_id,$person_id,$prim_num,$nid){
+	$result_id = db_insert('sales_team_member_feed_processing_results')
+		->fields(array(
+			'feed_file_name' => $file,
+			'feed_type' => 'NRT Team Members feed',
+			'feed_timestamp' => REQUEST_TIME,
+			'field_nrt_team_id' => $nrt_team_id,
+			'field_person_id' => $person_id,
+			'field_prim_num' => $prim_num,
+			'feed_result_status' => 'Success',
+			'feed_result_message' => 'User Id ('.$nid.') and Person Id ('.$person_id.') has been assigned to Team ID('.$nrt_team_id.') with Primary Number ('.$prim_num.'))',
+		))
+		->execute();	
+}

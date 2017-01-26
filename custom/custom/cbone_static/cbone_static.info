@@ -1,0 +1,11 @@
+name = "CB|ONE Static"
+description = "The CB|One static module to create static pages."
+core = "7.x"
+package = "CB|ONE"
+;configure = "admin/config/lms"
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE"
+datestamp = ""
+

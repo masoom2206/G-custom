@@ -1,0 +1,7 @@
+/****************16-03-16****************/
+.user_listings ul li{display: block;}
+.user_listings .node_lists{width: 100%; float: left;}
+.node_lists .lists, .node_lists .lists{float: left;}
+.node_lists .lists.second{min-width: 25%; padding-left: 10px;}
+.node_lists .lists.third{padding-left: 10px; padding-top: 10px;}
+/*******************END******************/

@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function region_filter_schema() {  
+  //Saved LMS Email Unsubscribe setting
+  $schema['region_filter'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Serial id',
+      ),
+      'content_type' => array(
+        'description'   => 'Selected content type for region validation',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'validate' => array(
+        'description'   => 'Validate Yes = 1, No = 0',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  return $schema;
+}

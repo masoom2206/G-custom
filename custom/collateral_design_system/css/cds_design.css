@@ -1,0 +1,439 @@
+.design-header {
+	background-color: #525252;
+	color: #ffffff;
+	width: 100%;
+	z-index: 50;
+	position: fixed;
+	padding: 15px;
+}
+.cds-design-header {
+	background-color: #525252;
+	color: #ffffff;
+	padding: 15px;
+}
+.breadcrumbs h2 {
+	color: #ffffff;
+	font-family: arial;
+	font-size: 26px;
+	margin: 0;
+}
+.breadcrumbs a {
+	color: #ffffff!important;
+}
+.cds-design-content-left h3 {
+	color: #fff;
+	text-align: center;
+	margin-top: 0!important;
+}
+.design-content {
+	background-color: #fff;
+	float: left;
+	height: auto;
+	width: 100%;
+}
+.cds-design-content-left {
+	background-color: #676767;
+	font-family: arial;
+	text-align: center;
+	padding: 7% 0 0!important;
+}
+.design-content-left {
+	float: left;
+	font-family: arial;
+	text-align: center;
+	overflow: auto;
+	width: 25%;
+	background-color: #676767;
+	position: fixed;
+	padding: 20px 0 0;
+}
+.page-cds-design-pdf .design-content-left {
+	width: 20%!important;
+}
+.cds-design-content-right {
+	float: left;
+	width: 80%;
+	background-color: #fff!important;
+	min-height: 200px;
+	margin-bottom: 6%;
+}
+.design-content-right {
+	min-height: 200px;
+	width: 75%;
+	float: right;
+	margin-top: 5%;
+	background-color: #dddddd;
+}
+.page-cds-design-pdf .design-content-right {
+	width: 80%!important;
+}
+.design-create.btn {
+	margin: 0 0 25px;
+}
+.design-content-left .btn {
+	background-color: #ffffff;
+	color: #666666;
+	border-radius: 10px;
+	width: 150px;
+}
+.product_icon {
+	margin: 10px;
+}
+.product_icon img {
+	width: 100px;
+	height: 100px;
+}
+.design-content-right-top {
+	background-color: #fff;
+	float: left;
+	width: 100%;
+}
+.design-content-setting {
+	float: left;
+	width: 100%;
+	padding: 10px;
+}
+.design-saved-template {
+	margin-top: 10%;
+}
+.product-setting-main {
+	float: left;
+	width: 100%;
+}
+.product-setting, .page-setting-main {
+	float: left;
+	width: 50%;
+	padding: 10px;
+}
+.page-setting {
+	border: none;
+	border-radius: 0;
+	margin: 0;
+	padding: 0;
+}
+.page-setting h3 {
+	font-family: Raleway, "Open Sans", HelveticaNeue, "Helvetica Neue", Helvetica, Arial, sans-serif!important;
+}
+.page-setting-submit {
+	border-top: 1px solid #cccccc;
+	float: left;
+	text-align: right;
+	width: 100%;
+	padding: 10px;
+}
+#property-pdf-selection-tool .product-setting .form-item>label {
+	font-size: 14px;
+	font-weight: 600;
+	width: 47%;
+}
+#property-pdf-selection-tool .page-setting-main .form-item>label {
+	float: left;
+	font-size: 14px;
+	font-weight: 600;
+	width: 47%;
+}
+#property-pdf-selection-tool .page-setting-main select {
+	border-radius: 5px;
+	width: 20%;
+	padding: 5px;
+}
+#edit-variations {
+	border: 1px solid #cccccc;
+	width: 52%;
+	padding: 10px;
+}
+#property-pdf-selection-tool .page-setting-main .form-text.form-number {
+	width: 25%;
+	border: 1px solid #cccccc;
+	height: 25px;
+	border-radius: 5px;
+}
+.cds-design-content-left .designs {
+	display: block;
+	float: left;
+	width: 50%;
+	padding: 10px 0;
+}
+.cds-design-content-left .designs>a {
+	display: block;
+}
+.cds-design-content-left .designs img {
+	height: 100px;
+	width: 100px;
+}
+.design-content-data {
+	padding-top: 10%;
+	text-align: center;
+	width: 100%;
+}
+.icon_title {
+	color: #ffffff;
+	font-size: 12px;
+}
+.welcometext {
+	font-family: Raleway;
+	font-size: 30px;
+	font-weight: 500;
+	margin: 20px;
+}
+.data3.welcometext {
+	font-size: 14px;
+}
+.zoomer__popover .arrow {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 20px;
+	bottom: 100%;
+	width: 0;
+	height: 0;
+	border-bottom: 18px solid #fff;
+	border-top: 10px solid transparent;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+}
+.zoomer--presentation .zoomer__popover {
+	z-index: 2;
+}
+.zoomer__item--selected {
+	animation: .1s ease 0 normal forwards 1 running zoomer__item--selectedAnimation;
+	background: rgba(0, 0, 0, 0) url(https://cdn0.iconfinder.com/data/icons/free-misc-icon-set-1/512/check-32.png) no-repeat scroll right 10px top 50% / 13px 13px;
+}
+.zoomer__popover {
+	border-radius: 10px;
+	max-width: 140px;
+	min-width: 88px;
+	position: absolute;
+}
+.zoomer__item:hover {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+.zoomer__pane {
+	-moz-user-select: none;
+	background: #ffffff none repeat scroll 0 0;
+	box-sizing: border-box;
+	border: 1px solid #272c33;
+}
+.zoomer__popoverList {
+	overflow: hidden;
+}
+.zoomer__popoverItem {
+	border-radius: 0;
+	height: auto;
+	line-height: 1.6em;
+	text-align: left;
+	width: 100%;
+	padding: 5px 32px 5px 14px;
+}
+.zoomer__item, .zoomer__item:visited {
+	background-color: transparent;
+	border: 1px solid transparent;
+	box-sizing: border-box;
+	color: black;
+	cursor: pointer;
+	list-style: outside none none;
+	outline: medium none;
+	text-decoration: none;
+	transition: background-color .1s ease 0 opacity .1s ease-in 0 border .1s ease-out 0;
+}
+.zoomer {
+	width: 148px;
+	float: none;
+	margin: 15px auto;
+}
+.zoomer.zoomer__pane.zoomer--presentation {
+	background: #fff none repeat scroll 0 0;
+	height: 33px;
+	margin-right: 26%;
+	width: 102px;
+}
+.zoomer.zoomer__pane.zoomer--presentation>span {
+	float: left;
+	cursor: pointer;
+	padding: 5px 0 0 13px;
+}
+#canvaslevel>h2 {
+	font-size: 13px;
+	margin-top: 13px;
+	cursor: pointer;
+	padding: 0 1px 9px 13px;
+}
+.product-tabs>li {
+	border: 1px solid #cccccc;
+	display: inline-block;
+	padding: 10px;
+}
+input[type="text"], input[type="password"], input[type="email"], textarea, select {
+	background: none!important;
+	border: 1px solid #eceef0;
+	border-radius: 0!important;
+	color: #848688;
+	display: block;
+	font-size: 14px;
+	outline: medium none;
+	width: 250px;
+	margin: 0;
+	padding: 0!important;
+}
+#deletebg {
+	cursor: pointer;
+}
+#confirmBox .message {
+	color: #666666!important;
+}
+#confirmBox {
+	background-color: #fff!important;
+	border: 5px solid #ddd!important;
+	border-radius: 10px!important;
+	color: #666666!important;
+	left: 25%!important;
+	position: fixed!important;
+	top: 35%!important;
+	width: 50%!important;
+	z-index: 1002!important;
+	padding: 16px!important;
+}
+.footer {
+	background-color: #eeeeee;
+	bottom: 0;
+	height: 26px;
+	padding-right: 15px;
+	position: fixed;
+	text-align: right;
+	width: 100%;
+	font-size: 12px;
+	z-index: 30;
+}
+.design-header-right {
+	float: right;
+}
+#text_ddata .dayanamic-data-option .toolbar__item.toolbar__button.toolbar__item--left.image_format.enabled>input {
+	height: 22px;
+}
+#text_ddata .dayanamic-data-option .toolbar__item.toolbar__button.toolbar__item--left.image_format input, textarea, .uneditable-input {
+	float: none!important;
+}
+#text_ddata .dayanamic-data-option #listing-photo {
+	padding: 7px 0 0;
+}
+.toolbar__item.toolbar__button.toolbar__item--left.image_format.enabled>input {
+	padding: 17px 14px 11px 0 !important;
+}
+.temp_icons {
+	text-align: center;
+}
+.tabs .svg-icon {
+	width: 46px!important;
+}
+.page-setting-contents table {
+	color: #fff;
+	font-family: Raleway;
+}
+.page-setting-contents table tbody {
+	border-top: none;
+}
+.page-settings-form-label {
+	text-align: left;
+	width: 70%;
+	padding-left: 20px;
+}
+.page-setting-contents .page-settings-form-select-field select {
+	background-color: #fff!important;
+	color: #000;
+	height: 20px;
+	width: 85px!important;
+	border-radius: 0;
+	padding: 0!important;
+}
+.page-setting-contents .page-settings-form-input-field input {
+	background-color: #fff!important;
+	color: #000;
+	border-radius: 0;
+	height: 20px;
+	padding: 0!important;
+}
+.page-setting-contents .page-settings-form-checkbox-field input {
+	background-color: #fff!important;
+	color: #000;
+	float: right;
+	width: 20px!important;
+}
+.page-setting h3, .page-elements h3, .template-setting h3 {
+	font-family: Raleway;
+}
+.page-elements {
+	margin-top: 10px;
+}
+.tab-pane {
+	height: 410px;
+	overflow: auto;
+	padding-top: 20px;
+}
+.left-tabs {
+	width: 30%;
+}
+.right-tabs {
+	width: 70%;
+}
+.cds-text-options button {
+	font-family: Raleway;
+	padding-top: 10px;
+	text-transform: capitalize!important;
+}
+.add-heading {
+	font-size: 25px!important;
+	font-weight: bolder;
+}
+.add-subheading {
+	font-size: 18px!important;
+	font-weight: 600;
+}
+.add-singleline {
+	font-size: 16px!important;
+}
+.add-multiline {
+	font-size: 15px!important;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+.tabs-left li a {
+	font-family: Raleway;
+	font-weight: 700;
+	font-size: 10px!important;
+	padding-top: 5px;
+}
+.template-setting-contents {
+	margin: 5px 10px;
+}
+.tabs-left .active a {
+	color: #fff!important;
+	font-weight: 700!important;
+}
+.page-setting-contents input[type="text"], .page-setting-contents input[type="number"] {
+	margin-bottom: 0;
+}
+.design-content-right .design-content-right-top, #canvas-wrapper-main .design-content-right-top {
+	position: fixed;
+	width: 100%;
+	z-index: 25;
+	border-bottom: 1px solid;
+}
+.zoomer.zoomer__pane.zoomer--presentation>div, .zoomer.zoomer__pane.zoomer--presentation>button, .design-header-left {
+	float: left;
+}
+.tabs .active a, #text-v p button {
+	color: #fff;
+}
+.delete_brochure {
+    cursor: pointer;
+    margin-left: 15px;
+}
+.cover {
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}

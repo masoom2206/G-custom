@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function cbone_services_schema() {
+  //Saved approved pdf
+  $schema['cbone_listing_approve_pdf'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Approve PDF serial id',
+      ),
+      'lnid' => array(
+        'description'   => 'The listing nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'pnid' => array(
+        'description'   => 'The mc_pdf nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'pdf_section' => array(
+        'description'   => 'PDF section Pro Brochures/Post Cards',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'vender_id' => array(
+        'description'   => 'The Vender Id',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'vender_auth' => array(
+        'description'   => 'Vender authentication',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'vendor_order_id' => array(
+        'description'   => 'An order number of string supplied by the vendor',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'vendor_order_status' => array(
+        'description'   => 'accepted, error, shipped',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'vendor_message' => array(
+        'description'   => 'A text string added to the response, usually an error message.',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'shipment_tracking' => array(
+        'description'   => 'This will be text field to hold the tracking URL of the shipment.',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'created' => array(
+        'description'   => 'Time when the PDF send for print.',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'confirm' => array(
+        'description'   => 'Time when the order confirm by vender.',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'shipped' => array(
+        'description'   => 'Time when the order shipped by vender.',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  return $schema;
+}

@@ -1,0 +1,4 @@
+.node-form.node-multi_section_page-form #edit-field-sub-section .field-multiple-table select, .node-form.node-multi_section_page-form #edit-field-section-icons .field-multiple-table select, .node-form.node-section-form #edit-field-section-icons .field-multiple-table select, .node-form.node-front_page-form #edit-field-sub-section .field-multiple-table select, .node-form.node-front_page-form #edit-field-section-icons .field-multiple-table select {
+    padding: 10px;
+    width: 400px;
+}

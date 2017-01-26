@@ -1,0 +1,7 @@
+.feed-result-status-list tr.even{
+background: #dae5f4 !important;
+}
+
+.feed-result-status-list tr.odd{
+background: #b8d1f3 !important;
+}

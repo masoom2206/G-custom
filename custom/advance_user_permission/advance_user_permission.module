@@ -1,0 +1,158 @@
+<?php
+/**
+ * Implementation of hook_init
+ */
+function advance_user_permission_init() {
+  if (arg(0) == 'admin' && arg(2) == 'permissions') {
+    drupal_add_js(drupal_get_path('module', 'advance_user_permission') . '/js/advance_user_permission.js');
+  }  
+}
+/**
+ * Implementation of hook_menu
+ */
+function advance_user_permission_menu() {
+  $items = array();
+  //$items['dms/marketing'] = array(
+  //Menu for admin to Update subscription mail template
+  $items['admin/js/configure/user_permission'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('advance_user_permmision_setting'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer users'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+
+function advance_user_permmision_setting($form, $form_state) {
+  // Get the list of options to populate the first dropdown.
+  $status = array();
+    // Retrieve role names for columns.
+  $role_names = user_roles();
+  if (is_numeric($rid)) {
+    $role_names = array($rid => $role_names[$rid]);
+  }
+  // Fetch permissions for all roles or the one selected role.
+  $role_permissions = user_role_permissions($role_names);
+
+   
+  // Render role/permission overview:
+  $options = array();
+  $module_info = system_get_info('module');
+  $hide_descriptions = system_admin_compact_mode();
+
+  // Get a list of all the modules implementing a hook_permission() and sort by
+  // display name.
+  $modules = array();
+  $optiondata = array();
+  $optiondata[] = array('- Select city -');
+  foreach (module_implements('permission') as $module) {
+    $modules[$module] = $module_info[$module]['name'];
+  }
+  asort($modules);
+
+  foreach ($modules as $module => $display_name) {
+    if ($permissions = module_invoke($module, 'permission')) {
+      foreach ($permissions as $perm => $perm_item) {
+        // Fill in default values for the permission.
+        $perm_item += array(
+          'description' => '',
+          'restrict access' => FALSE,
+          'warning' => !empty($perm_item['restrict access']) ? t('Warning: Give to trusted roles only; this permission has security implications.') : '',
+        );
+        $options[$perm] = '';
+        $optiondata[$module_info[$module]['project']][$perm] = $perm_item['title'];
+        foreach ($role_names as $rid => $name) {
+          // Builds arrays for checked boxes for each role
+          if (isset($role_permissions[$rid][$perm])) {
+            $status[$rid][] = $perm;
+          }
+        } 
+      }
+    }
+  }
+  $options_first = $optiondata;
+  // If we have a value for the first dropdown from $form_state['values'] we use
+  // this both as the default value for the first dropdown and also as a
+  // parameter to pass to the function that retrieves the options for the
+  // second dropdown.
+  $selected = isset($form_state['values']['dropdown_first']) ? $form_state['values']['dropdown_first'] : key($options_first);
+
+  $form['dropdown_first'] = array(
+    '#type' => 'select',
+    '#title' => 'Instrument Type',
+    '#options' => $options_first,
+    '#default_value' => $selected,
+    // Bind an ajax callback to the change event (which is the default for the
+    // select form type) of the first dropdown. It will replace the second
+    // dropdown when rebuilt.
+    '#ajax' => array(
+      // When 'event' occurs, Drupal will perform an ajax request in the
+      // background. Usually the default value is sufficient (eg. change for
+      // select elements), but valid values include any jQuery event,
+      // most notably 'mousedown', 'blur', and 'submit'.
+      // 'event' => 'change',
+      'callback' => 'ajax_example_dependent_dropdown_callback',
+      'wrapper' => 'dropdown-second-replace',
+    ),
+  );
+
+  $form['dropdown_second'] = array(
+    '#type' => 'checkboxes',
+   // '#title' => $options_first[$selected] . ' ' . t('Instruments'),
+    // The entire enclosing div created here gets replaced when dropdown_first
+    // is changed.
+    
+    // When the form is rebuilt during ajax processing, the $selected variable
+    // will now have the new value and so the options will change.
+    
+    '#default_value' => isset($form_state['values']['dropdown_second']) ? $form_state['values']['dropdown_second'] : '',
+  );
+  $form['checkboxes'] = array(
+      '#prefix' => '<div id="dropdown-second-replace">'.$selected,
+      '#suffix' => '</div>',
+  );
+   // Have to build checkboxes here after checkbox arrays are built
+  foreach ($role_names as $rid => $name) {
+    $checkper = 0;
+    $checkper = $role_permissions[$rid];
+    if (in_array($selected,$checkper)) {
+       $checkperdata = array($rid);
+    } else {
+       $checkperdata = array();
+    }
+    $form['checkboxes'][$rid] = array(
+      '#type' => 'checkboxes',
+      '#title' => $name.'--'.$selected.'--'.$selected,
+      '#options' => array($rid => $name),
+      '#default_value' =>  in_array($selected,$checkper) ? $rid : '' ,
+   );
+   // $form['role_names'][$rid] = array('#markup' => check_plain($name), '#tree' => TRUE);
+  }
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+function _ajax_example_get_first_dropdown_options() {
+  // drupal_map_assoc() just makes an array('String' => 'String'...).
+  return drupal_map_assoc(
+  array(
+    t('String'),
+    t('Woodwind'),
+    t('Brass'),
+    t('Percussion'),
+  )
+  );
+}
+
+function ajax_example_dependent_dropdown_callback($form, $form_state) {
+  return $form['checkboxes'];
+}
+
+function _ajax_example_get_second_dropdown_options($key = '') {
+    return $role_names = user_roles();
+}

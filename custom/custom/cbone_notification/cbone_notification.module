@@ -1,0 +1,911 @@
+<?php
+/**
+ * Implements hook_init.
+ */
+function cbone_notification_init() {
+  drupal_add_css(drupal_get_path('module', 'cbone_notification') . '/css/manage.css');
+}
+/**
+ * Implements hook_menu().
+ */
+function cbone_notification_menu() {
+  $items = array();
+  $items['manage-notifications'] = array(
+    'title' => 'Manage Notifications',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_cbone_notification'),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['manage/notification/settings'] = array(
+    'title' => 'Manage Notifications',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cbone_admin_notification'),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+ /* $items['manage-notifications-user'] = array(
+    'title' => 'Manage Notifications',
+    'page callback' => 'daily_get_user_uid_action',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );*/
+  return $items;
+}
+
+/**
+ * Implements Manage Notifications setting page.
+ */
+function _cbone_notification($form, &$form_state) {
+  global $user;
+  if($user->uid == 0) {
+   drupal_access_denied();
+   exit;
+  }
+  $defaultvalue = user_load($user->uid)->field_notification['und'][0]['value'];
+  $form = array();
+  $form['html'] = array(
+    '#type' => 'markup',
+    '#markup' => '<div id="notification-settings" class="block block-views section-notifications-title contextual-links-region" style="background-image:url(../'. drupal_get_path('module', 'cbone_notification').'/image/manage-notifications-background.jpg); background-position:center top;">
+<h3 class="block-title">Manage My Notifications</h3>',
+    '#tree' => true,
+  );
+  $form['selected'] = array(
+    '#type' => 'select',
+    '#title' => t('Notification Settings'),
+    '#options' => array(
+      0 => t('Do Not Send Notifications'),
+      1 => t('Immediately'),
+      2 => t('Daily Digest'),
+      3 => t('Weekly Digest'),
+      4 => t('Monthly Digest'),
+    ),
+    '#default_value' => (isset($defaultvalue)) ? $defaultvalue : 1,
+    '#prefix' => '<div id="ajax-status-messages-wrapper"></div><div style="width: 315px; margin: auto; padding-top: 50px;">',
+    '#suffix' => '</div></div>',
+    '#ajax' => array (
+        'callback' => '_cbone_notification_change',
+        'wrapper' => 'form-container-element-id',
+        'method' => 'replace',
+        'effect' => 'fade',
+     ),
+  );
+  $form['activity'] = array(
+    '#type' => 'markup',
+    '#markup' => _list_user_group_activity($user)
+    );
+  return $form;
+}
+
+/**
+ * Implements Manage Notifications submit callback.
+ */
+function _cbone_notification_change($form, &$form_state){
+  global $user;
+  drupal_set_message('Notification settings has been updated.', 'status'); 
+  $account = user_load($user->uid); // Loading account
+  $edit = array(
+    'field_notification' => array(
+      'und' => array(
+        0 => array(
+          'value' => $_POST['selected'],
+        ),
+      ),
+    ),
+  );
+  user_save($account, $edit);
+  $commands = array(); 
+  $commands[] = ajax_command_replace('#ajax-status-messages-wrapper', 
+      '<div id="messages">' . theme('status_messages') . '</div>'); 
+  return array( 
+      '#type' => 'ajax', 
+      '#commands' => $commands); 
+}
+
+/**
+ * Implements Admin Manage Notifications page.
+ */
+function cbone_admin_notification($form, &$form_state) {
+  # an html textfield for our drupal form
+      // To make the fieldset collapsible
+  global $user, $base_url;
+    if (!in_array('Administrator', $user->roles) && !in_array('Siteadmin', $user->roles)) {
+      drupal_access_denied();
+      exit;
+  }
+  $query = db_query('SELECT * FROM activity_mail_body')->fetchAll();
+  $defaultselected = variable_get('defaultnotificaton', 2);
+  $form['setting1'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Notificaton Setting'),
+    '#collapsible' => TRUE, // Added
+    '#collapsed' => FALSE, // Added
+  );
+  $form['setting1']['notificatinsetting'] = array(
+    '#type' => 'select',
+    '#title' => t('Notificaton Setting'),
+    '#options' => array(
+      0 => 'Do Not Send Me Notification From CBONE',
+      1 => 'Immediately',
+      2 => 'Daily Digest',
+      3 => 'Weekly Digest',
+      4 => 'Monthly Digest'
+    ),
+    '#default_value' => $defaultselected,
+    '#description' => t('Default notification method for users which have not selected a personalized notification option.'),
+   );
+  $form['mail1'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Immediately'),
+    '#collapsible' => TRUE, // Added
+    '#collapsed' => FALSE, // Added
+  );
+  $form['mail1']['t1'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Post mail Subject'),
+    '#default_value' => $query[0]->datas,
+  );
+  $form['mail1']['b1'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Post mail body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[0]->datab,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+  $form['mail1']['m1'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Comment mail body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[0]->datam,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );  
+  $form['mailg'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Digest Message Body header/footer'),
+    '#collapsible' => TRUE, // Added
+    '#collapsed' => FALSE, // Added
+  );
+   $form['mailg']['tg1'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Digest Message Body header'),
+    '#format'=> 'full_html',
+    '#default_value' => str_replace("[siteurl]", $base_url, $query[4]->datas),
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+  $form['mailg']['bg1'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Digest Message Body footer'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[4]->datab,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+  $form['mail2'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Digest body'),
+    '#collapsible' => TRUE, // Added
+    '#collapsed' => FALSE, // Added
+  );
+  $form['mail2']['t2'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $query[1]->datas,
+  );
+  $form['mail2']['b2'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Post mail body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[1]->datab,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+  $form['mail2']['m2'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Comment mail body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[1]->datam,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );   
+  $form['mail3'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Weekly Digest'),
+    '#collapsible' => TRUE, // Added
+    '#collapsed' => FALSE, // Added
+  );
+  $form['mail3']['t3'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $query[2]->datas,
+  );
+  $form['mail3']['b3'] = array(
+    '#type' => 'textarea',
+    '#title' => t('body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[2]->datab,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+  $form['mail3']['m3'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Comment mail body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[2]->datam,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  ); 
+  $form['mail4'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Monthly Digest'),
+    '#collapsible' => TRUE, // Added
+    '#collapsed' => FALSE, // Added
+  );
+  $form['mail4']['t4'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $query[3]->datas,
+  );
+  $form['mail4']['b4'] = array(
+    '#type' => 'textarea',
+    '#title' => t('body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[3]->datab,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+  $form['mail4']['m4'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Comment mail body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[3]->datam,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+   $form['mail5'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Like Message body'),
+    '#collapsible' => TRUE, // Added
+    '#collapsed' => FALSE, // Added
+  );
+  $form['mail5']['t5'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $query[5]->datas,
+  );  
+  $form['mail5']['b5'] = array(
+    '#type' => 'textarea',
+    '#title' => t('body'),
+    '#format'=> 'full_html',
+    '#default_value' => $query[5]->datab,
+    '#pre_render' => array('ckeditor_pre_render_text_format'),
+  );
+  # an html submit button for our drupal form
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Submit',
+  );  
+  return $form;
+}
+
+/**
+ * Implements Admin Manage Notifications submit.
+ */
+function cbone_admin_notification_submit($form, &$form_state) {
+    // Form above was submitted, now lets clean up $form_state['values'], 
+    // that's the submitted values in an associative array.
+    variable_set('defaultnotificaton', $form_state['input']['notificatinsetting']);
+    db_merge('activity_mail_body')
+      ->key(array('id' => 1))
+      ->fields(array(
+            'datas' => $form_state['input']['t1'],
+            'datab' => $form_state['input']['b1'],
+            'datam' => $form_state['input']['m1']
+      ))
+      ->execute();
+    db_merge('activity_mail_body')
+      ->key(array('id' => 2))
+      ->fields(array(
+            'datas' => $form_state['input']['t2'],
+            'datab' => $form_state['input']['b2'],
+            'datam' => $form_state['input']['m2'],
+      ))
+      ->execute();
+    db_merge('activity_mail_body')
+      ->key(array('id' => 3))
+      ->fields(array(
+            'datas' => $form_state['input']['t3'],
+            'datab' => $form_state['input']['b3'],
+            'datam' => $form_state['input']['m3'],
+      ))
+      ->execute();
+   db_merge('activity_mail_body')
+      ->key(array('id' => 4))
+      ->fields(array(
+            'datas' => $form_state['input']['t4'],
+            'datab' => $form_state['input']['b4'],
+            'datam' => $form_state['input']['m4'],
+      ))
+      ->execute();
+    db_merge('activity_mail_body')
+      ->key(array('id' => 5))
+      ->fields(array(
+            'datas' => $form_state['input']['tg1'],
+            'datab' => $form_state['input']['bg1'],
+            'datam' => $form_state['input']['bg1'],
+      ))
+      ->execute();
+    db_merge('activity_mail_body')
+      ->key(array('id' => 6))
+      ->fields(array(
+            'datas' => $form_state['input']['t5'],
+            'datab' => $form_state['input']['b5'],
+            'datam' => 'like',
+      ))
+      ->execute();
+    // And here is the value that was submitted:
+    drupal_set_message('Setting has been updated');
+}
+  
+/**
+ * hook_node_insert.
+ */
+function cbone_notification_node_insert($node) {
+  $statustext = '';
+  global $user, $base_url;
+  switch ($node->type) {
+    case 'circle_post':
+    case 'office_event':
+    case 'office_post':
+      $name = (isset(user_load($user->uid)->realname)) ? user_load($user->uid)->realname : $user->name;
+      $statustext = "New Circle Post posted: " . l($node->title, $base_url . "/node/{$node->nid}") . ' by ' . $name;
+      if ($node->type == 'circle_post') {
+        $gid = $node->og_group_ref['und'][0]['target_id'];
+        if (empty($gid)) {
+          $gid = array_values($node->og_group_ref['und']);
+          $gid = $gid[0]['target_id'];
+        }
+      } else {
+        $gid = $node->og_group_ref1['und'][0]['target_id'];
+        if (empty($gid)) {
+          $gid = array_values($node->og_group_ref1['und']);
+          $gid = $gid[0]['target_id'];
+        }
+      }
+      if (!empty($gid)) {
+        db_insert('activity') // Table name no longer needs {}
+          ->fields(array(
+            'nid' => $node->nid,
+            'gid' => $gid,
+            'uid' => $node->uid,
+            'type' => $node->type,
+            'title' => $node->title,
+            'status' => $node->status,
+            'name' => $name,
+            'message' => $statustext,
+            'created' => REQUEST_TIME,
+          ))
+          ->execute();
+        } 
+      break;
+  }
+  if (!empty($statustext)) {
+    $title = l($node->title, $base_url.'/node/'.$node->nid);
+    $postdate = $node->created;
+    $refnode = node_load($gid);
+    $refnodetitle = $refnode->title;
+    $refnodepostedby = (isset(user_load($refnode->uid)->realname)) ? user_load($refnode->uid)->realname : $refnode->name;
+    $nodeusername = $name;
+    $nodeuid = $node->uid;
+    $uids = get_users_in_group($refnode);
+    if (count($uids) > 0) {
+      foreach ($uids as $key => $value) {
+        $udata = user_load($value);
+        $mail = $udata->mail;
+        $name = (isset($udata->realname)) ? $udata->realname : $udata->name;
+        $checkstatus = $udata->field_notification;
+        if (empty($checkstatus)) {
+           $defaultselected = variable_get('defaultnotificaton', 2);
+        } else {
+           $defaultselected = $udata->field_notification['und'][0]['value'];
+        }
+        if ($defaultselected == 1 ) {
+          notify_insert_statuspost($title, $refnodetitle, $refnodepostedby, $mail, $name, $postdate, $nodeusername, $nodeuid, 'node');
+        }
+      }
+    }
+  }
+}
+
+/**
+ * hook_comment_insert.
+ */
+function cbone_notification_comment_insert($comment) {
+  // Reindex the node when comments are added.
+ $node = node_load($comment->nid);
+ $statustext = '';
+  global $user, $base_url;
+  switch ($node->type) {
+    case 'circle_post':
+    case 'office_event':
+    case 'office_post':
+      $name = (isset(user_load($user->uid)->realname)) ? user_load($user->uid)->realname : $user->name;
+      $statustext = "New Comment posted on " . l($node->title, $base_url . "/node/{$node->nid}") . ' by ' . $name;
+      if ($node->type == 'circle_post') {
+        $gid = $node->og_group_ref['und'][0]['target_id'];
+        if (empty($gid)) {
+          $gid = array_values($node->og_group_ref['und']);
+          $gid = $gid[0]['target_id'];
+        }
+      } else {
+        $gid = $node->og_group_ref1['und'][0]['target_id'];
+        if (empty($gid)) {
+          $gid = array_values($node->og_group_ref1['und']);
+          $gid = $gid[0]['target_id'];
+        }
+      }
+      if (!empty($gid)) {
+        db_insert('activity') // Table name no longer needs {}
+          ->fields(array(
+            'nid' => $node->nid,
+            'gid' => $gid,
+            'uid' => $comment->uid,
+            'type' => 'comment',
+            'title' => $node->title,
+            'status' => $node->status,
+            'name' => $name,
+            'message' => $statustext,
+            'created' => REQUEST_TIME,
+          ))
+          ->execute();
+      }
+      break;
+  }
+  if (!empty($statustext)) {
+    $title = l($node->title, $base_url.'/node/'.$node->nid);
+    $postdate = $comment->created;
+    $refnode = node_load($gid);
+    $refnodetitle = $refnode->title;
+    $refnodepostedby = (isset(user_load($refnode->uid)->realname)) ? user_load($refnode->uid)->realname : $refnode->name;
+    $nodeusername = $name;
+    $nodeuid = $comment->uid;
+    $uids = get_users_in_group($refnode);
+    
+    if (count($uids) > 0) {
+      foreach ($uids as $key => $value) {
+        $udata = user_load($value);
+        $mail = $udata->mail;
+        $name = $udata->name;
+        $checkstatus = $udata->field_notification;
+        if (empty($checkstatus)) {
+           $defaultselected = variable_get('defaultnotificaton', 2);
+        } else {
+           $defaultselected = $udata->field_notification['und'][0]['value'];
+        }
+        if ($defaultselected == 1 ) {
+        //if (!isset($udata->field_notification['und'][0]['value']) || $udata->field_notification['und'][0]['value'] == 1) {
+          notify_insert_statuspost($title, $refnodetitle, $refnodepostedby, $mail, $name, $postdate, $nodeusername, $nodeuid, 'comment');
+        }
+      }
+    }  
+  }
+}
+
+/**
+ * Implements notify_insert_statuspost using for send mail to users.
+ */
+function notify_insert_statuspost($title, $refnodetitle, $refnodepostedby, $mail, $name, $postdate, $nodeusername, $nodeuid, $type) {
+  drupal_mail('cbone_notification', 'instance', $mail, 'und', $params = array('title' => $title, 'postdate' => $postdate, 'postusername' => $nodeusername, 'postuserid' => $nodeuid, 'from' => 'noreply@cbone.me', 'refnodetitle' => $refnodetitle, 'type' => $type, 'refnodepostedby' => $refnodepostedby, 'mail' => $mail), $from = 'noreply@cbone.me', TRUE);
+}
+
+/**
+ * Mail theme function to create body and subject of body.
+ */
+function cbone_notification_mail ($key, &$message, $params) {
+  global $base_url;
+  switch ($key) {
+    case 'instance':
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+      $mailstrcture = db_query('SELECT * FROM {activity_mail_body}')->fetchAll();
+      $subject = $mailstrcture[0]->datas;
+      if ($params['type'] == 'comment') {
+        $body = $mailstrcture[0]->datam;
+      } 
+      else if ($params['type'] == 'node') {
+        $body = $mailstrcture[0]->datab;
+      }
+      else if ($params['type'] == 'like') {
+        $body = $mailstrcture[5]->datab;
+        $subject = $mailstrcture[5]->datas;
+      }
+      $body = str_replace("[comment-node:title]", $params['title'], $body);
+      $body = str_replace("[siteurl]", $base_url, $body);
+      $body = str_replace("[node:og-group-ref]", $params['refnodetitle'], $body);
+      $body = str_replace("node:og-group-ref]", $params['refnodetitle'], $body);
+      $body = str_replace("[circle:title]", $params['refnodetitle'], $body);
+      $body = str_replace("[node:title]", $params['title'], $body);
+      $body = str_replace("[node:author]", $params['postusername'], $body);
+      $body = str_replace("[comment:author]", $params['postusername'], $body);
+      $body = str_replace("[Date posted]", date('d-M-Y', $params['postdate']), $body);
+      $body = str_replace("[liked-by]", $params['postusername'], $body);
+      $message['to'] = $params['mail'];
+      $message['subject'] = $subject;
+      $message['body'][] = str_replace("[siteurl]", $base_url, $mailstrcture[4]->datas);
+      $message['body'][] = $body;
+      $message['body'][] = $mailstrcture[4]->datab; 
+    break;
+    case 'digest':
+      $message['to'] = $params['to'];
+      $message['from'] = $params['from'];
+      $message['subject'] = $params['subject'];
+      $message['body'][] = $params['body'];
+    break;
+  }
+  
+}
+
+
+/**
+ * Get all users of a group
+ */
+function get_users_in_group($entity) {
+  $name = 'members';
+  $type = 'node';
+  $userid = og_get_group_members_properties($entity, array(), $name, $type);
+  return $userid;
+}
+
+/**
+ * Implements setup daily activity mail callback.
+ */
+function daily_mail_setuppage() {
+  $defaultselected = variable_get('defaultnotificaton', 2);
+  if ($defaultselected == 2) {
+    $qur = db_query('SELECT entity_id FROM field_data_field_notification Where field_notification_value IN (0,1,3,4)');
+    $uidsdata = array();
+    $uidsdata[] = 0;
+    foreach ($qur as $record) {
+      $uidsdata[] = $record->entity_id;
+    }    
+    daily_get_user_uid_action(2, '1 DAY', $uidsdata);
+  } else {
+    get_user_uid_action(2, '1 DAY');
+  }
+  watchdog('cbone_notification', 'daily_mail_setuppage mail send', array(), WATCHDOG_NOTICE);
+}
+
+/**
+ * Implements setup weekly activity mail callback.
+ */
+function weekly_mail_setuppage() {
+  $defaultselected = variable_get('defaultnotificaton', 2);
+  if ($defaultselected == 3) {
+    $qur = db_query('SELECT entity_id FROM field_data_field_notification Where field_notification_value IN (0,1,2,4)');
+    $uidsdata = array();
+    $uidsdata[] = 0;
+    foreach ($qur as $record) {
+      $uidsdata[] = $record->entity_id;
+    }    
+    daily_get_user_uid_action(3, '7 DAY', $uidsdata);
+  } else {
+    get_user_uid_action(3, '7 DAY');
+  }
+  watchdog('cbone_notification', 'weekly_mail_setuppage mail send', array(), WATCHDOG_NOTICE);
+}
+
+/**
+ * Implements setup montly activity mail callback.
+ */
+function montly_mail_setuppage() {
+  $defaultselected = variable_get('defaultnotificaton', 2);
+  if ($defaultselected == 4) {
+    $qur = db_query('SELECT entity_id FROM {field_data_field_notification} Where field_notification_value IN (0,1,2,3)');
+    $uidsdata = array();
+    $uidsdata[] = 0;
+    foreach ($qur as $record) {
+      $uidsdata[] = $record->entity_id;
+    }
+    daily_get_user_uid_action(4, '1 MONTH', $uidsdata);
+  } else {
+    get_user_uid_action(4, '1 MONTH');
+  }
+  watchdog('cbone_notification', 'montly_mail_setuppage mail send', array(), WATCHDOG_NOTICE);
+}
+
+/**
+ * Implements daily_get_user_uid_action callback function for 
+ * get uses Manage Notification setting and send mail 
+ * base on user setting and group.
+ */
+function daily_get_user_uid_action($status, $day, $uidsdata) {
+  $comma_separated = implode(",", $uidsdata);
+  $query = db_select('users', 'u');
+            $query->condition('u.status', 1, '=');
+            $query->where("u.uid NOT IN ($comma_separated)");
+            $query->fields('u', array('uid'));
+  $results = $query->execute()->fetchCol();
+  if ( count($results) == 0) {
+    return 'No Update founds';
+  }
+  $users = user_load_multiple($results);
+  $datasets = '';
+  $mailstrcture = db_query('SELECT * FROM {activity_mail_body}')->fetchAll();
+  foreach($users as $account) {
+     $guid = og_get_groups_by_user($account, NULL);
+	 if(isset($guid['node'])) {
+		 $comma_separated = implode(", ", $guid['node']);
+		 $usermail = $account->mail;
+		 $username = (isset($account->realname)) ? $account->realname : $account->name;;
+		 $datasets = prepaer_mail_data($comma_separated, $day, $mailstrcture, $status, $usermail, $username);
+	 }
+  }
+  watchdog('cbone_notification', 'daily_get_user_uid_action mail send', array(), WATCHDOG_NOTICE);
+  return $datasets;
+}
+
+
+/**
+ * Implements get_user_uid_action callback function for 
+ * get uses Manage Notification setting and send mail 
+ * base on user setting and group.
+ */
+function get_user_uid_action($status, $day) {
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'user')
+    ->fieldCondition('field_notification', 'value', $status, '=');
+  $results = $query->execute();
+  if ( count($results) == 0) {
+    return 'No Update founds';
+  }
+  $users = user_load_multiple(array_keys($results['user']));
+  $datasets = '';
+  $mailstrcture = db_query('SELECT * FROM {activity_mail_body}')->fetchAll();
+  foreach($users as $account) {
+    $guid = og_get_groups_by_user($account, NULL);
+    $comma_separated = implode(", ", $guid['node']);
+    $usermail = $account->mail;
+    $username = (isset($account->realname)) ? $account->realname : $account->name;;
+    $datasets = prepaer_mail_data($comma_separated, $day, $mailstrcture, $status, $usermail, $username);
+  }
+  watchdog('cbone_notification', 'get_user_uid_action mail send', array(), WATCHDOG_NOTICE);
+  return $datasets;
+}
+
+/**
+ * Implements prepaer mail body and other data related to mail which send to user base on users group. 
+ */
+function prepaer_mail_data($comma_separated, $day, $mailstrcture, $status, $usermail, $username) {
+  global $base_url;
+  if (isset($comma_separated)) {
+    $data = db_query("SELECT * from {activity} WHERE gid IN ($comma_separated) AND status = 1 AND created >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL $day))")->fetchAll();
+    $result = "";
+    if (count($data) == 0) {
+      return 'No Update founds';
+    }
+    if ($status == 2) {
+      $subject = $mailstrcture[1]->datas;
+      $header = $mailstrcture[4]->datas;
+      $footer = $mailstrcture[4]->datab;
+    } 
+    elseif ( $status = 3 ) {
+      $subject = $mailstrcture[2]->datas;
+      $header = $mailstrcture[4]->datas;
+      $footer = $mailstrcture[4]->datab;
+    } 
+    elseif ( $status = 4 ) {
+      $subject = $mailstrcture[3]->datas;
+      $header = $mailstrcture[4]->datas;
+      $footer = $mailstrcture[4]->datab;
+    }
+    /*$likecheck = $value->type;
+    if (isset($likecheck) && $value->type == 'like') {
+       $subject = $mailstrcture[5]->datas;
+    }*/
+    $result = '<html><head></head><body><strong>'.$header.'</strong>';
+    foreach ($data as $key => $value ) {
+      if ($status == 1) {
+        $body = $mailstrcture[1]->datab;
+        if ($value->type == 'comment')
+          $body = $mailstrcture[1]->datam;
+        elseif ($value->type == 'like') 
+          $body = $mailstrcture[5]->datab; 
+      }
+      elseif ( $status = 2 ) {
+        $body = $mailstrcture[2]->datab;
+        if ($value->type == 'comment')
+          $body = $mailstrcture[2]->datam;
+        elseif ($value->type == 'like') 
+          $body = $mailstrcture[5]->datab;
+      }
+      else {
+        $body = $mailstrcture[3]->datab;
+        if ($value->type == 'comment')
+          $body = $mailstrcture[3]->datam;
+        elseif ($value->type == 'like') 
+          $body = $mailstrcture[5]->datab;
+      }
+      if ($value->type != 'comment' && $value->type != 'like') {
+        $body = str_replace("[node:og-group-ref]", l(node_load($value->gid)->title, $base_url.'/node/'.$value->gid), $body);
+        $body = str_replace("[circle:title]", node_load($value->gid)->title, $body);
+        $body = str_replace("[siteurl]", $base_url, $body);
+        $body = str_replace("[node:title]", l($value->title, $base_url.'/node/'.$value->nid), $body);
+        $body = str_replace("[node:author]", $value->name, $body);
+        $body = str_replace("[Date posted]", date('d-M-Y', $value->created), $body);
+        $result .= $body;
+      }
+      elseif ($value->type == 'comment') {
+        $body = str_replace("[comment-node:title]", l($value->title, $base_url.'/node/'.$value->nid), $body);
+        $body = str_replace("[siteurl]", $base_url, $body);
+        $body = str_replace("[node:og-group-ref]", $value->title, $body);
+        $body = str_replace("[circle:title]", node_load($value->gid)->title, $body);
+        $body = str_replace("[node:title]", l($value->title, $base_url.'/node/'.$value->nid), $body);
+        $body = str_replace("[node:author]", $value->name, $body);
+        $body = str_replace("[comment:author]", $value->name, $body);
+        $body = str_replace("[Date posted]", date('d-M-Y', $value->created), $body);
+        $result .= $body;
+      } else {
+        $body = str_replace("[comment-node:title]", l($value->title, $base_url.'/node/'.$value->nid), $body);
+        $body = str_replace("[siteurl]", $base_url, $body);
+        $body = str_replace("[node:og-group-ref]", $value->title, $body);
+        $body = str_replace("[circle:title]", node_load($value->gid)->title, $body);
+        $body = str_replace("[node:title]", l($value->title, $base_url.'/node/'.$value->nid), $body);
+        $body = str_replace("[node:author]", $value->name, $body);
+        $body = str_replace("[comment:author]", $value->name, $body);
+        $body = str_replace("[liked-by]", $value->name, $body);
+        $body = str_replace("[Date posted]", date('d-M-Y', $value->created), $body);
+        $result .= $body;
+      }
+    }
+    $result .= $footer.'</body></html>';
+    $result = str_replace("[siteurl]", $base_url, $result);
+    $subject = str_replace("[DATE]", date('d-M-Y',strtotime("-1 days")), $subject);
+    $subject = str_replace("[Sunday date]", date('d-M-Y', strtotime('last Sunday', time())), $subject);
+    $subject = str_replace("[previous month]",date('F', strtotime(date('Y-m')." -1 month")), $subject);
+    notify_digest_statuspost($usermail, $result, $subject, $username);
+    return $result;
+  }
+}
+
+/**
+ * Implements notify_digest_statuspost using for send mail to users (daily, weekly or Montly).
+ */
+function notify_digest_statuspost($usermail, $result, $subject, $username) {
+  global $language;
+  $params = array(
+    'body' => $result,
+    'subject' => $subject,
+    'to' => $usermail,
+    'from' => 'noreply@cbone.me',
+    );
+  drupal_mail('cbone_notification', 'digest', $usermail, $language, $params, 'noreply@cbone.me', TRUE);
+}
+
+/**
+* Implements activity block with list item pager.
+*/
+function _list_user_group_activity($account) {
+  $title = t('Activity');
+  $type = 'ul';
+  // The following attributes apply to the list tag (e.g., <ol> or <ul>)
+  $attributes = array(
+    'id' => 'my-custom-listing',
+    'class' => 'custom-class another-custom-class', // a string or indexed (string) array with the classes for the list tag
+  );
+  
+  $guid = og_get_groups_by_user($account, NULL);
+  if (count($guid) == 0) 
+    return;
+  $comma_separated = implode(", ", $guid['node']);
+  $dataactivity = db_query("SELECT * from {activity} WHERE gid IN ($comma_separated) AND status = 1 ORDER BY created DESC")->fetchAll();
+  $items = array();
+  foreach ($dataactivity as $data) {
+    $items[] = array('<div class="'.$data->type.' activitylist" id="activity-'.$data->id.'"><div class="time"><div class="c_date">'.date('M-d-Y', $data->created).'</div><div class="c_time">'.date('h:i A',$data->created) .'</div></div><div class="activitymessage">'.$data->message.'</div></div>');
+  }
+  $header = array();
+ // $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
+  $per_page = 10;
+  // Initialize the pager
+  $current_page = pager_default_initialize(count($items), $per_page);
+  // Split your list into page sized chunks
+  $chunks = array_chunk($items, $per_page, TRUE);
+  // Show the appropriate items from the list
+  $output = '<div class="activity-container">';
+  $output .= theme('table', array('header' => $header, 'rows' => $chunks[$current_page]));
+  // Show the pager
+  $output .= theme('pager', array('quantity', count($items)));
+  $output .= '</div>';
+  return $output;
+}
+
+/**
+* Implements hook_cron.
+*/
+function cbone_notification_cron() {
+  $time = REQUEST_TIME;
+  if ( date('G', $time) == 5) { // At 5'o clock
+    daily_mail_setuppage();
+    db_query("DELETE FROM {activity} where created < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 90 DAY))");
+    watchdog('cbone_notification', 'daily mail send'. date('G', $time) , array(), WATCHDOG_NOTICE);
+  }
+  if ( date('G', $time) == 6 && date('L', $time) == 'sunday') { // At 6'o clock on sunday for last week
+    weekly_mail_setuppage();
+    watchdog('cbone_notification', 'weekly mail send', array(), WATCHDOG_NOTICE);
+  }
+  if ( date('G', $time) == 7 && date('j', $time) == 1 ) { // At 7'o clock on Month 1st day
+    montly_mail_setuppage();
+    watchdog('cbone_notification', 'montly mail send', array(), WATCHDOG_NOTICE);
+  }
+  watchdog('cbone_notification', 'cronrun'. date('G', $time) , array(), WATCHDOG_NOTICE);
+}
+
+/**
+* Implements hook_flag_flag.
+*/
+function cbone_notification_flag_flag($flag, $entity_id, $account, $flagging) {
+  // Do something in response to the flagging.
+  global $base_url;
+  $node = node_load($entity_id);
+  switch ($node->type) {
+    case 'circle_post':
+    case 'office_event':
+    case 'office_post':
+      if ($node->type == 'circle_post') {
+        $gid = $node->og_group_ref['und'][0]['target_id'];
+        if (empty($gid)) {
+          $gid = array_values($node->og_group_ref['und']);
+          $gid = $gid[0]['target_id'];
+          if (empty($gid)) {
+            $gid = $node->og_group_ref['und'][0]['admin'][0]['target_id'];
+          }
+        }
+      } else {
+        $gid = $node->og_group_ref1['und'][0]['target_id'];
+        if (empty($gid)) {
+          $gid = array_values($node->og_group_ref1['und']);
+          $gid = $gid[0]['target_id'];
+          if (empty($gid)) {
+            $gid = $node->og_group_ref1['und'][0]['admin'][0]['target_id'];
+          }
+        }
+      }
+      if (!empty($gid)) {
+        $name = (isset(user_load($account->uid)->realname)) ? user_load($account->uid)->realname : $account->name;
+        $statustext = $name . " liked post " . l($node->title, 'node/'.$node->nid);
+        db_insert('activity') 
+          ->fields(array(
+            'nid' => $node->nid,
+            'gid' => $gid,
+            'uid' => $account->uid,
+            'type' => 'like',
+            'title' => $node->title,
+            'status' => 1,
+            'name' => $name,
+            'message' => $statustext,
+            'created' => REQUEST_TIME,
+          ))
+          ->execute();
+        if ( !empty($statustext) ) {
+          $title = l($node->title, $base_url.'/node/'.$node->nid);
+          $postdate = time();
+          $refnode = node_load($gid);
+          $refnodetitle = $refnode->title;
+          $refnodepostedby = $refnode->name;
+          $nodeusername = $name;
+          $nodeuid = $account->uid;
+          $uids = get_users_in_group($refnode);
+          if ( count($uids) > 0 ) {
+            foreach ( $uids as $key => $value ) {
+              $udata = user_load($value);
+              if (isset($udata->status ) && $udata->status == 1) {
+                $mail = $udata->mail;
+                $name = (isset($udata->realname)) ? $udata->realname : $udata->name;
+                $checkstatus = $udata->field_notification;
+                if (empty($checkstatus)) {
+                  $defaultselected = variable_get('defaultnotificaton', 2);
+                } else {
+                  $defaultselected = $udata->field_notification['und'][0]['value'];
+                }
+                if ($defaultselected == 1 ) {
+               // if ( $defaultselected == 1 || $udata->field_notification['und'][0]['value'] == 1 ) {
+                  notify_insert_statuspost($title, $refnodetitle, $refnodepostedby, $mail, $name, $postdate, $nodeusername, $nodeuid, 'like');
+                }
+              }
+            }
+          }
+        }
+    }
+    break;
+  }
+}

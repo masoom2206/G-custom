@@ -1,0 +1,128 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function nrt_team_feeds_schema() {
+	//Save Feed Processing Results
+  $schema['sales_team_feed_processing_results'] = array(
+    'fields' => array(
+      'result_id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Feed Result ID',
+      ),
+      'feed_file_name' => array(
+        'description'   => 'Feed File Name',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'feed_type' => array(
+        'description'   => 'Feed Type',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+      'feed_timestamp' => array(
+        'description'   => 'Time when the feed has saved',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'field_nrt_team_id' => array(
+        'description'   => 'Team Id.',
+        'type'          => 'varchar',
+		'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'field_stf_metro_id' => array(
+        'description'   => 'In the lms listing feed this value = “primary agent id”. It will be null for photo feeds.',
+        'type'          => 'varchar',
+		'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'feed_result_status' => array(
+        'description'   => 'Result: Success / Fail',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'feed_result_message' => array(
+        'description'   => 'Details of the result message',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+    ),
+    'primary key' => array('result_id'),
+    'indexes' => array(
+       'result_id' => array('result_id'),
+    ),
+  );
+  
+  $schema['sales_team_member_feed_processing_results'] = array(
+    'fields' => array(
+      'result_id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Feed Result ID',
+      ),
+      'feed_file_name' => array(
+        'description'   => 'Feed File Name',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'feed_type' => array(
+        'description'   => 'Feed Type',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+      'feed_timestamp' => array(
+        'description'   => 'Time when the feed has saved',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'field_nrt_team_id' => array(
+        'description'   => 'Team Id.',
+        'type'          => 'varchar',
+		'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'field_person_id' => array(
+        'description'   => 'Person ID.',
+        'type'          => 'varchar',
+		'length'        => 255,
+        'not null'      => FALSE,
+      ),
+	  'field_prim_num' => array(
+        'description'   => 'Primary Number.',
+        'type'          => 'varchar',
+		'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'feed_result_status' => array(
+        'description'   => 'Result: Success / Fail',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'feed_result_message' => array(
+        'description'   => 'Details of the result message',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+    ),
+    'primary key' => array('result_id'),
+    'indexes' => array(
+       'result_id' => array('result_id'),
+    ),
+  );
+  return $schema;
+}

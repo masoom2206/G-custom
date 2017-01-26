@@ -1,0 +1,112 @@
+/* By NItesh 07-09-2016 for popup*/
+.page-node-510 .modal-content {
+    border: none;
+    box-shadow: none;
+	height: 112px !important;
+    width: 682px !important;
+}
+
+.page-node-510 .modal-title {
+    float: none;
+}
+.page-node-510 .ctools-modal-content {
+    height: 173px !important;
+	width: 690px !important;
+}
+
+.page-node-510 div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
+    margin-top: 10px !important;
+}
+
+.submit-send-for-approval {width: 100%; float: left; height: 40px; padding-top: 10px;}
+.submit-send-for-approval a.submit-approval-link{background: #01468d; padding: 5px 20px 5px 20px; color: #fff; text-transform: uppercase;}
+.submit-send-for-approval a.submit-approval-link:hover{color: #fff;}
+.brochures-approval-header{margin-bottom: 20px; text-transform: uppercase; line-height: 30px;}
+.brochures-approval-header .header-first{font-size: 22px;}
+.brochures-approval-body ul{margin: 0px !important; padding: 0px !important;}
+.brochures-approval-body ul li {width: 33%; display: inline-block; padding: 10px; background-color: #e6e6e6; text-transform: uppercase; list-style: none; margin-bottom: 5px; vertical-align: top; min-height: 660px; margin-right: 2px;}/* height: 600px;*/
+/*.brochures-approval-body .brochure-approval-wrapper {width: 33%; display: inline-block; padding: 10px; background-color: #e6e6e6; text-transform: uppercase; list-style: none; margin-bottom: 5px;}*/
+.send-for-approval span{text-transform: uppercase;}
+.approval-view-image .approval-view .approval-image img{max-width: 225px; max-height: 283px;}
+.approval-view-image .approval-view .view-pdf{font-size: 14px;}
+.approval-view-image .approval-view .view-pdf-note{text-transform: none; font-size: 13px; line-height: normal;}
+.approval-view-image .approval-view{display: inline-block;}
+.approval-view-image .approval-action{display: inline-block; vertical-align: top; width: 28%;}
+.approval-image > div{font-size: 14px;}
+.approval-option{font-size: 22px; padding-bottom: 10px;}
+.approval-option span{font-size: 16px;}
+.marketing-coordinator-note {margin-top: 30px;}
+.marketing-coordinator-note .note-title {font-size: 14px;}
+.marketing-coordinator-note textarea{width: 330px; height: 200px;}
+.approval-view-image .approval-view{padding-right: 10px; width: 70%;}
+.pdf-edit-proof .edit-proof-header .block-title{width: 50%; background-color: rgba(0,0,0,0.5); height: auto; color: #fff; font-family: 'Raleway'; font-size: 3.5vw; letter-spacing: normal; text-align: center; margin-left: auto; margin-right: auto; padding-top: 11%; padding-bottom: 11%; text-transform: uppercase;}
+.pdf-edit-proof ul.tabs{ padding-left: 15px;}/* margin-top: -10px;*/
+.pdf-edit-proof ul.tabs li{list-style: none; display: inline-block; border: 1px solid #acacac; padding: 0px 50px 0px 50px; text-transform: uppercase; font-weight: 600; font-size: 18px; background: #dddddd; color: #666666; margin-left: -4px; cursor: pointer;}
+.pdf-edit-proof ul.tabs li.active{background: #eeeeee;}
+.edit-proof-text{margin-top: 20px;}
+.edit-proof-text .pdf-preview-image{background-color: #ccc; padding: 10px; margin-left: 25px; vertical-align: top;}
+.edit-proof-text .pdf-preview-image-thumbnail{display: inline-block; vertical-align: top;}
+.edit-proof-text .pdf-preview-image-thumbnail .pdf-proof-thumbnail{margin-left: 35px;}
+.magnify img {cursor: pointer;}
+.edit-proof-text .edit-pdf-form-wrapper{display: inline-block; margin-left: 10px; width: 35%; margin-top: 25px;}
+.edit-proof-photos .listing-photo-galleries{font-size: 16px; padding: 10px 0 10px 0; color: #9f9588; float: left; width: 38%;}
+#sortable2, #sortable2-disable {border-left: 3px solid #eee; padding-left: 7px;}
+#sortable1, #sortable2 {min-height: 350px;}
+
+#pdf-edit-proof-form .listing-copy-value, #pdf-edit-proof-form .form-item-online-copy {display: none;}
+#pdf-edit-proof-form .form-submit{text-transform: uppercase; background-color: #102e54;}
+#pdf-edit-proof-form .form-submit:hover{color: #FFF;}
+
+/*.confirmBox-group{position: relative;}*/
+#confirmBox{display: none; position: absolute; top: 25%; left: 25%; width: 50%; padding: 16px; border: 5px solid #ddd; z-index: 1002; background-color: #fff; border-radius: 10px; color: #666666;}/*height: 20%; */
+#confirmBox .message{text-align: center; font-size: 20px; font-weight: 500; padding: 30px;}
+#confirmBox .buttons{text-align: center;}/*margin-top: 35px; */
+#confirmBox span.yes{padding-right: 5px;}
+#confirmBox span.yes .long, #confirmBox span.no .long{background: #ddd; padding: 5px 15px 5px 15px; border: 5px solid #ddd; border-radius: 5px; cursor: pointer;}
+#confirmBox .no .short, #confirmBox .yes .short{display: none;}
+#confirmBox .no .long, #confirmBox .yes .long{display: inline-block;}
+
+/********Generate PDF form css 28-03-15***********/
+#listing-marketing-system-form .form-item.form-type-radios.form-item-postcard-type{border-bottom: 1px solid #ddd;}
+#listing-marketing-system-form .form-item.form-type-radio.form-item-postcard-type{display: inline-block; padding-right: 20px;}
+/********Generate PDF form css 28-03-15 END*******/
+/********Generate PDF form css 19-04-16 CSS*******/
+.popup-confirmation {
+	width: 400px;
+	height: 150px;
+	background: rgb(255, 255, 255);
+}
+.popup-confirmation .image_area{
+    font-size: 18px;
+    padding: 55px;
+}
+/********Generate PDF form css 19-04-16 END*******/
+/********29-04-16 CSS*******/
+.approval-action a.edit-pdf{padding: 5px 20px; border: 1px solid #f4f4f4;}
+/********29-04-16 END*******/
+/********06-05-16 CSS*******/
+#listing-marketing-system-form .listing-copy-value, #listing-marketing-system-form .listing-headline-value{display: none;}
+/********06-05-16 END*******/
+
+@media only screen and (max-device-width: 991px) {
+	.brochures-approval-body ul li {width: 100%;}
+	.approval-view-image .approval-view{padding-right: 5px;}
+	.pdf-edit-proof ul.tabs li{display: block;}
+	.edit-proof-text .edit-pdf-form-wrapper{display: block; width: 95%; margin-left: 15px;}
+	.edit-proof-text .pdf-preview-image{display: block; margin-left: 15px;}
+	.edit-proof-text .pdf-preview-image-thumbnail{display: block; margin-left: 15px;}
+	.edit-proof-text .pdf-preview-image-thumbnail .pdf_design_thumbnail{float: none; text-align: center;}
+	#confirmBox {padding: 0px; height: 16%;}
+	#confirmBox .message{font-size: 15px; line-height: normal;}
+	#confirmBox .no .short, #confirmBox .yes .short{display: inline-block; width: 48%; background: #ddd; padding: 5px 10px 5px 10px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;}
+	#confirmBox .no .long, #confirmBox .yes .long{display: none;}
+	.edit-proof-data .listing-photo {text-align: center; width: 127px; height: 85px;}
+	.edit-proof-data .image-frame-arrangment, .edit-proof-data .edit-proof-photos .listing-photo-galleries {float: none; width: 100%;}
+	#confirmBox .buttons{padding-bottom: 10px;}
+}
+
+/****** Added by nitesh******/
+
+.reuse-pdf{
+text-align:center;
+}

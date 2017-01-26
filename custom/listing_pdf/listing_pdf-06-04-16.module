@@ -1,0 +1,664 @@
+<?php
+/**
+ * Implements hook_init()
+ */
+function listing_pdf_init(){
+	global $base_url, $user;
+	drupal_add_css(drupal_get_path('module', 'listing_pdf') . '/css/pdf.css');
+}
+/**
+* Implementation of hook_menu
+*/
+function listing_pdf_menu() {
+  $items = array();
+  //menu for pro brochures the Listing
+	$items['listing-brochures/%'] = array(
+		'title'				=> 'Listing Brochures',
+		'description'		=> 'Listing Brochures',
+		'page callback'		=> 'cbone_listing_brochures',
+		'access callback'	=> 'user_is_logged_in',
+		'page arguments' 	=> array(1),
+		'file'				=> 'includes/listing_brochures.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['print-and-go/%'] = array(
+		'title'				=> 'Print and go',
+		'description'		=> 'Print and go',
+		'page callback'		=> 'cbone_print_and_go',
+		'access callback'	=> 'user_is_logged_in',
+		'page arguments' 	=> array(1),
+		'file'				=> 'includes/listing_brochures.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	//menu for save online marketing in Listing brochures page  
+	$items['print-and-go/marketing'] = array(
+		'title'				=> 'Use for online marketing',
+		'description'		=> 'Save mcpdf nid',
+		'page callback'		=> 'manage_mcpdf_nid',
+		'access callback'	=> 'user_is_logged_in',
+	); 
+	//menu for save online marketing on PDF generation page  
+	$items['print-and-go/marketing/weblisting'] = array(
+		'title'				=> 'Use for online marketing',
+		'description'		=> 'Save mcpdf nid',
+		'page callback'		=> 'weblisting_mcpdf_nid',
+		'access callback'	=> 'user_is_logged_in',
+	);
+	//menu for save online marketing for shared listing on PDF generation page  
+	$items['print-and-go/marketing/sharedlisting'] = array(
+		'title'				=> 'Use for online marketing',
+		'description'		=> 'Save mcpdf nid',
+		'page callback'		=> 'shared_mcpdf_nid',
+		'access callback'	=> 'user_is_logged_in',
+	);
+	$items['postcard/%'] = array(
+		'title'				=> 'Post Card',
+		'description'		=> 'Post Card',
+		'page callback'		=> 'cbone_post_card',
+		'access callback'	=> 'user_is_logged_in',
+		'page arguments' 	=> array(1),
+		'file'				=> 'includes/listing_brochures.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	); 
+	$items['generate-pdf/%/%'] = array( 
+		'title' 			=> 'Generate PDF',
+		'description' 		=> 'A node for PDF Generation',
+		'page callback' 	=> 'pdf_edit_nodes',
+		'access callback' 	=> TRUE,
+		'page arguments' 	=> array(1, 2),
+		'file'				=> 'includes/listing_brochures.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	 );
+	$items['pdf-delete/%/%/%'] = array(
+		'title'				=> 'MCPDF Delete Node',
+		'description'		=> 'MCPDF Delete Node',
+		'access callback'	=> TRUE,
+		'page callback' 	=> 'drupal_get_form',
+		'page arguments' 	=> array('delete_mcpdf_node_form'),
+		'file'				=> 'includes/listing_brochures.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);	
+	$items['download_pdf/%/%'] = array(
+		'title'				=> 'PDF Download',
+		'description'		=> 'Download PDF File',
+		'page callback'		=> 'download_pdf',
+		'access callback'	=> TRUE,
+		'page arguments' 	=> array(1, 2),
+		'file'				=> 'includes/listing_brochures.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['shared-listing-pdf/%'] = array(
+		'title'				=> 'PDF Download',
+		'description'		=> 'Download Shared PDF File',
+		'page callback'		=> 'shared_listing_pdf',
+		'access callback'	=> TRUE,
+		'page arguments' 	=> array(1, 2),
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['listing-pdf/sortable'] = array(
+		'title'				=> 'PDF photos sortable',
+		'description'		=> 'Save PDF photos sortable',
+		'page callback'		=> 'listing_pdf_sortable',
+		'access callback'	=> 'user_is_logged_in',
+	);
+ return $items;
+}
+/**
+ * Implements hook_theme
+ **/
+function listing_pdf_theme($existing, $type, $theme, $path) {
+	return array(
+		'listing_brochures' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/listing_brochures', // do not include .tpl.php
+		),
+		'listing_pdf' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/listing_pdf', // do not include .tpl.php
+		),
+		'print_and_go' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/print_and_go', // do not include .tpl.php
+		),
+		
+		'post_card' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/post_card', // do not include .tpl.php
+		),
+		
+		'pdf_form_test' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/pdf_form_test', // do not include .tpl.php
+		),
+	);
+	return $theme;
+}
+
+/************************Code for listing pdf generation**********************************/
+/**
+ * function get_mcpdf_nid()
+ * to get MC PDF nid
+ * return @$result
+ **/
+
+function get_mcpdf_nid($nid1 = NULL, $nid2 = NULL) {
+	if($nid1 != NULL){
+		$pdf_nid1 = $nid1;
+	}
+	else{
+		$pdf_nid1 = arg(1);
+	}
+	if($nid2 != NULL) {
+		$pdf_nid2 = $nid2;
+	}
+	else {
+		$pdf_nid2 = arg(2);
+	}
+	global $user,$base_url;
+	if($pdf_nid1 !='' && $pdf_nid2 !='') {
+		$query=db_select('field_data_field_lms_listing_reference', 'lms_ref');
+		$query->innerJoin('field_data_field_template_reference', 'tr', 'lms_ref.entity_id = tr.entity_id');
+		$query->innerJoin('node', 'n', 'lms_ref.entity_id = n.nid');
+		$query->fields('lms_ref', array('entity_id'));
+		$query->condition('lms_ref.field_lms_listing_reference_nid', $pdf_nid1, '=');
+		$query->condition('lms_ref.entity_type', 'node', 'LIKE');
+		$query->condition('lms_ref.bundle', 'mc_pdf', 'LIKE');
+		$query->condition('tr.field_template_reference_nid', $pdf_nid2, '=');
+		$query->condition('tr.entity_type', 'node', 'LIKE');
+		$query->condition('tr.bundle', 'mc_pdf', 'LIKE');
+		$result= $query->execute()->fetchField(); 
+		//return $result;
+		
+		if(!empty($result)){
+			$mcpdf_node=node_load($result);
+			 return $nid = $mcpdf_node->nid;
+		}
+		else{
+			 return $nid='';
+		}
+		
+	}else{
+		 return $nid='';
+	}
+}
+
+/**
+ * function save_generated_pdf($nid1 = NULL, $nid2 = NULL)
+ * to save MC PDF node on submitting the image sequences
+ * on node "generate-pdf"
+ **/
+function save_generated_pdf($nid1 = NULL, $nid2 = NULL) {
+	global $base_url;
+	/************************rules download code*******************************/
+	
+	$mcpdf_id_pdf = get_mcpdf_nid($nid1, $nid2);
+	
+	if(file_exists('S3://PDF/'.$mcpdf_id_pdf.'.pdf')){
+	$path = 'S3://PDF/'.$mcpdf_id_pdf.'.pdf';
+	$fid = db_query("SELECT fid FROM {file_managed} WHERE uri = :path", array(':path' => $path))->fetchField();
+	$file = file_load($fid);
+	file_delete($file);
+	}
+	
+	if($nid1 != NULL){
+		$pdf_nid1 = $nid1;
+	}
+	else{
+		$pdf_nid1 = arg(1);
+	}
+	if($nid2 != NULL) {
+		$pdf_nid2 = $nid2;
+	}
+	else {
+		$pdf_nid2 = arg(2);
+	}
+	$listing_node = node_load($pdf_nid1);
+	$pdf_design_node = node_load($pdf_nid2);
+	if( !empty($listing_node->field_lms_other_agent) && ($pdf_design_node->field_pdf_section['und'][0]['value'] == 'pro brochure' || $pdf_design_node->field_pdf_section['und'][0]['value'] == 'post card') ){
+			$url = $base_url.'/co-agent/'.$pdf_nid1.'/'.$pdf_nid2; 
+	}
+	else{
+		$url = $base_url.'/test/'.$pdf_nid1.'/'.$pdf_nid2; 
+	}
+	
+	$headers = array();
+	// Add cookie so that we can use the same access as the logged in user, if present.
+    $headers = array(
+      'Cookie' => $_SERVER['HTTP_COOKIE'],
+    );
+	// Fetch the content
+	$response = drupal_http_request($url,  array('timeout' => 240, 'headers' => $headers));
+	if(isset($response->data)){
+		$data = $response->data;  
+		$temp_folder = 'public://lms/'.$pdf_nid1.'/pdf/';
+		file_prepare_directory($temp_folder, FILE_CREATE_DIRECTORY);
+		$filename = $temp_folder.$mcpdf_id_pdf.".pdf";
+		$realpath = drupal_realpath($filename);
+		$fp = fopen($realpath, "w");
+		fwrite($fp, $data);
+		fclose($fp);
+		//$cmd = "convert -density 200x200 -colorspace CMYK -resize 100% -quality 100 -compress jpeg $realpath $realpath";
+		//exec($cmd, $op);
+		
+		$pdf_node = node_load($mcpdf_id_pdf);
+
+		$file = (object)array(
+			'uid' => $pdf_node->uid,
+			'filename' => $mcpdf_id_pdf.".pdf",
+			'uri' => $filename,
+			'filemime' => file_get_mimetype($filename),
+			'status' => 1,
+			'display' => 1,
+		);
+		if ($file = file_move($file, $filename, $replace = FILE_EXISTS_RENAME)) {
+			$pdf_node->field_generated_pdf['und']['0'] = (array)$file;
+			//$listing_video->save( TRUE );
+		}
+		node_save($pdf_node);
+		$real_path_temp_folder = drupal_realpath($temp_folder);
+		$cmd = "rm $real_path_temp_folder 2>&1";
+		exec($cmd, $op);	
+
+		pdf_image_generation($pdf_nid1, $pdf_nid2);
+		
+		return '';
+	}
+	else{
+		return drupal_set_message('An error has occured '."$response->error".' while creating PDF', 'error');
+	}
+	
+	
+	/************************rules download code*******************************/
+}
+
+/**
+ * function pdf_image_generation($nid1 = NULL, $nid2 = NULL)
+ * to generate/save PDF image 
+ * on submitting MC PDF node
+ **/
+function pdf_image_generation($nid1 = NULL, $nid2 = NULL) {
+	
+	if($nid1 != NULL){
+		$pdf_nid1 = $nid1;
+	}
+	else{
+		$pdf_nid1 = arg(1);
+	}
+	if($nid2 != NULL) {
+		$pdf_nid2 = $nid2;
+	}
+	else {
+		$pdf_nid2 = arg(2);
+	}
+	
+	$result = get_mcpdf_nid($pdf_nid1, $pdf_nid2);
+	$pdf_node = node_load($result);
+	
+	$uid = $pdf_node->field_generated_pdf['und']['0']['uid'];
+	$uri = $pdf_node->field_generated_pdf['und']['0']['uri'];
+	$pdf_url = file_create_url($uri);
+	$pdf_content = file_get_contents($pdf_url);
+	$pdf_name = basename($pdf_url);
+	//$pdf_file_explode = explode("?AWSAccessKeyId", $pdf_name);
+	$pdf_file_explode = explode("?", $pdf_name);
+	$pdf_file_name = $pdf_file_explode[0];
+	
+	$filepath = 'public://lms/PDF/pdf-thumb/';
+	file_prepare_directory($filepath, FILE_CREATE_DIRECTORY);
+	$pdf_path = drupal_realpath($filepath).'/'.$pdf_file_name;	
+	file_put_contents($pdf_path, $pdf_content);
+	$pdf_file = drupal_realpath($pdf_path);
+	//get PDF file name
+	$pdf_file_name = basename($pdf_file);
+	$pdf_file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $pdf_file_name);
+	$pdf_first_page = drupal_realpath($pdf_path) . '[0]';
+	if (file_exists($pdf_file) && filesize($pdf_file) > 0) {
+		if(!empty($pdf_node->field_pdf_preview_image)){
+			foreach ($pdf_node->field_pdf_preview_image['und'] as $key => $value) {
+			$file = file_load($value['fid']);
+			unset($pdf_node->field_pdf_preview_image['und'][$key]);
+			file_delete($file);
+			}
+		}
+		// $im = new imagick($pdf_file);
+		// $num_pages = $im->getNumberImages();
+		$filepath = 'public://pdf-thumbnail/agent-'.$uid.'/listing-'.$pdf_nid1.'-'.$pdf_nid2.'/';
+		file_prepare_directory($filepath, FILE_CREATE_DIRECTORY);
+		
+		$name = $pdf_file_name.'.jpg';
+		$image_path = drupal_realpath($filepath);
+		$cmd =  "convert -density 200 -colorspace sRGB $pdf_file -quality 100 $image_path/$name";
+		exec($cmd,$op);
+		
+		$scanned_directory = array_diff(scandir($image_path), array('..', '.'));
+		$i=0;
+		foreach($scanned_directory as $value){
+			$filename = $filepath.$value;
+			$file = (object)array(
+				'uid' => $pdf_node->uid,
+				'filename' => $value,
+				'uri' => $filename,
+				'filemime' => file_get_mimetype($filename),
+				'status' => 1,
+				'display' => 1,
+			);
+			
+			if ($file = file_move($file, $filename, FILE_EXISTS_RENAME)) {
+				$pdf_node->field_pdf_preview_image['und'][$i] = (array)$file;
+			}
+			$i++;
+		}
+		node_save($pdf_node);
+		
+		$temp_folder = 'public://lms/PDF/';
+		$realpath = drupal_realpath($temp_folder);
+		$cmd = "rm -R $realpath 2>&1";
+		exec($cmd,$op);
+		$temp_folder = 'public://pdf-thumbnail/agent-'.$uid.'/listing-'.$pdf_nid1.'-'.$pdf_nid2.'/';
+		$realpath = drupal_realpath($temp_folder);
+		$cmd = "rm -R $realpath 2>&1";
+		exec($cmd,$op);
+	} 
+	else {
+		return "Error";
+	}
+}
+
+/**
+ * Callback function listing_pdf_sortable()
+ * to saved the new order of listing photos
+ **/
+function listing_pdf_sortable(){
+module_load_include('inc', 'listing_pdf', 'includes/listing_brochures');
+	if(isset($_POST['mcpdf_nid'])) {
+		$mcpdf_nid = $_POST['mcpdf_nid'];
+		$mcpdf_node = node_load($mcpdf_nid);
+		$nid1 = $_POST['nid1'];
+		$nid2 = $_POST['nid2'];
+		$fids=array();
+		foreach ($_POST['neworder'] as $delta => $value) {
+			$fids[]=$value['id'];
+			$lms_file = file_load($value['id']);
+			$filepath = $lms_file->uri;
+			$content = file_get_contents($filepath);
+			
+			$temp_folder = 'public://lms/mc_pdf/images/';
+			file_prepare_directory($temp_folder, FILE_CREATE_DIRECTORY);
+			$filename = $temp_folder.$lms_file->filename;
+			$realpath = drupal_realpath($filename);
+			$fp = fopen($realpath, "w");
+			fwrite($fp, $content);
+			fclose($fp);
+
+			$file = (object)array(
+				'uid' => $mcpdf_node->uid,
+				'filename' => $lms_file->filename,
+				'uri' => $filename,
+				'filemime' => file_get_mimetype($filename),
+				'status' => 1,
+				'display' => 1,
+			);
+			if ($file = file_move($file, $filename, $replace = FILE_EXISTS_RENAME)) {
+				$mcpdf_node->field_pdf_photos['und'][$delta] = (array)$file;
+				//$listing_video->save( TRUE );
+			}
+			node_save($mcpdf_node);
+			$mc_pdf_folder = 'public://lms/mc_pdf/';
+			$real_path_temp_folder = drupal_realpath($mc_pdf_folder);
+			$cmd = "rm $real_path_temp_folder 2>&1";
+			exec($cmd, $op);	
+		}
+	}
+	//node_save($mcpdf_node);
+	$serializefids = serialize($fids);
+	$reuslt = db_merge('cbone_selected_photos')
+			  ->key(array('mcpdf_id' => $_POST['mcpdf_nid']))
+			  ->fields(array(
+				  'listing_id' => $nid1,
+				  'pdf_design_id' => $nid2,
+				  'mcpdf_id' => $_POST['mcpdf_nid'],
+				  'selected_photos_fid' => $serializefids,
+			  ))
+			  ->execute();
+	mcpdf_agent_image($nid1, $mcpdf_nid);
+	save_generated_pdf($nid1, $nid2);
+	pdf_image_generation($nid1, $nid2);
+	cbone_delete_mcpdf_agent_images($_POST['mcpdf_nid']);
+	cbone_delete_mcpdf_images($_POST['mcpdf_nid']);
+	print 'Saved';
+	
+}
+/**
+ * Callback function cbone_delete_mcpdf_images()
+ * to delete photos from mc_pdf node 
+ **/
+function cbone_delete_mcpdf_images($nid){
+	$mcpdf_node = node_load($nid);
+	foreach ($mcpdf_node->field_pdf_photos['und'] as $key => $value) {
+		$file = file_load($value['fid']);
+		unset($mcpdf_node->field_pdf_photos['und'][$key]);
+		file_delete($file);
+	}
+	node_save($mcpdf_node);
+	return '';
+}
+
+/**
+ * Callback function cbone_delete_mcpdf_agent_images()
+ * to delete photos from mc_pdf node 
+ **/
+function cbone_delete_mcpdf_agent_images($nid){
+	$mcpdf_node = node_load($nid);
+	if(!empty($mcpdf_node->field_primary_agent_photo)){
+		$pfile = file_load($mcpdf_node->field_primary_agent_photo['und'][0]['fid']);
+		unset($mcpdf_node->field_primary_agent_photo['und'][0]);
+		file_delete($pfile);
+	}
+	
+	if(!empty($mcpdf_node->field_co_listing_agent_photo)){
+		$cfile = file_load($mcpdf_node->field_co_listing_agent_photo['und'][0]['fid']);
+		unset($mcpdf_node->field_co_listing_agent_photo['und'][0]);
+		file_delete($cfile);
+	}	
+	node_save($mcpdf_node);
+	return '';
+}
+/************************Code for listing pdf generation**********************************/
+/**
+ * Callback function rules download
+ * to displayed listing nid 
+ * and template nid
+ **/
+function get_rules_download_nids() {
+ $nid1 = arg(1);
+ $nid2 = arg(2);
+ 
+ $full_nid = 'test/'.$nid1.'/'.$nid2; 
+ return $full_nid;
+ }
+ 
+ /**
+ * Callback function manage_mcpdf_nid()
+ * to saved the mc_pdf nid on choose
+ * radio button Use For Marketing Online
+ **/
+function manage_mcpdf_nid(){
+//print 'hello';
+//print $_POST['mcpdf_nid'];
+//print $_POST['listing_nid'];
+//print $_POST['shared_mcpdf_nid'];
+	if(isset($_POST['mcpdf_nid']) || isset($_POST['shared_mcpdf_nid'])) {
+		$mc_pdfnid = $_POST['mcpdf_nid'];
+		$listing_nid = $_POST['listing_nid'];
+		$shared_mcpdf_nid = $_POST['shared_mcpdf_nid'];
+		db_merge('cbone_website_settings')
+			  ->key(array('nid' => $listing_nid))
+			  ->fields(array(
+				  'print_and_go' => $mc_pdfnid,
+				  'shared_lisitng' => $shared_mcpdf_nid,
+			  ))
+			  ->execute();
+	}
+print "mcpdf nid saved";
+}
+/**
+ * Callback function manage_mcpdf_nid()
+ * to saved the mc_pdf nid on choose
+ * radio button Use For Marketing Online
+ **/
+function weblisting_mcpdf_nid(){
+//print $_POST['mcpdf_nid'];
+//print $_POST['listing_nid'];
+	if(isset($_POST['mcpdf_nid'])) {
+		$mc_pdfnid = $_POST['mcpdf_nid'];
+		$listing_nid = $_POST['listing_nid'];
+		db_merge('cbone_website_settings')
+			  ->key(array('nid' => $listing_nid))
+			  ->fields(array(
+				  'print_and_go' => $mc_pdfnid,
+			  ))
+			  ->execute();
+	}
+print "mcpdf nid saved";
+}
+/**
+ * Callback function manage_mcpdf_nid()
+ * to saved the mc_pdf nid on choose
+ * radio button Use For Marketing Online
+ **/
+function shared_mcpdf_nid(){
+//print $_POST['listing_nid'];
+//print $_POST['shared_mcpdf_nid'];
+	if(isset($_POST['shared_mcpdf_nid'])) {
+		$listing_nid = $_POST['listing_nid'];
+		$shared_mcpdf_nid = $_POST['shared_mcpdf_nid'];
+		db_merge('cbone_website_settings')
+			  ->key(array('nid' => $listing_nid))
+			  ->fields(array(
+				  'shared_lisitng' => $shared_mcpdf_nid,
+			  ))
+			  ->execute();
+	}
+print "mcpdf nid saved";
+}
+/**
+ * Callback function shared_listing_pdf()
+ * to saved the mc_pdf nid on choose
+ * radio button Use For Marketing Online
+ **/
+function shared_listing_pdf($nid1){
+global $base_url, $url;
+	//Query to get pdf design nid, display document values
+	$query=db_select('cbone_website_settings', 'cws')
+		->fields('cws')
+		->condition('nid', $nid1, '=');
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+		foreach($result as $value){
+			$pdf_brochure = $value->print_and_go;
+			$shared_pdf_brochure = $value->shared_lisitng;
+		}
+	}
+	$nid2= $shared_pdf_brochure;
+	$mcpdf_id_pdf = get_mcpdf_nid($nid1, $nid2);
+	
+	if(file_exists('S3://PDF/shared-listing'.$mcpdf_id_pdf.'.pdf')){
+		$path = 'S3://PDF/shared-listing'.$mcpdf_id_pdf.'.pdf';
+		$fid = db_query("SELECT fid FROM {file_managed} WHERE uri = :path", array(':path' => $path))->fetchField();
+		$file = file_load($fid);
+		file_delete($file);
+	}
+	
+	$pdf_nid1 = $nid1;
+	$pdf_nid2 = $nid2;
+	
+	$photosquery= db_select('cbone_selected_photos', 'cs')
+			->fields('cs', array('selected_photos_fid'))
+			->condition('listing_id', $pdf_nid1, '=')
+			->condition('pdf_design_id', $pdf_nid2, '=');
+	$photosresult = $photosquery->execute()->fetchField();
+	$photosresultarray = unserialize($photosresult); 
+		
+	$node_update= 	node_load($mcpdf_id_pdf);
+	if(!empty($photosresultarray)){
+		foreach ($photosresultarray as $delta => $value) {
+			$fids[]=$value;
+			$lms_file = file_load($value);
+			$filepath = $lms_file->uri;
+			$content = file_get_contents($filepath);
+			
+			$temp_folder = 'public://lms/mc_pdf/images/';
+			file_prepare_directory($temp_folder, FILE_CREATE_DIRECTORY);
+			$filename = $temp_folder.$lms_file->filename;
+			$realpath = drupal_realpath($filename);
+			$fp = fopen($realpath, "w");
+			fwrite($fp, $content);
+			fclose($fp);
+
+			$file = (object)array(
+				'uid' => $node_update->uid,
+				'filename' => $lms_file->filename,
+				'uri' => $filename,
+				'filemime' => file_get_mimetype($filename),
+				'status' => 1,
+				'display' => 1,
+			);
+			if ($file = file_move($file, $filename, $replace = FILE_EXISTS_RENAME)) {
+				$node_update->field_pdf_photos['und'][$delta] = (array)$file;
+			}
+			node_save($node_update);
+			$mc_pdf_folder = 'public://lms/mc_pdf/';
+			$real_path_temp_folder = drupal_realpath($mc_pdf_folder);
+			$cmd = "rm $real_path_temp_folder 2>&1";
+			exec($cmd, $op);	
+		}
+	}
+		
+	$url = $base_url.'/shared-listing/'.$pdf_nid1.'/'.$pdf_nid2; 
+	$headers = array();
+	// Add cookie so that we can use the same access as the logged in user, if present.
+    $headers = array(
+      'Cookie' => $_SERVER['HTTP_COOKIE'],
+    );
+	// Fetch the content
+	$response = drupal_http_request($url, array('headers' => $headers));
+	$data = $response->data;
+  
+	$temp_folder = 'public://lms/'.$pdf_nid1.'/pdf/';
+	file_prepare_directory($temp_folder, FILE_CREATE_DIRECTORY);
+	$filename = $temp_folder.'shared-listing'.$mcpdf_id_pdf.".pdf";
+	$realpath = drupal_realpath($filename);
+	$fp = fopen($realpath, "w");
+	fwrite($fp, $data);
+	fclose($fp);
+	// $cmd = "convert -density 200x200 -colorspace CMYK -resize 100% -quality 100 -compress jpeg $realpath $realpath";
+	// exec($cmd, $op);
+	$pdf_node = node_load($mcpdf_id_pdf);
+
+	$file = (object)array(
+		'uid' => $pdf_node->uid,
+		'filename' => 'shared-listing'.$mcpdf_id_pdf.".pdf",
+		'uri' => $filename,
+		'filemime' => file_get_mimetype($filename),
+		'status' => 1,
+		'display' => 1,
+	);
+	if ($file = file_move($file, $filename, $replace = FILE_EXISTS_RENAME)) {
+		$pdf_node->field_shared_listing_pdf['und']['0'] = (array)$file;
+		//$listing_video->save( TRUE );
+	}
+	node_save($pdf_node);
+	$real_path_temp_folder = drupal_realpath($temp_folder);
+	$cmd = "rm $real_path_temp_folder 2>&1";
+	exec($cmd, $op);
+	
+	cbone_delete_mcpdf_images($mcpdf_id_pdf);	
+	$node_load = node_load($mcpdf_id_pdf);
+	
+	$path = $node_load->field_shared_listing_pdf['und'][0]['uri'];
+	$file_name = $node_load->field_shared_listing_pdf['und'][0]['filename'];
+	$url = file_create_url($path);
+	header('Content-disposition: attachment; filename="'.$file_name.'"');
+	header("Content-Type: application/octet-stream");
+	readfile($url);
+}

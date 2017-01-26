@@ -1,0 +1,47 @@
+<?php
+/*
+ * Implementation of hook_menu
+ */
+function photographer_services_menu() {
+  $items = array();
+  $items['manage-listing/%/photography'] = array(
+    'title' => 'Listing Management Photography Tools',
+    'description' => 'Manage Listing Photography',
+    'page callback' => 'cbone_manage_listing_photography',
+    'page arguments' => array(1),
+	  'access callback' => 'manage_listing_access',
+	  'access arguments' => array(1),
+	  'file' => 'includes/cbone_manage_listing_photography.inc',
+  );
+  $items['manage-listing/%/photography/%/profile'] = array(
+    'title' => 'Listing Management Photography Tools',
+    'description' => 'Manage Listing Photography',
+    'page callback' => 'cbone_manage_listing_photography_profile',
+    'page arguments' => array(1, 3),
+    'access callback' => 'manage_listing_access',
+	  'access arguments' => array(1),
+	  'file' => 'includes/cbone_manage_listing_photography.inc',
+  );
+   return $items;
+}
+
+/**
+ * Implements hook_theme
+ **/
+function photographer_services_theme($existing, $type, $theme, $path) {
+  return array(
+   'protographer_template_base' => array(
+			'template' => 'template/protographer_template_base',
+			'variables' =>  array('data' => null),
+		),
+		'protographer_template' => array(
+			'template' => 'template/protographer_template',
+			'variables' =>  array('data' => null),
+		),
+		'protographer_detail_profile_template' => array(
+			'template' => 'template/protographer_detail_profile',
+			'variables' =>  array('data' => null),
+		),
+  );
+  return $theme;
+}

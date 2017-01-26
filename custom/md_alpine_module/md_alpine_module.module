@@ -1,0 +1,830 @@
+<?php
+/**
+ * @return mixed
+ * Hook_menu
+ */
+function md_alpine_module_menu(){
+    $items['ajax_portfolio'] = array(
+        'page callback' => 'ajax_portfolio',
+        'access callback' => true,
+        'access arguments' => array('access content'),
+    );
+    $items['md_alpine_save_sortable_theme_settings'] = array(
+        'page callback' => 'md_alpine_save_sortable_theme_settings',
+        'access callback'   => true,
+        'access arguments'  => array('administer users'),
+        'type'  => MENU_CALLBACK
+    );
+    return $items;
+}
+/**
+ * Get only node and comment html data
+ */
+function ajax_portfolio(){
+    if(isset($_GET['nid'])){
+        $nid = $_GET['nid'];
+        $node = node_load($nid);
+        if($node->type == 'portfolio'){
+            $node_view = node_view($node,'teaser');
+            echo drupal_render($node_view);
+        }
+    }
+}
+/**
+ * Save sortable theme setting values
+ */
+function md_alpine_save_sortable_theme_settings($form_state) {
+    if(isset($_POST['order'])) {
+        $order_val = $_POST['order'];
+    }
+    return $order_val;
+}
+/**
+ * hook_block_info
+ */
+function md_alpine_module_block_info() {
+    for($i=1;$i<=7;$i++) {
+        $blocks['parallax_'.$i.''] = array(
+            'info' => t('Parallax Block '.$i.''),
+            'cache' => DRUPAL_CACHE_PER_ROLE,
+        );
+    }
+    $blocks['header'] = array(
+        'info'  => t('MD Alpine Header Block'),
+        'cache' => DRUPAL_CACHE_PER_ROLE,
+    );
+    $blocks['footer'] = array(
+        'info'  => t('MD Alpine Footer Block'),
+        'cache' => DRUPAL_CACHE_PER_ROLE,
+    );
+
+    return $blocks;
+}
+/**
+ * Implements hook_block_configure().
+ */
+function md_alpine_module_block_configure($delta = '') {
+
+}
+/**
+ * Implement hook_block_view
+ * @return data
+ */
+function md_alpine_module_block_view($delta = '') {
+    $block = array();
+    $css = '';
+    global $base_url;
+    for($i=1;$i<=7;$i++) {
+        switch($delta) {
+            case 'parallax_'.$i.'':
+                $block['subject'] = t('Parallax '.$i.'');
+                $block['content'] = '';
+                if(theme_get_setting('parallax_'.$i.'_enabled') == TRUE) {
+                    switch(theme_get_setting('parallax_'.$i.'_type')){
+                        case 'skills' :
+                            $block['content'] .= '<div class="parallax-overlay ';
+                            if(theme_get_setting('pr_'.$i.'_overlay_enable') == TRUE){
+                                $block['content'] .= 'parallax-background-color';
+                            }
+                            $block['content'] .= '">
+                    <div class="section-content">
+                        <div class="container text-center">
+
+                            <!-- Parallax title -->
+                            <h1>'.theme_get_setting('pr_'.$i.'_title').'</h1>
+                            <p class="lead">
+                                '.theme_get_setting('pr_'.$i.'_des').'
+                            </p>
+                            <!-- Parallax title -->
+
+                            <!-- Parallax content -->
+                            <div class="parallax-content">
+                                <div class="cart">
+                                    <div class="cart_container">
+                                        <div class="row">';
+                            $skills = theme_get_setting('pr_'.$i.'_skill');
+
+                            foreach($skills as $key => $value) {
+                                 $block['content'] .= '<div class="col-md-4">
+                                    <div class="element-line">
+                                        <div class="circular-content">
+                                            <div class="circular-item hidden">';
+                                            if($skills[$key]['percent'] != null){
+                                                $block['content'] .= '<div class="circular-pie" data-percent="'.$skills[$key]['percent'].'" data-color="#ffffff">
+                                                    <span>'.$skills[$key]['percent'].'%</span>
+                                                </div>';
+                                            }
+                                                $block['content'] .= '<div class="circ_counter_desc">
+                                                    <p class="lead">
+                                                        '.$skills[$key]['title'].'
+                                                    </p>
+                                                    <p>
+                                                        '.$skills[$key]['des'].'
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+                            }
+                    $block['content'] .= '</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Parallax content -->
+                        </div>
+                    </div>
+                </div>';
+                            break;
+                        case 'connect' :
+                            $block['content'] .= '<div class="parallax-overlay ';
+                            if(theme_get_setting('pr_'.$i.'_overlay_enable') == TRUE){
+                                $block['content'] .= 'parallax-background-color';
+                            }
+                            $block['content'] .= '">
+                    <div class="section-content">
+                        <div class="container text-center">
+
+                            <!-- Parallax title -->
+                            <h1>'.theme_get_setting('pr_'.$i.'_title').'</h1>
+                            <p class="lead">
+                                '.theme_get_setting('pr_'.$i.'_des').'
+                            </p>
+                            <!-- Parallax title -->
+
+                            <!-- Parallax content -->
+                            <div class="parallax-content social-link">
+                                <div class="row">';
+                            $connect = theme_get_setting('pr_'.$i.'_connect');
+                            /*$count = count($connect);
+                            $divider = 12 % $count;
+                            if ($divider = 0) {
+                                $column_type = 12 / $count;
+                            } elseif($divider = 7 ) {
+                                $column_type = 2;
+                            } elseif ($divider = 5) {
+                                $column_type = 2;
+                            } elseif ($divider = 4) {
+                                $column_type = 4;
+                            } elseif ($divider = 3) {
+                                $column_type = 4;
+                            } elseif ($divider = 2) {
+                                $column_type = 3;
+                            } else {
+                                $column_type = 2;
+                            }*/
+                            foreach($connect as $key => $value) {
+                                $block['content'] .= '<!-- Link item -->
+                                    <div class="col-md-3 col-sm-3 col-xs-6">
+                                        <div class="element-line">
+                                            <div class="item_top">';
+                                if($connect[$key]['icon'] != null) {
+                                    $block['content'] .= '<div class="hi-icon-effect-1">
+                                                    <a href="'.$connect[$key]['link'].'" target="_blank" class=""> <i class="hi-icon '.$connect[$key]['icon']['bundle'].' '.$connect[$key]['icon']['icon'].' icon-4x"></i> </a>
+                                                </div>';
+                                }
+                                $block['content'] .= '<span>'.$connect[$key]['title'].'</span>
+                                                <p class="lead hidden-xs">
+                                                    '.$connect[$key]['des'].'
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>';
+                            }
+                            $block['content'] .= '</div>
+                                </div>
+                            <!-- Parallax content -->
+
+                        </div>
+                    </div>
+                </div>';
+                            break;
+                        case 'button'  :
+                            $block['content'] .= '<div class="parallax-overlay ';
+                            if(theme_get_setting('pr_'.$i.'_overlay_enable') == TRUE){
+                                $block['content'] .= 'parallax-background-color';
+                            }
+                            $block['content'] .= '">
+                    <div class="section-content">
+                        <div class="container text-center">
+                            <!-- Parallax title -->
+                            <h1>'.theme_get_setting('pr_'.$i.'_title').'</h1>
+                            <p class="lead no-margin">
+                                '.theme_get_setting('pr_'.$i.'_des').'
+                            </p>
+                            <!-- Parallax title -->
+                            <!-- Parallax content -->
+                            <div class="parallax-content">
+                                <div class="row">
+                                    <div class="col-md-12">
+									<div class="element-line">
+										<div class="item_right">';
+                            if(theme_get_setting('pr_'.$i.'_button_text') && theme_get_setting('pr_'.$i.'_button_text_hover')) {
+                                $block['content'] .= '<div class="mybutton ultra">
+												<a href="'.theme_get_setting('pr_'.$i.'_button_link').'"> <span data-hover="'.theme_get_setting('pr_'.$i.'_button_text_hover').'">'.theme_get_setting('pr_'.$i.'_button_text').'</span> </a>
+											</div>';
+                            }
+                            $block['content'] .= '</div>
+									</div>
+								</div>
+                                </div>
+                            </div>
+                            <!-- Parallax content -->
+
+                        </div>
+                    </div>
+                </div>';
+                            break;
+                        case 'number'  :
+                            $block['content'] .= '<div class="parallax-overlay ';
+                            if(theme_get_setting('pr_'.$i.'_overlay_enable') == TRUE){
+                                $block['content'] .= 'parallax-background-color';
+                            }
+                            $block['content'] .= '">
+                    <div class="section-content">
+                        <div class="container text-center">
+                            <!-- Parallax title -->
+                            <h1>'.theme_get_setting('pr_'.$i.'_title').'</h1>
+                            <p class="lead">
+                                '.theme_get_setting('pr_'.$i.'_des').'
+                            </p>
+                            <!-- Parallax title -->
+                            <!-- Parallax content -->
+                            <div class="parallax-content">
+                                <div class="row text-center number-counters">';
+                            $number = theme_get_setting('pr_'.$i.'_number');
+                            /*$count = count($number);
+                            $divider = 12 % $count;
+                            if ($divider = 0) {
+                                $column_type = 12 / $count;
+                            } elseif($divider = 7 ) {
+                                $column_type = 2;
+                            } elseif ($divider = 5) {
+                                $column_type = 2;
+                            } elseif ($divider = 4) {
+                                $column_type = 4;
+                            } elseif ($divider = 3) {
+                                $column_type = 4;
+                            } elseif ($divider = 2) {
+                                $column_type = 3;
+                            } else {
+                                $column_type = 2;
+                            }*/
+                            foreach ($number as $key => $value){
+                                $block['content'] .= '<div class="col-md-3 col-sm-6">
+                                        <div class="counters-item element-line">
+                                            <i class="'.$number[$key]['icon']['bundle'].' '.$number[$key]['icon']['icon'].' icon-4x"></i>
+                                            <strong data-to="'.$number[$key]['number_count'].'">'.$number[$key]['number_count'].'</strong>
+                                            <p class="lead">
+                                                '.$number[$key]['des'].'
+                                            </p>
+                                        </div>
+                                    </div>';
+
+                            }
+                            $block['content'] .= '
+                                </div>
+                            </div>
+                            <!-- Parallax content -->
+
+                        </div>
+                    </div>
+                </div>';
+                            break;
+                        case 'customer' :
+                            $block['content'] .= '<div class="parallax-overlay ';
+                            if(theme_get_setting('pr_'.$i.'_overlay_enable') == TRUE){
+                                $block['content'] .= 'parallax-background-color';
+                            }
+                            $block['content'] .= '">
+                    <div class="section-content">
+                        <div class="container text-center">
+
+                            <!-- Parallax title -->
+                            <h1>'.theme_get_setting('pr_'.$i.'_title').'</h1>
+                            <p class="lead">
+                                '.theme_get_setting('pr_'.$i.'_des').'
+                            </p>
+                            <!-- Parallax title -->
+
+                            <!-- Parallax content -->
+                            <div class="parallax-content">
+                                <div class="element-line">
+                                            <div class="item_right">
+                                                 <div id="owl-client" class="owl-carousel">';
+
+                            $customer = theme_get_setting('pr_'.$i.'_customer');
+                            foreach ($customer as $key => $value){
+                                $block['content'] .= '<!-- Client item -->
+                                    <div class="item">
+                                        <a href="'.$customer[$key]['link'].'" class="zoom"> <img class="img-responsive client-logo" src="'.md_alpine_theme_setting_check_path($customer[$key]['image']).'" alt=""> </a>
+                                    </div>
+                                    <!-- Client item -->';
+                            }
+
+                            $block['content'] .= '</div>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                            <!-- Parallax content -->
+
+                        </div>
+                    </div>
+                </div>';
+                            break;
+                        case 'overview' :
+                            $block['content'] .= '<div class="parallax-overlay ';
+                            if(theme_get_setting('pr_'.$i.'_overlay_enable') == TRUE){
+                                $block['content'] .= 'parallax-background-color';
+                            }
+                            $block['content'] .= '">
+                    <div class="section-content overview">
+                        <div class="container text-center">
+
+                            <!-- Parallax title -->
+                            <h1>'.theme_get_setting('pr_'.$i.'_title').'</h1>
+                            <p class="lead">
+                                '.theme_get_setting('pr_'.$i.'_des').'
+                            </p>
+                            <!-- Parallax title -->
+
+                            <!-- Parallax content -->
+                            <div class="parallax-content">
+                                <div class="row">';
+                            $overview = theme_get_setting('pr_'.$i.'_overview');
+                           /* $count = count($overview);
+                            $divider = 12 % $count;
+                            if ($divider = 0) {
+                                $column_type = 12 / $count;
+                            } elseif($divider = 7 ) {
+                                $column_type = 2;
+                            } elseif ($divider = 5) {
+                                $column_type = 2;
+                            } elseif ($divider = 4) {
+                                $column_type = 4;
+                            } elseif ($divider = 3) {
+                                $column_type = 4;
+                            } elseif ($divider = 2) {
+                                $column_type = 3;
+                            } else {
+                                $column_type = 2;
+                            }*/
+                            foreach ($overview as $key => $value){
+                                $block['content'] .= '<!-- Item box -->
+                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                        <div class="element-line">
+                                            <div class="item_left">';
+                                if($overview[$key]['icon']['icon'] != null && $overview[$key]['des'] != null) {
+                                    $block['content'] .= '<div class="parallax-box">
+                                                    <a href="'.$overview[$key]['link'].'"> <i class="'.$overview[$key]['icon']['bundle'].' '.$overview[$key]['icon']['icon'].' icon-4x"></i> <h4>'.$overview[$key]['title'].'</h4>
+                                                    <p>
+                                                        '.$overview[$key]['des'].'
+                                                    </p> </a>
+                                                </div>';
+                                }
+                                $block['content'] .= '</div>
+                                        </div>
+                                    </div>
+                                    <!-- Item box -->';
+                            }
+                            $block['content'] .= '
+                                </div>
+                            </div>
+                            <!-- Parallax content -->
+                        </div>
+                    </div>
+                </div>';
+                            break;
+                        case 'contact' :
+                            $contact_icon_no1 = theme_get_setting('pr_'.$i.'_contact_icon_no1');
+                            $block['content'] .= '<div class="parallax-overlay ';
+                            if(theme_get_setting('pr_'.$i.'_overlay_enable') == TRUE){
+                                $block['content'] .= 'parallax-background-color';
+                            }
+                            $block['content'] .= '">
+                    <div class="section-content">
+                        <div class="container text-center">
+                            <div class="item_right">
+
+                                <!-- Parallax title -->
+                                <h1><i class="'.$contact_icon_no1['bundle'].' '.$contact_icon_no1['icon'].' icon-5x"></i></h1>
+                                <span class="call-number">'.theme_get_setting('pr_'.$i.'_contact_title_no1').'</span>
+                                <p class="lead">
+                                    '.theme_get_setting('pr_'.$i.'_contact_des_no1').'
+                                </p>
+                                <!-- Parallax title -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                            break;
+                    }
+                }
+            break;
+        }
+    }
+    switch($delta) {
+        case 'header':
+            $block['subject'] = t('Header Block');
+            $block['content'] = _md_alpine_header_block_content();
+            break;
+        case 'footer':
+            $block['subject'] = 'Footer Block';
+            $block['content'] = _md_alpine_footer_block_content();
+            break;
+    }
+    drupal_add_css($css,'inline');
+    return $block;
+}
+
+/**
+ * Header Block Content
+ */
+function _md_alpine_header_block_content() {
+    global $base_url;
+    $content = '';
+    $css = '';
+    $header_bg_type = theme_get_setting('header_background_type');
+    if(theme_get_setting('logo_retina_path')) {
+        $logo_path = md_alpine_theme_setting_check_path(theme_get_setting('logo_retina_path'));
+    } elseif(theme_get_setting('logo_normal_path')) {
+        $logo_path = md_alpine_theme_setting_check_path(theme_get_setting('logo_normal_path'));
+    } else {
+        $logo_path = $base_url.'/'.drupal_get_path('theme','md_alpine').'/images/alpine-logo-home.png';
+    }
+    if($header_bg_type == 'video') {
+        $video_link = theme_get_setting('header_video_link');
+        $content .= '<!-- Home Section -->
+            <section id="home" data-stellar-background-ratio="0.6" data-stellar-vertical-offset="20">
+                <div style="background-image: url(\''.md_alpine_theme_setting_check_path(theme_get_setting('header_video_image_fallback')).'\');" class="fullscreen-image"></div>
+                <div class="intro-video">
+
+                    <div id="video-controls">
+                        <a id="video-play" onclick="jQuery(\'#bgndVideo\').playYTP();"><i class="fontello icon-play"></i></a>
+                        <a id="video-pause" onclick="jQuery(\'#bgndVideo\').pauseYTP();"><i class="fontello icon-pause"></i></a>
+                        <a id="video-volume" onclick="jQuery(\'#bgndVideo\').toggleVolume();"><i class="fontello icon-volume-down"></i></a>
+                    </div>
+                    <!-- Video Background - Here you need to replace the videoURL with your youtube video URL -->
+                    <a id="bgndVideo" class="player" data-property="{videoURL:\''.$video_link.'\'}"></a>
+                    <!--/Video Background -->
+                    <div class="text-slider">
+                        <div class="intro-item">
+                            <div class="intro-flexslider">
+                                <ul class="slides">';
+        $hd_vd_slide = theme_get_setting('hd_vd_slide');
+        if(isset($hd_vd_slide) && !empty($hd_vd_slide)) {
+            foreach ($hd_vd_slide as $key => $value) {
+                $content .= '
+                    <li>
+                        <div class="section-title text-center">
+                            <div class="hidden-xs">
+                                <span class="line big"></span>
+                                <span>'.$hd_vd_slide[$key]['before_title'].'</span>
+                                <span class="line big"></span>
+                            </div>
+                            <h1>'.$hd_vd_slide[$key]['title'].'</h1>
+                            <div class="hidden-xs">
+                                <span class="line"></span>
+                                <span>'.$hd_vd_slide[$key]['after_title'].'</span>
+                                <span class="line"></span>
+                            </div>
+                            <p class="lead">
+                                '.$hd_vd_slide[$key]['des'].'
+                            </p>
+                        </div>
+                    </li>';
+            }
+        }
+        $content .= '</ul>
+                        </div>';
+        if(theme_get_setting('header_vd_ti_button_link') != null && theme_get_setting('header_vd_ti_button_text') != null) {
+            $content .= '<div class="mybutton ultra">
+                            <a class="start-button" href="'.theme_get_setting('header_vd_ti_button_link').'"> <span data-hover="'.theme_get_setting('header_vd_ti_button_text_hover').'">'.theme_get_setting('header_vd_ti_button_text').'</span> </a>
+                        </div>
+                        ';
+        }
+        $content .= '</div>
+                    </div>
+                </div>
+            </section><!-- End Home Section -->';
+    }
+
+    if($header_bg_type == 'custom') {
+        $header_slide = theme_get_setting('hd_slide');
+        $content .= '<!-- Home Section -->
+		<section id="home">';
+
+        $content .= '<a id="slider_left" class="fullscreen-slider-arrow"><img src="'.$base_url.'/'.theme_path().'/img/arrow_left.png" alt="Slide Left" /></a>
+        <a id="slider_right" class="fullscreen-slider-arrow"><img src="'.$base_url.'/'.theme_path().'/img/arrow_right.png" alt="Slide Right" /></a>';
+
+        $content .=	'<div id="fullscreen-slider">';
+        foreach ($header_slide as $key => $value) {
+            $slide_image_path = md_alpine_theme_setting_check_path($header_slide[$key]['image']);
+            $content .= '<!-- Slider item -->
+				<div class="slider-item">
+					<img src="'.$slide_image_path.'" alt="">
+					<div class="pattern">
+						<div class="slide-content">
+							<!-- Section title -->
+							<div class="section-title text-center">
+								<div>
+									<span class="line big"></span>
+									<span>'.$header_slide[$key]['before_title'].'</span>
+									<span class="line big"></span>
+								</div>
+								<h1>'.$header_slide[$key]['title'].'</h1>
+								<p class="lead">
+                                    '.$header_slide[$key]['des'].'
+								</p>';
+            if($header_slide[$key]['button_link'] != null && $header_slide[$key]['button_text'] != null) {
+                $content .= '<div class="mybutton ultra">
+									<a class="start-button" href="'.$header_slide[$key]['button_link'].'"> <span data-hover="'.$header_slide[$key]['button_text_hover'].'">'.$header_slide[$key]['button_text'].'</span> </a>
+								</div>';
+            }
+		    $content .= '</div>
+							<!-- Section title -->
+						</div>
+					</div>
+				</div>
+				<!-- Slider item -->';
+        }
+		$content .= '
+			</div>
+		</section>
+		<!-- Home Section -->';
+
+    }
+    if($header_bg_type == 'md_fullscreen_slider') {
+    }
+    if($header_bg_type == 'pattern') {
+        $header_pt_slide = theme_get_setting('hd_pt_slide');
+        $content .= '<!-- Home Section -->
+		<section id="home" class="intro-pattern">';
+
+        if(theme_get_setting('header_pt_slide_auto') == false){
+            $content .= '<a id="flexslider_left" class="fullscreen-slider-arrow"><img src="'.$base_url.'/'.theme_path().'/img/arrow_left.png" alt="Slide Left" /></a>
+			<a id="flexslider_right" class="fullscreen-slider-arrow"><img src="'.$base_url.'/'.theme_path().'/img/arrow_right.png" alt="Slide Right" /></a>';
+        }
+
+        $content .=	'<div class="text-slider">
+			    <div class="intro-item">
+			        <div class="intro-flexslider">
+			            <ul class="slides">';
+        foreach ($header_pt_slide as $key => $value) {
+            $content .= '<!-- Slider item -->
+                            <li>
+                                <!-- Section title -->
+                                <div class="section-title text-center">
+                                    <h1>'.$header_pt_slide[$key]['title'].'</h1>
+                                    <p class="lead">
+                                        '.$header_pt_slide[$key]['des'].'
+                                    </p>';
+            if($header_pt_slide[$key]['button_link'] != null && $header_pt_slide[$key]['button_text'] != null) {
+                $content .= '<div class="mybutton medium">
+									<a class="start-button" href="'.$header_pt_slide[$key]['button_link'].'"> <span data-hover="'.$header_pt_slide[$key]['button_text_hover'].'">'.$header_pt_slide[$key]['button_text'].'</span> </a>
+								</div>';
+            }
+            $content .=     '</div><!-- Section title -->
+                            </li><!-- Slider item -->';
+        }
+        $content .= '    </ul>
+                    </div>
+                </div>
+			</div>
+		</section>
+		<!-- Home Section -->';
+
+    }
+    drupal_add_css($css,'inline');
+    return $content;
+}
+
+/**
+ * Footer Block Content
+ */
+function _md_alpine_footer_block_content(){
+    global $base_url;
+    $content = '';
+    $content .= '<!-- Back to top -->
+            <a href="#" id="back-top"><i class="fontello icon-angle-up icon-2x"></i></a>
+            <footer class="text-center">';
+    if(theme_get_setting('ft_social')) {
+        $content .= '<div class="social-icon">';
+        $social_acc = theme_get_setting('ft_social');
+        foreach ($social_acc as $key => $value) {
+            if(isset($social_acc[$key]['icon'])) {
+                $sc_icon_value = $social_acc[$key]['icon'];
+                $content .= '<a href="'.$social_acc[$key]['link'].'" target="_blank"><i class="'.$sc_icon_value['icon'].' icon-3x"></i></a>';
+            }
+        }
+        $content .= '</div>';
+    }
+    $content .= theme_get_setting('footer_text').'
+            </footer>';
+    return $content;
+}
+/**
+ * Hook_form_alter
+ */
+function md_alpine_module_form_alter(&$form, &$form_state, $form_id){
+    switch($form_id){
+        case 'block_admin_configure':
+            $delta = $form['delta']['#value'];
+
+            // Before Title Text
+            $form['settings']['before_title'] = array(
+                '#type' => 'textfield',
+                '#title' => t('Text Before Block Title'),
+                '#default_value' => variable_get($delta.'_before_title', ''),
+                '#description'   => t('Text display before block title in MD Alpine Theme'),
+                '#weight'   => -20,
+            );
+            // After Title Text
+            $form['settings']['after_title'] = array(
+                '#type' => 'textfield',
+                '#title' => t('Text After Block Title'),
+                '#default_value' => variable_get($delta.'_after_title', ''),
+                '#description'   => t('Text display after block title in MD Alpine Theme')
+            );
+            // Block Description
+            $form['settings']['description'] = array(
+                '#type' => 'textfield',
+                '#title' => t('Block Description'),
+                '#default_value' => variable_get($delta.'_description', ''),
+                '#description'   => t('Text display under block title in MD Alpine Theme'),
+                '#maxlength' => 1024,
+            );
+            $form['settings']['title_des_animate'] = array(
+                '#type' => 'select',
+                '#options'  => array(
+                    'none'          => 'None',
+                    'item_top'      => 'Top to bottom',
+                    'item_bottom'   => 'Bottom to top',
+                    'item_left'     => 'Left to right',
+                    'item_right'    => 'Right to left',
+                    'item_fade_in'   => 'Fade In'
+                ),
+                '#title' => t('Title & Description Animation'),
+                '#default_value' => variable_get($delta.'_title_des_animate', 'item_left'),
+                '#description'   => t('Select Title and Description Animation'),
+            );
+            $form['settings']['content_animate'] = array(
+                '#type' => 'select',
+                '#options'  => array(
+                    'none'          => 'None',
+                    'item_top'      => 'Top to bottom',
+                    'item_bottom'   => 'Bottom to top',
+                    'item_left'     => 'Left to right',
+                    'item_right'    => 'Right to left',
+                    'item_fade_in'   => 'Fade In'
+                ),
+                '#title' => t('Block Content Animation'),
+                '#default_value' => variable_get($delta.'_content_animate', 'item_right'),
+                '#description'   => t('Select Block Content Animation'),
+            );
+            $form['#submit'][] = '_md_alpine_block_config_form_submit_alter';
+            break;
+    }
+    return $form;
+}
+
+/**
+ * Submit block configure form alter
+ */
+function _md_alpine_block_config_form_submit_alter($form, &$form_state) {
+    $delta = $form_state['values']['delta'];
+    if($form_state['values']['before_title'] != null) {
+        variable_set($delta.'_before_title',$form_state['values']['before_title']);
+    }
+    if($form_state['values']['after_title'] != null) {
+        variable_set($delta.'_after_title',$form_state['values']['after_title']);
+    }
+    if($form_state['values']['description'] != null) {
+        variable_set($delta.'_description',$form_state['values']['description']);
+    }
+    if($form_state['values']['title_des_animate'] != null) {
+        variable_set($delta.'_title_des_animate',$form_state['values']['title_des_animate']);
+    }
+    if($form_state['values']['content_animate'] != null) {
+        variable_set($delta.'_content_animate',$form_state['values']['content_animate']);
+    }
+}
+/**
+ * @param $form
+ * @param $form_state
+ */
+function md_alpine_form_comment_form_alter(&$form, &$form_state) {
+    if($form['is_anonymous']['#value'] == true) {
+        unset($form['actions']['preview']);
+    }
+    $form['author']['#prefix'] = '<div class="row"><div class="col-md-12 col-sm-12 col-md-12 col-xs-12"><div class="form-group">';
+    $form['author']['#suffix'] = '</div></div></div>';
+    $form['subject']['#prefix'] = '<div class="row"><div class="col-md-12 col-sm-12 col-md-12 col-xs-12"><div class="form-group">';
+    $form['subject']['#attributes'] = array(
+        'class' => array('form-control input-lg'),
+        'placeholder' => t('Enter subject'),
+    );
+    $form['subject']['#suffix'] = '</div></div></div>';
+    $form['comment_body']['#prefix'] = '<div class="row"><div class="col-md-12 col-sm-12 col-md-12 col-xs-12"><div class="form-group">';
+    $form['comment_body']['#attributes']['placeholder'] = array(t('Enter subject'));
+    $form['comment_body']['#suffix'] = '</div></div></div>';
+    $form['actions']['submit']['#prefix'] = '<div class="row"><div class="col-md-12"><div class="action mybutton medium"><span data-hover="POST COMMENT">';
+    $form['actions']['submit']['#suffix'] = '</span></div></div></div>';
+    $form['actions']['preview']['#prefix'] = '<div class="row"><div class="col-md-12"><div class="action mybutton medium"><span data-hover="PREVIEW">';
+    $form['actions']['preview']['#suffix'] = '</span></div></div></div>';
+    $form['actions']['submit']['#value'] = t('Post Comment');
+    //$form['actions']['submit']['#attributes']['data-hover'] = array(t('Post comment'));
+}
+function md_alpine_module_theme_registry_alter(&$theme_registry) {
+    if(!empty($theme_registry['webform_element'])) {
+        $theme_registry['webform_element']['function'] = 'md_alpine_module_theme_webform_element';
+    }
+}
+function md_alpine_module_theme_webform_element($variables) {
+    // Ensure defaults.
+    $variables['element'] += array(
+        '#title_display' => 'before',
+    );
+
+    $element = $variables['element'];
+    // All elements using this for display only are given the "display" type.
+    if (isset($element['#format']) && $element['#format'] == 'html') {
+        $type = 'display';
+    }
+    else {
+        $type = ($element['#webform_component']['type'] == 'select' && isset($element['#type'])) ? $element['#type'] : $element['#webform_component']['type'];
+    }
+
+    // Convert the parents array into a string, excluding the "submitted" wrapper.
+    $nested_level = $element['#parents'][0] == 'submitted' ? 1 : 0;
+    $parents = str_replace('_', '-', implode('--', array_slice($element['#parents'], $nested_level)));
+
+    $wrapper_attributes = isset($element['#wrapper_attributes']) ? $element['#wrapper_attributes'] : array('class' => array());
+    $wrapper_classes = array(
+        'form-item',
+        'webform-component',
+        'webform-component-' . str_replace('_', '-', $type),
+        'webform-component--' . $parents,
+    );
+    if (isset($element['#title_display']) && strcmp($element['#title_display'], 'inline') === 0) {
+        $wrapper_classes[] = 'webform-container-inline';
+    }
+    $wrapper_attributes['class'] = array_merge($wrapper_classes, $wrapper_attributes['class']);
+    $output = '<div ' . drupal_attributes($wrapper_attributes) . '>' . "\n";
+
+    // If #title_display is none, set it to invisible instead - none only used if
+    // we have no title at all to use.
+    if ($element['#title_display'] == 'none') {
+        $variables['element']['#title_display'] = 'invisible';
+        $element['#title_display'] = 'invisible';
+        if (empty($element['#attributes']['title']) && !empty($element['#title'])) {
+            $element['#attributes']['title'] = $element['#title'];
+        }
+    }
+    // If #title is not set, we don't display any label or required marker.
+    if (!isset($element['#title'])) {
+        $element['#title_display'] = 'none';
+    }
+    $prefix = isset($element['#field_prefix']) ? '<span class="field-prefix">' . webform_filter_xss($element['#field_prefix']) . '</span> ' : '';
+    $suffix = isset($element['#field_suffix']) ? ' <span class="field-suffix">' . webform_filter_xss($element['#field_suffix']) . '</span>' : '';
+
+    switch ($element['#title_display']) {
+        case 'inline':
+        case 'before':
+        case 'invisible':
+            $output .= ' ' . theme('form_element_label', $variables);
+            $output .= ' ' . $prefix . $element['#children'] . $suffix . "\n";
+            break;
+
+        case 'after':
+            $output .= ' ' . $prefix . $element['#children'] . $suffix;
+            $output .= ' ' . theme('form_element_label', $variables) . "\n";
+            break;
+
+        case 'none':
+        case 'attribute':
+            // Output no label and no required marker, only the children.
+            $output .= ' ' . $prefix . $element['#children'] . $suffix . "\n";
+            break;
+    }
+
+    if (!empty($element['#description'])) {
+        $output .= ' <div class="description">' . $element['#description'] . "</div>\n";
+    }
+
+    $output .= "</div>\n";
+    return $output;
+}
+/**
+ * @param $css
+ * Hook css alter
+ */
+function md_alpine_module_css_alter(&$css) {
+    /* Remove some default Drupal css */
+    $exclude = array(
+        //'modules/system/system.menus.css' => FALSE,
+    );
+    $css = array_diff_key($css, $exclude);
+}

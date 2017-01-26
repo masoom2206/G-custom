@@ -1,0 +1,442 @@
+.page-elements{color:#fff; background-color:#272C33; text-align:center; padding: 2% 0 30%; float:left;}
+.page-setting h3, .page-elements h3, .template-setting h3 { color: #fff; text-align: center;margin-top:0px !important;  padding: 15px 0 0;}
+.page-setting-contents input, .page-setting-contents checkbox, .page-setting-contents select{ height: 20px; padding: 0 !important; width: 85px !important;}
+.template-setting-contents{border-top: 1px solid #cccccc; border-bottom: 1px solid #cccccc;padding: 10px 0; margin: 20px 10px;}
+.design-content-right-top input{height: 30px; padding: 0 !important;}
+.design-content-right-top input[type="color"]{ margin: 6px 4px !important;}
+.page-setting-dimensions{height:11in;width:8.5in; border:1px #000 dashed;}
+#canvas-wrapper-main { float: left; width: 100%; background-color:#DDDDDD;}
+#canvas-wrapper-left{ float: left; margin-top: 8%; margin-left: 3%; float: left;
+    height: 400px;
+    margin-left: 3%;
+    margin-top: 8%;
+    overflow: auto;
+    width: 90%;}
+.container-div { float: left; width: 95%; margin: 20px 0; opacity: 0.5;}
+.container-div.pageselected { opacity:1;}
+.canvas-container {background-color:#fff;float:left;}
+#canvas-wrapper-right { background-color: #272c33; float: right; width: 30%;}
+.sides{position:relative;float:left;margin:20px 5px;width: 100%;}
+.pagetool{text-align: left;}
+.pagetool li.pageNumber{ padding:10px; cursor:pointer;}
+.pagetool li{ padding:20px; cursor:pointer;display: inline;}
+.pagecopy { background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/Duplicate_file-512.png") no-repeat scroll center center;}
+.pagecopy:hover{ background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/Duplicate_file-Hex_66ffff.png") no-repeat scroll center center;}
+.pagedelete { background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/Trash_Can-512.png") no-repeat scroll center center;}
+.pagedelete:hover { background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/Trash_Can-Hex_66ffff.png") no-repeat scroll center center;}
+.pagedown{ background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/CDR-TriangleDown-Hex_b3b3b3.png") no-repeat scroll center center;}
+.pagedown:hover{ background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/CDR-TriangleDown-Hex_66ffff.png") no-repeat scroll center center;}
+.pageup { background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/CDR-TriangleUp-Hex_b3b3b3.png") no-repeat scroll center center;}
+.pageup:hover { background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/CDR-TriangleUp-Hex_66fff.png") no-repeat scroll center center;}
+.sides-inner{height:90px; border:1px solid #666;float:left;width:100%;}
+.temp-name { float: left;width: 50%;}
+.temp-name #temp_name{ border-radius: 10px;     height: 35px;    width: 75%;}
+.temp-button { float: left;width: 100%;text-align:right;}
+.left-tabs { float: left; width: 40%;}
+.right-tabs { float: left; width: 60%;}
+#pdf-main-container #text-controls label{ color:#FFFFFF !important;}
+#pdf-main-container .btn{ font-weight: 700 !important;}
+#pdf-main-container .region-content{padding:0px !important; margin:0px !important;}
+#pdf-main-container .design-content-right-ads { width: 53% !important; }
+#pdf-main-container .design-content-left-right.design-content-left-right-ads {
+float: left;
+width: 23%;
+background-color: #676767 !important;
+height: 750px;
+}
+#pdf-main-container .design-content-left-ads { width: 23% !important; }
+#pdf-main-container .text-controls-textarea {
+height: 125px;
+margin-top: 5%;
+width: 95% !important;
+}
+#pdf-main-container .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+	background-color: #414854 !important;
+	border-color: #414854 transparent;
+	font-size: 12px;
+}
+#pdf-main-container .design-content-left .nav-tabs  .active a {color:#8e9094; font-size:9px; font-weight:normal;}
+#pdf-main-container .design-content-left ul.nav-tabs  li a{ color: #8e9094; font-size: 12px; font-weight: normal; width:100%; text-transform: uppercase;}
+#pdf-main-container .tab-content {background-color: #3f4652; overflow: auto; min-height: 178px;}
+#pdf-main-container .sticky-wrapper{display: none;}
+#pdf-main-container .sideways.tabs-left > li { margin:0px; width: 100%;height: 75px !important;}
+#pdf-main-container .nav-tabs > li > a:hover {border: none;}
+#pdf-main-container #background-images > img { padding: 9px 2px 0 0; }
+#pdf-main-container .nav.nav-tabs.tabs-left.sideways {margin-left: 16px;}
+#pdf-main-container #text-controls {
+border: 1px dotted #ccc;
+display: inline-block;
+margin-left: 1px !important;
+padding: 10px;
+vertical-align: top;
+width: 280px !important;
+}
+
+#pdf-main-container b { margin-left: 98px; font-size: 21px; margin-top: 17px !important;}
+#upload-v{ min-height: 329px; }
+#upload-v > button { height: 65px; width: 83px; background-color: #fff;color: black; border-radius: 7px 8px 7px 7px ; }
+
+
+#canvas-container { border: 5px solid transparent; box-shadow: 0 0 5px 1px black;height: 725px;margin: 43px auto; position: relative; width: 707px;}
+#canvas-container.over {}
+#images img.img_dragging {opacity: 0.4;}
+#saveImg {background:yellow;}
+#imageControl {
+	width:500px;
+	height:100px;
+	min-height:100px;
+	position: relative;
+	display:none;
+}
+#canvas-container-controls {
+	position: relative;
+	width: 450px;
+	min-height: 100px;
+	border: 5px solid transparent;
+}
+#imageControlWrapper {min-height:100px;}
+.imgBtn {background:#ccc;border:solid 1px #A8A8A8;}
+/* 
+Styles below based on  http://www.html5rocks.com/en/tutorials/dnd/basics/ 
+*/
+/* Prevent the text contents of draggable elements from being selectable. */
+[draggable] {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	/* Required to make elements draggable in old WebKit */
+	-khtml-user-drag: element;
+	-webkit-user-drag: element;
+	cursor: move;
+}
+#canvas-background{position: relative; margin-bottom: 15px;}
+#canvas-background input{border: 1px solid #ffffff;}
+.innertab {border-radius: 10px; float: left; font-size: 12px; margin: 10px 4px; padding: 5px; width: 44%;}
+.innertab.active { background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/elements-folder-active.png") no-repeat scroll center center / 70px 70px; color:#fff;}
+#tab-contents.tab-content { float: left; height: auto; min-height: auto; overflow: auto;}
+.innertab > a { display: block; width:auto !important;}
+.tab-pane button { background: rgba(0, 0, 0, 0) none repeat scroll 0 0;  border: medium none;text-transform: uppercase;font-size: 14px;}
+#profile-v.tab-pane {  background-color:#656B75; margin: 20px 10px; padding: 5px;}
+#canvas-wrapper-right {
+    height: 565px !important;
+}
+#text-controls-additional button{display: inline-block;}
+.text-controls-textarea{width: 100%; margin-top: 5%; height: 125px;}
+#text-font-size{width: 25%; height: 30px;}
+#text-controls-additional .btn{margin-left: 10px;}
+.design-content-left-ads #text-controls{width: 100%; margin-left: 0px;}
+/* Start vertical tab css */
+.tabs-left, .tabs-right {border-bottom: none; padding-top: 2px;}
+.tabs-left {border-right: 1px solid #ddd;}
+.tabs-right {border-left: 1px solid #ddd;}
+.tabs-left>li, .tabs-right>li {float: none; margin-bottom: 2px;}
+.tabs-left>li {margin-right: -1px;}
+.tabs-right>li {margin-left: -1px;}
+.tabs-left>li.active>a, .tabs-left>li.active>a:hover, .tabs-left>li.active>a:focus {border-bottom-color: #ddd;border-right-color: transparent;}
+.tabs-right>li.active>a, .tabs-right>li.active>a:hover, .tabs-right>li.active>a:focus {border-bottom: 1px solid #ddd;   border-left-color: transparent;}
+.tabs-left>li>a {border-radius: 4px 0 0 4px; margin-right: 0; display:block;}
+.tabs-right>li>a {border-radius: 0 4px 4px 0; margin-right: 0; }
+.sideways {margin-top:50px; border: none; position: relative;}
+.sideways>li>a {border-bottom: 1px solid #ddd; border-right-color: transparent; text-align: center; border-radius: 4px 4px 0px 0px;
+}
+.sideways>li.active>a, .sideways>li.active>a:hover, .sideways>li.active>a:focus {border-bottom-color: transparent;   border-right-color: #ddd; border-left-color: #ddd; }
+.sideways.tabs-left {border: medium none;}
+.sideways.tabs-right {}
+.nav-tabs > li{height: 100px;}
+.right-tabs ul li a {color: #ffffff !important; display: block; font-size: 12px;  height: 100%; padding: 24px 0; width: 100%;}
+.right-tabs ul li { background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/elements-folder.png") no-repeat scroll center center / 70px 70px; }
+.right-tabs ul li:hover{background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/elements-folder-hover.png") no-repeat scroll center center / 70px 70px; color:#fff;}
+/* End vertical tab css */
+#all-images img{float: left; margin-left: 5px; width: 65px; height: 70px; margin-bottom: 5px;}
+#home-v .btn{margin-bottom: 10px;}
+#custom-canvas-confirm-popup{background: none repeat scroll 0 0 #fff; border: 1px solid; display: none; float: left; width: 100% }
+#custom-canvas-confirm-popup2{background: none repeat scroll 0 0 #fff; border: 1px solid; display: none; float: left; width: 100% }
+#custom-canvas-confirm-popup .custom-canvas-confirm-popup-ok{background: none repeat scroll 0 0 #5f8cb4; color: #fff !important; font-weight: 500; padding: 5px 20px;  text-transform: uppercase; float: right; font-weight: bold; }
+#custom-canvas-confirm-popup2 .custom-canvas-confirm-popup-ok{background: none repeat scroll 0 0 #5f8cb4; color: #fff !important; font-weight: 500; padding: 5px 20px;  text-transform: uppercase; float: right; font-weight: bold; }
+.cds-image-upload-field{width:68%; float: left; padding:10px;}
+.cds-image-upload-file-setting{background-color: #272c33; color: #fff; float: left; height: 720px; margin-left: 10px; width: 30%; padding: 5px;}
+.cds-image-upload-file-setting h3{color: #fff; text-align: center; font-family: arial;}
+.cds-image-upload-file-setting .cds-image-upload-input-fields-header{width: 100%; background-color: #000; padding: 1px;}
+.custom-confirm-area #custom-canvas-image-upload img{height: 90px; overflow-y: scroll; width: 20%;}
+#property-ads-form #custom-canvas-image-upload {height: 300px; overflow-y: scroll; width: 69%;}
+.custom-confirm-area .form-item, .form-actions{color: #fff; font-family: arial;}
+#edit-image-file_container .plupload .plupload_content .plupload_filelist_footer .plupload_file_name .plupload_buttons .plupload_button{ padding: 10px; background-color: #5f8cb4; border-radius: 5px; color: #fff; margin-top: 30px; }
+#edit-image-file_filelist li .plupload_file_name span{ color: #333;}
+.cds-image-upload-file-setting .form-item label{float: left;}
+.cds-image-upload-file-setting .form-item #edit-image-name{border-radius: 0px; padding: 0px; height: 30px; width: 75%;}
+.cds-image-upload-file-setting .form-type-select select{border-radius: 0px; width: 50%; margin-left: 139px;}
+#text-controls-additional .btn-object-action{color:#000; font-weight: bold;}
+#text-controls label{color: #fff;}
+#property-ads-form #edit-submit{border-radius: 10px; margin: 50px auto 0; background-color: #f7f7f7; color:#000; font-weight: bold; Display: block; font-family: arial; padding: 4px 40px 4px 40px; font-size: 18px;}
+#up-v #cds-upload-images{background-color: #238c00; border-radius: 7px; font-family: arial; padding: 15px 5px;}
+#up-v #cds-upload-pdf{background-color: #fff; border-radius: 7px; font-family: arial; padding: 15px; color: #000;}
+.cds-image-upload-field h3{font-family: arial;}
+.disabledbutton{pointer-events: none; opacity: 0.4;}
+.temp-button button{font-family: arial;}
+.page-setting h3, .page-elements h3{font-family: arial;}
+.cds-uploaded-image-show-area > img{height: 64px; margin-left: 2px; margin-top: 10px; width: 64px;}
+.cds-saved-json-imgs .cds-uploaded-image-show-area > img{background-color: #fff;}
+.selectBox.btn-object-action.selectBox-dropdown, .selectBox-label { width: auto !important;  min-width: auto !important; background: rgba(0, 0, 0, 0) none repeat scroll 0 0; border: medium none !important;}
+.font-options {float: left;
+    height: 30px;
+    min-width: 30px;
+    padding: 0 3px;
+    text-align: center;}
+#font-color input[type="color"] {background: rgba(0, 0, 0, 0) url("/sites/all/modules/custom/collateral_design_system/text_icons/ColorBox.png") no-repeat scroll center center;
+    box-shadow: none;
+    height: auto;
+    padding: 12px !important;
+    width: auto;
+	border: medium none !important;
+	top:0;
+}
+.selectBox-dropdown .selectBox-arrow {
+    background: rgba(0, 0, 0, 0) url("jquery.selectBox-arrow.gif") no-repeat scroll 50% center;
+    border: medium none !important;
+    display: inline-block;
+    height: 100%;
+    padding: 12px;
+    width: 23px;
+	position: relative !important;
+}
+.btn-inverse { background-image: none; background-color: #cccccc !important; border-radius: 5px; padding: 2px 5px 5px;}
+.zoomer__item--selected {
+    animation: 0.1s ease 0s normal forwards 1 running zoomer__item--selectedAnimation;
+    background: rgba(0, 0, 0, 0) url("https://static.canva.com/static/images/tick_white.svg") no-repeat scroll right 10px top 50% / 13px 13px;
+}
+.zoomer__popover { border-radius: 10px; max-width: 140px; min-width: 88px; position: absolute;}
+.zoomer__item:hover {  background-color: rgba(0, 0, 0, 0.3);}
+.zoomer__pane { -moz-user-select: none; background: #ffffff none repeat scroll 0 0;  box-sizing: border-box;}
+.zoomer__popoverList { overflow: hidden;}
+.zoomer__popoverItem {
+    border-radius: 0;
+    font-size: 11px;
+    height: auto;
+    line-height: 1.6em;
+    padding: 5px 32px 5px 14px;
+    text-align: left;
+    width: 100%;
+}
+.zoomer__item, .zoomer__item:visited {
+    background-color: transparent;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    color: black;
+    cursor: pointer;
+    list-style: outside none none;
+    outline: medium none;
+    text-decoration: none;
+    transition: background-color 0.1s ease 0s, opacity 0.1s ease-in 0s, border 0.1s ease-out 0s;
+}
+.zoomer.zoomer__pane.zoomer--presentation > div { float: left;}
+.zoomer { float: right; width: 148px;}
+.zoomer.zoomer__pane.zoomer--presentation > button {  float: left;}
+.zoomer.zoomer__pane.zoomer--presentation > div { float: left;}
+.zoomer.zoomer__pane.zoomer--presentation > button { float: left;}
+div.top-menu {
+    background-color: #fff;
+    height: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #000000;
+}
+li {  list-style: none;}
+.top-menu ul > li { float: left;}
+.top-menu ul.selectBox-options > li { float: none;}
+.top-menu ul > li a {font-weight: bold;  display:block;padding:0px 10px;}
+.top-menu ul li a:hover {
+    background-image: none;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 4px;
+    cursor: pointer;
+	background-color: #f5f5f5;
+}
+.top-menu ul li .text-toggle {display: none; position: absolute; background: #ffffff none repeat scroll 0 0; border: medium none;  border-radius: 5px; box-shadow: 0 0 0 2px rgba(63, 70, 82, 0.15);  top: 40px;transition: visibility 0s linear 0.4s;z-index:2}
+.top-menu ul li ul li { float: none; line-height: 40px; height: 40px;}
+.top-menu li .text-toggle::before, .top-menu li .text-toggle::after {
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #ffffff;
+    border-style: solid;
+    border-width: 0 9px 9px;
+    content: " ";
+    display: block;
+    height: 0;
+    left: 14px;
+    position: absolute;
+    top: -9px;
+    width: 0;
+    z-index: 2;
+}
+.top-menu li .text-toggle::after {
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(63, 70, 82, 0.15);
+    border-style: solid;
+    border-width: 0 10px 10px;
+    content: " ";
+    left: 13px;
+    position: absolute;
+    top: -12px;
+    z-index: 1;
+}
+.top-menu li .text-toggle ::before, .top-menu li .text-toggle::after {
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #ffffff;
+    border-style: solid;
+    border-width: 0 9px 9px;
+    content: " ";
+    display: block;
+    height: 0;
+    left: 14px;
+    position: absolute;
+    top: -9px;
+    width: 0;
+    z-index: 2;
+}
+.top-menu .text-toggle  { padding: 0 8px;}
+#text-align > span {display: inline-block; margin: 5px 0; padding: 2px;}
+#text-copy > img { height: 20px;  width: 20px;}
+
+.zoomer__popover .arrow{
+content: '';
+ display: block;  
+ position: absolute;
+ left: 20px;
+ bottom: 100%;
+ width: 0;
+ height: 0;
+ border-bottom: 18px solid #fff;
+ border-top: 10px solid transparent;
+ border-left: 10px solid transparent;
+ border-right: 10px solid transparent;
+}
+.zoomer--presentation .zoomer__popover {
+    z-index: 2;
+}
+.zoomer__item--selected {
+    animation: 0.1s ease 0s normal forwards 1 running zoomer__item--selectedAnimation;
+    background: rgba(0, 0, 0, 0) url("https://cdn0.iconfinder.com/data/icons/free-misc-icon-set-1/512/check-32.png") no-repeat scroll right 10px top 50% / 13px 13px;
+}
+.zoomer__popover {
+    border-radius: 10px;
+    max-width: 140px;
+    min-width: 88px;
+    position: absolute;
+}
+
+.zoomer__item:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+.zoomer__pane {
+    -moz-user-select: none;
+    background: #ffffff none repeat scroll 0 0;
+    box-sizing: border-box;
+	border: 1px solid #272c33;
+}
+
+.zoomer__popoverList {
+    overflow: hidden;
+}
+
+.zoomer__popoverItem {
+    border-radius: 0;
+    height: auto;
+    line-height: 1.6em;
+    padding: 5px 32px 5px 14px;
+    text-align: left;
+    width: 100%;
+}
+.zoomer__item, .zoomer__item:visited {
+    background-color: transparent;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    color: black;
+    cursor: pointer;
+    list-style: outside none none;
+    outline: medium none;
+    text-decoration: none;
+    transition: background-color 0.1s ease 0s, opacity 0.1s ease-in 0s, border 0.1s ease-out 0s;
+}
+
+.zoomer.zoomer__pane.zoomer--presentation > div {
+    float: left;
+}
+
+.zoomer {
+    float: right;
+    width: 148px;
+}
+.zoomer.zoomer__pane.zoomer--presentation > button {
+    float: left;
+}
+.zoomer.zoomer__pane.zoomer--presentation > div {
+    float: left;
+}
+.zoomer.zoomer__pane.zoomer--presentation > button {
+    float: left;
+}
+.zoomer.zoomer__pane.zoomer--presentation {
+    background: #fff none repeat scroll 0 0;
+    height: 33px;
+    margin-right: 26%;
+    width: 102px;
+}
+.zoomer.zoomer__pane.zoomer--presentation > span {
+ float: left;
+    padding: 5px 0 0 13px;
+	 cursor: pointer;
+}
+#canvaslevel > h2 {
+    font-size: 13px;
+    margin-top: 13px;
+    padding: 0 1px 9px 13px;
+	 cursor: pointer;
+}
+.message {color: #fff;}
+#deletebg > img{
+	background-position: center center;
+	background-repeat: no-repeat;
+	height: 30px;
+	width: 30px;
+	background-size: 20px 20px;
+}
+#image-wrapper .toolbar.font-toolbar {
+    left: 372px;
+}
+#image-wrapper .toolbar.main_right.toolbar--element.toolbar--right {
+    left: 372px;
+}
+.cds-saved-template-image-show-area{width: 18.5%; display: inline-block; border: 1px solid; margin-left: 10px; margin-top: 2%; padding: 5px; text-align:center;}
+.cds-saved-template-image-show-area .node_details{width: 85%; margin-left: 10px; margin-top: 10px; font-size: 11px;}
+.cds-delete-saved-template-btn{    background: #042E51; color: #fff !important; margin-right: 12px; padding: 3px 15px 3px 15px;     text-transform: uppercase; margin-left: 1%;}
+.canvas-img-cont {float: left; padding: 2px; position: relative;}
+/** This code writen for crop marks layout. **/
+.cds-parent-canvas-div {	position: relative; margin: 20px; }
+.cds-inner-canvas-div {box-shadow: 1px 1px 0 10px #EEEEEE; position: absolute; z-index: 10; }
+.canvas-container{z-index: 20; }
+.cds-parent-canvas-div:before {display: block;content: ""; width: 40px; 	height: 40px; position: absolute; top: -20px; left: -20px;
+	border-bottom: 1px solid #000; border-right: 1px solid #000; }
+.cds-parent-canvas-div:after {display: block; content: ""; width: 40px; height: 40px; position: absolute; top: -20px; right: -20px;
+	border-bottom: 1px solid #000; border-left: 1px solid #000; }
+.cds-parent-canvas-div span:before {display: block; content: ""; width: 40px; height: 40px; position: absolute; bottom: -20px; 
+	left: -20px; border-top: 1px solid #000; border-right: 1px solid #000; }
+.cds-parent-canvas-div span:after {display: block; content: ""; width: 40px; height: 40px; position: absolute; bottom: -20px; 	right: -20px; border-top: 1px solid #000; border-left: 1px solid #000; }
+/** code ended for crop layout **/
+#property-ads-form-pdf .form-select{
+	 width: 142px !important;
+	 background:#fff  !important;
+
+}
+#property-ads-form .form-select{
+	 width: 142px !important;
+	 background:#fff !important;
+
+}
+.page-setting-contents select {
+        /*for firefox*/
+        -moz-appearance: none;
+        /*for chrome*/
+        -webkit-appearance:none;
+      }
+
+/*for IE10*/
+.page-setting-contents select::-ms-expand {
+    display: none;
+}

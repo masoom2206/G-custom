@@ -1,0 +1,22 @@
+.marketing-concierge-title h1 {
+	font-size: 72px;
+	text-transform: uppercase;
+}
+
+.view-marketing-concierge-products tr, tr.even {
+    background: none !important;
+}
+.view-marketing-concierge-products tr td {
+    border-right: 1px solid #000000;
+	vertical-align: top;
+}
+.view-marketing-concierge-products tr td.col-last {
+    border-right: none;
+}
+.marketing-concierge-products .product-image, .marketing-concierge-products .product-title, .marketing-concierge-products .product-price, .marketing-concierge-products .product-total-value, .marketing-concierge-products .product-add-to-cart, .marketing-concierge-title {
+	text-align: center;
+}
+.marketing-concierge-products .product-title {
+	text-transform: uppercase;
+	font-weight: bold;
+}

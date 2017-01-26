@@ -1,0 +1,153 @@
+<?php
+/**
+ * Implements hook_menu()
+ * @return $items
+ */
+function modal_node_display_menu() {
+  $items['modal_display'] = array(
+    'title' => 'Animated Modal Node Display',
+    'description' => 'Animated Modal Node Display',
+    'page callback' => 'modal_display',
+    'access callback' => TRUE,
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['modal_node_popup/%'] = array(
+    'title' => '',
+    'description' => 'Display node data in popup',
+    'page callback' => 'modal_node_popup',
+    'access callback' => TRUE,
+    'type' => MENU_LOCAL_TASK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_init()
+ */
+function modal_node_display_init(){
+	//if(arg(0) == 'modal_display') {
+	drupal_add_css(drupal_get_path('module', 'modal_node_display') . '/css/modal_node_display.css');
+	drupal_add_js(drupal_get_path('module', 'modal_node_display') . '/js/modal_node_display.js');
+	drupal_add_js(drupal_get_path('module', 'modal_node_display') . '/js/jquery.bpopup-0.10.0.min.js');
+	//}
+	/*if(arg(0) == 'modal_node_popup') {
+		drupal_add_css(drupal_get_path('module', 'flag') . '/theme/flag.css');
+		drupal_add_js(drupal_get_path('module', 'flag') . '/theme/flag.js');
+	}*/
+}
+/**
+ * Callback function user_signup()
+ * @return theme
+ */
+function modal_display() {
+	$output = '<div class="md-modal md-effect-1" id="modal-1">
+			<div class="md-content">
+				<h3>Modal Dialog</h3>
+				<div>
+					<p>This is a modal window. You can do the following things with it:</p>
+					<ul>
+						<li><strong>Read:</strong> modal windows will probably tell you something important so don\'t forget to read what they say.</li>
+						<li><strong>Look:</strong> a modal window enjoys a certain kind of attention; just look at it and appreciate its presence.</li>
+						<li><strong>Close:</strong> click on the button below to close the modal.</li>
+					</ul>
+					<button class="md-close">Close me!</button>
+				</div>
+			</div>
+		</div>';
+	$output .= '<div class="column">
+			<a href="#" class="md-trigger" data-modal="modal-1">Slide in (right)</a>
+		</div><div class="md-overlay"></div>';
+	$output = '<button id="my-button">POP IT UP</button>
+            <div id="element_to_pop_up">Content of popup</div>
+			<div id="popup">
+				<span class="button b-close"><span>[Close]</span></span>
+			If you can\'t get it up use<br><span class="logo">bPopup</span>
+			</div>';
+			
+			
+	$output = '<div>Click on the button<br/>
+			<a href="/node/62" modal-node-popup="yes">POP IT UP</a><br/>
+			<a href="/node/39">POP IT UP 2</a>
+			<div id="popup-load-img"><img src="/sites/all/modules/custom/modal_node_display/images/dim-loading.gif"/></div>
+			<div id="popup">
+				<span class="button b-close"><span></span></span>
+				<div class="c_area"></div>
+			</div></div>';
+
+	$output = '<div><h1>Example links for modal node window task!</h1>
+			<h4>Click on the Links</h4>		
+			<a href="/node/62" rel="modal-node-popup">Default link</a><br/>
+			<a href="/node/62?slide=top" rel="modal-node-popup">Slide from top</a><br/>
+			<a href="/node/62?width=700&height=650&slide=left" rel="modal-node-popup">Slide from left and height/width</a><br/>
+			<a href="/node/62?width=700&height=650&slide=right" rel="modal-node-popup">Slide from right and height/width</a><br/>
+			<a href="/node/62?width=500&height=450&slide=bottom" rel="modal-node-popup">Slide from bottom and height/width</a><br/>
+			<a href="http://www.cbone.me/node/62?width=700&height=700" rel="modal-node-popup">Full URL and height/width</a><br/>
+			<h4>URL Alias Link</h4>
+			<a href="http://www.cbone.me/detail/headshot?width=900&height=700" rel="modal-node-popup">Full URL alias with height/width</a><br/>
+			<a href="/detail/headshot?width=900&height=700" rel="modal-node-popup">Short URL alias with height/width</a><br/>
+			<a href="http://www.cbone.me/detail/headshot" rel="modal-node-popup">Full URL alias without height/width</a><br/>
+			<a href="/detail/headshot" rel="modal-node-popup">Short URL alias without height/width</a><br/>
+			</div>';
+
+
+	return $output;
+}
+/**
+ * Callback function modal_node_popup()
+ * to print node data in popup.
+ **/
+function modal_node_popup(){
+	global $base_url;
+	if(isset($_POST['url'])) {
+		$url = $_POST['url'];
+		$pattern = '@node/[0-9]+@';
+		$result = preg_match( $pattern, $url , $matches  );
+		if(!empty($matches)) {
+			$node = menu_get_object("node", 1, $matches[0]);
+		}
+		else {
+			$path = explode('?', $url);
+			if(count($path) > 1) {
+				$path = explode($base_url.'/', $path[0]);
+				if(count($path) > 1){
+					$org_path = drupal_lookup_path("source", $path[1]);
+					$node = menu_get_object("node", 1, $org_path);
+				}
+				else{
+					$path = explode('/', $path[0]);
+					if(empty($path[0])) {
+						unset($path[0]);
+					}
+					$path = implode('/', $path);
+					$org_path = drupal_lookup_path("source", $path);
+					$node = menu_get_object("node", 1, $org_path);
+				}
+			}
+			else {
+				$path = explode($base_url.'/', $path[0]);
+				if(count($path) > 1){
+					$org_path = drupal_lookup_path("source", $path[1]);
+					$node = menu_get_object("node", 1, $org_path);
+				}
+				else {
+					$path = explode('/', $path[0]);
+					if(empty($path[0])) {
+						unset($path[0]);
+					}
+					$path = implode('/', $path);
+					$org_path = drupal_lookup_path("source", $path);
+					$node = menu_get_object("node", 1, $org_path);
+				}
+			}
+		}
+	}
+	else {
+		drupal_goto($_SERVER['HTTP_REFERER']);
+		/*$nid = arg(1);
+		$node = node_load($nid);*/
+	}
+	$node_view = node_view($node);
+	$rendered_node = drupal_render($node_view);
+	print $rendered_node;
+
+}

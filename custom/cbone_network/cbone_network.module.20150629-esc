@@ -1,0 +1,470 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function cbone_network_menu() {
+  $items = array();
+  $items['cbone-network'] = array(
+    'title' => 'CB|ONE Network',
+    'description' => 'CB|ONE Network',
+    'page callback'		=> 'cbone_network',
+    'access callback' => 'user_is_logged_in',
+  );
+   $items['create/circle'] = array(
+    'title'				=> 'Create a Circle',
+    'description'		=> 'Create a Circle',
+    'page callback'		=> 'circle_create',
+    'access callback'	=> TRUE,
+    'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['edit/circle/%'] = array(
+    'title'				=> 'Create a Circle',
+    'description'		=> 'Create a Circle',
+    'page callback'		=> 'circle_create',
+    'access callback'	=> 'user_is_logged_in',
+    'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['circle/browse'] = array(
+    'title'				=> 'Browse Circles',
+    'description'		=> 'Browse Circles',
+    'page callback'		=> 'cbone_non_groups',
+    'access callback'	=> TRUE,
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['my-office'] = array(
+    'title'				=> 'My Office',
+    'description'		=> 'My Office',
+    'page callback'		=> 'my_office',
+    'access callback'	=> TRUE,
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['my-office/%'] = array(
+    'title'				=> 'My Office',
+    'description'		=> 'My Office',
+    'page callback'		=> 'my_office_details',
+    'access callback'	=> TRUE,
+	'page arguments' 	=> array(1),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['circle-members/%'] = array(
+    'title'				=> 'Circle Members',
+    'description'		=> 'Circle Members',
+    'page callback'		=> 'circle_members',
+    'access callback'	=> TRUE,
+	'page arguments' 	=> array(1),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['office-members/%'] = array(
+    'title'				=> 'Office Members',
+    'description'		=> 'Office Members',
+    'page callback'		=> 'office_members',
+    'access callback'	=> TRUE,
+	'page arguments' 	=> array(1),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['request-sent/%'] = array(
+    'title'				=> 'Membership request sent',
+    'description'		=> 'Membership request sent',
+    'page callback'		=> 'request_sent',
+    'access callback'	=> 'user_is_logged_in',
+	'page arguments' 	=> array(1),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+   $items['request-cancel/%'] = array(
+    'title'				=> 'Membership request cancelled',
+    'description'		=> 'Membership request cancelled',
+    'page callback'		=> 'request_cancel',
+    'access callback'	=> 'user_is_logged_in',
+	'page arguments' 	=> array(1),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['manage-circles'] = array(
+    'title'				=> 'Manage Circles',
+    'description'		=> 'Manage Circles',
+    'page callback'		=> 'manage_circle',
+    'access callback'	=> 'user_is_logged_in',
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['upcoming-events'] = array(
+    'title'				=> 'Upcoming Events',
+    'description'		=> 'Upcoming Events',
+    'page callback'		=> 'upcoming_events',
+    'access callback'	=> 'user_is_logged_in',
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['create/circle-post/%'] = array(
+    'title'				=> 'Create Circle Post',
+    'description'		=> 'Create Circle Post',
+    'page callback'		=> 'create_circle_post',
+    'access callback'	=> 'user_is_logged_in',
+	'page arguments' 	=> array(2),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['create/office-post/%'] = array(
+    'title'				=> 'Create Office Post',
+    'description'		=> 'Create Office Post',
+    'page callback'		=> 'create_office_post',
+    'access callback'	=> 'user_is_logged_in',
+	'page arguments' 	=> array(2),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['member-info/%'] = array(
+    'title'				=> 'Member Info',
+    'description'		=> 'Member Info',
+    'page callback'		=> 'member_info',
+    'access callback'	=> 'user_is_logged_in',
+	'page arguments' 	=> array(1),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['event-list'] = array(
+    'title'				=> 'List of Events',
+    'description'		=> 'List of Events',
+    'page callback'		=> 'events_list',
+    'access callback'	=> 'user_is_logged_in',
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['send-inappropriate-mail/%/%'] = array(
+    'title'				=> 'Report as inappropriate',
+    'description'		=> 'Report as inappropriate',
+    'page callback'		=> 'send_inappropriate_mail',
+    'access callback'	=> 'user_is_logged_in',
+	'page arguments' 	=> array(1, 2),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+   $items['events/%'] = array(
+    'title'				=> 'List of Events on date',
+    'description'		=> 'List of Events on date',
+    'page callback'		=> 'events_list_date',
+    'access callback'	=> 'user_is_logged_in',
+	'page arguments' 	=> array(1),
+	'file'				=> 'includes/create_circle.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+ return $items;
+}
+/**
+ * Implements hook_init()
+ */
+function cbone_network_init(){
+	drupal_add_css(drupal_get_path('module', 'cbone_network') . '/css/cbone_network.css');
+	//drupal_add_js(drupal_get_path('module', 'percent_complete_meter') . '/js/percent_meter.js');
+	if( arg(0) == 'upcoming-events' || arg(0) == 'events' ) {
+		drupal_add_js(drupal_get_path('module', 'cbone_network') . '/js/network.js');
+	}
+}
+/**
+ * Implements hook_views_api
+ **/
+function cbone_network_views_api() {
+  return array(
+    'api' => 3.0,
+    'path' => drupal_get_path('module', 'cbone_network') . '/includes/views',
+  );
+}
+
+/**
+ * Implements hook_form_alter()
+ */
+function cbone_network_form_alter(&$form, &$form_state, $form_id) {
+	global $base_url;
+	if($form_id == 'circle_company_wide_node_form') {
+		//$form['actions']['submit']['#submit'][] = 'subscribe_to_group';
+	}
+	if($form_id == 'circle_post_node_form') {
+		if( arg(0)== 'create' && arg(1)== 'circle-post' && is_numeric(arg(2))){
+			$nid=arg(2);
+			$form['og_group_ref'][LANGUAGE_NONE][0]['default']['#value'] = array($nid);
+			$form['og_group_ref']['#disabled'] = TRUE;
+		}
+		if( isset($_GET['destination'])){
+		preg_match_all('/\d{1,}/',$_GET['destination'],$matches);
+			 $form['og_group_ref'][LANGUAGE_NONE][0]['default']['#value'] = array($matches[0][0]);
+			 $form['og_group_ref']['#disabled'] = TRUE;
+		}
+	}
+	if($form_id == 'office_post_node_form') {
+		if( arg(0)== 'create' && arg(1)== 'office-post' && is_numeric(arg(2))){
+		$nid=arg(2);
+		$form['og_group_ref1'][LANGUAGE_NONE][0]['default']['#value'] = array($nid);
+		$form['og_group_ref1']['#disabled'] = TRUE;
+		}
+	}
+	if($form_id == 'og_ui_confirm_subscribe') {
+		if(isset($_GET['destination'])){
+			$form['og_membership_request']['und'][0]['value']['#description']=t('Click the Join button to send a request to the Circle Owner. You may also add a personalized message above.');
+			$str = preg_replace('/\D/', '', $_GET['destination']);
+			$form['actions']['cancel']['#href']=$base_url.'/request-cancel/'.$str;
+			$form['actions']['cancel']['#option']['path']=$base_url.'/request-cancel/'.$str;
+		}
+	}
+}
+/**
+ * Implements submit_handler to subscribe users to gp()
+ */
+function subscribe_to_group($form, &$form_state){
+	$node=node_load($form_state['values']['nid']);//node saved
+	$roles=array(14, 15);
+	$query = db_select('users_roles', 'ur')
+			->fields('ur', array('uid'))
+			->condition('rid', $roles, 'IN');
+	$result=$query->execute()->fetchAll();
+	foreach($result as $value){
+		if($value->uid !=0 ){
+			$account=user_load($value->uid);
+			
+			$values = array(
+				'entity_type' => 'user',
+				'entity' => $account,
+			);
+			//add to the group
+			$og_membership = og_group('node', $node->nid, $values);
+			$og_membership->save();
+		}
+	}	
+	drupal_set_message(t('Users are subscribed to group.'));
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function cbone_network_block_info() {
+	$blocks = array();
+	$blocks['cbone_network_home'] = array(
+		'info' => t('CB|One Network Home'),
+	);
+	$blocks['cbone_network_links'] = array(
+		'info' => t('CB|One Network Links'),
+	);
+	$blocks['cbone_non_groups'] = array(
+		'info' => t('Browse Circles'),
+	);
+	$blocks['cbone_circle_page'] = array(
+		'info' => t('Circle Page'),
+	);
+	$blocks['cbone_circle_post_page'] = array(
+		'info' => t('Circle Post Page'),
+	);
+	$blocks['cbone_circle_company_wide_page'] = array(
+		'info' => t('Circle Company Wide Page'),
+	);
+	return $blocks;
+}
+/**
+ * Implements hook_block_view().
+ */
+function cbone_network_block_view($delta='') {
+	$block = array();
+	switch($delta) {	
+		case 'cbone_network_home' :
+			$block['content'] = cbone_network_home();
+		break;
+		case 'cbone_network_links' :
+			$block['content'] = cbone_network_links();
+		break;
+		case 'cbone_non_groups' :
+			$block['content'] = cbone_non_groups();
+		break;
+		case 'cbone_circle_page' :
+			$block['content'] = cbone_circle_page();
+		break;
+		case 'cbone_circle_post_page' :
+			$block['content'] = cbone_circle_post_page();
+		break;
+		case 'cbone_circle_company_wide_page' :
+			$block['content'] = cbone_circle_company_wide_page();
+		break;
+	}
+
+	return $block;
+}
+/**
+ * Implements hook_theme
+ **/
+function cbone_network_theme($existing, $type, $theme, $path) {
+	return array(
+		'network_home' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/network_home', // do not include .tpl.php
+		),
+		'network_links' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/network_links', // do not include .tpl.php
+		),
+		'my_office' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/my_office', // do not include .tpl.php
+		),
+		'cbone_circle_page' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cbone_circle_page', // do not include .tpl.php
+		),
+		'browse_circle_page' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/browse_circle_page', // do not include .tpl.php
+		),
+	);
+	return $theme;
+}
+/**
+ * Callback function cbone_marketing_concierge()
+ * to test node URL
+ **/
+function cbone_network(){
+	global $user;
+	$output = '';
+	/*$home = module_invoke('cbone_network', 'block_view', 'cbone_network_home');
+	$output .= render($home['content']);
+	$links = module_invoke('cbone_network', 'block_view', 'cbone_network_links');
+	$output .= render($links['content']);
+	$output .= views_embed_view('og_user_circles', 'block_1', $user->uid);
+	$output .= views_embed_view('og_group_post', 'block');*/
+	
+	return $output;
+}
+/**
+ * Callback function cbone_network_home()
+ * to displayed the network image and title
+ **/
+function cbone_network_home(){
+	$data = array();
+	$output = theme('network_home', array('var_name' => $data));
+	return $output;
+}
+/**
+ * Callback function cbone_network_links()
+ * to displayed the network links for user
+ **/
+function cbone_network_links(){
+	$data = array();
+	$output = theme('network_links', array('var_name' => $data));
+	return $output;
+}
+
+/**
+ * distinct circle page
+ **/
+function cbone_circle_page(){
+	global $user, $base_url;
+	$node = menu_get_object();
+	$get_nid = $node->nid;
+	$query=db_select('node', 'n');
+	$query->innerJoin('og_membership', 'om', 'n.nid= om.etid');
+	$query->fields('n', array('nid', 'created'))
+			->fields('om', array('etid', 'gid'))
+			->condition('om.gid', $get_nid, '=')
+			->condition('om.group_type', 'node', '=')
+			->condition('om.entity_type', 'node', '=')
+			->condition('om.field_name', 'og_group_ref', '=')
+			->orderBy('n.created', 'DESC');
+	$result= $query->execute()->fetchAll();
+	
+	if (!empty($result)) {
+	
+	$circles_id=array();
+		foreach($result as $value){
+		$circles_id[]=$value->etid;
+			$query= db_select('og_membership', 'om')
+				->fields('om', array('etid', 'gid'))
+				->condition('etid', $value->etid, '=')
+				->condition('group_type', 'node', '=')
+				->condition('entity_type', 'node', '=')
+				->condition('field_name', 'og_group_ref', '=');
+			$results= $query->execute()->fetchAll();
+			
+			foreach($results as $values){
+				//$circles_ids[]=$values->gid;
+			}
+		}
+		
+		$variables = array(
+			'main_circle_nid' => $get_nid,
+			'circle_nid' => $circles_id,
+		);
+		$output = theme('cbone_circle_page', array('var_name' => $variables));
+    }
+	else{
+		$output="There is not any comments post.";
+	}
+	return $output;
+}
+
+/**
+ * distinct circle post page
+ **/
+function cbone_circle_post_page(){
+	global $user, $base_url;
+	$node = menu_get_object();
+	$get_nid = $node->nid;
+	$query= db_select('og_membership', 'om')
+			->fields('om', array('etid', 'gid'))
+			->condition('gid', $get_nid, '=')
+			->condition('group_type', 'node', '=')
+			->condition('entity_type', 'node', '=')
+			->condition('field_name', 'og_group_ref', '=');
+	$result= $query->execute()->fetchAll();
+	
+	if (!empty($result)) {
+	$circles_id=array();
+		foreach($result as $value){
+		$circles_id[]=$value->etid;
+			$query= db_select('og_membership', 'om')
+				->fields('om', array('etid', 'gid'))
+				->condition('etid', $value->etid, '=')
+				->condition('group_type', 'node', '=')
+				->condition('entity_type', 'node', '=')
+				->condition('field_name', 'og_group_ref', '=');
+			$results= $query->execute()->fetchAll();
+			
+			foreach($results as $values){
+				//$circles_ids[]=$values->gid;
+			}
+		}
+		$variables = array(
+			'circle_nid' => $circles_id,
+		);
+		$output = theme('cbone_circle_page', array('var_name' => $variables));
+    }
+	else{
+		$output="There is not any comments post.";
+	}
+	return $output;
+}
+/******trim the length of string*****/
+function trim_text($input, $length, $ellipses = true, $strip_html = true) {
+    //strip tags, if desired
+    if ($strip_html) {
+        $input = strip_tags($input);
+    }
+  
+    //no need to trim, already shorter than trim length
+    if (strlen($input) <= $length) {
+        return $input;
+    }
+  
+    //find last space within length
+    $last_space = strrpos(substr($input, 0, $length), ' ');
+    $trimmed_text = substr($input, 0, $last_space);
+  
+    //add ellipses (...)
+    if ($ellipses) {
+        $trimmed_text .= '...';
+    }
+  
+    return $trimmed_text;
+}

@@ -1,0 +1,119 @@
+<?php
+/**
+ * @file
+ * Install hooks for cbone notification.
+ */
+function cbone_notification_schema() {
+  $schema['activity'] = array(
+    'description' => t('The base table for activity.'),
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for a node.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      'nid' => array(
+        'description' => 'The current node nid identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0),
+      'gid' => array(
+        'description' => 'The current group gid identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0),        
+      'uid' => array(
+        'description' => 'The current user uid identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0),        
+      'type' => array(
+        'description' => 'The node/comment of this node.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'node'),
+      'title' => array(
+        'description' => 'The title of this node, always treated a non-markup plain text.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''),
+      'name' => array(
+        'description' => 'The current user name identifier',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''),  
+     'message' => array(
+        'description' => 'The activity message',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''),       
+      'status' => array(
+        'description' => 'Whether the schedule is enabled.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'created' => array(
+        'description' => 'The UNIX time stamp representing when the flag was set.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'disp-size' => 11,
+      ),
+    ),  
+    'indexes' => array(
+      'node_created' => array('created'),
+      ),
+    'primary key' => array('id'),
+  );
+  $schema['activity_mail_body'] = array(
+    'description' => t('The base table for activity mail body.'),
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for a node.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      'datas' => array(
+        'description' => 'Mail subject.',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),  
+      'datab' => array(
+        'description' => 'Mail post body',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),  
+      'datam' => array(
+        'description' => 'Mail comment body',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),  
+    ),  
+    'primary key' => array('id'),
+  );
+  return $schema;
+}
+
+function cbone_notification_install() {
+  db_query("INSERT INTO {activity_mail_body} (id, datas, datab, datam) VALUES
+(1, 'Individual Immediate Message', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew post: \"[node:og-group-ref]\"<br />\r\nCircle: [circle:title]<br />\r\nPost title: [node:title]<br />\r\nPosted by: [node:author]</p>\r\n', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew Comment for: \"[comment-node:title]\"<br />\r\nPost title: [comment-node:title]<br />\r\nComment posted by: [comment:author]</p>\r\n'),
+(2, 'Your CB|One message digest for [DATE]', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew post: \"[node:og-group-ref]\"<br />\r\nCircle: [circle:title]<br />\r\nPost title: [node:title]<br />\r\nPosted by: [node:author]</p>\r\n', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew Comment for: \"[comment-node:title]\"<br />\r\nHere are the details:<br />\r\nPost title: [comment-node:title]<br />\r\nComment posted by: [comment:author]</p>\r\n'),
+(3, 'Your CB|One message digest for the week starting [Sunday date]', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew post: \"[node:og-group-ref]\"<br />\r\nCircle: [circle:title]<br />\r\nPost title: [node:title]<br />\r\nPosted by: [node:author]</p>\r\n', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew Comment for: \"[comment-node:title]\"<br />\r\nHere are the details:<br />\r\nPost title: [comment-node:title]<br />\r\nComment posted by: [comment:author]</p>\r\n'),
+(4, 'Your CB|One message digest for the month of [previous month]', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew post: \"[node:og-group-ref]\"<br />\r\nCircle: [circle:title]<br />\r\nPost title: [node:title]<br />\r\nPosted by: [node:author]</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<hr />\r\n<p>Date posted: [Date posted]<br />\r\nNew Comment for: \"[comment-node:title]\"<br />\r\nHere are the details:<br />\r\nPost title: [comment-node:title]<br />\r\nComment posted by: [comment:author]</p>\r\n'),
+(5, '<div style=\"text-align:left;\"><a class=\"site-logo\" href=\"[siteurl]\"><img alt=\"\" src=\"[siteurl]/sites/default/files/cbone-banner-small.png\" /></a></div>\r\n\r\n<p>Log in to CB|ONE today to check out the latest activity, hit like, comment and spend a minute or two interacting and connecting with your Coldwell Banker Northern California network.</p>\r\n', '<hr />\r\n<p>CB|ONE Network | A specialized social network</p>\r\n', '<hr />\r\n<p>CB|ONE Network | A specialized social network</p>\r\n'),
+(6, 'One of your CB|One Circle posts has been Liked!', '<hr />\r\nDate liked: [Date posted]<br />\r\nPost: \"[node:og-group-ref]\"<br />\r\nCircle: [circle:title]<br />\r\nPost title: [node:title]<br />\r\nLiked by: [liked-by] ', 'like')");
+}

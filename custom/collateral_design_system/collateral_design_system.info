@@ -1,0 +1,9 @@
+name = "Collateral Design Feature"
+description = "Collateral Design Feature"
+core = "7.x"
+package = "Collateral Design System"
+
+version = "7.x-1.0"
+core = "7.x"
+project = "Collateral Design Feature"
+datestamp = ""

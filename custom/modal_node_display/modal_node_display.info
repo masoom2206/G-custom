@@ -1,0 +1,9 @@
+name = Animated Modal Node Display
+description = Custom Module for Animated Modal Node Display.
+package = Custom
+version = VERSION
+core = 7.x
+; Information added by drupal.org packaging script on 2013-02-20
+version = "7.custom"
+project = support
+

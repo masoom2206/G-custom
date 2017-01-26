@@ -1,0 +1,64 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function marketing_concierge_menu() {
+  $items = array();
+  $items['marketing-concierge'] = array(
+    'title' => 'CB|ONE marketing concierge',
+    'description' => 'CB|ONE marketing concierge',
+    'page callback'		=> 'cbone_marketing_concierge',
+    'access callback' => 'user_is_logged_in',
+  );
+  //Menu for admin to Update subscription mail template
+  /*$items['admin/config/lms'] = array(
+    'title'				=> 'CB|ONE Daily Quiz',
+    'description'		=> 'CB|ONE Daily Quiz systems.',
+    'page callback'		=> 'system_admin_menu_block_page',
+    'access arguments'	=> array('access administration pages'),
+    'file'				=> 'system.admin.inc',
+    'file path'			=> drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/lms/user-list'] = array(
+    'title'				=> 'Marketing Concierge Node URL',
+    'description'		=> 'Marketing Concierge Node URL.',
+	'weight'			=> 1,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('marketing_concierge_node_form'),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/marketing_concierge_node.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );*/
+ return $items;
+}
+/**
+ * Implements hook_init()
+ */
+function marketing_concierge_init(){
+	drupal_add_css(drupal_get_path('module', 'marketing_concierge') . '/css/marketing_concierge.css');
+	//drupal_add_js(drupal_get_path('module', 'percent_complete_meter') . '/js/percent_meter.js');
+}
+
+/**
+ * Implements hook_form_alter()
+ */
+function marketing_concierge_form_alter(&$form, &$form_state, $form_id) {
+	if($form_id == 'lms_listing_node_form') {
+		/*print "<pre>";print_r($form);exit;
+		$form['field_lms_purchase_marketing']['und']['0']['markup']['#markup'] = '';
+		$form['actions']['submit']['#value'] = 'Save Question';
+		$form['actions']['addanother']['#value'] = 'Save and add another Question';
+		$form['#validate'][] = 'daily_quiz_node_form_validate';*/
+	}
+}
+
+/**
+ * Callback function cbone_marketing_concierge()
+ * to test node URL
+ **/
+function cbone_marketing_concierge(){
+	$output = 'ddd';
+	return $output;
+}
+
+

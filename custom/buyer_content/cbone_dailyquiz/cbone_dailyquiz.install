@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function cbone_dailyquiz_schema() {
+  
+  //Saved dailyquiz answer
+  $schema['dailyquiz_answer'] = array(
+    'fields' => array(
+      'aid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'User answer ID',
+      ),
+      'nid' => array(
+        'description'   => 'The daily quiz questions nid foreign key',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'uid' => array(
+        'description'   => 'User ID',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'question_level' => array(
+        'description'   => 'Quiz question level.',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'answer' => array(
+        'description'   => 'User answer',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'answer_status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => '0 = wrong, 1 = right',
+      ),
+      'timestamp' => array(
+        'description'   => 'Time when the answer was saved',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('aid'),
+    'indexes' => array(
+       'aid' => array('aid'),
+    ),
+  );
+  //user last question/level status
+  $schema['dailyquiz_user_last'] = array(
+    'fields' => array(
+      'lid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Serial Numner of User last table',
+      ),
+      'uid' => array(
+        'description'   => 'User ID',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'last_level' => array(
+        'description'   => 'User last level.',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'last_question' => array(
+        'description'   => 'User last question.',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'question_count' => array(
+        'description'   => 'Total question count in level.',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'answer_status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => '0 = wrong, 1 = right',
+      ),
+      'timestamp' => array(
+        'description'   => 'Time when the answer was saved',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('lid'),
+    'indexes' => array(
+       'lid' => array('lid'),
+    ),
+  );
+  return $schema;
+}

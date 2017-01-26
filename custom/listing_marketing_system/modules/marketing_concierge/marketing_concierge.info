@@ -1,0 +1,13 @@
+name = "CB|ONE Marketing Concierge Commerce Component"
+description = "The Marketing Concierge is a selection of services that agents can purchase to have a marketing specialist handle all of the LMS features for a particular listing."
+core = "7.x"
+package = "CB|ONE LMS"
+configure = "admin/config/marketing-concierge/mc-settings"
+
+;dependencies[] = text
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE LMS"
+datestamp = ""
+

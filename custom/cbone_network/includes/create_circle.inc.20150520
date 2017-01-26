@@ -1,0 +1,431 @@
+<?php
+/**
+ * Callback function listing_pdf_download()
+ * to download the PDF file
+ **/
+function circle_create(){
+	global $user, $base_url;
+	$nid='';
+	if( is_numeric(arg(2)) ){
+		$nid= arg(2);
+	}
+	$circle_form=drupal_get_form('create_circle_form', $nid);
+	$output= drupal_render($circle_form);
+	return $output;
+}
+
+/*
+		form to create a circle
+*/
+function create_circle_form($form, &$form_state, $nid=NULL) { 
+	if(!empty($nid)){
+		$node=node_load($nid);
+		
+		$nid=$node->nid;
+		$title=$node->title;
+		$body = isset($node->body[$node->language][0]['value']) ? $node->body[$node->language][0]['value'] .'': '';
+		$banner = isset($node->field_banners[$node->language][0]['value']) ? $node->field_banners[$node->language][0]['value'] .'': '';
+	}
+	else{
+		$nid='';
+		$title='';
+		$body='';
+		$banner='';
+	}
+	$info = field_info_field('field_banners');
+	$options = $info['settings']['allowed_values'];
+	$banner_options=array();
+	foreach ($options as $key=>$value){
+	$path= 'public://images/banner/'.$key;
+	$image=theme_image_style(array('style_name' => 'medium', 'path' => $path, 'width'=>'', 'height'=>''));
+		$banner_options[$key]='<div class="banners_images">'.$image.' '.$value.'</div>';
+	}
+	$form['wrapper'] = array(
+		'#markup' => "<div class='circle_info'>Name your specialized social network and begin networking with like minded individuals across Coldwell Banker's Northern Californi a network. Don't worry, you can change the circle name later.</div>",
+	);
+	$form['circle_nid'] = array(
+			'#type' => 'hidden',
+			'#value'=>$nid,
+	);
+	$form['circle_title'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Name Your Circle'),
+		'#attributes' => array('placeholder'=>'Ex. Vacation Rental Agents'),
+		'#default_value'=>$title,
+	
+	);
+	$form['description'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Description of Your Circle'),
+		'#default_value'=>$body,
+	);
+	$form['banners'] = array(
+		'#type' => 'radios',
+		'#title' => t('Select a Banner Image'),
+		'#options'=>$banner_options,
+		'#default_value' => $banner,
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t("I'm Ready!"),
+		'#prefix'=> '<div class="circle_submit">',
+		'#suffix'=> '</div>',
+	);
+	return $form;
+}
+
+/*Create Circle form submit handler*/
+function create_circle_form_submit($form, &$form_state, $nid=NULL) { 
+	global $base_url, $user;
+	$node_id=$form_state['values']['circle_nid'];
+	if(!empty($node_id)){
+	$node=node_load($node_id);
+		$node->title = $form_state['values']['circle_title'];
+		$node->body[$node->language][0]['value'] = $form_state['values']['description'];
+		$node->body[$node->language][0]['summary'] = $form_state['values']['description'];
+		$node->field_banners[$node->language][0]['value']= $form_state['values']['banners'];
+		node_save($node); // After this call we'll get a nid
+		drupal_set_message(t('Circle "'.$form_state['values']['circle_title'].'" has been updated.'));
+	}
+	else{
+		$node = new stdClass(); // We create a new node object
+		$node->type = "circle"; // Or any other content type you want
+		$node->title = $form_state['values']['circle_title'];
+		$node->language = LANGUAGE_NONE; // Or any language code if Locale module is enabled. More on this below *
+		node_object_prepare($node); // Set some default values.
+		$node->uid = $user->uid; // Or any id you wish
+		$node->body[$node->language][0]['value'] = $form_state['values']['description'];
+		$node->body[$node->language][0]['summary'] = $form_state['values']['description'];
+		$node->field_banners[$node->language][0]['value']= $form_state['values']['banners'];
+		$node = node_submit($node); // Prepare node for a submit
+		if($node){
+			node_save($node); // After this call we'll get a nid
+			drupal_set_message(t('Circle "'.$form_state['values']['circle_title'].'" has created.'));
+		}
+		else{
+			drupal_set_message(t('Circle "'.$form_state['values']['circle_title'].'" has not created.'));
+		}
+	}
+}
+
+/**
+ * Callback function cbone_non_groups()
+ * to display list of gps user is not assigned
+ Browse Circle page
+ **/
+
+function cbone_non_groups(){
+	global $user, $base_url;
+	$account=user_load($user->uid);
+	$groups = og_get_groups_by_user($account);
+	
+	$query=db_select('node', 'n')
+			->fields('n', array('nid'))
+			->condition('type', 'circle', '=');
+	$result = $query->execute()->fetchAll();
+	$nids=array();
+	foreach($result as $value){
+		$nids[]=$value->nid;
+	}
+	
+	$non_groups=array();
+	foreach($nids as $value ){
+		if(!in_array($value, $groups['node'])){
+			$non_groups[]=$value;
+		}
+	}
+	$non_groups_nid=array();
+	$output='<div class="non-groups"><ul>';
+	foreach($non_groups as $nid){
+		$node_group= node_load($nid);
+		
+		if(isset($node_group->group_access)){
+			if($node_group->group_access['und'][0]['value']==0){
+				$non_groups_nid[]=$node_group->nid;
+			}
+		}
+		else{
+			$non_groups_nid[]=$node_group->nid;
+		}
+	} 
+	$variables = array(
+				'circle_nid' => $non_groups_nid,
+	);
+	$output = theme('browse_circle_page', array('var_name' => $variables));
+	return $output;
+}
+/**
+ * Callback function my_office()
+ * to display the primary office of user
+ **/
+function my_office(){	
+	global $user, $base_url;
+	$query=db_select('field_data_field_office_id', 'foid')->distinct();
+		$query->innerJoin('field_data_field_member_office', 'fmo', 'foid.field_office_id_value = fmo.field_member_office_value');
+		$query->fields('foid', array('entity_id', 'field_office_id_value'))
+			->fields('fmo', array('entity_id', 'field_member_office_value'));
+		$query->condition('fmo.entity_id', $user->uid, '=');
+		$result= $query->execute()->fetchAll();
+		if(!empty($result)){
+			foreach($result as $value){
+			$office_nid=$value->entity_id;			
+			}
+		}
+		if(!empty($office_nid)){
+		$office_gp=node_load($office_nid);
+		$get_nid = $office_gp->nid;
+		$query= db_select('og_membership', 'om')
+			->fields('om', array('etid', 'gid'))
+			->condition('gid', $get_nid, '=')
+			->condition('group_type', 'node', '=')
+			->condition('entity_type', 'node', '=');
+		$result= $query->execute()->fetchAll();
+	
+		if (!empty($result)) {
+		$circles_id=array();
+			foreach($result as $value){
+			$circles_id[]=$value->etid;
+				$query= db_select('og_membership', 'om')
+					->fields('om', array('etid', 'gid'))
+					->condition('etid', $value->etid, '=')
+					->condition('group_type', 'node', '=')
+					->condition('entity_type', 'node', '=');
+				$results= $query->execute()->fetchAll();
+				
+				foreach($results as $values){
+					//$circles_ids[]=$values->gid;
+				}
+			}
+			$variables = array(
+				'circle_nid' => $circles_id,
+			);
+			$output = theme('my_office', array('var_name' => $variables));
+		}
+		else{
+			$output="There are currently no posts.";
+		}
+		}
+		else{
+			$output="You have not assigned any user group. Please choose a office group.";
+		}
+	return $output;
+}
+
+/**
+List of cirlce members
+*/
+function circle_members($circle_id){
+	global $user, $base_url;
+	
+	$query= db_select('og_membership', 'om')
+			->fields('om', array('etid', 'gid'))
+			->condition('gid', $circle_id, '=')
+			->condition('group_type', 'node', '=')
+			->condition('entity_type', 'user', '=');
+	$result= $query->execute()->fetchAll();
+	
+	if (!empty($result)) {
+	$output='<ul>';
+		foreach($result as $value){
+		$user= user_load($value->etid);
+			if(!empty($user->field_preferred_name)){
+				$output.='<li>'.$user->field_preferred_name['und'][0]['value'].'</li>';
+			}
+		}
+		$output.='</ul>';
+    }
+	else{
+		$output='No user assigned to the group';
+	}
+	return $output;
+}
+
+/**
+List of cirlce members
+*/
+function office_members($office_id){
+	global $user, $base_url;
+	
+	$query= db_select('og_membership', 'om')
+			->fields('om', array('etid', 'gid'))
+			->condition('gid', $office_id, '=')
+			->condition('group_type', 'node', '=')
+			->condition('entity_type', 'user', '=');
+	$result= $query->execute()->fetchAll();
+	
+	if (!empty($result)) {
+	$output='<ul>';
+		foreach($result as $value){
+		$user= user_load($value->etid);
+			if(!empty($user->field_preferred_name)){
+				$output.='<li>'.$user->field_preferred_name['und'][0]['value'].'</li>';
+			}
+		}
+		$output.='</ul>';
+    }
+	else{
+		$output='No user assigned to the group';
+	}
+	return $output;
+}
+///******Request sent callback*************/
+function request_sent($circle_id){
+	$node = node_load($circle_id);
+	$output='<div class="thanks-message">You have successfully submitted your membership request for '.$node->title.'.</br> Once it is approved you will be able to access the group. </div>';
+	return $output;
+}
+
+///******Request cancel callback*************/
+function request_cancel($circle_id){
+	$node = node_load($circle_id);
+	$output='<div class="thanks-message">You have cancelled your membership request for '.$node->title.'.</br></div>';
+	return $output;
+}
+
+/*
+	CALLBACK FUNCTION To display COMMENT
+*/
+function comment_display($nid){
+		$result = db_select('comment')
+                  ->fields('comment', array('cid', 'name','subject'))
+                  ->condition('nid', $nid, '=')
+                  ->execute()
+                  ->fetchAll();
+		if(!empty($result)){
+			$output='<ul>';
+			foreach($result as $comment) {
+				$comment_data=comment_load($comment->cid);
+				$user=user_load($comment_data->uid);
+				$picture='<div class="user-picture">'.theme('image_style', array('path' => !empty($user->picture->uri) ? $user->picture->uri : variable_get('user_picture_default'), 'style_name' => 'thumbnail')).'</div>';
+				$output.='<li><div class="views-field views-field-nothing">        
+								<span class="field-content"><div class="post-comment">
+									<div class="circle-poster">
+										<div class="circle-poster-image">  <div class="user-picture">'.$picture.'</div></div>
+										<div class="circle-poster-info">
+											<div class="circle-poster-name">'.$user->field_preferred_name['und'][0]['value'].'</div>
+											<div class="circle-poster-office">'.$user->field_member_office['und'][0]['value'].'</div>
+											<div class="circle-poster-social"><a href="/contact" rel="modal-node-popup">Contact</a></div>
+											<div class="comment-body">'.$comment_data->comment_body['und'][0]['value'].'</div>
+										</div>
+									</div>
+								</div>
+							</span></div></li>';
+			}
+			$output.='</ul>';
+		}
+		else{
+			$output=t('Currently no comments added');
+		}
+		return $output;
+}
+
+/*
+	CALLBACK FUNCTION TP CREATE COMMENT
+*/
+function comment_create_form($form, &$form_state, $nid){
+	$form['nid'] = array(
+		'#type' => 'hidden',
+		'#value' => $nid,
+	);
+	$form['description'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Add Comment'),
+		'#rows' => 2,
+		'#cols' => 60,
+		'#resizable' => FALSE,
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t("Submit"),
+		'#prefix'=> '<div class="comment_submit">',
+		'#suffix'=> '</div>',
+	);
+	  return $form;
+}
+
+/*
+	CALLBACK FUNCTION To submit COMMENT
+*/
+function comment_create_form_submit($form, &$form_state){
+	global $user, $base_url;
+	$users = user_load($user->uid);
+	
+	$comment_nid=$form_state['values']['nid'];
+	$node=node_load($comment_nid);
+	$comment_body=$form_state['values']['description'];
+	
+	// Let's create a managed object $comment = new stdClass(); // We create a new comment object
+	$comment->nid = $comment_nid; // nid of a node you want to attach a comment to
+	$comment->cid = 0; // leave it as is
+	$comment->pid = 0; // parent comment id, 0 if none 
+	$comment->uid = $users->uid; // user's id, who left the comment
+	$comment->mail = $users->mail; // user's email
+	$comment->name = $user->name; // If user is authenticated you can omit this field, it will be auto-populated, if the user is anonymous and you want to name him somehow, input his name here
+	$comment->thread = '01/'; // OPTIONAL. If you need comments to be threaded you can fill this value. Otherwise omit it.
+	$comment->created = time(); // OPTIONAL. You can set any time you want here. Useful for backdated comments creation.
+	$comment->is_anonymous = 0; // leave it as is
+	$comment->homepage = ''; // you can add homepage URL here
+	$comment->status = COMMENT_PUBLISHED; // We auto-publish this comment
+	$comment->language = LANGUAGE_NONE; // The same as for a node
+	$comment->subject = $node->title.'-'.$user->name; 
+	$comment->comment_body[$comment->language][0]['value'] = $comment_body; // Everything here is pretty much like with a node
+	$comment->comment_body[$comment->language][0]['format'] = 'filtered_html'; 
+	comment_submit($comment); // saving a comment
+	comment_save($comment);
+}
+
+/**
+	Callback to manage circles
+**/
+function manage_circle(){
+global $user, $base_url;
+$header = array('Circle Title', '', '', '', '', '');
+$rows = array();
+	$query=db_select('node', 'n')
+		->fields('n', array('nid'))
+		->condition('uid', $user->uid, '=')
+		->condition('type', 'circle', '=');
+	$result= $query->execute()->fetchAll();
+	
+	if(!empty($result)){
+	
+			
+			foreach($result as $value) {
+				$node=node_load($value->nid);
+				$user=user_load($node->uid);
+				$rows[] = array(
+                    t($node->title),
+					l('Edit', $base_url.'/edit/circle/'.$node->nid),
+					l('Add Circle Post', $base_url.'/create/circle-post/'.$node->nid),
+                    l('Add People', $base_url.'/group/node/'.$node->nid.'/admin/people/add-user'),
+					l('Invite People', $base_url.'/group/node/'.$node->nid.'/admin/people/invite'),
+					l('People', $base_url.'/group/node/'.$node->nid.'/admin/people'),
+                );
+			}
+			$output=theme('table', array('header' => $header, 'rows' => $rows, '#empty' =>t('No circle is added'),  'attributes' => array('width' => '100%')));
+		}
+		else{
+			$output=t('You have not created any circle.');
+		}
+		return $output;
+
+}
+/*****
+	**** Upcoming events page function callback **********
+****/
+function upcoming_events(){
+	return '';
+}
+
+/*****
+	**** Create circle post page function callback **********
+****/
+function create_circle_post($nid){
+	$output='<div class="share_wrapper">';
+		module_load_include('inc', 'node', 'node.pages');
+		$form = node_add('circle_post');
+		unset($form['additional_settings']);
+		$output.=drupal_render($form);
+		$output.='</div>';
+		return $output;
+}

@@ -1,0 +1,104 @@
+<?php
+/**
+ * @author: MegaDrupal
+ * @file: md_fullscreen_slider.install
+ */
+
+
+/**
+ * implements hook_schema()
+ */
+function md_fullscreen_slider_schema() {
+  $schema = array();
+  $schema["md_fullscreen_sliders"] = array(
+    "description" => "The table contains data of sliders on your site",
+    "fields" => array(
+      "id" => array(
+        "description" => "Primary key to identify a slider",
+        "type" => "serial",
+        "unsigned" => TRUE,
+        "not null" => TRUE,
+      ),
+      "uid" => array(
+        "description" => "uid of user create slider",
+        "type" => "int",
+        "unsigned" => TRUE,
+        "not null" => TRUE,
+      ),
+      "title" => array(
+        "description" => "The name of slider to identify slider for administrator.",
+        "type" => "varchar",
+        "length" => "255",
+        "not null" => TRUE,
+      ),
+      "machine_name" => array(
+        "description" => "The machine name of slideshow. The uniquied values.",
+        "type" => "varchar",
+        "length" => 255,
+        "not null" => TRUE,
+      ),
+      "description" => array(
+        "description" => "The description about slider is created.",
+        "type" => "text",
+        "size" => "big",
+      ),
+      "extended_item" => array(
+        "description" => "ID of item use extended licence of FullScreen JavaScript Library",
+        "type" => "varchar",
+        "length" => "255",
+        "not null" => FALSE,
+      ),
+      "settings" => array(
+        "description" => "The common settings for slideshow.",
+        "type" => "text",
+        "size" => "big",
+        "not null" => TRUE,
+      ),
+    ),
+    "primary key" => array("id"),
+  );
+  $schema["md_fullscreen_slides"] = array(
+    "description" => "The table contains slides data in sliders",
+    "fields" => array(
+      "id" => array(
+        "description" => "Primary key to identify a slide",
+        "type" => "serial",
+        "unsigned" => TRUE,
+        "not null" => TRUE,
+      ),
+      "sid" => array(
+        "description" => "The ID of slider that contains this slide",
+        "type" => "int",
+        "not null" => TRUE,
+        "unsigned" => TRUE,
+      ),
+      "position" => array(
+        "description" => "The order of slide in list slides of slider",
+        "type" => "int",
+        "not null" => TRUE,
+        "unsigned" => TRUE,
+        "size" => "tiny",
+      ),
+      "settings" => array(
+        "description" => "Settings data for this slide",
+        "type" => "text",
+        "size" => "big",
+        "not null" => TRUE,
+      ),
+      "items" => array(
+        "description" => "Data of items will be show with slide",
+        "type" => "text",
+        "size" => "big",
+      ),
+    ),
+    "primary key" => array("id"),
+    "foreign keys" => array(
+      "slides_slider" => array(
+        "table" => "md_fullscreen_sliders",
+        "columns" => array("sid" => "id"),
+      ),
+    ),
+  );
+
+  return $schema;
+}

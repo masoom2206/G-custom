@@ -1,0 +1,10 @@
+name = "Agent Directory"
+description = "Agent Directory"
+core = "7.x"
+package = "Listing PDF"
+
+version = "7.x-1.0"
+core = "7.x"
+project = "Agent Directory"
+datestamp = ""
+

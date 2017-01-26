@@ -1,0 +1,327 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function percent_complete_meter_menu() {
+  $items = array();
+  //Menu for testing percent meter.
+  $items['percent_meter'] = array(
+    'title' => 'Testing percent complete meter',
+    'description' => 'Testing percent complete meter',
+	'page callback' => 'percent_meter_test',
+    'access callback' => TRUE,
+  );
+  //Menu for admin to Update subscription mail template
+  $items['admin/config/pcm'] = array(
+    'title'				=> 'Percent Complete Meter',
+    'description'		=> 'Percent Complete Meter systems.',
+    'page callback'		=> 'system_admin_menu_block_page',
+    'access arguments'	=> array('access administration pages'),
+    'file'				=> 'system.admin.inc',
+    'file path'			=> drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/pcm/percent/meter'] = array(
+    'title'				=> 'Percent complete meter Setup',
+    'description'		=> 'Percent complete meter Setup.',
+    'page callback'		=> 'percent_meter',
+	'weight'			=> 1,
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/percent_complete_meter.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/pcm/percent/tracking/on'] = array(
+    'title'				=> 'On Percent Meter Tracking',
+    'description'		=> 'Active percent Meter Tracking.',
+	'weight'			=> 2,
+    'page callback'		=> 'percent_tracking',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/percent_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/pcm/percent/tracking/off'] = array(
+    'title'				=> 'Off Percent Meter Tracking',
+    'description'		=> 'Disable percent Meter Tracking.',
+	'weight'			=> 3,
+    'page callback'		=> 'percent_tracking',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/percent_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/pcm/user/tracking'] = array(
+    'title'				=> 'User Percent Meter Tracking',
+    'description'		=> 'User Percent Meter Tracking.',
+	'weight'			=> 4,
+    'page callback'		=> 'user_percent_tracking',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/user_percent_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/pcm/percent/tracking/add'] = array(
+    'title'				=> 'Percent Add Tracking',
+    'description'		=> 'Percent Add New Tracking Setup.',
+	'weight'			=> 5,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('percent_tracking_form'),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/percent_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/pcm/percent/tracking/edit/%'] = array(
+    'title'				=> 'Percent Tracking Edit',
+    'description'		=> 'Percent Tracking Edit Setup.',
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('percent_tracking_form', 6),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/percent_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/pcm/percent/tracking/delete/%'] = array(
+    'title'				=> 'Percent Tracking Delete',
+    'description'		=> 'Percent Tracking Delete.',
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('percent_tracking_delete_confirm_form', 6),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/percent_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+
+ return $items;
+}
+
+/**
+ * Implements hook_init()
+ */
+function percent_complete_meter_init(){
+	$current_path = current_path();
+	$explode = explode('/', $current_path);
+	$alias = drupal_get_path_alias('node/'.$explode[1]);
+	$explode1 = explode('/', $alias);
+	if($explode1[0] == 'lms' && $explode1[2] == 'steps'){
+		$_SESSION['custom_flag_lms_pnid'] = $explode1[1];
+	}
+	drupal_add_css(drupal_get_path('module', 'percent_complete_meter') . '/css/percent_meter.css');
+	drupal_add_js(drupal_get_path('module', 'percent_complete_meter') . '/js/percent_meter.js');
+}
+
+/**
+ * Implements hook_views_api
+ **/
+function percent_complete_meter_views_api() {
+  return array(
+    'api' => 3.0,
+    'path' => drupal_get_path('module', 'percent_complete_meter') . '/includes/views',
+  );
+}
+/**
+ * Allow modules to alter a flag when it is initially loaded.
+ * Implements hook_flag_alter()
+ * @see flag_get_flags()
+ *
+function percent_complete_meter_flag_alter(&$flag) {
+	if(arg(0) == 'testing-percent-meter'){
+		print "<pre>";print_r($flag);exit;
+		if($flag->fid == 1){
+			$flag->flag_short = 'Like';
+			$flag->unflag_short = 'UnLike';
+		}
+	}
+}*/
+/*function percent_complete_meter_flag_link() {
+	if(arg(0) == 'testing-percent-meter'){
+		print $action;
+		print $entity_id;
+		print "<pre>";print_r($flag);exit;
+	}
+}*/
+
+/*
+function percent_complete_meter_preprocess_flag(&$vars) {
+	if(arg(0) == 'testing-percent-meter'){
+		$flag = $vars['flag'];
+		$entity_id = $vars['entity_id'];
+		$node_detail = node_load($entity_id);
+		$action = $vars['action'];
+		$fav_completed_class = $node_detail->field_fav_completed_class['und']['0']['value'];
+		//unflag
+		if($fav_completed_class == 'fav-completed-white' && $action == 'flag') {
+			$vars['link_text'] = '<img border="0" src="/sites/default/files/images/icon/flag/heart-icon-gray.png">';
+		}
+		else if ($fav_completed_class == 'fav-completed-white' && $action == 'unflag') {
+			$vars['link_text'] = '<img border="0" src="/sites/default/files/images/icon/flag/heart-icon-gray-x.png">';
+		}
+		else if ($fav_completed_class == 'fav-completed-gray' && $action == 'flag') {
+			$vars['link_text'] = '<img border="0" src="/sites/default/files/images/icon/flag/heart-icon-white.png">';
+		}
+		else if ($fav_completed_class == 'fav-completed-gray' && $action == 'unflag') {
+			$vars['link_text'] = '<img border="0" src="/sites/default/files/images/icon/flag/heart-icon-white-x.png">';
+		}
+		return $vars;
+		$vars['link_text'] = '<img border="0" src="/sites/default/files/images/icon/flag/heart-icon-gray-x.png">';
+		print "<pre>";print_r($vars);exit;
+	}
+}*/
+
+/**
+ * Callback function details_page_completed_flagged()
+ * to checked the nid has flagged
+ * @return $row_count
+ **/
+function details_page_completed_flagged($entity_id = NULL, $fid = NULL, $uid = NULL) {
+	$result = db_select('flagging', 'fc')
+		->fields('fc')
+		->condition('entity_type', 'node')
+		->condition('fid', $fid)
+		->condition('entity_id', $entity_id)
+		->condition('uid', $uid)
+		->execute();
+	$row_count = $result->rowCount();
+	//foreach($result as $result){
+		//echo "<pre>";
+		//print_r ($result);
+		//echo "</pre>";
+	//}
+	return $row_count;
+}
+/**
+ * Call back function percent_meter_test()
+ * to test percent meter
+ **/
+function percent_meter_status($nid = NULL, $fid = NULL, $percent_status = NULL){
+	global $user;
+	$uid = $user->uid;
+	$percent = "0";
+	$percent_width = "3";
+	$output = '';
+	
+	//fetch data from percent_complete table
+	$query = db_select("percent_complete", "pc");
+	$query->join('percent_complete_child', 'pcc', 'pcc.pcid = pc.pcid');
+	$query->condition("pc.parent_entity_id", $nid, '=');
+	if($percent_status == NULL) {
+		$query->join('percent_tracking', 'pt', 'pt.pcid = pc.pcid');
+		$query->condition("pt.tracking_status", '1', '=');
+	}
+	$query->fields("pc");
+	$query->fields("pcc");
+	$result = $query->execute();
+	$row_count = $result->rowCount();
+	$x = 0; $y = 0;
+	
+	if($row_count == 0){
+		$entity_id = $nid;
+		//$user_flags = flag_get_user_flags('node', $entity_id, $uid);
+		$user_flags = details_page_completed_flagged($entity_id, $fid, $uid);
+		if($user_flags == 0) {
+			$y = $y + 1;
+		}
+		else {
+			$x = $x + 1;
+			$y = $y + 1;
+		}
+	}
+	else {
+		while($data = $result->fetchObject()){
+			$entity_id = $data->child_entity_id;
+			//$user_flags = flag_get_user_flags('node', $entity_id, $uid);
+			$user_flags = details_page_completed_flagged($entity_id, $fid, $uid);
+			if($user_flags == 0) {
+				$y = $y + 1;
+			}
+			else {
+				$x = $x + 1;
+				$y = $y + 1;
+			}
+		}
+	}
+	if($x != 0 && $y != 0) {
+		$percent = round($x/$y*100);
+		$percent_width = $percent;
+	}
+	if($percent_status == 'percent') {
+		$output = $percent;
+	}
+	else {
+		$output = '<div class="percent-meter"><div style="width: '.$percent_width.'% !important">'.$percent.'%</div></div>';
+	}
+	return $output;
+}
+/**
+ * Call back function percent_meter_test()
+ * to test percent meter
+ * //percent_meter
+ **/
+function percent_meter_test($nid = NULL){
+	$output = 'Without Var'.percent_meter_status(510, 2);
+	$output .= '<br/><br/>With Var'.percent_meter_status(510, 2, 'percent');
+	return $output;
+	$entity_id = 43;
+	/*$flag = flag_get_flag('bookmarks');
+	if (!$flag) {
+		// Flag does not exist.
+		return 'Wrong Flag';
+	}
+	if (!$flag->access($entity_id) && (!$flag->is_flagged($entity_id) || !$flag->access($entity_id, 'flag'))) {
+		// User has no permission to use this flag.
+		return 'Do not';
+	}
+	return $flag->theme($flag->is_flagged($entity_id) ? 'unflag' : 'flag', $entity_id);*/
+}
+
+function custom_percent_meter_status($nid = NULL, $fid = NULL, $percent_status = NULL){
+	global $user;
+	$uid = $user->uid;
+	$percent = "0";
+	$percent_width = "3";
+	$output = '';
+	
+	//fetch data from percent_complete table
+	$query = db_select("percent_complete", "pc");
+	$query->join('percent_complete_child', 'pcc', 'pcc.pcid = pc.pcid');
+	$query->condition("pc.parent_entity_id", $nid, '=');
+	if($percent_status == NULL){
+		$query->join('percent_tracking', 'pt', 'pt.pcid = pc.pcid');
+		$query->condition("pt.tracking_status", '1', '=');
+	}
+	$query->fields("pc");
+	$query->fields("pcc");
+	$result = $query->execute();
+	$row_count = $result->rowCount();
+	$x = 0; $y = 0;
+	if($row_count == 0){
+		$entity_id = $nid;
+		//$user_flags = flag_get_user_flags('node', $entity_id, $uid);
+		$user_flags = details_page_completed_flagged($entity_id, $fid, $uid);
+		if($user_flags == 0) {
+			$y = $y + 1;
+		}
+		else {
+			$x = $x + 1;
+			$y = $y + 1;
+		}
+	}
+	else {
+		while($data = $result->fetchObject()){
+			$entity_id = $data->child_entity_id;
+			//$user_flags = flag_get_user_flags('node', $entity_id, $uid);
+			$user_flags = details_page_completed_flagged($entity_id, $fid, $uid);
+			if($user_flags == 0) {
+				$y = $y + 1;
+			}
+			else {
+				$x = $x + 1;
+				$y = $y + 1;
+			}
+		}
+	}
+	if($nid == 44){
+		$y = $y-1;
+	}
+	if($nid == 48){
+		$y = $y-4;
+	}
+	if($x != 0 && $y != 0) {
+		$percent = round($x/$y*100);
+		$percent_width = $percent;
+	}
+	return $percent;
+}

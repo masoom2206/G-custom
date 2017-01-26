@@ -1,0 +1,362 @@
+<?php
+/**
+ * @file
+ * Contains Region Filter functionality for node view by user.
+ */
+/**
+ * Implementation of hook_menu
+ */
+function region_filter_menu() {
+	$items = array();
+	//$items['dms/marketing'] = array(
+  //Menu for admin to Update subscription mail template
+	/*$items['admin/config/region_filter'] = array(
+		'title'				=> 'Region filter settings',
+		'description'		=> 'Region filter settings to apply the filter region functionality.',
+		'page callback'		=> 'system_admin_menu_block_page',
+		'access arguments'	=> array('access administration pages'),
+		'file'				=> 'system.admin.inc',
+		'file path'			=> drupal_get_path('module', 'system'),
+	);*/
+	$items['admin/config/content/content_type'] = array(
+		'title'				=> 'Region filter settings',
+		'description'		=> 'Region filter settings to apply the filter region functionality.',
+		'page callback'		=> 'region_filter_content_type',
+		'weight'			=> 1,
+		'access arguments'	=> array('access administration pages'),
+		'file'				=> 'includes/region_content_type.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	return $items;
+}
+/**
+ * Implements hook_views_api
+ **/
+function region_filter_views_api() {
+  return array(
+    'api' => 3.0,
+    'path' => drupal_get_path('module', 'region_filter') . '/includes/views',
+  );
+}
+/**
+ * Implements hook_node_access().
+ */
+function region_filter_node_access($node, $op, $account) {
+	global $user;
+	$user_detail = user_load($user->uid);
+	$roles = array_map('strtolower', $user_detail->roles);
+	if (is_object($node)) {
+    $bool = (
+      (($node->type == 'event') || ($node->type == 'office_event')) && 
+      ($op == 'view')
+    );
+    if ($bool) {
+      if ($account->uid > 0) {
+        if(isset($node->field_allow_on_social_media['und'][0]['value'])) {
+          if ($node->field_allow_on_social_media['und'][0]['value'] == 1) {
+             $dataaccess = regoin_filter_for_user_viewdata($node->nid, $user->uid, $op);
+             if(!$dataaccess) {
+                return NODE_ACCESS_ALLOW;
+             }
+          }
+        }
+        
+      }
+
+    }
+  }
+	if(in_array("siteadmin", $roles)) {
+		return NODE_ACCESS_ALLOW;
+	}
+	else if($op == 'view' && $user->uid > 1) {
+		$any_roles = drupal_map_assoc(content_access_per_node_setting($op, $node));
+		$diff_roles = array_intersect_key($user_detail->roles, $any_roles);
+		$nid = is_string($node) ? arg(1) : $node->nid;
+		$node_detail = node_load($nid);
+		if(!empty($diff_roles) && isset($node_detail->field_region['und'][0]['tid'])) {
+			$validate = db_select("region_filter", 'rf');
+			$validate->fields('rf', array('validate'));
+			$validate->condition('rf.content_type', $node_detail->type, 'LIKE');
+			$result = $validate->execute()->fetchField();
+			if($result == 1) {
+				$area_tid = array();
+				foreach($node_detail->field_region['und'] as $tids) {
+					$area_tid[] = $tids['tid'];
+				}
+				if(!empty($area_tid)) {
+					$count = db_query("SELECT COUNT( * ) FROM field_data_field_region WHERE bundle = 'user' AND entity_id = :uid AND field_region_tid IN ( :area_tid )", array(':uid' => $user->uid,':area_tid' => $area_tid))->fetchField();
+					if($count > 0) {
+						return NODE_ACCESS_ALLOW;
+					}
+					else {
+						return NODE_ACCESS_DENY;
+					}
+				}
+			}
+		}
+	}
+}
+/**
+ * Implements hook_views_query_alter()
+ * Alter the query before executing the query.
+ *
+ * This hook should be placed in MODULENAME.views.inc and it will be
+ * auto-loaded. MODULENAME.views.inc must be in the directory specified by the
+ * 'path' key returned by MODULENAME_views_api(), or the same directory as the
+ * .module file, if 'path' is unspecified.
+ *
+ * @param $view
+ *   The view object about to be processed.
+ * @param $query
+ *   An object describing the query.
+ * @see hook_views_query_substitutions()
+ */
+function region_filter_views_query_alter(&$view, &$query) {
+	global $user;
+	$node_type = array();
+	if($view->base_table == 'node') {
+		foreach($query->where as $wheres){
+			foreach($wheres['conditions'] as $where){
+				if(!is_object($where['field']) && !is_array($where['field'])){
+					if($where['field'] == 'node.type') {
+						$node_type = $where['value'];
+					}
+				}
+			}
+		}
+		if(!empty($node_type)) {
+			$ct_query = db_select("region_filter", 'rf');
+			$ct_query->fields('rf', array('content_type'));
+			$ct_query->condition('rf.validate', 1, '=');
+			$selected_bundles = $ct_query->execute()->fetchCol();
+			$diff_roles = array_intersect($selected_bundles, $node_type);
+			if(!empty($diff_roles)) {
+				$user_detail = user_load($user->uid);
+				$roles = array_map('strtolower', $user_detail->roles);
+				if (!in_array("siteadmin", $roles) && $user->uid > 1) {
+					$area_tid = array();
+					if(isset($user_detail->field_region['und']['0']['tid'])) {
+						foreach($user_detail->field_region['und'] as $tids) {
+							$area_tid[] = $tids['tid'];
+						}
+					}
+					if(!empty($area_tid)){
+						//create the join
+						$join = new views_join();
+						$join->table = 'field_data_field_region';
+						$join->field = 'entity_id';
+						$join->left_table = 'node';
+						$join->left_field = 'nid';
+						$join->type = 'left';
+						//add the join the the view query
+						$query->add_relationship('field_data_field_region',$join,'node');
+						//add the where
+						$region_condition = db_or()->condition('field_data_field_region.field_region_tid', $area_tid, 'IN')->isNull('field_data_field_region.field_region_tid');
+						$query->add_where(0, $region_condition);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/**
+ * Implements hook_node_presave($node)
+ */
+function region_filter_node_presave($node) {	
+	if($node->type == 'document_section') {
+		if(!isset($node->field_region['und']['0']['tid'])) {
+			$vid = db_query('SELECT vid FROM taxonomy_vocabulary WHERE name like :name', array(':name' => 'Region'))->fetchField();
+			$terms = taxonomy_get_tree($vid);
+			foreach($terms as $key => $term) {
+				$node->field_region['und'][$key]['tid'] = $term->tid;
+			}
+		}
+	}
+}
+
+/**
+ * Implements hook_search_info().
+ */
+function region_filter_search_info() {
+  return array(
+    'title' => 'Content',
+    'path' => 'node',
+  );
+}
+
+/**
+ * Implements hook_search_access().
+ */
+function region_filter_search_access() {
+  return user_access('access content');
+}
+
+/**
+ * Implements hook_search_reset().
+ */
+function region_filter_search_reset() {
+  db_update('search_dataset')
+    ->fields(array('reindex' => REQUEST_TIME))
+    ->condition('type', 'node')
+    ->execute();
+}
+
+/**
+ * Implements hook_search_status().
+ */
+function region_filter_search_status() {
+  $total = db_query('SELECT COUNT(*) FROM {node}')->fetchField();
+  $remaining = db_query("SELECT COUNT(*) FROM {node} n LEFT JOIN {search_dataset} d ON d.type = 'node' AND d.sid = n.nid WHERE d.sid IS NULL OR d.reindex <> 0")->fetchField();
+  return array('remaining' => $remaining, 'total' => $total);
+}
+
+/**
+ * Implements hook_search_execute().
+ */
+function region_filter_search_execute($keys = NULL, $conditions = NULL) {
+    global $user;
+	$user_detail = user_load($user->uid);
+	$area_tid = array();
+	if(isset($user_detail->field_region['und'][0]['tid'])) {
+		foreach($user_detail->field_region['und'] as $tids) {
+			$area_tid[] = $tids['tid'];
+		}
+	}
+  // Build matching conditions
+  $query = db_select('search_index', 'i', array('target' => 'slave'))->extend('SearchQuery')->extend('PagerDefault');
+  $query->join('node', 'n', 'n.nid = i.sid');
+  
+    // Here goes my filter where I joined another table and
+    // filter by region field
+    if (!empty($area_tid) && $user->uid > 1) {
+        $query->leftJoin('field_data_field_region', 'fa', 'fa.entity_id = i.sid');		
+		$or = db_or()->condition('fa.field_region_tid', $area_tid, 'IN')->condition('n.uid', $user->uid, '=');
+        $query->condition($or);
+        //$query->condition('fa.field_region_tid', $area_tid, 'IN');
+		//$query->condition('n.uid', $user->uid, '=');
+    }
+	
+  $query
+    ->condition('n.status', 1)
+    ->addTag('node_access')
+    ->searchExpression($keys, 'node');
+
+  // Insert special keywords.
+  $query->setOption('type', 'n.type');
+  $query->setOption('language', 'n.language');
+  if ($query->setOption('term', 'ti.tid')) {
+    $query->join('taxonomy_index', 'ti', 'n.nid = ti.nid');
+  }
+  // Only continue if the first pass query matches.
+  if (!$query->executeFirstPass()) {
+    return array();
+  }
+
+  // Add the ranking expressions.
+  _node_rankings($query);
+
+  // Load results.
+  $find = $query
+    ->limit(10)
+    ->execute();
+  $results = array();
+  foreach ($find as $item) {
+    // Render the node.
+    $node = node_load($item->sid);
+    $build = node_view($node, 'search_result');
+    unset($build['#theme']);
+    $node->rendered = drupal_render($build);
+
+    // Fetch comments for snippet.
+    $node->rendered .= ' ' . module_invoke('comment', 'node_update_index', $node);
+
+    $extra = module_invoke_all('node_search_result', $node);
+
+    $uri = entity_uri('node', $node);
+    $results[] = array(
+      'link' => url($uri['path'], array_merge($uri['options'], array('absolute' => TRUE))),
+      'type' => check_plain(node_type_get_name($node)),
+      'title' => $node->title,
+      'user' => theme('username', array('account' => $node)),
+      'date' => $node->changed,
+      'node' => $node,
+      'extra' => $extra,
+      'score' => $item->calculated_score,
+      'snippet' => search_excerpt($keys, $node->rendered),
+      'language' => entity_language('node', $node),
+    );
+  }
+  return $results;
+}
+/**
+ * Prepare the query by adding parameters, sorts, etc.
+ *
+ * This hook is invoked before the query is cached. The cached query is used
+ * after the search such as for building facet and sort blocks, so parameters
+ * added during this hook may be visible to end users.
+ *
+ * This is otherwise the same as HOOK_apachesolr_query_alter(), but runs before
+ * it.
+ *
+ * @param DrupalSolrQueryInterface $query
+ *  An object implementing DrupalSolrQueryInterface. No need for &.
+ */
+function region_filter_apachesolr_query_prepare(DrupalSolrQueryInterface $query) {
+	global $user;
+	$user_detail = user_load($user->uid);
+	$roles = array_map('strtolower', $user_detail->roles);
+	if(!in_array("siteadmin", $roles)) {
+		if($user->uid > 1){
+			//fetch all selected content type in search setting page
+			module_load_include('inc', 'apachesolr', 'apachesolr.index');
+			$env_id = apachesolr_default_environment();
+			$existing_bundles = apachesolr_get_index_bundles($env_id, 'node');
+			//fetch selected content type for region filter
+			$ct_query = db_select("region_filter", 'rf');
+			$ct_query->fields('rf', array('content_type'));
+			$ct_query->condition('rf.validate', 1, '=');
+			$selected_bundles = $ct_query->execute()->fetchCol();
+			//Find the difference between two content type array
+			$bundles = array_diff($existing_bundles, $selected_bundles);
+			//fetch all region tid of login user
+			$area_tid = array();
+			if(isset($user_detail->field_region['und'][0]['tid'])) {
+				foreach($user_detail->field_region['und'] as $tids) {
+					$area_tid[] = $tids['tid'];
+				}
+			}
+			//create filter as solr sub query and attached to main query
+			$compiled_filter = new SolrFilterSubQuery('OR');
+			$compiled_filter->addFilter("im_field_region", '('. implode(' OR ', $area_tid) .')');
+			$compiled_filter->addFilter("bundle", '('. implode(' OR ', $bundles) .')');
+			$compiled_filter->addFilter("cbone_access_domain", 1);
+			$query->addFilterSubQuery($compiled_filter);
+		}
+	}
+	/*$query = apachesolr_drupal_query('test');
+	drupal_alter('apachesolr_query', $query);
+	print "<pre>";print_r($query);exit;*/
+}
+/**
+ * Implements hook_apachesolr_index_document_build_node()
+ * Implements hook_apachesolr_index_document_build_ENTITY_TYPE()
+ * to Build the documents before sending them to Solr.
+ **/
+function region_filter_apachesolr_index_document_build_node(ApacheSolrDocument $document, $node, $env_id) {
+	foreach($node->domains as $domains){
+		if($domains == 1){
+			$document->addField('cbone_access_domain', 1);
+		}
+		else {
+			$document->addField('cbone_access_domain', 0);
+		}
+		if($domains == 1){
+			$document->addField('homecb_access_domain', 1);
+		}
+		else {
+			$document->addField('homecb_access_domain', 0);
+		}
+	}
+}

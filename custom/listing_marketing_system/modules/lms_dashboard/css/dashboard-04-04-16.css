@@ -1,0 +1,290 @@
+/**
+ * Css File for dashboard.
+ **/
+
+@import url("http://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800");
+@import url("http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700");
+
+.office_dashboard_top_menu_links {  float: left; width: 100%;}
+.office_dashboard_top_menu_links > ul { float: left; width: 67%;}
+.office_dashboard_top_menu_links li { float: left;}
+.office_dashboard_group_title {  float: right; width: 30%;color:#D8E2EA;text-transform:uppercase; font-size:20px;}
+.office_dashboard_top_menu_links { line-height: 100px;}
+.office_dashboard_top_menu_links  .links {  padding: 5px 20px; color: #9DA7B1 !important; font-size:12px;}
+.office_dashboard_menu_links  .links {  padding: 10px; color: #9DA7B1 !important; display:block; line-height:normal;}
+ #section-header .container {background-color: #444E58 !important;}
+ .office_dashboard_menu_links { background-color: #403c3d;  float: left;  width: 100%;}
+.all-dashboard {width: 100%; padding-top: 5px; padding-bottom: 5px;}
+.header-dashboard {width:100%;}
+.header-dashboard .cbone-dashboard-logo {float:left; }
+.region-left-sidebar{padding-left:0px !important;}
+.region-left-sidebar .clearfix{display:none;}
+.header-dashboard .dashboard-notification{margin-left: 289px;text-transform: uppercase;
+  font-size: 15px;}
+.header-dashboard .dashboard-message{margin-left: 289px;text-transform: uppercase;
+  font-size: 15px;}
+.header-dashboard .dashboard-logout{margin-left: 289px;text-transform: uppercase;
+  font-size: 15px;}
+.header-dashboard .dashbaord-name{float:right;}
+.user_info h4{color:#86BAC0; text-transform: uppercase; font-size:14px; margin-top:70px;}
+.glyphicon{color:#9DA7B1;}
+.office_dashboard_menu_links > ul {
+    float: right;
+    margin-top: 10px;
+}
+.office_dashboard_menu_links li {padding: 5px;}
+.glyphicon.glyphicon-chevron-right { float: right;}
+.user_info {
+    float: left;
+    width: 100%;
+}
+.picture {
+    float: left;
+    height: auto;
+    width: 100px;
+	padding:10px;
+}
+.title {
+    float: left;
+}
+#block-views-active-orders-block, #block-views-pending-orders-block, #block-views-completed-orders-block{
+float:left; width:48%; margin-right:10px;
+
+}
+#block-views-active-orders-block h3, #block-views-pending-orders-block h3, #block-views-completed-orders-block h3 {
+    color: #fff;
+    margin: 0px;
+    padding: 10px;
+	background-color: #5FBBD6;
+}
+#quicktabs-dashboard_links .item-list, #quicktabs-mc_dashboard .item-list{ background-color: #403C3D !important; width: 100%;
+    float: left;}
+
+#quicktabs-dashboard_links .item-list ul , #quicktabs-mc_dashboard .item-list ul{
+    float: right !important;
+    width: 100% !important;
+	min-height: 400px !important;
+}
+#quicktabs-dashboard_links .item-list ul  li, #quicktabs-mc_dashboard .item-list ul li{
+    padding: 5px;
+}
+#quicktabs-dashboard_links .item-list ul  li a, #quicktabs-mc_dashboard .item-list ul li a{
+    color: #9DA7B1 !important; display:block; line-height:normal;
+}
+#quicktabs-container-dashboard_links, #quicktabs-container-mc_dashboard{width:100% !important;}
+.dexp-body-inner{min-height:700px;}
+.page-office-dashboard .block.block-system, .page-lms-mc .block.block-system{display:none;}
+.dashboard_order {
+    border: 1px solid #fff;
+    float: left;
+    margin: 5px;
+    width: 95%;
+	background-color: #fff;
+}
+
+.dashboard_order h3 {
+    background-color:#5DBCDA;
+    padding: 5px;
+	margin:0px;
+	font-size: 24px !important;
+	letter-spacing: 0px !important;
+}
+.new_orders.dashboard_order {
+    width: 98%;
+}
+
+.active_orders.dashboard_order , .pending_orders.dashboard_order , .completed_orders.dashboard_order {
+    width: 47%;
+	float:left;
+}
+.user_pic {
+    text-align: center;
+}
+.user-picture > a {
+    display: block;
+}
+.user-picture img {
+    border-radius: 50%;
+    height: 70px;
+    width: 70px;
+}
+.listings {
+    float: left;
+    margin-bottom: 10px;
+    width: 100%;
+   
+}
+.user_pro {
+    float: left;
+    width: 30%;
+}
+.user_data{
+     font-size: 10px;
+    text-align: center;
+    line-height: normal;
+}
+.user_listings {
+    float: right;
+    width: 68%;
+}
+.user_listings > ul {
+   float: left;
+    padding: 3px;
+    width: 100%;
+}
+.user_listings li {
+    float: left;
+   width: 100%;
+	 background-color: #D7DBDE;
+	  margin: 10px 0;
+}
+.glyphicon.glyphicon-pencil {
+    color: #fff;
+	 background-color: #D7DBDE;
+}
+.node_lists {
+    float: left;
+    width: 90%;
+}
+.icon {
+    float: right;
+}
+.more_links {
+    padding: 5px;
+    width: 100%;
+    float: left;
+    text-align: right;
+}
+.user_profiles {
+    background-color: #fff;
+    float: left;
+    font-size: 10px;
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+    width: 18%;
+    word-wrap: break-word;
+	line-height: normal;
+}
+
+.user_pics > img {
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+    margin-bottom: 10px;
+}
+.left_block_sections {
+    float: left;
+    width: 40%;
+}
+.right_block_sections {
+    float: left;
+    width: 60%;
+}
+
+.recent_orders .recent_activity_listing_info {
+    float: right;
+    margin-top: -65px;
+	font-size: smaller;
+}
+
+.daily_quiz .daily_quiz_listing_info {
+    float: right;
+    margin-top: -65px;
+    margin-right: 60px;
+	font-size: smaller;
+}
+
+.reveal-modal .user_details {
+    float: left;
+    padding-bottom: 10px;
+    width: 100%;
+}
+.percent_meteres {
+    float: left;
+    width: 100%;
+    margin: 5% 0;
+}
+.user_details{
+	text-align:center;
+}
+.reveal-modal .user_pics {
+    float: left;
+    width: 17%;
+}
+.user_popup_datas {
+    float: left;
+    line-height: normal;
+    width: 100%;
+}
+.office_dashboard_group_title select {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 1 solid #CCCCCC;
+    font-size: 16px;
+    height: 34px;
+    margin: 10% 0 0;
+    padding: 2px;
+    width: 186px;
+    overflow: hidden;
+}
+
+.node_lists  a  .glyphicon.glyphicon-pencil {
+	  float: right;
+	  margin-top: 16px;
+}
+.office_dashboard_top_menu_links .office_dashboard_group_title_name {
+    color: #fff;
+    float: right;
+    font-size: 20px;
+    text-transform: uppercase;
+}
+#section-header .site-logo{line-height: normal !important;}
+#block-lms-dashboard-my-agents  .user_profiles{ height: 180px;}
+/***************************** Percent Bar***********************/
+
+
+            .graph {
+                width: 100%; /* width and height are arbitrary, just make sure the #bar styles are changed accordingly */
+                height: 10px;
+                border: 1px solid #888; 
+                background: rgb(168,168,168);
+                background: -moz-linear-gradient(top, rgba(168,168,168,1) 0%, rgba(204,204,204,1) 23%);
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(168,168,168,1)), color-stop(23%,rgba(204,204,204,1)));
+                background: -webkit-linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                background: -o-linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                background: -ms-linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a8a8a8', endColorstr='#cccccc',GradientType=0 );
+                background: linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                position: relative;
+				border-radius: 5px;
+				box-sizing: unset;
+            }
+            #bar {
+                height: 10px; /* Not 30px because the 1px top-border brings it up to 30px to match #graph */
+                background-color:#5DBDD7;
+				box-sizing: unset;
+            }
+            #bar p { position: absolute; text-align: center; width: 100%; margin: 0; line-height: 40px; }
+            .error {
+                /* These styles are arbitrary */
+                background-color: #fceabb;
+                padding: 1em;
+                font-weight: bold;
+                color: red;
+                border: 1px solid red;
+            }
+			
+/*********************** Modal Pop up css 02062015*********************/
+
+.lbp_buttons .all_buttons #listing_button {
+		display: inline;
+		padding-left: 10px;
+}
+.lbp_buttons .all_buttons #buyer_button {
+		display: inline;
+		padding-left: 10px;
+}
+.lbp_buttons .all_buttons #profile_button {
+		display: inline;
+		padding-left: 10px;
+}

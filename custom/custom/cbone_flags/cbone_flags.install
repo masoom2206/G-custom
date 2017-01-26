@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function cbone_flags_schema() {  
+  //Saved website listing setting
+  $schema['cbone_flags'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Flags serial id',
+      ),
+      'pnid' => array(
+        'description'   => 'The Parent nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'cnid' => array(
+        'description'   => 'The child nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'uid' => array(
+        'description'   => 'User ID',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'flag' => array(
+        'description'   => 'flag = 1, unflag = 0',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'timestamp' => array(
+        'description'   => 'Time when the setting saved',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  $schema['cbone_flags_tracking'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Serial number',
+      ),
+      'pnid' => array(
+        'description'   => 'The Parent nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'cnid' => array(
+        'description'   => 'The child nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'type' => array(
+        'description'   => 'Type, Lession or Buyer',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  return $schema;
+}

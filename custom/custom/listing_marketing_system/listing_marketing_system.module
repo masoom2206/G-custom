@@ -1,0 +1,4189 @@
+<?php
+/**
+ *Implaments hook_custom_theme
+ */
+function listing_marketing_system_custom_theme() {
+  global $user, $base_url;
+  $themes_available = list_themes();
+  if (arg(0) == 'node' &&( arg(1) == 'add' || arg(2)== 'edit' )){
+    return 'ftevolve';
+  }
+}
+
+/*
+ * Implementation of hook_menu
+ */
+function listing_marketing_system_menu() {
+  $items = array();
+  $items['listing-marketing-system'] = array(
+    'title' => 'CB|ONE listing marketing system',
+    'description' => 'CB|ONE listing marketing system',
+    'page callback'    => 'cbone_listing_marketing_system',
+    'access callback' => 'user_is_logged_in',
+  );
+  //Menu for admin to Update subscription mail template
+  $items['admin/config/lms'] = array(
+    'title'        => 'CB|ONE Listing Marketing System',
+    'description'    => 'CB|ONE Listing Marketing System (LMS) systems.',
+    'page callback'    => 'system_admin_menu_block_page',
+    'access arguments'  => array('access administration pages'),
+    'file'        => 'system.admin.inc',
+    'file path'      => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/lms/video-help'] = array(
+    'title'        => 'Video Help Node NID',
+    'description'    => 'Video Help Node NID',
+	'weight'      => 1,
+    'page callback'    => 'drupal_get_form',
+	'page arguments'   => array('video_help_node_form'),
+	'access arguments'  => array('access administration pages'),
+    'file'        => 'includes/video_help_node.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/lms/agent-download-notification'] = array(
+    'title'        => 'Primary Agent Download Notification',
+    'description'    => 'Primary Agent an email notification of the document download request!',
+	'weight'      => 2,
+    'page callback'    => 'drupal_get_form',
+	'page arguments'   => array('agent_download_notification_form'),
+	'access arguments'  => array('access administration pages'),
+    'file'        => 'includes/agent_download_notification.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );  
+  /*$items['admin/config/lms/photo-feeds'] = array(
+	'title'        => 'Import LMS Photo Feeds',
+	'description'    => 'Import LMS photo from feeds',
+	'weight'      => 3,
+	'page callback'    => 'drupal_get_form',
+	'page arguments'   => array('import_photo_feeds_form'),
+	'access arguments'  => array('access administration pages'),
+	//'file'        => 'includes/agent_download_notification.inc',
+	'type'        => MENU_NORMAL_ITEM,
+  );*/
+  //menu for Embed the Listing pages in other website or block
+  $items['embed-listing/%'] = array(
+    'title'        => 'Embed Listing',
+    'description'    => 'Embed All Listing Data',
+    'page callback'    => 'cbone_embed_listing',
+    //'access callback'  => 'user_is_logged_in',
+	//'access callback' => 'manage_listing_access',
+	'access callback' => TRUE,
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+  );
+  //menu for Embed the Listing pages in other website or block
+  $items['embed-code/download/%'] = array(
+    'title'        => 'Embed Listing',
+    'description'    => 'Embed All Listing Data',
+    'page callback'    => 'cbone_embed_code_download',
+    'access callback'  => 'user_is_logged_in',
+	'page arguments'   => array(2),
+  );
+ 
+  //menu for managing the Listing setup page
+  $items['manage-listing/%'] = array(
+    'title'        => 'Listing Management Tools',
+    'description'    => 'Manage Listing',
+    'page callback'    => 'cbone_manage_listing',
+    //'access callback'  => 'user_is_logged_in',
+	'access callback' => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+  );
+  //menu for managing the Listing setup page
+  $items['listing-photos/%'] = array(
+    'title'        => 'Listing Photos',
+    'description'    => 'Listing Photos',
+    'page callback'    => 'cbone_listing_photos',
+    //'access callback'  => 'user_is_logged_in',
+	'access callback' => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_photos.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for managing the Listing Photos setup page
+  $items['listing-photos/sortable'] = array(
+    'title'        => 'Listing photos sortable',
+    'description'    => 'Save listing photos sortable',
+    'page callback'    => 'listing_photos_sortable',
+    'access callback'  => 'user_is_logged_in',
+  );
+  $items['listing-photos/upload/%'] = array(
+    'title'        => 'Listing Photos Upload',
+    'description'    => 'Listing Photos Upload',
+    'page callback'    => 'listing_photos_upload',
+	'page arguments'   => array(2),
+	'access callback'  => 'user_is_logged_in',
+    'file'        => 'includes/listing_photos.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-photos/download/%'] = array(
+    'title'        => 'Listing Photos Download',
+    'description'    => 'Listing Photos Download',
+    'page callback'    => 'listing_photos_download',
+	'page arguments'   => array(2),
+	'access callback'  => 'user_is_logged_in',
+    'file'        => 'includes/listing_photos.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu to save Website Settings for listing page
+  $items['listing-photos/delete'] = array(
+    'title'        => 'Listing photos delete',
+    'description'    => 'Delete selected listing photos',
+    'page callback'    => 'listing_photos_delete',
+    'access callback'  => 'user_is_logged_in',
+    'file'        => 'includes/listing_photos.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for managing the Listing Document setup page
+  $items['listing-document/%'] = array(
+    'title'        => 'Listing Document',
+    'description'    => 'Listing Document',
+    'page callback'    => 'cbone_listing_document',
+    //'access callback'  => 'user_is_logged_in',
+	'access callback' => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_document.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-document/upload/%'] = array(
+    'title'        => 'Listing Document Upload',
+    'description'    => 'Listing Document Upload',
+    'page callback'    => 'listing_document_upload',
+	'page arguments'   => array(2),
+	'access callback'  => 'user_is_logged_in',
+    'file'        => 'includes/listing_document.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-document/download/%'] = array(
+    'title'        => 'Listing Document Download',
+    'description'    => 'Listing Document Download',
+    'page callback'    => 'listing_document_download',
+	'page arguments'   => array(2),
+	'access callback'  => TRUE,
+    'file'        => 'includes/listing_document.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-document/report/%'] = array(
+    'title'        => 'Listing Document Report',
+    'description'    => 'Listing Document Report',
+    'page callback'    => 'listing_document_report',
+	'page arguments'   => array(2),
+	'access callback'  => 'user_is_logged_in',
+    'file'        => 'includes/listing_document.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );  
+  $items['listing-pdf/download/%'] = array(
+    'title'        => 'Listing PDF Download',
+    'description'    => 'Listing PDF Download',
+    'page callback'    => 'listing_pdf_download',
+	'page arguments'   => array(2),
+	'access callback'  => TRUE,
+    'file'        => 'includes/listing_document.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for managing the Listing video setup page
+  $items['listing-video/%'] = array(
+    'title'        => 'Listing Video',
+    'description'    => 'Listing Video',
+    'page callback'    => 'cbone_listing_video',
+    //'access callback'  => 'user_is_logged_in',
+	'access callback' => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_video.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu to create slide video by listing photos
+  $items['listing-video/create'] = array(
+    'title'        => 'listing Video Create',
+    'description'    => 'Listing Video Create',
+    'page callback'    => 'cbone_listing_video_create',
+    'access callback'  => 'user_is_logged_in',
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_video.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-video/download/%'] = array(
+    'title'        => 'Listing Video Download',
+    'description'    => 'Listing Video Download',
+    'page callback'    => 'listing_video_download',
+	'page arguments'   => array(2),
+	'access callback'  => 'user_is_logged_in',
+    'file'        => 'includes/listing_video.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for managing the Listing website page
+  $items['listing-website/%'] = array(
+    'title'        => 'Listing Website',
+    'description'    => 'Listing Website',
+    'page callback'    => 'cbone_listing_website',
+    //'access callback'  => 'user_is_logged_in',
+	'access callback' => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_website.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for send the Listing email
+  $items['listing-email/%'] = array(
+    'title'        => 'Listing Email',
+    'description'    => 'Listing Email',
+    'page callback'    => 'cbone_listing_email',
+    //'access callback'  => 'user_is_logged_in',
+	'access callback' => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_email.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for Unsubscribe the Listing email
+  $items['listing-email-unsubscribe/%'] = array(
+    'title'        => 'Listing Email Unsubscribe',
+    'description'    => 'Listing Email Unsubscribe',
+    'page callback'    => 'cbone_listing_email_unsubscribe',
+    'access callback'  => TRUE,
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_email.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for Listing Step By Step
+  $items['listing/%/steps'] = array(
+    'title'        => 'Listing Step By Step',
+    'description'    => 'Listing Step By Step',
+    'page callback'    => 'cbone_listing_step_by_step',
+    'access callback'  => 'user_is_logged_in',
+	//'page arguments'   => array(1),
+    //'file'        => 'includes/listing_step_by_step.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for Listing analytics page
+  $items['listing-analytics/%'] = array(
+    'title'        => 'Listing Analytics',
+    'description'    => 'Listing Analytics',
+    'page callback'    => 'cbone_listing_analytics',
+    //'access callback'  => 'user_is_logged_in',
+	'access callback' => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_analytics.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  //menu for Listing Merge page
+  $items['listing-merge/%/%'] = array(
+    'title'        => 'Listing Merge',
+    'description'    => 'Listing Merge',
+    'page callback'    => 'cbone_listing_merge',
+    'access callback'  => 'user_is_logged_in',
+	//'access callback' => 'manage_listing_access',
+	'page arguments'   => array(1, 2),
+    'file'        => 'includes/listing_merge.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-merge-selection/%'] = array(
+    'title'        => 'Listing Merge Selection',
+    'description'    => 'Listing Merge Selection',
+    'page callback'    => 'cbone_listing_merge_selection',
+    'access callback'  => 'user_is_logged_in',
+	'page arguments'   => array(1),
+    'file'        => 'includes/listing_merge.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  
+  //menu for managing the Listing video setup page
+  $items['slide-image'] = array(
+    'title'        => 'Auto Generated Slide Image',
+    'description'    => 'Auto Generated Slide Image',
+    'page callback'    => 'cbone_auto_generated_slide_image',
+    'access callback'  => 'user_is_logged_in',
+	//'page arguments'   => array(1),
+  );
+  //menu to save Website Settings for listing page
+  $items['website-settings'] = array(
+    'title'        => 'Save Website Settings',
+    'description'    => 'Save Website Settings',
+    'page callback'    => 'cbone_save_website_settings',
+    'access callback'  => 'user_is_logged_in',
+    'file'        => 'includes/listing_website.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+   //menu for LMS photo feeds
+  $items['feeds/photo-feed'] = array(
+    'title'        => 'LMS photo feeds',
+    'description'    => 'LMS photo feeds',
+    'page callback'    => 'cbone_photo_feeds_import',
+	'access callback'  => TRUE,
+    //'access callback'  => 'user_is_logged_in',
+	//'page arguments'   => array(1),
+  );  
+  $items['share/%'] = array( 
+    'title'       => 'Share Listing',
+    'description'     => 'A node to share listing',
+    'page callback'   => 'share_nodes',
+    //'access callback'   => TRUE,
+    'access callback'   => 'manage_listing_access',
+	'access arguments' => array(1),
+	'page arguments'   => array(1),
+	'file'        => 'includes/listing_share.inc',
+	'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['agents/autocomplete/%'] = array(
+	'title' => 'Autocomplete for agents lists',
+	'page callback' => '_agents_autocomplete',
+	'access callback'   => TRUE,
+	'page arguments'   => array(2),
+	'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['cbone-test-url'] = array(
+	'title'        => '',
+	'description'    => '',
+	//'page callback'    => 'cbone_delete_mcpdf_images',
+	//'page callback'    => '_drupalchat_chat',
+	'page callback'    => 'cbone_listing_video_create_test',
+	'file'        => 'includes/listing_video.inc',
+	'access callback'  => TRUE,
+	'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['cbone-dev-url'] = array(
+	'title'        => '',
+	'description'    => '',
+	//'page callback'    => 'cbone_delete_mcpdf_images',
+	//'page callback'    => '_drupalchat_chat',
+	'page arguments'   => array(1),
+	'page callback'    => 'cbone_listing_email_message',
+	'file'        => 'includes/listing_email.inc',
+	'access callback'  => TRUE,
+	'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['post-to-circle/%'] = array(
+    'title'        => 'Post to Circle',
+    'description'    => 'Post to Circle',
+    'page callback'    => 'post_to_circle',
+    'access callback'  => 'user_is_logged_in',
+	'page arguments'   => array(1),
+	'file'        => 'includes/listing_post_circle.inc',
+    'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-pdf'] = array(
+    'title'        => 'Create Listing PDF',
+    'description'    => 'Create Listing PDF',
+    'page callback'    => 'create_listing_pdf',
+	//'page arguments'   => array(2),
+	'access callback'  => TRUE,
+	//'file'        => 'includes/cbone_pdf.inc',
+	'type'        => MENU_NORMAL_ITEM,
+  );
+  $items['listing-video/active-url'] = array(
+	'title'        => 'Active URL of listin video',
+	'description'    => 'Active URL of listing video',
+	'page callback'    => 'listing_video_active_url',
+	'access callback'  => 'user_is_logged_in',
+  );
+  return $items;
+}
+/**
+ * Implements hook_init()
+ */
+function listing_marketing_system_init(){
+  global $base_url, $user;
+  drupal_add_js(array('base_url' => $base_url), 'setting');
+  drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/pdf-preview.js');
+  drupal_add_css(drupal_get_path('module', 'listing_marketing_system') . '/css/client_report.css');
+  drupal_add_css(drupal_get_path('module', 'listing_marketing_system') . '/css/listing.css');
+  drupal_add_css(drupal_get_path('module', 'listing_marketing_system') . '/css/web-listing.css');
+  drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/listing.js');
+  //drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/cbone-chat.js');
+  drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/print_and_go.js');
+  drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/web-listing.js');
+  if((arg(0) == 'listing-photos' || arg(0) == 'listing-document') && is_numeric(arg(1))) {
+    drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/listing-photos.js');
+    drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/jquery-ui.js');
+  }
+  else if(arg(0) == 'listing-video' && is_numeric(arg(1))) {
+    drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/listing-video.js');
+    drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/jquery-ui.js');
+  }
+  else if(arg(0) == 'listing-pdf' && arg(1) == 'download') {
+    drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/pdfobject.js');
+  }
+  else if(arg(0) == 'listing-analytics' && is_numeric(arg(1))) {
+    drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/topup.js');
+  }
+  else if(arg(0) == 'node' && is_numeric(arg(1)) && $base_url != 'http://www.homecb.com' && $user->uid != 1) {
+    if(arg(2) == 'edit' || arg(2) == 'delete') {
+      return FALSE;
+    }
+    else if($_SERVER['HTTP_HOST'] == 'homecb.com') {
+      $alias = $_SERVER['REQUEST_URI'];
+      $url = url('http://www.homecb.com'.$alias);
+      drupal_goto($url);
+    }
+    else {
+      $node = node_load(arg(1));
+      if(is_object($node)) {
+        if($node->type == 'lms_listing' || isset($node->domains[2])){
+          $alias = drupal_get_path_alias($path = 'node/'.arg(1));
+          $url = url('http://www.homecb.com/'.$alias);
+          drupal_goto($url);
+        }
+      }
+    }
+  }
+  if(arg(0) == 'node' && (arg(1) == '510' || arg(1) == '50')) {
+    $urlAlias = drupal_lookup_path('alias', "node/".arg(1));
+    $_SESSION['my_listing_back'] = $urlAlias;
+  }
+  else if(arg(0) == 'node' && arg(1) == '115' && $user->uid > 0) {
+    drupal_goto('node/117');
+  }
+  /*else if(arg(0) == 'manage-listing') {
+    drupal_add_js(drupal_get_path('module', 'listing_marketing_system') . '/js/jquery.zclip.js');
+  }*/
+}
+/**
+ * Implements hook_page_build()
+ 
+function listing_marketing_system_page_build(){
+  global $user;
+  //if (drupal_page_is_cacheable()) {
+  $ttl = variable_get('page_cache_maximum_age', '864000000');
+
+  $expires = strtotime('+' . $ttl . ' seconds');
+  // Override core's expiration header.
+  drupal_add_http_header('Expires', date('r', $expires));
+  drupal_add_http_header('Cache-Control', 'max-age=' . $ttl . ', public, must-revalidate, proxy-revalidate');
+  //}
+  // Regardless, always vary on X-Drupal-Roles.
+  // drupal_add_http_header('Vary', 'X-Drupal-Roles');
+}
+*/
+/**
+ * Implements hook_form_alter()
+ */
+function listing_marketing_system_form_alter(&$form, &$form_state, $form_id) {
+  //print $form_id;exit;
+  global $user;
+  $user_detail = user_load($user->uid);
+  //print "<pre>";print_r($user);exit;
+  $roles = array_map('strtolower', $user_detail->roles);
+  if($form_id == 'lms_listing_node_form') {
+    //print "<pre>";print_r($form);exit;
+    $node_detail = $form['#node'];
+    if(!user_has_role(3, $user) || !user_has_role(4, $user)) {
+      $form['field_lms_shared_agent']['#type'] = 'hidden';
+    }
+    $form['actions']['preview']['#attributes']['disabled'] = TRUE;
+    $form['actions']['delete']['#attributes']['disabled'] = TRUE;
+    $form['actions']['preview']['#prefix'] = '<div style="display: none;">';
+    $form['actions']['preview']['#suffix'] = '</div>';
+    $form['actions']['delete']['#prefix'] = '<div style="display: none;">';
+    $form['actions']['delete']['#suffix'] = '</div>';
+    $form['field_lms_listing_expiration']['#title'] = t('');
+    $form['field_lms_listing_expiration']['#attributes']['placeholder']= t('Your placeholder text');
+    if(arg(2) == 'edit') {
+      $nid = arg(1);
+      $listing_node = node_load($nid);
+      if($listing_node->uid == $user->uid || $user->uid == 1) {
+        $my_listings_link = '/my-listings';
+      }
+      else {
+        $my_listings_link = '/office-listings-agent/'.$listing_node->uid;
+      }
+      //Listing Address
+      $address = array();
+      if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_listing_state['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_state['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_listing_zip['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_zip['und']['0']['value'];
+      }
+      $listing_address = implode(', ', $address);
+        
+      $form['#prefix'] = '<div class="listing-edit-form">
+                <div class="listing-banner"><img src="/sites/default/files/images/banner/listing-details-banner.jpg" /></div>
+                <div class="manage-listing-back"><a href="/manage-listing/'.$nid.'"><img src="/sites/all/modules/custom/listing_marketing_system/images/back-curved-arrow.png"></a></div>
+                <div class="manage-listing-photos">
+                  <div class="listing-photos-header">
+                    <div class="photos-title">Listing</div>
+                    <div class="photos-address">'.$listing_address.' <a href="/manage-listing/'.$nid.'">[return to Listing Tools]</a> <a href="'.$my_listings_link.'">[return to Active Listings]</a></div>
+                  </div>
+                </div>';
+      $form['#suffix'] = '</div>';
+      if($listing_node->status == 1) {
+        $form['field_published_listing']['und']['#default_value'][] = $listing_node->status;
+      }
+    }
+    else {
+      $form['#prefix'] = '<div class="listing-edit-form">
+                <div class="listing-banner"><img src="/sites/default/files/images/banner/listing-details-banner.jpg" /></div>';
+      $form['#suffix'] = '</div>';
+      $form['field_lms_listing_status']['und']['#options']['_none'] = t('Listing Status');
+      $form['field_lms_property_type']['und']['#options']['_none'] = t('Property Type');
+    }
+    //print "<pre>";print_r($form);exit;
+    //if(in_array('agent', $roles)) {
+    if(isset($_GET['title']) && $_GET['title'] != '') {
+      $form['title']['#default_value'] = $_GET['title'];
+    }
+    /*if(isset($_GET['uid']) && $_GET['uid'] != '') {
+      print "<pre>";print_r($form);exit;
+      //$form['title']['#default_value'] = $_GET['title'];
+    }*/
+    //}
+    //jwang-begin
+    $listing_uid = ''; $listing_userdetail = NULL; $listing_user_name = '';
+    if(isset($_GET['uid']) && $_GET['uid'] != '') {
+      $listing_uid = $_GET['uid'];
+      $listing_user_detail = user_load($listing_uid);
+      $listing_user_name = isset($listing_user_detail->field_preferred_name['und']['0']['value']) ? $listing_user_detail->field_preferred_name['und']['0']['value'] : '';
+      //print "<!-- user->uid=".$user->uid." listing_uid=".$listing_uid." listing user name=".$listing_user_name."-->";
+    }
+    //jwang-end
+    if(!in_array('siteadmin', $roles) && !in_array('marketing coordinator', $roles) && $user->uid != 1) {
+      $options = array();
+      $options['_none'] = 'Select sales team';
+      if(in_array('manager', $roles) || in_array('office administrator', $roles)) {
+        $office = $user_detail->field_member_office['und']['0']['value'];
+        $result = db_query("SELECT n.nid, n.title FROM node n where n.type = :type AND n.uid IN (SELECT mo.entity_id FROM field_data_field_member_office mo WHERE mo.field_member_office_value = :office)", array(':type' => 'lms_sales_team', ':office' => $office));
+        
+        $count = $result->rowCount();
+        if($count != 0) {
+          foreach($result as $nids) {
+            $options[$nids->nid] = $nids->title;
+          }
+        }
+        else {
+          $options['_none'] = 'No teams created';
+        }
+        $form['field_lms_sales_team']['und']['#options'] = $options;
+
+        
+        //print "<pre>";print_r($form['field_lms_sales_team']);exit;
+        //$form['field_lms_sales_team']['und']['#options'] = array('_none' => '- None -', 41616 => 'A family committed to your real estate needs', 41502 => 'Caoili & Stelle ');
+      }
+      else if(in_array('agent', $roles) || in_array('agent - beta test', $roles)) {
+        //SELECT nid, title FROM node WHERE type = 'lms_sales_team' and uid = 1
+        $query = db_select("node", 'n');
+        $query->fields('n', array('nid', 'title'));
+        $query->condition('n.uid', $user->uid, '=');
+        $query->condition('n.type', 'lms_sales_team', '=');
+        $result = $query->execute();
+        $count = $result->rowCount();
+        if($count != 0) {
+          foreach($result as $nids) {
+            $options[$nids->nid] = $nids->title;
+          }
+        }
+        else {
+          $options['_none'] = 'No teams created';
+        }
+        $form['field_lms_sales_team']['und']['#options'] = $options;
+      }
+    }
+    //auto-fill the field
+    if(!isset($node_detail->field_lms_agent_uid['und']['0']['uid'])){
+      //jwang-begin
+      if (!empty($listing_uid)) {
+        $form['field_lms_agent_uid']['und']['0']['uid']['#default_value'] = $listing_uid;
+      } else {
+        $form['field_lms_agent_uid']['und']['0']['uid']['#default_value'] = $user->uid;
+      }
+      //jwang-end
+    }
+    $form['field_lms_agent_uid']['und']['#disabled'] = TRUE;
+    if(!isset($node_detail->field_lms_metro_id['und']['0']['value'])){
+      $form['field_lms_metro_id']['und']['0']['value']['#default_value'] = 625;
+    }
+    $form['field_lms_metro_id']['und']['#disabled'] = TRUE;
+    //jwang-begin
+    if(!isset($node_detail->field_lms_agent_name['und']['0']['value'])){
+      if (!empty($listing_user_name)) {
+        $form['field_lms_agent_name']['und']['0']['value']['#default_value'] = $listing_user_name;
+      } else {
+        $form['field_lms_agent_name']['und']['0']['value']['#default_value'] = isset($user_detail->field_preferred_name['und']['0']['value']) ? $user_detail->field_preferred_name['und']['0']['value'] : '';
+      }
+    }
+    //jwang-end
+    $form['field_lms_agent_name']['und']['0']['value']['#disabled'] = TRUE;
+    if(isset($user_detail->field_tridentid['und']['0']['value']) && $user_detail->field_tridentid['und']['0']['value'] != '' && !isset($node_detail->field_lms_agent_id['und']['0']['value'])) {
+      $form['field_lms_agent_id']['und']['0']['value']['#default_value'] = $user_detail->field_tridentid['und']['0']['value'];
+      $form['field_lms_agent_id']['und']['0']['value']['#disabled'] = TRUE;
+    }
+    
+    $form['#validate'][] = 'lms_listing_form_validation';
+    $form['#attached']['js'] = array(drupal_get_path('module', 'listing_marketing_system') . '/js/listing_form.js',);
+    $form['#submit'][] = 'listing_node_form_submit';
+  }
+  else if($form_id == 'node_delete_confirm') {
+    $node = $form['#node'];
+    if($node->type == 'lms_listing'){
+      $form['description']['#markup'] = t('Are you sure you want to delete the listing for: '.$node->title.'. This action cannot be undone.');
+      $form['#submit'][] = 'listing_delete_path_submit';
+      
+    }
+    else if($node->type == 'circle' || $node->type == 'circle_post' || $node->type == 'company_wide_circle_article' || $node->type == 'event'){
+      $form['description']['#markup'] = t('Are you sure you want to delete the '.$node->title.'. This action cannot be undone.');
+      $form['#submit'][] = 'circles_delete_path_submit';
+    }
+    else if($node->type == 'mc_pdf'){
+      $form['#submit'][] = 'pdf_delete_path_submit';
+      if(isset($_GET['destpath'])){
+        $nid= $_GET['design_id'];
+        $form['actions']['cancel']['#href'] = $_GET['destpath'];
+      }
+    }
+  }
+  /*else if($form_id == 'commerce_checkout_form_checkout') {
+    $listing_reference_nid = $_SESSION['listing_reference_nid'];
+    $form['field_lms_listing_reference']['und']['#default_value'] = $listing_reference_nid;
+    $form['field_lms_listing_reference']['und']['#disabled'] = TRUE;
+  }*/
+  else if($form_id == 'lms_photos_node_form'){
+    if(isset($_GET['listing']) && $_GET['listing'] != '') {
+      $node_detail = node_load($_GET['listing']);
+      if(is_object($node_detail) && $node_detail->uid == $user->uid) {
+        $form['field_lms_listing_reference']['und']['#default_value'] = $_GET['listing'];
+        $form['field_lms_listing_reference']['und']['#disabled'] = TRUE;
+      }
+    }
+  }
+  else if($form_id == 'lms_listing_document_node_form'){
+    if(isset($_GET['listing']) && $_GET['listing'] != '') {
+      $node_detail = node_load($_GET['listing']);
+      if(is_object($node_detail) && $node_detail->uid == $user->uid) {
+        $form['field_lms_listing_reference']['und']['#default_value'] = $_GET['listing'];
+        $form['field_lms_listing_reference']['und']['#disabled'] = TRUE;
+      }
+    }
+  }
+  else if($form_id == 'field_collection_item_form') {
+    if(isset($_GET['listing_nid'])) {
+      $document_count = '';
+      $nid = $_GET['listing_nid'];
+      $listing_node = node_load($nid);
+      //Listing Address
+      $address = array();
+      if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_listing_state['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_state['und']['0']['value'];
+      }
+      if(isset($listing_node->field_lms_listing_zip['und']['0']['value'])) {
+        $address[] = $listing_node->field_lms_listing_zip['und']['0']['value'];
+      }
+      $listing_address = implode(', ', $address);
+        
+      if(arg(1) == 'field-lms-listing-documents') {
+        $lms_document_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+        $lms_document_nid->fields('lr', array('entity_id'));
+        $lms_document_nid->condition('lr.entity_type', 'node', 'LIKE');
+        $lms_document_nid->condition('lr.bundle', 'lms_listing_document', 'LIKE');
+        $lms_document_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+        $document_nid = $lms_document_nid->execute()->fetchField();
+        $document_node = node_load($document_nid);
+        $items = field_get_items('node', $document_node, 'field_lms_listing_documents');
+        $item_count = count($items);
+        $document_count = '<div class="document-count">'.$item_count.' documents in library</div>';
+      }
+      $form['#prefix'] = '<div class="manage-listing-back"><a href="/manage-listing/'.$_GET['listing_nid'].'"><img src="/sites/all/modules/custom/listing_marketing_system/images/back-curved-arrow.png"></a></div><div class="manage-listing-photos"><div class="listing-photos-header"><div class="photos-title">Listing Photos</div><div class="photos-address document-address">'.$listing_address.' <a href="/manage-listing/'.$_GET['listing_nid'].'">[return to Listing Tools]</a><a href="/my-listings">[return to Active Listings]</a></div>'.$document_count.'</div></div>';
+      //$form['#suffix'] = '</div>';
+    }
+  }
+  else if($form_id == 'circle_post_node_form'){
+    if( arg(0)=='post-to-circle' && is_numeric(arg(1)) ) {
+      $listing_node = node_load(arg(1));
+      //Listing Address
+      if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+        $listing_address = t('Address Available Upon Request');
+      }
+      else {
+        $address = array();
+        if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+          $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+        }
+        if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+          $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+        }
+        if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+          $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+        }
+        $listing_address = implode(', ', $address);
+      }
+      $path_alias = drupal_lookup_path('alias',"node/".$listing_node->nid);
+      $path ='http://homecb.com/'.$path_alias; 
+      
+      $value='View my new Property Web Page for '.$listing_address.' at '.$path;
+      $form["body"][LANGUAGE_NONE][0]['value']['#default_value'] = $value;
+      $form['#redirect'] = 'manage-listing/'.arg(1);
+      $form['actions']['submit']['#submit'][] = 'circle_post_submit';
+    }
+  }
+  else if($form_id == 'lms_client_report_node_form') {
+    if (isset($form['field_client_report_items'])) {
+    	if(isset($_GET['listing_nid']) && $_GET['listing_nid'] != '') {
+				$nid = $_GET['listing_nid'];
+			}
+			else {
+				$nid = $form['field_lms_listing_reference']['und']['0']['nid']['#default_value'];
+			}
+			$listing_node = node_load($nid);
+      $nodedata = get_all_listing_attached_recoreds($nid);
+      $designnid = get_property_flyer_dnid($nid);
+      $keydisable = array();
+      $yourtubelink = '';
+      $yourtube = '';
+      if (isset($nodedata['lms_video']) && !empty(($nodedata['lms_video']))) { 
+        $video_entity = entity_load_single('node', $nodedata['lms_video']);
+        if (isset( $video_entity->field_you_tube_url) && !empty( $video_entity->field_you_tube_url)) {
+          $yourtube = $video_entity->field_you_tube_url['und'][0]['value'];
+          $yourtubelink = l('video slideshow', $yourtube, array('external' => TRUE));
+        } 
+       if (isset($video_entity->field_lms_embed_video) && !empty($video_entity->field_lms_embed_video)) {
+          $yourtube = $video_entity->field_lms_embed_video['und'][0]['value'];
+          $yourtubelink = l('video slideshow', $yourtube, array('external' => TRUE));
+        }
+      }
+      $listingpdf = list_pdf_postcard_data($nid, $listing_node->nid);
+      $clientreportitem = '';
+      if ($listing_node->status == 1) {
+           $clientreportitem = str_replace('property website', l('property website', 'http://www.homecb.com/node/'.$listing_node->nid), $clientreportitem);
+         }
+      }
+      if ($yourtube == '') {
+        $keydisable[] = 'Developed a video slideshow of your property';
+      } 
+      if (empty($nodedata['commerce_order'])) { 
+        $keydisable[] = 'Developed a property website of your property and positioned it online on our partner websites';
+      }
+      if (empty($listingpdf['postcard'])) {
+        $keydisable[] = 'Distributed a Just Listed postcard to 100 of your surrounding neighbors';
+      }
+      if (empty($listingpdf['probrochure'])) {
+        $keydisable[] = 'Created a high-end, professional property brochure for display during property tours and open houses';
+      }
+      if ($clientreportitem == '') {
+         $keydisable[] = 'Developed a property website of your property and positioned it online on our partner websites';
+      }
+      if (empty($designnid) ) {
+         $keydisable[] = 'Created a property flyer to be distributed via the property flyer box on your property sign and at open houses';
+      }
+      foreach($form['field_client_report_items'][LANGUAGE_NONE]['#options'] as $key => $label) {
+        if (in_array($key, $keydisable)) {
+          $form['field_client_report_items'][LANGUAGE_NONE][$key]['#disabled'] = TRUE;
+        }
+        else {
+         if (!empty($yourtubelink)) {
+           $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key] = str_replace("video slideshow", $yourtubelink, $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key]);
+         } 
+         if (!empty($designnid)) {
+           $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key] = str_replace("property flyer to", l('property flyer', 'download_pdf/'.$listing_node->nid.'/'.$designnid).' to', $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key]);
+          }
+          if ($clientreportitem != '') {
+            $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key] = str_replace('property website', l('property website', 'http://www.homecb.com/node/'.$listing_node->nid), $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key]);
+          }
+          if (!empty($listingpdf['probrochure'])) {
+            $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key] = str_replace("high-end, professional property", $listingpdf['probrochure'], $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key]);
+          } 
+          if (!empty($listingpdf['postcard'])) {
+            $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key] = str_replace("Just Listed postcard", $listingpdf['postcard'], $form['field_client_report_items'][LANGUAGE_NONE]['#options'][$key]);
+          }  
+        }
+      }
+		if(isset($_GET['listing_nid']) || arg(2) == 'edit') {
+			if(isset($_GET['listing_nid']) && $_GET['listing_nid'] != '') {
+				$nid = $_GET['listing_nid'];
+			}
+			else {
+				$nid = $form['field_lms_listing_reference']['und']['0']['nid']['#default_value'];
+			}
+			$listing_node = node_load($nid);
+      //added by dilip for report section
+     
+      $form['field_completed_item2']['und']['#title'] = '';
+      $nodedata = get_all_listing_attached_recoreds($nid);
+      if (isset($nodedata['commerce_order']) || empty($nodedata['commerce_order'])) {
+        foreach($form['field_completed_item2'][LANGUAGE_NONE]['#options'] as $key => $label) {
+          $form['field_completed_item2'][LANGUAGE_NONE][$key]['#disabled'] = TRUE;
+        }  
+      }
+      $form['field_client_report_items']['#disabled_options'] = array('Distributed an eBlast to my personal sphere', 'Photography');
+//      $form['field_client_report_items']['#process'][] = 'mymodule_disable_element';
+// print '<pre>';
+    // print_r($form['field_client_report_items']); exit;
+      //end - added by dilip
+			//Listing Address
+			$address = array();
+			if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+				$address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+			}
+			if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+				$address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+			}
+			if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+				$address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+			}
+			if(isset($listing_node->field_lms_listing_state['und']['0']['value'])) {
+				$address[] = $listing_node->field_lms_listing_state['und']['0']['value'];
+			}
+			if(isset($listing_node->field_lms_listing_zip['und']['0']['value'])) {
+				$address[] = $listing_node->field_lms_listing_zip['und']['0']['value'];
+			}
+			$listing_address = implode(', ', $address);
+				
+			$client_name = isset($listing_node->field_client_first_name['und']['0']['value']) ? $listing_node->field_client_first_name['und']['0']['value'] : '';
+			$client_name .= isset($listing_node->field_client_last_name['und']['0']['value']) ? ' '.$listing_node->field_client_last_name['und']['0']['value'] : '';
+			$client_email = isset($listing_node->field_client_email['und']['0']['value']) ? ' '.$listing_node->field_client_email['und']['0']['value'] : '';
+			
+			$form['#prefix'] = '<div class="listing-client-report-form">
+								<div class="manage-listing-back"><a href="/manage-listing/'.$nid.'"><img src="/sites/all/modules/custom/listing_marketing_system/images/back-curved-arrow.png"></a></div>
+								<div class="manage-listing-photos">
+									<div class="listing-photos-header">
+										<div class="photos-title">Listing Client Report</div>
+										<div class="photos-address">'.$listing_address.' <a href="/manage-listing/'.$nid.'">[return to Listing Tools]</a> <a href="/my-listings">[return to Active Listings]</a></div>		
+									</div>
+									<div class="seller-client-info">
+										<div class="seller-title">Seller:</div>
+										<div class="seller-name">'.$client_name.'</div>
+										<div class="seller-email">'.$client_email.'</div>
+									</div>';
+									
+			$form['#suffix'] = '</div></div><div><div id="image_popup"><span class="button b-close"><span>[ X ]</span></span><div class="image_area"></div></div></div>';
+			if(isset($_GET['listing_nid']) && $_GET['listing_nid'] != '') {
+				$form['field_lms_listing_reference']['und']['0']['nid']['#default_value'] = $nid;
+			}
+			$form['field_lms_listing_reference']['#prefix'] = '<div style="display: none;">';
+			$form['field_lms_listing_reference']['#suffix'] = '</div>';
+			$form['actions']['preview']['#prefix'] = '<div style="display: none;">';
+			$form['actions']['preview']['#suffix'] = '</div>';
+		}
+		$form['actions']['previews'] = array (
+			'#type' => 'submit',
+			'#access' => '1',
+			'#value' => 'Generate PDF',
+			'#weight' => '6',
+			'#disabled' => empty($form_state['node']->nid) ? TRUE : FALSE,
+			'#submit' => array (
+					1 => 'node_form_submit',
+					0 => 'client_report_form_submit',
+				)
+		);
+		$form['actions']['Send_pdf_to_agent'] = array (
+			'#type' => 'submit',
+			'#access' => '1',
+			'#value' => 'Send PDF to Agent',
+			'#weight' => '7',
+			'#disabled' => empty($form_state['node']->field_document) ? TRUE : FALSE,
+			'#submit' => array (
+					0 => 'node_form_submit',
+					1 => 'client_report_form_submit',
+				)
+		);
+		/*$form['actions']['send_to_agent'] = array (
+			'#type' => 'submit',
+			'#access' => '1',
+			'#value' => 'Send to Agent',
+			'#weight' => '8',
+			'#submit' => array (
+					0 => 'node_form_submit',
+					1 => 'client_report_form_submit',
+				)
+		);*/
+		$form['actions']['submit']['#submit'][] ='client_report_form_submit';
+		if(isset($_SESSION['client_report_submit']) && $_SESSION['client_report_submit'] == 'Preview'){
+			$form['report_preview'] = array('#markup' => '<a href="#" id="client_report_preview" nid="'.arg(1).'">Preview Click</a>');
+			unset($_SESSION['client_report_submit']);
+		}
+		//$form['#submit'][] = 'client_report_form_submit';
+		//$form['#submit'] = array_merge(array('client_report_form_submit'), $form['#submit']);
+		//print "<pre>";print_r($form);exit;
+  }
+  elseif($form_id == 'client_node_form') {
+    $form['field_buyer_property_photo']['#prefix'] = '<div class="photo-upload"><div class="photo-upload-icon"><img src="/sites/all/modules/custom/listing_marketing_system/images/upload.jpg"></div>';
+    $form['field_buyer_property_photo']['#suffix'] = '</div>';
+    $form['field_buyer_side_property_photo']['#prefix'] = '<div class="photo-upload"><div class="photo-upload-icon"><img src="/sites/all/modules/custom/listing_marketing_system/images/upload.jpg"></div>';
+    $form['field_buyer_side_property_photo']['#suffix'] = '</div>';
+    $form['#validate'][] = 'client_form_validation';
+  }
+  if($form_id == 'cb_firstlook_property_post_node_form') {
+    $form['#prefix'] = '<div class="listing-edit-form">
+              <div class="listing-banner"><img src="/sites/default/files/images/banner/first-look-create-a-post.jpg" /></div>';
+    $form['#suffix'] = '</div>';
+    $form['field_firstlook_region']['und']['#options']['_none'] = t('Region');
+    $form['field_cb_firstlook_category']['und']['#options']['_none'] = t('Category');
+    $form['field_firstlook_comment']['und']['0']['value']['#attributes']['placeholder'] = t('Copy');
+    $form['title']['#attributes']['placeholder'] = t('Address or Neighborhood');
+    $form['field_firstlook_city']['und']['0']['value']['#attributes']['placeholder'] = t('City (or city code)');
+    $form['field_firstlook_price']['und']['0']['value']['#attributes']['placeholder'] = t('Price');
+    $form['field_firstlook_beds']['und']['0']['value']['#attributes']['placeholder'] = t('Beds');
+    $form['field_firstlook_baths']['und']['0']['value']['#attributes']['placeholder'] = t('Baths');
+    //$form['field_firstlook_link']['und']['0']['value']['#attributes']['placeholder'] = t('Weblink');
+    /*$form['field_first_look_requirements']['#prefix'] = '<div style="display: none;">';
+    $form['field_first_look_requirements']['#suffix'] = '</div>';*/
+    $form['field_first_look_confirmation']['#prefix'] = '<div style="display: none;">';
+    $form['field_first_look_confirmation']['#suffix'] = '</div>';
+    $requirements = $form['field_first_look_requirements']['und']['0']['markup']['#markup'];
+    $option0 = $form['field_first_look_confirmation']['und']['#options']['0'];
+    $option1 = $form['field_first_look_confirmation']['und']['#options']['1'];
+    $form['firstlook_requirements'] = array(
+      '#type' => 'markup',
+      '#markup' => '<div id="firstlook-requirements-popup" class="firstlook-requirements"><div class="firstlook-note">'.$requirements.'</div><div class="firstlook-yes">'.$option1.' <a href="#" class="firstlook-yes-save">Save</a> <a href="#" class="firstlook-yes-preview">Preview</a></div><div class="firstlook-no">'.$option0.' <a href="#" class="firstlook-no-cancel">Cancel</a></div></div>',
+    );
+  }
+  if(arg(0) == 'marketing-concierge') {
+    if($form_id == 'commerce_cart_add_to_cart_form_1' || $form_id == 'commerce_cart_add_to_cart_form_2' || $form_id == 'commerce_cart_add_to_cart_form_3') {
+      $form['submit']['#value'] = t('Order Now');
+    }
+  }
+  return $form;
+}
+/**
+ * Implements form submit API
+ * for client report form
+ */
+function client_report_form_submit($form, &$form_state) {
+	//print "<pre>";print_r($form_state);exit;
+	global $base_url;
+	$initial_values = $form_state['build_info']['args'][0];
+	$form_state['redirect'] = drupal_get_destination();
+	$form_state['redirect'] = array('destination' => 'node/' . $initial_values->nid . '/edit');
+
+	unset($_GET['destination']);
+	$_GET['destination'] = 'node/' . $initial_values->nid . '/edit';
+	drupal_static_reset('drupal_get_destination');
+	drupal_get_destination();
+
+	$op = $form_state['values']['op'];
+	$_SESSION['client_report_submit'] = $op;
+	if($op == 'Send to Agent') {
+		cbone_lms_report_mail($initial_values->nid);
+	} 
+	else if ($op == 'Generate PDF') {
+	  $listing_nid = $node->field_lms_listing_reference[LANGUAGE_NONE]['0']['nid'];
+	  $node_update = 	node_load($form_state['node']->nid);
+	  $listing_node = node_load($listing_nid);
+	  if (isset($listing_node->field_lms_other_agent)) {
+	    if ($uid1 = $listing_node->field_lms_other_agent[LANGUAGE_NONE]['0']['uid']) {
+	      $url = $base_url.'/client-repot-pdf-co/'.$node_update->nid;
+	    }
+	  } else {
+	    $url = $base_url.'/client-repot-pdf/'.$node_update->nid;
+	  }
+    $response = drupal_http_request($url);
+	  $data = $response->data;
+	  $temp_folder = 'public://client_report/';
+	  file_prepare_directory($temp_folder, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+	  $filename = $temp_folder."client_report_".$form_state['node']->nid.".pdf";
+	  $realpath = drupal_realpath($filename);
+	  $fp = fopen($realpath, "w");
+	  fwrite($fp, $data);
+	  fclose($fp);
+	  $file = (object)array(
+		  'uid' => $form_state['node']->uid,
+		  'filename' => 'client_report_'.$form_state['node']->nid.'.pdf',
+		  'uri' => $filename,
+		  'filemime' => file_get_mimetype($filename),
+		  'status' => 1,
+		  'display' => 1,
+	  );
+	  if ($files = file_move($file, $filename, FILE_EXISTS_RENAME)) {
+				//['und'][$delta] = (array)$file;
+				//$listing_video->save( TRUE );
+		    $node_update->field_document['und'][0] = (array)$files;
+		   // node_save($node);
+		}
+	 node_save($node_update);
+	 //print_r($file); exit;
+	} 
+	else if ($op == 'Send PDF to Agent') {
+    cbone_lms_pdf_report_mail($initial_values->nid);
+	}
+}
+
+/**
+ * Implements form submit API
+ * for listing delete form
+ */
+function listing_delete_path_submit($form, &$form_state) {
+  if(!isset($_GET['destination'])){
+    if(isset($_SESSION['my_listing_back']) && $_SESSION['my_listing_back'] != '') {
+      $my_listing_back = $_SESSION['my_listing_back'];
+    }
+    else {
+      $my_listing_back = 'node/510';
+    }
+    $initial_values = $form_state['build_info']['args'][0];
+    $form_state['redirect'] = drupal_get_destination();
+    $form_state['redirect'] = array('destination' => $my_listing_back);
+
+    unset($_GET['destination']);
+    $_GET['destination'] = $my_listing_back;
+    drupal_static_reset('drupal_get_destination');
+    drupal_get_destination();
+  }
+}
+/**
+ * Implements form submit API
+ * for circles delete form
+ */
+function circles_delete_path_submit($form, &$form_state) {
+  $form_state['redirect'] = 'cbone-network';
+}
+/**
+ * Implements submit handler for MC PDF content type on Print and Go Page()
+ */
+function pdf_delete_path_submit($form, &$form_state){
+  global $base_url;
+  if(isset($_GET['destpath'])){
+      $nid= $_GET['design_id'];
+      unset($_SESSION['messages']);
+      drupal_set_message(t('The PDF for Design '.$nid.' has been deleted'));
+      $form_state['redirect'] = $_GET['destpath'];
+    }
+}
+/**
+ * Implements form submit API
+ * for listing delete form
+ */
+function listing_node_form_submit($form, &$form_state) {
+  //print "<pre>";print_r($form_state['values']);exit;
+  if($form_state['values']['op'] != 'Preview') {
+    $initial_values = $form_state['build_info']['args'][0];
+    if($form_state['values']['field_published_listing']['und']['0']['value'] == 1) {
+      $form_state['values']['status'] = 1;
+    }
+    else {
+      $form_state['values']['status'] = 0;
+    }
+    if(isset($initial_values->nid)) {
+      $form_state['redirect'] = drupal_get_destination();
+      $form_state['redirect'] = array('destination' => 'manage-listing/' . $initial_values->nid);
+
+      unset($_GET['destination']);
+      $_GET['destination'] = 'manage-listing/' . $initial_values->nid;
+      drupal_static_reset('drupal_get_destination');
+      drupal_get_destination();
+    }
+  }
+}
+
+/**
+ * Implements submit handler for circle post content type on post to circle page()
+ */
+function circle_post_submit($form, &$form_state){
+  if( arg(0)=='post-to-circle' && is_numeric(arg(1)) ) {
+     unset($_SESSION['messages']);
+     drupal_set_message(t('Post To Circle successful.'));
+    $form_state['redirect'] = 'manage-listing/'.arg(1);
+  }
+}
+
+/**
+ * Implements hook_validate()
+ */
+function lms_listing_form_validation(&$form, &$form_state) {
+  //print "<pre>";print_r($form_state['values']);exit;
+  global $user;
+  $primary_agent = isset($form_state['values']['field_lms_primary_agent']['und']['0']['value']) ? $form_state['values']['field_lms_primary_agent']['und']['0']['value'] : '';
+  $co_agent = isset($form_state['values']['field_lms_other_agent']['und']['0']['uid']) ? $form_state['values']['field_lms_other_agent']['und']['0']['uid'] : '';
+  $sales_team = isset($form_state['values']['field_lms_sales_team']['und']['0']['nid']) ? $form_state['values']['field_lms_sales_team']['und']['0']['nid'] : '';
+  if($sales_team != '' && ($primary_agent != '' || $co_agent != '')) {
+    form_set_error('field_lms_sales_team][und', 'Kindly select "Sales Team" or "Primary agent" or "Co Agent"');
+  }
+  if($form_state['values']['nid'] == '') {
+    if(isset($form_state['values']['field_lms_listing_nrt_id']['und']['0']['value']) && $form_state['values']['field_lms_listing_nrt_id']['und']['0']['value'] != '') {
+      $nrt_id = $form_state['values']['field_lms_listing_nrt_id']['und']['0']['value'];
+      $nrt_id_count = db_query("select COUNT(entity_id) from field_data_field_lms_listing_nrt_id WHERE field_lms_listing_nrt_id_value = :nrt_id", array(":nrt_id" => $nrt_id))->fetchField();
+      if($nrt_id_count != 0) {
+        form_set_error('field_lms_listing_nrt_id][und][0][value', 'NRT Property ID already has a matching listing');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_validate()
+ */
+function client_form_validation(&$form, &$form_state) {
+  //print "<pre>";print_r($form_state['values']);exit;
+  $property_fid = $form_state['values']['field_buyer_side_property_photo']['und']['0']['fid'];
+  $property_embed = $form_state['values']['field_buyer_property_embed']['und']['0']['value'];
+  if($property_fid > 0 || $property_embed == 1) {
+    $property_address = $form_state['values']['field_buyer_property_address']['und']['0']['value'];
+    if(empty($property_address)) {
+      form_set_error('field_buyer_property_address][und][0][value', 'Property address field is required.');
+    }
+  }
+}
+
+/**
+ * Implements hook_views_query_alter()
+ */
+function listing_marketing_system_views_query_alter(&$view, &$query) {
+	global $user;
+	if(arg(0) == 'marketing-concierge') {
+		$nid = arg(1);
+		$node_data = node_load($nid);
+		if($node_data->uid == $user->uid || $user->uid == 1) {
+			$order_id = db_select("field_data_field_lms_listing_reference", 'lr');
+			$order_id->fields('lr', array('entity_id'));
+			$order_id->condition('lr.entity_type', 'commerce_order', 'LIKE');
+			$order_id->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+			$result = $order_id->execute()->fetchField();
+			if($result != NULL){
+				$order = commerce_order_load($result);
+				$titles = commerce_order_state_get_title();
+				$statuses = commerce_order_statuses(array('state' => 'cart'));
+				$statuses += commerce_order_statuses(array('state' => 'checkout'));
+				if (!array_key_exists($order->status, $statuses)) {
+					unset($_SESSION['listing_reference_nid']);
+					drupal_goto('user/'.$order->uid.'/orders/'.$result);
+				}
+			}
+			else {
+				$_SESSION['listing_reference_nid'] = $nid;
+			}
+		}
+		else {
+			drupal_goto('node/'.$nid);
+		}
+	}
+}
+/**
+ * Implements hook_commerce_checkout_complete().
+ *
+function listing_marketing_system_commerce_checkout_complete($order) {
+  $nid = $_SESSION['listing_reference_nid'];
+  $tid = array_shift(taxonomy_get_term_by_name('Pending Order Confirmation'))->tid;
+  $node_data = node_load($nid);
+  $node_data->field_mc_status_ref['und']['0']['tid'] = $tid;
+  node_save($node_data);
+  unset($_SESSION['listing_reference_nid']);
+}*/
+/**
+ * Implements hook_node_view().
+ */
+function listing_marketing_system_node_view($node, $view_mode, $langcode) {
+  //print "<pre>";print_r($node);exit;
+  global $user;
+  if ($node->type == "lms_listing" && ($user->uid == $node->uid || $user->uid == 1)){
+    $order_id = db_select("field_data_field_lms_listing_reference", 'lr');
+    $order_id->fields('lr', array('entity_id'));
+    $order_id->condition('lr.entity_type', 'commerce_order', 'LIKE');
+    $order_id->condition('lr.field_lms_listing_reference_nid', $node->nid, '=');
+    $result = $order_id->execute()->fetchField();
+    if($result != NULL){
+      $link = l('Order ID '.$result, 'user/'.$node->uid.'/orders/'.$result);
+    }
+    else {
+      $link = l('Purchase Marketing!', 'marketing-concierge/'.$node->nid);
+    }
+    $node->content['purchase_marketing'] = array(
+      "#markup"=> '<div class="marketing-concierge-link">'.$link.'</div>',
+      "#weight"=> -1
+    );
+    return $node;
+  }
+}
+/** 
+* Implements hook_entity_info_alter().
+*/
+function listing_marketing_system_entity_info_alter(&$entity_info) {
+  $entity_info['field_collection_item']['view modes']['field_lms_listing_photos'] = array(
+    'label' => t('LMS Listing Photos'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['field_collection_item']['view modes']['pdf_photos'] = array(
+    'label' => t('LMS Listing PDF'),
+    'custom settings' => TRUE,
+  );
+  //print "<pre>";print_r($entity_info);exit;
+}
+/**
+ * Implements hook_views_api
+ **/
+function listing_marketing_system_views_api() {
+  return array(
+    'api' => 3.0,
+    'path' => drupal_get_path('module', 'listing_marketing_system') . '/includes/views',
+  );
+}
+/**
+ * Implements hook_theme
+ **/
+function listing_marketing_system_theme($existing, $type, $theme, $path) {
+  return array(
+    'manage_listing' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/manage_listing', // do not include .tpl.php
+    ),
+    'listing_photos' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_photos', // do not include .tpl.php
+    ),
+    'photos_upload' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/photos_upload', // do not include .tpl.php
+    ),
+    'listing_document' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_document', // do not include .tpl.php
+    ),
+    'document_upload' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/document_upload', // do not include .tpl.php
+    ),
+    'listing_document_view' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_document_view', // do not include .tpl.php
+    ),
+    'listing_video' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_video', // do not include .tpl.php
+    ),
+    'listing_website' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_website', // do not include .tpl.php
+    ),
+    'listing_email' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_email', // do not include .tpl.php
+    ),
+    'listing_analytics' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_analytics', // do not include .tpl.php
+    ),
+    'listing_email_message' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_email_message', // do not include .tpl.php
+    ),
+	'listing_email_message_table' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_email_message_table', // do not include .tpl.php
+    ),
+    'listing_step_by_step' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_step_by_step', // do not include .tpl.php
+    ),
+    
+    'node__lms_listing' => array(
+      'render element' => 'content',
+      'base hook' => 'node',
+      'template' => 'node--lms_listing',
+      'path' => drupal_get_path('module', 'listing_marketing_system') . '/template',
+    ),
+    'node__lms_client_report' => array(
+      'render element' => 'content',
+      'base hook' => 'node',
+      'template' => 'node--lms_client_report',
+      'path' => drupal_get_path('module', 'listing_marketing_system') . '/template',
+    ),
+    'user_profile_form' => array(
+      'render element' => 'form',
+      'template' => 'user-profile-form',
+      'path' => drupal_get_path('module', 'listing_marketing_system') . '/template',
+    ),
+    'listing_merge_detail_form' => array(
+      'render element' => 'form',
+      'template' => 'listing-merge',
+      'path' => drupal_get_path('module', 'listing_marketing_system') . '/template',
+    ),
+    
+    'web_listing_home' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/web_listing_home', // do not include .tpl.php
+    ),
+    'web_listing_gallery' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/web_listing_gallery', // do not include .tpl.php
+    ),
+    'web_listing_video' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/web_listing_video', // do not include .tpl.php
+    ),
+    'web_listing_features' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/web_listing_features', // do not include .tpl.php
+    ),
+    'web_listing_directions' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/web_listing_directions', // do not include .tpl.php
+    ),
+    'web_listing_contact' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/web_listing_contact', // do not include .tpl.php
+    ),
+    'web_listing_menu' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/web_listing_menu', // do not include .tpl.php
+    ),
+    'embed_web_listing' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/embed_web_listing', // do not include .tpl.php
+    ),
+    'listing_share' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/listing_share', // do not include .tpl.php
+    ),
+    'formtable_form_table' => array(
+       'render element' => 'form',
+    ),
+    'post_to_circle' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/post_to_circle', // do not include .tpl.php
+    ),
+  
+  );
+      return $theme;
+}
+
+/**
+ * Implements hook_node_insert()
+ * @return $node
+ */
+function listing_marketing_system_node_insert($node) {
+  if($node->is_new && $node->type == 'lms_listing') {
+    if(isset($_GET['uid']) && is_numeric($_GET['uid']) && $_GET['uid'] != $node->uid) {
+      $node = node_load($node->nid);
+      $node->uid = (int)$_GET['uid'];
+      node_save($node);
+    }
+    $nid = $node->nid;
+    $uid = $node->uid;
+    auto_insert_lms_node('Photos for '.$node->title, $nid, $uid, 'lms_photos');
+    auto_insert_lms_node('Documents for '.$node->title, $nid, $uid, 'lms_listing_document');
+    auto_insert_lms_node('Videos for '.$node->title, $nid, $uid, 'lms_video');
+    auto_insert_lms_node('LMS Step By Step for '.$node->title, $nid, $uid, 'lms_step_by_step_guide');
+    /*if(arg(0) == 'node' && arg(1) == 'add') {
+      drupal_set_message(t("The listing has been successfully created."), 'status');
+      drupal_goto('manage-listing/'.$nid);
+    }*/
+  }
+  else if($node->is_new && $node->type == 'client') {
+    if(isset($_GET['agent']) && is_numeric($_GET['agent']) && $_GET['agent'] != $node->uid) {
+      $node = node_load($node->nid);
+      $node->uid = (int)$_GET['agent'];
+      node_save($node);
+    }
+  }
+}
+/**
+ * Implements hook_message_alter().
+ */
+function listing_marketing_system_message_alter(&$messages) {
+  if(arg(0) == 'manage-listing' && isset($messages->messages['status'])) {
+    foreach($messages->messages['status'] as $key => $status) {
+      if (preg_match("/LMS Listing (.*?) has been created./", $status)) {
+        $val = preg_replace("/LMS Listing (.*?) has been created./", 'The listing has been successfully created.', $status);
+        $messages->messages['status'][$key] = $val;
+      }
+      else if (preg_match("/LMS Listing (.*?) has been updated./", $status)) {
+        $node = node_load(arg(1));
+        $val = preg_replace("/LMS Listing (.*?) has been updated./", 'The listing for '.$node->field_lms_listing_address['und']['0']['value'].' has been updated.', $status);
+        $messages->messages['status'][$key] = $val;
+      }
+    }
+  }
+}
+/**
+ * Implements hook_node_delete()
+ * @return $node
+ */
+function listing_marketing_system_node_delete($node) {
+  if($node->type == 'lms_listing') {
+    $nid = $node->nid;
+    //fetch photos nid
+    $lms_photo_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_photo_nid->fields('lr', array('entity_id'));
+    $lms_photo_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_photo_nid->condition('lr.bundle', 'lms_photos', 'LIKE');
+    $lms_photo_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $photo_nid = $lms_photo_nid->execute()->fetchField();
+    if($photo_nid) {
+      node_delete($photo_nid);
+    }
+    //fetch video nid
+    $lms_video_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_video_nid->fields('lr', array('entity_id'));
+    $lms_video_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_video_nid->condition('lr.bundle', 'lms_video', 'LIKE');
+    $lms_video_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $video_nid = $lms_video_nid->execute()->fetchField();
+    if($video_nid) {
+      node_delete($video_nid);
+    }
+    //fetch document nid
+    $lms_document_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_document_nid->fields('lr', array('entity_id'));
+    $lms_document_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_document_nid->condition('lr.bundle', 'lms_listing_document', 'LIKE');
+    $lms_document_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $document_nid = $lms_document_nid->execute()->fetchField();
+    if($document_nid) {
+      node_delete($document_nid);
+    }
+    //fetch Step By Step nid
+    $lms_step_by_step_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_step_by_step_nid->fields('lr', array('entity_id'));
+    $lms_step_by_step_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_step_by_step_nid->condition('lr.bundle', 'lms_step_by_step_guide', 'LIKE');
+    $lms_step_by_step_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $step_by_step_nid = $lms_step_by_step_nid->execute()->fetchField();
+    if($step_by_step_nid) {
+      node_delete($step_by_step_nid);
+    }
+  }
+}
+/**
+ * Implements hook_entity_presave()
+ * @ $entity;
+ **/
+function listing_marketing_system_entity_presave($entity, $type) {
+  if(arg(0) == 'field-collection') {
+    $entity->field_document_update[LANGUAGE_NONE][0] = array(
+      'value' => date('Y-m-d H:i:s', strtotime('now')),
+      'timezone' => 'UTC',
+      'timezone_db' => 'UTC',
+    );
+    unset($entity->field_document_thumbnail['und'][0]);
+  }
+}
+/**
+ * Implements hook_node_access()
+ * @ $entity;
+ **/
+function listing_marketing_system_node_access($node, $op, $account) {
+  global $user;
+  $roles = array("Corporate", "Siteadmin", "Administrator");
+  $roles_result = array_intersect($roles, $user->roles);
+  if ($op == 'update' && $node->type == 'lms_listing') {
+    if(!empty($roles_result)) {
+      //print "<pre>";print_r($node);exit;
+      return NODE_ACCESS_ALLOW;
+    }
+    else if(isset($node->field_lms_marketing_coordinator['und']['0']['uid']) && $node->field_lms_marketing_coordinator['und']['0']['uid'] == $user->uid) {
+      return NODE_ACCESS_ALLOW;
+    }
+    else if(isset($node->field_lms_other_agent['und']['0']['uid']) && $node->field_lms_other_agent['und']['0']['uid'] == $user->uid) {
+      return NODE_ACCESS_ALLOW;
+    }
+  }
+}
+/**
+ * Implements hook_block_info().
+ */
+function listing_marketing_system_block_info() {
+  $blocks = array();
+  $blocks['web_listing_menu'] = array(
+    'info' => t('Web Listing Menu'),
+  );
+  $blocks['web_listing_home'] = array(
+    'info' => t('Web Listing Home'),
+  );
+  $blocks['web_listing_gallery'] = array(
+    'info' => t('Web Listing Gallery'),
+  );
+  $blocks['web_listing_features'] = array(
+    'info' => t('Web Listing Features'),
+  );
+  $blocks['web_listing_directions'] = array(
+    'info' => t('Web Listing Directions'),
+  );
+  $blocks['web_listing_contact'] = array(
+    'info' => t('Web Listing Contact'),
+  );
+  $blocks['step_by_step_head'] = array(
+    'info' => t('Step by Step Head'),
+  );
+  return $blocks;
+}
+/**
+ * Implements hook_block_view().
+ */
+function listing_marketing_system_block_view($delta='') {
+  $block = array();
+  switch($delta) {
+    case 'web_listing_menu' :
+      $block['content'] = cbone_web_listing_menu();
+    break;
+    case 'web_listing_home' :
+      $block['content'] = cbone_web_listing_home();
+    break;
+    case 'web_listing_gallery' :
+      $block['content'] = cbone_web_listing_gallery();
+    break;
+    case 'web_listing_features' :
+      $block['content'] = cbone_web_listing_features();
+    break;
+    case 'web_listing_video' :
+      $block['content'] = cbone_web_listing_video();
+    break;
+    case 'web_listing_directions' :
+      $block['content'] = cbone_web_listing_directions();
+    break;
+    case 'web_listing_contact' :
+      $block['content'] = cbone_web_listing_contact();
+    break;
+    case 'step_by_step_head' :
+      $block['content'] = cbone_listing_step_by_step();
+    break;
+  }
+
+  return $block;
+}
+/**
+ * Implements hook_preprocess_html().
+ */
+function listing_marketing_system_preprocess_html(&$vars){
+  global $user;
+  if ($user->uid == 1) {
+    $vars['classes_array'][] = "admin";
+  }
+  else {
+    $vars['classes_array'][] = "member";
+  }
+}
+/**
+ * Implements hook_js_alter(&$javascript).
+*/
+
+/**
+ * Implements hook_path_update().
+*/
+function listing_marketing_system_path_update($path) {
+  $source = $path['source'];
+  $explode = explode("/", $source);
+  $node_detail = node_load($explode[1]);
+  if(!empty($node_detail)){
+    if($node_detail->type == 'lms_listing') {
+      $urlAlias = db_query("SELECT alias FROM url_alias WHERE source = :source ORDER BY pid DESC LIMIT 0, 1", array(':source'=> $source))->fetchField();
+      lms_url_alias_update($urlAlias, $source);
+    }
+  }
+}
+/**
+ * Implements hook_path_insert().
+*/
+function listing_marketing_system_path_insert($path) {
+  $source = $path['source'];
+  $explode = explode("/", $source);
+  $node_detail = node_load($explode[1]);
+  if(!empty($node_detail)){
+    if($node_detail->type == 'lms_listing') {
+      $urlAlias = db_query("SELECT alias FROM url_alias WHERE source = :source ORDER BY pid DESC LIMIT 0, 1", array(':source'=> $source))->fetchField();
+      lms_url_alias_update($urlAlias, $source);
+    }
+  }
+}
+/**
+ * Callback function lms_url_alias_update()
+ * to update the listing alias
+ **/
+function lms_url_alias_update($newsAlias, $source) {
+  $newsAlias2 = 'branded/'.$newsAlias;
+  $newsAlias3 = 'unbranded/'.$newsAlias;
+  if(!empty($newsAlias)) {
+    db_delete('url_alias')
+      ->condition('source', $source)
+      ->execute();
+    db_insert('url_alias')
+      ->fields(array(
+        'source' => $source,
+        'alias' => $newsAlias3,
+        'language' => 'und',
+      ))
+      ->execute();
+    db_insert('url_alias')
+      ->fields(array(
+        'source' => $source,
+        'alias' => $newsAlias2,
+        'language' => 'und',
+      ))
+      ->execute();
+    db_insert('url_alias')
+      ->fields(array(
+        'source' => $source,
+        'alias' => $newsAlias,
+        'language' => 'und',
+      ))
+      ->execute();
+  }
+}
+/**
+ * Callback function auto_insert_lms_node()
+ * to insert node of "Photo", "Document", and "Video"
+ * at the time of adding lms_listing nodes
+ **/
+function auto_insert_lms_node($title, $nid, $uid, $type){
+  global $user;
+  $node = new stdClass();
+  $node->title = $title;
+  $node->type = $type;
+  node_object_prepare($node);
+  $node->language = LANGUAGE_NONE;
+  $node->field_lms_listing_reference[$node->language][0]['nid'] = $nid;
+  $node->uid = $uid;
+  $node->status = 1;
+  $node->promote = 0;
+  $node->comment = 0;
+  $node = node_submit($node);
+  node_save($node);
+  return $node->nid;
+}
+/**
+ * Callback function cbone_listing_marketing_system()
+ * to test node URL
+ **/
+function cbone_listing_marketing_system(){
+  //$value = variable_get('marketing_concierge_node_url', 'node/');
+  ///return $value;
+  //Add search form
+  $form = drupal_get_form('new_listing_title_form');
+  $output = drupal_render($form);
+  return $output;
+}
+
+/**
+ * Drupal form API
+ * to enter listing title at my listing page
+ * @return $form
+ */
+function new_listing_title_form($form, &$form_state) {
+  $form['from'] = array(
+    '#type' => 'item',
+    '#markup' => '<img src="/sites/all/modules/custom/listing_marketing_system/images/placeholder-arrow.jpg">',
+  );
+  $form['new_listing_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Add New Listing'),
+    '#size' => 80,
+    '#attributes' => array('placeholder' => t('Enter Listing Title')),
+    '#required' => TRUE,
+  );
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add'),
+    '#required' => TRUE,
+  );
+  $path = current_path();
+  $form['#action'] = url($path);
+  return $form;
+}
+
+/**
+ * Drupal form API
+ * submit Daily Quiz Question form
+ */
+function new_listing_title_form_submit($form, &$form_state) {
+  $title = $form_state['values']['new_listing_title'];
+  //$form_state['redirect'] = urldecode(url('/node/add/lms-listing', array('query' => array('title' => $title))));
+  if(arg(0) == 'office-listings-agent') {
+    $uid = arg(1);
+    drupal_goto('node/add/lms-listing', array('query' => array('title' => $title, 'uid' => $uid)));
+  }
+  else {
+    drupal_goto('node/add/lms-listing', array('query' => array('title' => $title)));
+  }
+}
+/**
+ * Callback function manage_listing_access()
+ * to set the access of manage listing page
+ * "cbone_manage_listing"
+ * @return TRUE/FALSE
+ **/
+function manage_listing_access($nid) {
+  global $user;
+  $access = FALSE;
+  if($user->uid == 0) {
+    $access = FALSE;
+  }
+  else {
+    $listing_node = node_load($nid);
+    //$roles = array("Marketing Coordinator", "Office Administrator", "Manager", "Siteadmin", "Administrator");
+    //$roles = array("Corporate", "Siteadmin", "Administrator", "Manager", "Office Administrator", "Marketing Coordinator");
+    $roles = array(4 => 'Siteadmin', 3 => 'Administrator', 6 => 'Manager', 13 => 'Office Administrator', 9 => 'Marketing Coordinator');
+    //$roles_result = array_intersect($roles, $user->roles);
+    $roles_result = array_intersect_key($roles, $user->roles);
+    $co_agent = isset($listing_node->field_lms_other_agent['und']['0']['uid']) ? $listing_node->field_lms_other_agent['und']['0']['uid'] : '';
+    $marketing_coordinator_uid = isset($listing_node->field_lms_marketing_coordinator['und']['0']['uid']) ? $listing_node->field_lms_marketing_coordinator['und']['0']['uid'] : '';
+    $primary_agent = isset($listing_node->field_lms_agent_uid['und']['0']['uid']) ? $listing_node->field_lms_agent_uid['und']['0']['uid'] : '';
+    if($primary_agent == $user->uid || !empty($roles_result) || $marketing_coordinator_uid == $user->uid || $co_agent == $user->uid || $listing_node->uid == $user->uid) {
+      $access = TRUE;
+    }
+  }
+  return $access;
+}
+/**
+ * Callback function cbone_manage_listing()
+ * to displayed the listing tool to manage the listing
+ * @return $output
+ **/
+function cbone_manage_listing($nid){
+  global $user;
+  $output = '';
+  $listing_node = node_load($nid);
+  //print "<pre>";print_r($listing_node);exit;
+  global $user;
+  $admin_roles = array('Manager','Office Administrator','Siteadmin','Administrator');
+  $rid = '';
+  $result_row = '';
+  if(array_intersect($admin_roles, $user->roles)) {
+    $rid = 3;
+  }
+  else if (in_array('Marketing Coordinator', $user->roles)) {
+    $rid = array_search('Marketing Coordinator', $user->roles);
+  }
+  else if (in_array('Agent', $user->roles)) {
+    $rid = array_search('Agent', $user->roles);
+  }
+  $mcc_order_status = isset($listing_node->field_mc_status_ref['und']['0']['tid']) ? $listing_node->field_mc_status_ref['und']['0']['tid'] : 0;
+  if($rid != '') {
+    $query = db_select('mc_lms_tool_matrix', 'tm');
+    $query->fields('tm');
+    $query->condition('tm.mc_status', $mcc_order_status, '=');
+    $query->condition('tm.user_role', '%'.$rid.'%', 'LIKE');
+    $result_row = $query->execute()->fetchAssoc();
+  }
+  //Fetch count of mcPDF node of postcard which has sent to approval
+  $postcard_mc_pdf_count = 0;
+  $term1 = taxonomy_get_term_by_name('PDF Pending Agent Approval');
+  $pdf_pending_agent_approval_tid = array_shift($term1)->tid;
+  $query = db_select('field_data_field_lms_listing_reference', 'lms');
+  $query->join('field_data_field_mc_pdf_status', 'pdfs', 'lms.entity_id = pdfs.entity_id');
+  $query->join('field_data_field_template_reference', 'tr', 'lms.entity_id = tr.entity_id');
+  $query->join('field_data_field_pdf_section', 'ps', 'ps.entity_id = tr.field_template_reference_nid');
+  $query->fields('lms', array('entity_id'))
+    ->condition('lms.field_lms_listing_reference_nid', $nid, '=')
+    ->condition('lms.entity_type', 'node', 'LIKE')
+    ->condition('lms.bundle', 'mc_pdf', 'LIKE')
+    ->condition('pdfs.field_mc_pdf_status_tid', $pdf_pending_agent_approval_tid, '=')
+    ->condition('ps.field_pdf_section_value', 'post card', 'LIKE');
+  $postcard_mc_pdf_count = $query->execute()->rowCount();
+  //Fetch count of mcPDF node of pro brochure which has sent to approval
+  $pro_brochure_mc_pdf_count = 0;
+  $term2 = taxonomy_get_term_by_name('PDF Pending Agent Approval');
+  $pdf_pending_agent_approval_tid = array_shift($term2)->tid;
+  $query = db_select('field_data_field_lms_listing_reference', 'lms');
+  $query->join('field_data_field_mc_pdf_status', 'pdfs', 'lms.entity_id = pdfs.entity_id');
+  $query->join('field_data_field_template_reference', 'tr', 'lms.entity_id = tr.entity_id');
+  $query->join('field_data_field_pdf_section', 'ps', 'ps.entity_id = tr.field_template_reference_nid');
+  $query->fields('lms', array('entity_id'))
+    ->condition('lms.field_lms_listing_reference_nid', $nid, '=')
+    ->condition('lms.entity_type', 'node', 'LIKE')
+    ->condition('lms.bundle', 'mc_pdf', 'LIKE')
+    ->condition('pdfs.field_mc_pdf_status_tid', $pdf_pending_agent_approval_tid, '=')
+    ->condition('ps.field_pdf_section_value', 'pro brochure', 'LIKE');
+  $pro_brochure_mc_pdf_count = $query->execute()->rowCount();
+  if(is_object($listing_node)) {
+    //Marketing Coordinator
+    $marketing_coordinator_uid = '';
+    $marketing_coordinator_status = 0;
+    if(isset($listing_node->field_lms_marketing_coordinator['und']['0']['uid'])) {
+      $marketing_coordinator_uid = $listing_node->field_lms_marketing_coordinator['und']['0']['uid'];
+    }
+    if(isset($listing_node->field_mc_status_ref['und']['0']['tid'])) {
+      $marketing_coordinator_status = $listing_node->field_mc_status_ref['und']['0']['tid'];
+    }
+    //Listing Address
+    $address = array();
+    if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_state['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_state['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_zip['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_zip['und']['0']['value'];
+    }
+    $listing_address = implode(', ', $address);
+      
+    $co_agent = isset($listing_node->field_lms_other_agent['und']['0']['uid']) ? $listing_node->field_lms_other_agent['und']['0']['uid'] : '';
+    //product Order
+    $product_title = '';
+    $order = db_select("field_data_field_lms_listing_reference", 'lr');
+    $order->fields('lr', array('entity_id'));
+    $order->condition('lr.entity_type', 'commerce_order', 'LIKE');
+    $order->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $order_id = $order->execute()->fetchField();
+    if($order_id != NULL){
+      $order = commerce_order_load($order_id);
+      $line_item = commerce_line_item_load($order->commerce_line_items['und']['0']['line_item_id']);
+      $product = commerce_product_load($line_item->commerce_product['und']['0']['product_id']);
+      $product_title = $product->title;
+    }
+    //Approve PDF nids by agent
+    $query = db_select('cbone_listing_approve_pdf', 'apdf');
+    $query->fields('apdf', array('pnid', 'pdf_section'))
+      ->condition('apdf.lnid', $nid, '=');
+    $approve_pdf_nids = $query->execute()->fetchAll();
+    $approve_pdf_status = '';
+    $listed = '';
+    $sold = '';
+    if(!empty($approve_pdf_nids)) {
+      foreach($approve_pdf_nids as $approve_pdf_nid) {
+        $approve_mcpdf = node_load($approve_pdf_nid->pnid);
+        $template_id = $approve_mcpdf->field_template_reference['und']['0']['nid'];
+        if(isset($approve_mcpdf->field_mc_pdf_status['und']['0']['tid'])) {
+          $pdf_status_term = taxonomy_term_load($approve_mcpdf->field_mc_pdf_status['und']['0']['tid']);
+          if($approve_pdf_nid->pdf_section == 'post-card') {
+            if($approve_mcpdf->field_postcard_type['und']['0']['value'] == 'listed') {
+              $approve_pdf_status .= '<a href="/download_pdf/'.$nid.'/'.$template_id.'?destination=manage-listing/'.$nid.'"><div>Just Listed Postcard Order '.$order_id.'-'.$approve_pdf_nid->pnid.' status: '.$pdf_status_term->name.'&nbsp;&nbsp;<img src="/sites/all/modules/custom/listing_marketing_system/images/download-arrow-58C6BD-sm.png" /></div></a>';
+              $listed = 1;
+            }
+            else if($approve_mcpdf->field_postcard_type['und']['0']['value'] == 'sold') {
+              $approve_pdf_status .= '<a href="/download_pdf/'.$nid.'/'.$template_id.'?destination=manage-listing/'.$nid.'"><div>Just Sold Postcard Order '.$order_id.'-'.$approve_pdf_nid->pnid.' status: '.$pdf_status_term->name.'&nbsp;&nbsp;<img src="/sites/all/modules/custom/listing_marketing_system/images/download-arrow-58C6BD-sm.png" /></div></a>';
+              $sold = 1;
+            }
+            if($listed == 1 && $sold == 1) {
+              //$result_row['post_cards'] = 0;
+              $postcard_mc_pdf_count = 0;
+            }
+          }
+          else {
+            $approve_pdf_status .= '<a href="/download_pdf/'.$nid.'/'.$template_id.'?destination=manage-listing/'.$nid.'"><div>Pro Brochure Order '.$order_id.'-'.$approve_pdf_nid->pnid.' status: '.$pdf_status_term->name.'&nbsp;&nbsp;<img src="/sites/all/modules/custom/listing_marketing_system/images/download-arrow-58C6BD-sm.png" /></div></a>';
+            //$result_row['pro_brochures'] = 0;
+            $pro_brochure_mc_pdf_count = 0;
+          }
+        }
+      }
+    }
+    //fetch photos nid
+    $lms_photo_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_photo_nid->fields('lr', array('entity_id'));
+    $lms_photo_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_photo_nid->condition('lr.bundle', 'lms_photos', 'LIKE');
+    $lms_photo_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $photo_nid = $lms_photo_nid->execute()->fetchField();
+    //fetch video nid
+    $lms_video_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_video_nid->fields('lr', array('entity_id'));
+    $lms_video_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_video_nid->condition('lr.bundle', 'lms_video', 'LIKE');
+    $lms_video_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $video_nid = $lms_video_nid->execute()->fetchField();
+    //fetch document nid
+    $lms_document_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_document_nid->fields('lr', array('entity_id'));
+    $lms_document_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_document_nid->condition('lr.bundle', 'lms_listing_document', 'LIKE');
+    $lms_document_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $document_nid = $lms_document_nid->execute()->fetchField();
+    //fetch Client Report nid
+    $client_report_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $client_report_nid->fields('lr', array('entity_id'));
+    $client_report_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $client_report_nid->condition('lr.bundle', 'lms_client_report', 'LIKE');
+    $client_report_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $report_nid = $client_report_nid->execute()->fetchField();
+    //Query to get pdf design nid, display document values
+    $shared_pdf_brochure='';
+    $query = db_select('cbone_website_settings', 'cws')
+      ->fields('cws', array('shared_lisitng'))
+      ->condition('nid', $nid, '=');
+    $result = $query->execute()->fetchField();
+    if(!empty($result)){
+      $shared_pdf_brochure = $result;
+    }
+	
+	$photo_node = node_load($photo_nid);
+	$items = field_get_items('node', $photo_node, 'field_lms_listing_photos');
+	$item_count = count($items);
+	$mls_description = isset($listing_node->field_lms_mls_description['und']['0']['value']) ? $listing_node->field_lms_mls_description['und']['0']['value'] : '';
+	$online_copy = isset($listing_node->field_lms_online_copy['und']['0']['value']) ? $listing_node->field_lms_online_copy['und']['0']['value'] : '';
+	$listing_photos_status = ($item_count < 4) ? ' less_listing_photos' : '';
+	$listing_data_status = ($online_copy == '') ? ' less_listing_data' : '';
+	$listing_marketing_headline_data = isset($listing_node->field_lms_listing_headline['und']['0']['value']) ? $listing_node->field_lms_listing_headline['und']['0']['value'] : '';
+	$listing_marketing_headline = ($listing_marketing_headline_data == '') ? ' listing_marketing_headline' : '';
+	//Check Order and add PRIME ORDER to Listing.
+	if($order_id == NULL){
+		$flag = 0;
+		foreach($listing_node->field_lms_product['und'] as $key => $product_ids){
+			if($product_ids['product_id'] == 7){
+				$flag = 1;
+			}
+		}
+		if($flag == 0) {
+			$key++;
+			$listing_node->field_lms_product['und'][$key]['product_id'] = 7;
+			$listing_node_save = node_save($listing_node);
+		}
+	}
+    $variables = array(
+		'listing_title' => $listing_node->title,
+		'nid' => $nid,
+		'photo_nid' => $photo_nid,
+		'video_nid' => $video_nid,
+		'document_nid' => $document_nid,
+		'listing_address' => $listing_address,
+		'agent_uid' => isset($listing_node->field_lms_agent_uid['und']['0']['uid']) ? $listing_node->field_lms_agent_uid['und']['0']['uid'] : $listing_node->uid,
+		'product' => $product_title,
+		'marketing_coordinator_uid' => $marketing_coordinator_uid,
+		'marketing_coordinator_status' => $marketing_coordinator_status,
+		'co_agent' => $co_agent,
+		'report_nid' => $report_nid,
+		'shared_pdf_brochure' => $shared_pdf_brochure,
+		'mc_tool_matrix' => $result_row,
+		'mcc_order_status' => $mcc_order_status,
+		'listing_office_id' => isset($listing_node->field_lms_office_id['und']['0']['value']) ? $listing_node->field_lms_office_id['und']['0']['value'] : 0,
+		'pro_brochure_mc_pdf_count' => $pro_brochure_mc_pdf_count,
+		'postcard_mc_pdf_count' => $postcard_mc_pdf_count,
+		'approve_pdf_status' => $approve_pdf_status,
+		'listing_photos_status' => $listing_photos_status,
+		'listing_data_status' => $listing_data_status,
+		'listing_marketing_headline' => $listing_marketing_headline,
+    );
+    //print "<pre>";print_r($variables);exit;
+    $output = theme('manage_listing', array('var_name' => $variables));
+    return $output;
+  }
+  else {
+    drupal_goto('my-listings');
+  }
+}
+/**
+ * Callback function cbone_embed_listing()
+ * to displayed All listing data for embed
+ * to other website or block
+ * @return $output
+ **/
+function cbone_embed_listing($nid) {
+  $first_node = node_load($nid);
+  $listing_nids = db_select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition('n.uid', $first_node->uid, '=')
+      ->condition('n.type', 'lms_listing', '=')
+      ->condition('n.status', '1', '=')
+      ->orderBy('n.created', 'DESC')
+      ->execute();
+  $listing = array();
+  $closedlisting = array();
+  $buyerlisting = array();
+  foreach($listing_nids as $listing_nid){
+    $listing_node = node_load($listing_nid->nid);
+    $status_tid = $listing_node->field_lms_listing_status['und']['0']['tid'];
+    //$status_term = taxonomy_term_load($status_tid);
+    if($status_tid == 196 || $status_tid == 199) {
+      $first_image = cbone_web_listing_photo($listing_node->nid, 'embedded');
+      if (isset($first_image)) {
+        //Listing Address
+        if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+          $listing_address = t('Address Available Upon Request');
+        }
+        else {
+          $address = array();
+          if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+            $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+          }
+          if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+            $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+          }
+          if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+            $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+          }
+          $listing_address = implode(', ', $address);
+        }
+        $bedroom = array();
+        if(isset($listing_node->field_lms_total_bedrooms['und']['0']['value'])) {
+          $bedroom[] = $listing_node->field_lms_total_bedrooms['und']['0']['value'].' Bedroom';
+        }
+        if(isset($listing_node->field_lms_total_baths['und']['0']['value'])) {
+          $bedroom[] = $listing_node->field_lms_total_baths['und']['0']['value'].' Bathrooms';
+        }
+        if(isset($listing_node->field_lms_list_price['und']['0']['value'])) {
+          $currency = commerce_default_currency();
+          $amount = $listing_node->field_lms_list_price['und']['0']['value'];
+          $bedroom[] = '$'.commerce_currency_format($amount, 'US'); //'$'.$listing_node->field_lms_list_price['und']['0']['value'];
+        }
+        $bedroom_detail = implode(' | ', $bedroom);
+        if(count($bedroom) > 1) {
+          preg_replace('/|/', '-', $bedroom_detail, 1);
+        }
+      
+        $listing[] = array('listing_nid' => $listing_node->nid, 'address' => $listing_address, 'first_image' => $first_image, 'bedroom_detail' => $bedroom_detail);
+      }
+    }
+    else if ($status_tid == 197) {
+      $first_image = cbone_web_listing_photo($listing_node->nid, 'embedded');
+      //Listing Address
+      if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+        $listing_address = t('Address Available Upon Request');
+      }
+      else {
+        $address = array();
+        if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+          $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+        }
+        if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+          $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+        }
+        if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+          $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+        }
+        $listing_address = implode(', ', $address);
+      }
+      $bedroom = array();
+      if(isset($listing_node->field_lms_total_bedrooms['und']['0']['value'])) {
+        $bedroom[] = $listing_node->field_lms_total_bedrooms['und']['0']['value'].' Bedroom';
+      }
+      if(isset($listing_node->field_lms_total_baths['und']['0']['value'])) {
+        $bedroom[] = $listing_node->field_lms_total_baths['und']['0']['value'].' Bathrooms';
+      }
+      if(isset($listing_node->field_lms_list_price['und']['0']['value'])) {
+        $currency = commerce_default_currency();
+        $amount = $listing_node->field_lms_list_price['und']['0']['value'];
+        $bedroom[] = '$'.commerce_currency_format($amount, 'US'); //'$'.$listing_node->field_lms_list_price['und']['0']['value'];
+      }
+      $bedroom_detail = implode(' | ', $bedroom);
+      if(count($bedroom) > 1) {
+        preg_replace('/|/', '-', $bedroom_detail, 1);
+      }
+      $closedlisting[] = array('listing_nid' => $listing_node->nid, 'address' => $listing_address, 'first_image' => $first_image, 'bedroom_detail' => $bedroom_detail);
+    }
+  }
+  $buyer_nids = db_select('node', 'n');
+  $buyer_nids->join('field_data_field_buyer_property_embed', 'pe', 'pe.entity_id = n.nid');
+  $buyer_nids->fields('n', array('nid'));
+  $buyer_nids->condition('n.uid', $first_node->uid, '=');
+  $buyer_nids->condition('n.type', 'client', '=');
+  $buyer_nids->condition('n.status', '1', '=');
+  $buyer_nids->condition('pe.field_buyer_property_embed_value', '1', '=');
+  $buyer_nids->orderBy('n.created', 'DESC');
+  $result = $buyer_nids->execute();
+  foreach($result as $buyer_nid){
+    $buyer_node = node_load($buyer_nid->nid);
+    $address = '';
+    $first_image = isset($buyer_node->field_buyer_side_property_photo['und']['0']['uri']) ? $buyer_node->field_buyer_side_property_photo['und']['0']['uri'] : '';
+    if(isset($buyer_node->field_buyer_property_address['und']['0']['value']) && isset($buyer_node->field_buyer_property_city['und']['0']['value'])) {
+      $address = $buyer_node->field_buyer_property_address['und']['0']['value'].', '.$buyer_node->field_buyer_property_city['und']['0']['value'];
+    }
+    else {
+      $address = isset($buyer_node->field_buyer_property_address['und']['0']['value']) ? $buyer_node->field_buyer_property_address['und']['0']['value'] : '';
+      $address .= isset($buyer_node->field_buyer_property_city['und']['0']['value']) ? $buyer_node->field_buyer_property_city['und']['0']['value'] : '';
+    }
+    $price = '';
+    if(isset($buyer_node->field_buyer_purchase_price['und']['0']['value'])) {
+      $amount = preg_replace("/[^0-9.]*/", "", $buyer_node->field_buyer_purchase_price['und']['0']['value']);
+      $price = '$'.commerce_currency_format($amount, 'US');
+      //$price = '$'.$buyer_node->field_buyer_purchase_price['und']['0']['value'];
+    }
+    $buyerlisting[] = array('buyer_nid' => $buyer_node->nid, 'address' => $address, 'first_image' => $first_image, 'price' => $price);
+  }
+  $data = array(
+    'data' => $listing,
+    'closedata' => $closedlisting,
+    'buyerlisting' => $buyerlisting,
+  );
+  $output = theme('embed_web_listing', array('var_name' => $data));
+  return $output;
+}
+
+/**
+ * Callback function listing_photos_upload_form()
+ * to displayed the form to Multi upload photos/document
+ * @return $form
+ **/
+function listing_photos_upload_form($form, &$form_state, $nid = NULL){
+  if(arg(0) == 'listing-document') {
+    $extensions = array('jpg jpeg pdf');
+    $submit = t('Save Documents');
+    $title = t('Upload Documents');
+    $vocabulary = taxonomy_vocabulary_machine_name_load('lms_document_type');
+    $terms = taxonomy_get_tree($vocabulary->vid);
+    $options = array();
+    //$options['_none'] = '- None -';
+    foreach ($terms as $data) {
+      $options[$data->tid] = $data->name;
+    }
+    $form['document_type'] = array (
+      '#title' => 'Document Type',
+      '#type' => 'select',
+      '#options' => $options,
+      '#required' => TRUE,
+    );
+  }
+  else if(arg(0) == 'listing-photos') {
+    $extensions = array('jpg jpeg gif png');
+    $submit = t('Save Photos');
+    $title = t('Upload Photos');
+  }
+  $form['nid'] = array(
+    '#type' => 'hidden',
+    '#value' => $nid,
+  );
+  $form['listing_nid'] = array(
+    '#type' => 'hidden',
+    '#value' => arg(2),
+  );
+  $form['lms_photos'] = array(
+    '#type' => 'plupload',
+    '#title' => $title,
+    '#description' => t('Drag photos or select by "Add files".'),
+    '#autoupload' => FALSE,
+    '#autosubmit' => FALSE,
+    //'#submit_element' => '#id-of-your-submit-element',
+    '#upload_validators' => array(
+    'file_validate_extensions' => $extensions,
+    //'my_custom_file_validator' => array('some validation criteria'),
+    ),
+    /*'#plupload_settings' => array(
+    'runtimes' => 'html5',
+    'chunk_size' => '1mb',
+    'flash_swf_url' => file_create_url('/sites/all/libraries/plupload/js/plupload.flash.swf'),
+    'silverlight_xap_url' => file_create_url('/sites/all/libraries/plupload/js/plupload.silverlight.xap'),
+    ),*/
+    /*'#event_callbacks' => array(
+    'FilesAdded' => 'Drupal.listing_marketing_system.filesAddedCallback',
+    'UploadComplete' => 'Drupal.listing_marketing_system.uploadCompleteCallback',
+    ),*/
+  );
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => $submit,
+    '#required' => TRUE,
+  );
+  return $form;
+}
+/**
+ * Drupal Form API
+ * Submit functionality to save photos
+ **/
+function listing_photos_upload_form_submit($form, &$form_state){
+  $values = $form_state['values'];
+  $listing_nid = $values['listing_nid'];
+  $nid = $values['nid'];
+  $node = node_load($nid);
+  $filepath = 's3://lms/agent-'.$node->uid;
+  file_prepare_directory($filepath, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+  foreach ($values['lms_photos'] as $uploaded_file) {
+    if ($uploaded_file['status'] == 'done') {
+      $source = $uploaded_file['tmppath'];
+      $filepath = 's3://lms/agent-'.$node->uid;
+      file_prepare_directory($filepath, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+      $name =  $uploaded_file['name'];
+      $destination = '';
+      $destination = file_stream_wrapper_uri_normalize($filepath .'/'. $name);
+      $destination = file_unmanaged_move($source, $destination, FILE_EXISTS_RENAME);
+      $file = plupload_file_uri_to_object($destination);
+      file_save($file);
+      $file->display = 1;  
+      if(arg(0) == 'listing-document') {
+         $document_type = $values['document_type'];
+         $fc_item = entity_create('field_collection_item', array('field_name' => 'field_lms_listing_documents'));
+         $fc_item->setHostEntity('node', $node);
+         $fc_wrapper = entity_metadata_wrapper('field_collection_item', $fc_item);
+         $fc_wrapper->field_lms_document_type->set($document_type);
+         $fc_wrapper->field_lms_listing_document->set((array)$file);
+         $fc_wrapper->field_document_update->set(REQUEST_TIME);
+         $fc_wrapper->save(TRUE);
+      }
+      else if(arg(0) == 'listing-photos') {
+        $fc_item = entity_create('field_collection_item', array('field_name' => 'field_lms_listing_photos'));
+        $fc_item->setHostEntity('node', $node);
+        $fc_wrapper = entity_metadata_wrapper('field_collection_item', $fc_item);
+        $fc_wrapper->field_lms_listing_photo->set((array)$file);
+        $fc_wrapper->field_lms_listing_photo_update->set(REQUEST_TIME);
+        $fc_wrapper->save(TRUE);
+      }
+    }  
+  }  
+  if(arg(0) == 'listing-document') {
+    //drupal_goto('listing-document/'.$listing_nid);
+    $form_state['redirect'] = 'listing-document/'.$listing_nid;
+  }
+  else if(arg(0) == 'listing-photos') {
+   // drupal_goto('listing-photos/'.$listing_nid);
+    $form_state['redirect'] = 'listing-photos/'.$listing_nid;
+  }
+}
+/**
+ * Callback function listing_photos_sortable()
+ * to saved the new order of listing photos
+ **/
+function listing_photos_sortable(){
+  if(isset($_POST['photo_nid'])) {
+    $photo_nid = $_POST['photo_nid'];
+    $photo_node = node_load($photo_nid);
+    foreach ($_POST['neworder'] as $delta => $value) {
+      $photo_node->field_lms_listing_photos['und'][$delta]['value'] = $value['id'];
+      $photo_node->field_lms_listing_photos['und'][$delta]['revision_id'] = $value['revision_id'];
+    }
+  }
+  elseif(isset($_POST['document_nid'])) {
+    $document_nid = $_POST['document_nid'];
+    $photo_node = node_load($document_nid);
+    foreach ($_POST['neworder'] as $delta => $value) {
+      $photo_node->field_lms_listing_documents['und'][$delta]['value'] = $value['id'];
+      $photo_node->field_lms_listing_documents['und'][$delta]['revision_id'] = $value['revision_id'];
+    }
+  }
+  node_save($photo_node);
+  print 'Saved';
+}
+/**
+ * Callback function cbone_auto_generated_slide_image()
+ * to create listing slide image for video 
+ * //slide-image
+ **/
+function cbone_auto_generated_slide_image($nid){
+  //Listing detail
+  $listing_node = node_load($nid);
+  $headline = isset($listing_node->field_lms_listing_headline['und']['0']['value']) ? $listing_node->field_lms_listing_headline['und']['0']['value'] .' ': '';
+  //Listing Address
+  if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+    $listing_address = t('Address Available Upon Request');
+  }
+  else {
+    $address = array();
+    if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_state['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_state['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_zip['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_zip['und']['0']['value'];
+    }
+    $listing_address = implode(', ', $address);
+  }
+  //Agent detail
+  $user_detail = user_load(isset($listing_node->field_lms_agent_uid['und']['0']['uid']) ? $listing_node->field_lms_agent_uid['und']['0']['uid'] : $listing_node->uid);
+  $name = isset($user_detail->field_firstname['und']['0']['value']) ? $user_detail->field_firstname['und']['0']['value'].' ' : $user_detail->name;
+  $name .= isset($user_detail->field_lastname['und']['0']['value']) ? $user_detail->field_lastname['und']['0']['value'] : '';
+  
+  if(!empty($listing_node->field_lms_sales_team) && isset($listing_node->field_lms_sales_team) ) {
+    $sales_team_node = node_load($listing_node->field_lms_sales_team['und']['0']['nid']);
+    $user_name = $sales_team_node->title;
+    $email = isset($sales_team_node->field_team_email['und']['0']['value']) ? $sales_team_node->field_team_email['und']['0']['value'].' ' : '';
+    $website = isset($sales_team_node->field_team_website['und']['0']['url']) ? $sales_team_node->field_team_website['und']['0']['url'].' ' : '';
+  }
+  else{
+    $user_name = isset($user_detail->field_preferred_name['und']['0']['value']) ? $user_detail->field_preferred_name['und']['0']['value'].' ' : '';
+    $email = $user_detail->mail;
+    $website = isset($user_detail->field_agent_web_site['und']['0']['value']) ? $user_detail->field_agent_web_site['und']['0']['value'].' ' : '';
+  }
+  
+  $phone = isset($user_detail->field_phone_mobile['und']['0']['value']) ? $user_detail->field_phone_mobile['und']['0']['value'].' ' : 'N/A';
+  $license = isset($user_detail->field_state_license['und']['0']['value']) ? $user_detail->field_state_license['und']['0']['value'].' ' : 'N/A';
+  if(!empty($license) && $license != 'N/A') {
+    $state_license_exp = explode('=', $license);
+	if(isset($state_license_exp[1])) {
+		$license = 'CalBRE #'.$state_license_exp[1];
+	}
+  }
+  $date = array(
+    $headline,
+    $listing_address,
+    "$user_name",
+    "Coldwell Banker Residential Brokerage",
+    $phone,
+    $email,
+    $license,
+    $website,
+  );
+  $module_path = drupal_get_path('module', 'listing_marketing_system');
+  $module_path = drupal_realpath($module_path);
+  //Image Generate code
+  //Header ("Content-type: image/jpeg");
+  $image = imageCreateFromJPEG("$module_path/images/blank-slide-first-last.jpg");
+  $logo = imageCreateFromJPEG("$module_path/images/cbrb-logo-video.jpg");
+  $color = ImageColorAllocate($image, 0, 0, 0);
+  $font = "$module_path/font/arial.ttf";
+  # Line thickness equals to 18 pixels
+  $thickness = 5;
+  // Get image Width and Height
+  $image_width = imagesx($image);  
+  $image_height = imagesy($image);
+  //Add title
+  $text_box = imagettfbbox(48, 0, $font, $date[0]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+    imagettftext($image, 48, 0, $x, 100, $color, $font, $date[0]);
+  //Add address
+  $text_box = imagettfbbox(36, 0, $font, $date[1]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+  imagettftext($image, 36, 0, $x, 180, $color, $font, $date[1]);
+  //Add default logo
+  $white = imagecolorallocate($image, 184, 204, 223);
+  imagecopymerge($image, $logo, 280, 320, 0, 0, 224, 130, 75);
+  imageline($image, 520, 250, 520, 550, $white);
+  //Add Agent name
+  $text_box = imagettfbbox(24, 0, $font, $date[2]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+  imagettftext($image, 24, 0, 550, 300, $color, $font, $date[2]);
+  //Add Static text
+  $text_box = imagettfbbox(24, 0, $font, $date[3]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+  imagettftext($image, 24, 0, 550, 350, $color, $font, $date[3]);
+  //Add Agent Phone
+  $text_box = imagettfbbox(24, 0, $font, $date[4]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+  imagettftext($image, 24, 0, 550, 400, $color, $font, $date[4]);
+  //Add Agent Email
+  $text_box = imagettfbbox(24, 0, $font, $date[5]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+  imagettftext($image, 24, 0, 550, 450, $color, $font, $date[5]);
+  //Add Agent Licence number
+  $text_box = imagettfbbox(24, 0, $font, $date[6]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+  imagettftext($image, 24, 0, 550, 500, $color, $font, $date[6]);
+  //Add Agent Website number
+  $text_box = imagettfbbox(24, 0, $font, $date[7]);
+  $text_width = $text_box[2]-$text_box[0];
+  $text_height = $text_box[3]-$text_box[1];
+  $x = ($image_width/2) - ($text_width/2);
+  imagettftext($image, 24, 0, 550, 550, $color, $font, $date[7]);
+  //Create video temp folder
+  $filepath = 'public://lms/'.$listing_node->nid.'/video/';
+  file_prepare_directory($filepath, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+  $name_first = 'slide-first.jpg';
+  $name_second = 'slide-second.jpg';
+  $filename_first = $filepath.$name_first;
+  $filename_second = $filepath.$name_second;
+  $write_source_first = drupal_realpath($filename_first);
+  $write_source_second = drupal_realpath($filename_second);
+  imagejpeg($image, $write_source_first, 100);
+  imagejpeg($image, $write_source_second, 100);
+  // Return output.
+  //ImageJPEG($image, NULL, 100);
+  ImageDestroy($image);
+  return TRUE;
+}
+/**
+ * Callback function cbone_photo_feeds_import()
+ * to create LMS Photo node by feeds
+ * //feeds/photo-feed
+ **/
+function cbone_photo_feeds_import(){
+  global $user, $base_url;
+  if(isset($_POST['photo_nid'])) {
+    $nrt_id = $_POST['nrt_id'];
+    $listing_nid = $_POST['listing_nid'];
+    $photo_nid = $_POST['photo_nid'];
+    
+    $import_photos = db_query("SELECT * FROM lms_photo_import WHERE nrt_property_id = :nrt_id AND lms_listing_node = :listing_nid AND lms_photo_node = :photo_nid AND imported = :imported ORDER BY sequence_number ASC", array('nrt_id' => $nrt_id, 'listing_nid' => $listing_nid, 'photo_nid' => $photo_nid, 'imported' => 0))->fetchAll();
+    
+    $photo_node = node_load($photo_nid);
+    $listing_node = node_load($listing_nid);
+    $office_id = $listing_node->field_lms_office_id['und']['0']['value'];
+    if(!isset($photo_node->field_lms_listing_photos['und']['0']['value'])) {
+      $x = 0;
+      foreach($import_photos as $key => $import_photo) {
+        $url_path = $import_photo->path;
+        $update_date = strtotime($import_photo->nrt_update_date);
+    
+        $image = file_get_contents($url_path);
+        $image_name = basename($url_path);
+
+        //$filepath = 'public://lms/agent-'.$photo_node->uid;
+        $filepath = 's3://lms/'.$office_id.'/agent-'.$photo_node->uid;
+        
+        file_prepare_directory($filepath, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+        $destination = $filepath.'/'.$image_name;
+        $replace = FILE_EXISTS_REPLACE;
+        if ($uri = file_unmanaged_save_data($image, $destination, $replace)) {
+          // Create a file object.
+          $file = new stdClass();
+          $file->fid = NULL;
+          $file->uri = $uri;
+          $file->filename = drupal_basename($uri);
+          $file->filemime = file_get_mimetype($file->uri);
+          $file->uid = $photo_node->uid;
+          $file->status = FILE_STATUS_PERMANENT;
+          // If we are replacing an existing file re-use its database record.
+          if ($replace == FILE_EXISTS_REPLACE) {
+            $existing_files = file_load_multiple(array(), array('uri' => $uri));
+            if (count($existing_files)) {
+              $existing = reset($existing_files);
+              $file->fid = $existing->fid;
+              $file->filename = $existing->filename;
+            }
+          }
+          elseif ($replace == FILE_EXISTS_RENAME && is_file($destination)) {
+            $file->filename = drupal_basename($destination);
+          }
+          file_save($file);
+        }
+        $fc_item = entity_create('field_collection_item', array('field_name' => 'field_lms_listing_photos'));
+        $file = (array)$file;
+        $fc_item->field_lms_listing_photo['und'][] = $file;
+        $fc_item->field_lms_listing_photo_update['und'][] = $update_date;
+        $fc_item->setHostEntity('node', $photo_node);
+        $fc_item->save(TRUE);
+        node_save($photo_node);
+        $x++;
+      }
+      $photo_node->field_photo_feed_status['und']['0']['value'] = date('Y-m-d H:i:s');
+      node_save($photo_node);
+      //Update lms_photo_import table
+      $import_updated = db_update('lms_photo_import')
+        ->fields(array(
+          'imported' => 1,
+          'import_date' => date('Y-m-d H:i:s'),
+        ))
+        ->condition('nrt_property_id', $nrt_id, '=')
+        ->condition('lms_listing_node', $listing_nid, '=')
+        ->condition('lms_photo_node', $photo_nid, '=')
+        ->condition('imported', 0, '=')
+        ->execute();
+    }
+  }
+  print "done";
+}
+/**
+ * Callback function cbone_web_listing_photo()
+ * to displayed listing photo at web page.
+ * return photos
+ **/
+function cbone_web_listing_photo($nid, $type){
+  //fetch photos nid
+  $lms_photo_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+  $lms_photo_nid->fields('lr', array('entity_id'));
+  $lms_photo_nid->condition('lr.entity_type', 'node', 'LIKE');
+  $lms_photo_nid->condition('lr.bundle', 'lms_photos', 'LIKE');
+  $lms_photo_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+  $photo_nid = $lms_photo_nid->execute()->fetchField();
+  $photo_node = node_load($photo_nid);
+  $url = '';
+  $items = field_get_items('node', $photo_node, 'field_lms_listing_photos');
+  if(!empty($items)) {
+    if($type == 'first' && isset($items['0'])) {
+      $count = cbone_web_listing_photo_exist($items['0']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['0']);
+        $url = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+      }
+      return $url;
+    }
+    else if($type == 'home-first' && isset($items['0'])) {
+      $count = cbone_web_listing_photo_exist($items['0']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['0']);
+        $img_url = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? $listing_photos->field_lms_listing_photo['und']['0']['uri'] : '';
+        $url = image_style_url("web_listing_home_single_image", $img_url);
+      }
+      return $url;
+    }
+    else if($type == 'second' && isset($items['1'])) {
+      $count = cbone_web_listing_photo_exist($items['1']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['1']);
+        $url = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+        //$img_url = $listing_photos->field_lms_listing_photo['und']['0']['uri'];
+        //$url = image_style_url("web_page_video_background", $img_url);
+      }
+      return $url;
+    }
+    else if($type == 'second1' && isset($items['1'])) {
+      $count = cbone_web_listing_photo_exist($items['1']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['1']);
+        //$url = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+        $img_url = $listing_photos->field_lms_listing_photo['und']['0']['uri'];
+        $url = image_style_url("web_page_video_background", $img_url);
+      }
+      return $url;
+    }
+    else if($type == 'second2' && isset($items['1'])) {
+      $photos = '';
+      $count = cbone_web_listing_photo_exist($items['1']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['1']);
+        if(isset($listing_photos->field_lms_listing_photo['und']['0']['uri'])) {
+          $image = array(
+            'style_name' => 'web_page_feature_536x358',
+            'path' => $listing_photos->field_lms_listing_photo['und']['0']['uri'],
+            'title' => $listing_photos->field_lms_listing_photo['und']['0']['filename']
+          );
+          $photos = theme('image_style', $image);
+        }
+      }
+      return $photos;
+    }
+    else if($type == 'email2' && isset($items['1'])) {
+      $photos = '';
+      $count = cbone_web_listing_photo_exist($items['1']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['1']);
+        if(isset($listing_photos->field_lms_listing_photo['und']['0']['uri'])) {
+          $image = array(
+            'style_name' => 'listing_email_442x470',
+            'path' => $listing_photos->field_lms_listing_photo['und']['0']['uri'],
+            'title' => $listing_photos->field_lms_listing_photo['und']['0']['filename']
+          );
+          $photos = theme('image_style', $image);
+        }
+      }
+      return $photos;
+    }
+    else if($type == 'email3' && isset($items['2'])) {
+      $photos = '';
+      $count = cbone_web_listing_photo_exist($items['2']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['2']);
+        if(isset($listing_photos->field_lms_listing_photo['und']['0']['uri'])) {
+          $image = array(
+            'style_name' => 'listing_email_442x470',
+            'path' => $listing_photos->field_lms_listing_photo['und']['0']['uri'],
+            'title' => $listing_photos->field_lms_listing_photo['und']['0']['filename']
+          );
+          $photos = theme('image_style', $image);
+        }
+      }
+      return $photos;
+    }
+    else if($type == 'third1' && isset($items['2'])) {
+      $count = cbone_web_listing_photo_exist($items['2']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['2']);
+        $url = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+      }
+      return $url;
+    }
+    else if($type == 'third' && isset($items['2'])) {
+      $photos = '';
+      $count = cbone_web_listing_photo_exist($items['2']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['2']);
+        if(isset($listing_photos->field_lms_listing_photo['und']['0']['uri'])) {
+          $image = array(
+            'style_name' => 'web_page_contact_400x450',
+            'path' => $listing_photos->field_lms_listing_photo['und']['0']['uri'],
+            'title' => $listing_photos->field_lms_listing_photo['und']['0']['filename']
+          );
+          $photos = theme('image_style', $image);
+        }
+      }
+      return $photos;
+      //$url = file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']);
+      //return $url;
+    }
+    else if($type == 'video_third' && isset($items['2'])) {
+      $count = cbone_web_listing_photo_exist($items['2']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['2']);
+        if(isset($listing_photos->field_lms_listing_photo['und']['0']['uri'])) {
+          /*$image = array(
+            'style_name' => 'web_page_video_background',
+            'path' => $listing_photos->field_lms_listing_photo['und']['0']['uri'],
+            'title' => $listing_photos->field_lms_listing_photo['und']['0']['filename']
+          );
+          $photos = theme('image_style', $image);*/
+          $img_url = $listing_photos->field_lms_listing_photo['und']['0']['uri'];
+          $url = image_style_url("web_page_video_background", $img_url);
+        }
+      }
+      return $url;
+      //$url = file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']);
+      //return $url;
+    }
+    else if($type == 'fourth' && isset($items['3'])) {
+      $count = cbone_web_listing_photo_exist($items['3']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['3']);
+        $url = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+      }
+      return $url;
+    }    
+    else if($type == 'three') {
+      $photos = array();
+      $x = 0;
+      foreach ($items as $delta => $item) {
+        if($x < 3){
+          $count = cbone_web_listing_photo_exist($item['value']);
+          if($count) {
+            $listing_photos = field_collection_field_get_entity($item);
+            $photos[] = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+            $x++;
+          }
+        }
+      }
+      return $photos;
+    }
+    else if($type == 'five') {
+      $photos = array();
+      $x = 0;
+      foreach ($items as $delta => $item) {
+        if($x < 5){
+          $count = cbone_web_listing_photo_exist($item['value']);
+          if($count) {
+            $listing_photos = field_collection_field_get_entity($item);
+            $photos[] = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+            $x++;
+          }
+        }
+      }
+      return $photos;
+    }
+    else if($type == 'home-five') {
+      $photos = array();
+      $x = 0;
+      foreach ($items as $delta => $item) {
+        if($x < 5){
+          $count = cbone_web_listing_photo_exist($item['value']);
+          if($count) {
+            $listing_photos = field_collection_field_get_entity($item);
+            if(isset($listing_photos->field_lms_listing_photo['und']['0']['uri'])) {
+              $image = array(
+                'style_name' => 'web_listing_home_slide-copy',
+                'path' => $listing_photos->field_lms_listing_photo['und']['0']['uri'],
+                'title' => $listing_photos->field_lms_listing_photo['und']['0']['filename']
+              );
+              $photos[] = theme('image_style', $image);
+              $x++;
+            }
+            //$photos[] = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+          }
+        }
+      }
+      return $photos;
+    }
+    else if($type == 'all') {
+      $photos = array();
+      foreach ($items as $delta => $item) {
+        $count = cbone_web_listing_photo_exist($item['value']);
+        if($count) {
+          $listing_photos = field_collection_field_get_entity($item);
+          if(isset($listing_photos->field_lms_listing_photo['und']['0']['uri'])) {
+            $image = array(
+              'style_name' => 'web_page_gallery_photos-copy', //change style "web_page_gallery_photos"
+              'path' => $listing_photos->field_lms_listing_photo['und']['0']['uri'],
+              'title' => $listing_photos->field_lms_listing_photo['und']['0']['filename']
+            );
+            $photos[$delta]['photo'] = theme('image_style', $image);
+            $photos[$delta]['photo_url'] = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? file_create_url($listing_photos->field_lms_listing_photo['und']['0']['uri']) : '';
+            $photos[$delta]['photo_title'] = isset($listing_photos->field_lms_photo_title['und']['0']['value']) ? $listing_photos->field_lms_photo_title['und']['0']['value'] : '&nbsp;';
+            $photos[$delta]['photo_caption'] = isset($listing_photos->field_lms_photo_caption['und']['0']['value']) ? substr($listing_photos->field_lms_photo_caption['und']['0']['value'], 0, 100) : "&nbsp;";
+          }
+        }
+      }
+      return $photos;
+    }
+    else if ($type == 'embedded' && isset($items['0'])) {
+      $count = cbone_web_listing_photo_exist($items['0']['value']);
+      if($count) {
+        $listing_photos = field_collection_field_get_entity($items['0']);
+        $url = isset($listing_photos->field_lms_listing_photo['und']['0']['uri']) ? $listing_photos->field_lms_listing_photo['und']['0']['uri'] : '';
+        return $url;
+      }
+    }
+    //print "<pre>";print_r($listing_photos);exit;
+  }
+}
+/**
+ * Callback function cbone_web_listing_photo_exist()
+ * to check the field collection item id exist or not
+ */
+function cbone_web_listing_photo_exist($item_id){
+  $count = db_query("SELECT COUNT(item_id) FROM field_collection_item WHERE item_id = :item_id", array('item_id' => $item_id))->fetchField();
+  return $count;
+}
+/**
+ * Callback function cbone_web_listing_design()
+ * to return listing style name
+ **/
+function cbone_web_listing_design($nid = NULL){
+  $design_id = db_select("cbone_website_settings", 'ws');
+  $design_id->fields('ws', array('design'));
+  $design_id->condition('ws.nid', $nid, '=');
+  $design_tid = $design_id->execute()->fetchField();
+  $design = 'standard_design';
+  if($design_tid) {
+    $design_term = taxonomy_term_load($design_tid);
+    if($design_term->name == 'Standard Web Page Design') {
+      $design = 'standard_design';
+    }
+    else if($design_term->name == 'Marketing Concierge Design') {
+      $design = 'mc_design';
+    }
+  }
+  else {
+    $order_id = db_select("field_data_field_lms_listing_reference", 'lr');
+    $order_id->fields('lr', array('entity_id'));
+    $order_id->condition('lr.entity_type', 'commerce_order', 'LIKE');
+    $order_id->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $result = $order_id->execute()->fetchField();
+    if($result != NULL){
+		$order = commerce_order_load($result);
+		$line_item_id = $order->commerce_line_items['und']['0']['line_item_id'];
+		$line_item = commerce_line_item_load($line_item_id);
+		$product_id = $line_item->commerce_product['und']['0']['product_id'];
+		$product = commerce_product_load($product_id);
+		if($product->sku == 'LMS-04'){
+			$design = 'standard_design';
+		}
+		else {
+			$design = 'mc_design';
+		}
+    }
+  }
+  return $design;
+}
+/**
+ * Callback function cbone_web_listing_menu()
+ * to displayed menu for listing section
+ **/
+function cbone_web_listing_menu($nid = NULL){
+  $nid = ($nid == NULL) ? arg(1) : $nid;
+  $design = cbone_web_listing_design($nid);
+  $node = node_load($nid);
+  //print "<pre>";print_r($node);exit;
+  $address = '';
+  if($design == 'mc_design') {
+    $agent_detail= user_load($node->uid);
+    $agent_name = isset($agent_detail->field_preferred_name['und']['0']['value']) ? $agent_detail->field_preferred_name['und']['0']['value'].' ' : $agent_detail->name;
+    $address = $agent_name." | REALTOR<sup>&reg;</sup>";
+  }
+  else{
+    if(isset($node->field_lms_listing_address['und']['0']['value']) && isset($node->field_lms_listing_city['und']['0']['value'])) {
+      if( isset($node->field_lms_hide_listing_address['und']['0']['value']) && $node->field_lms_hide_listing_address['und']['0']['value']== 1){
+        $address = 'ADDRESS WITHELD | '.$node->field_lms_listing_city['und']['0']['value'];
+      }
+      else{
+        $address = $node->field_lms_listing_address['und']['0']['value'].' | ';
+        $address .= (isset($node->field_lms_address_unit['und']['0']['value']) && $node->field_lms_address_unit['und']['0']['value'] != '') ? $node->field_lms_address_unit['und']['0']['value'].' | ' : '';
+        $address .= $node->field_lms_listing_city['und']['0']['value'];
+      }
+      
+    }
+    else {
+      if( isset($node->field_lms_hide_listing_address['und']['0']['value']) && $node->field_lms_hide_listing_address['und']['0']['value']== 1){
+        $address = 'ADDRESS WITHELD';
+      }
+      else{
+        $address = isset($node->field_lms_listing_address['und']['0']['value']) ? $node->field_lms_listing_address['und']['0']['value'] : '';
+        $address .= (isset($node->field_lms_address_unit['und']['0']['value']) && $node->field_lms_address_unit['und']['0']['value'] != '') ? (', '.$node->field_lms_address_unit['und']['0']['value']) : '';
+      }
+      
+      $address .= isset($node->field_lms_listing_city['und']['0']['value']) ? $node->field_lms_listing_city['und']['0']['value'] : '';
+    }
+  }
+  $previews = 0;
+  if(isset($node->field_lms_presentation['und']['0'])) {
+    foreach($node->field_lms_presentation['und']['0'] as $presentation) {
+      if($presentation == 'previews') {
+        $previews = 1;
+      }
+    }
+  }
+  //Listing Video Node
+  $lms_video_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+  $lms_video_nid->fields('lr', array('entity_id'));
+  $lms_video_nid->condition('lr.entity_type', 'node', 'LIKE');
+  $lms_video_nid->condition('lr.bundle', 'lms_video', 'LIKE');
+  $lms_video_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+  $video_nid = $lms_video_nid->execute()->fetchField();
+  $listing_video = node_load($video_nid);
+  
+  $video_url = isset($listing_video->field_lms_listing_video['und']['0']['uri']) ? file_create_url($listing_video->field_lms_listing_video['und']['0']['uri']) : '';
+  $youtube_url = '';
+  $active_url = isset($listing_video->field_active_video['und']['0']['value']) ? $listing_video->field_active_video['und']['0']['value'] : '';
+  if($active_url == 'embed') {
+    $youtube_url = isset($listing_video->field_lms_embed_video['und']['0']['uri']) ? file_create_url($listing_video->field_lms_embed_video['und']['0']['uri']).'': '';
+  }
+  else if($active_url == 'create' || empty($active_url)) {
+    $youtube_url = isset($listing_video->field_you_tube_url['und']['0']['value']) ? $listing_video->field_you_tube_url['und']['0']['value'] : '';
+  }
+
+  $audio_fid = '';
+  $audio = db_select("cbone_website_settings", 'ws');
+  $audio->fields('ws', array('background_music'));
+  $audio->condition('ws.nid', $nid, '=');
+  $audio_fid = $audio->execute()->fetchField();
+  $data = array(
+    'listing_nid'=>$nid,
+    'address' => $address,
+    'design' => $design,
+    'previews' => $previews,
+    'audio_fid' => $audio_fid,
+    'video_url' => $video_url,
+    'youtube_url' => $youtube_url,
+  );
+  $output = theme('web_listing_menu', array('var_name' => $data));
+  return $output;
+}
+/**
+ * Callback function cbone_web_listing_home()
+ * to displayed listing home page data
+ **/
+function cbone_web_listing_home($nid = NULL){
+  $nid = ($nid == NULL) ? arg(1) : $nid;
+  
+  $active= active_inactive_listing($nid);
+  $design = cbone_web_listing_design($nid);
+  $listing_node = node_load($nid);
+  $address = '';
+  //Listing Address
+  if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+    $listing_address = t('Address Available Upon Request');
+  }
+  else {
+    $address = array();
+    if(isset($listing_node->field_lms_listing_address['und']['0']['value']) && trim($listing_node->field_lms_listing_address['und']['0']['value']) != '') {
+      $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_address_unit['und']['0']['value']) && trim($listing_node->field_lms_address_unit['und']['0']['value']) != '') {
+      $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_city['und']['0']['value']) && trim($listing_node->field_lms_listing_city['und']['0']['value']) != '') {
+      $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+    }
+    $listing_address = implode(', ', $address);
+  }
+  if($design == 'mc_design') {
+    $first_image = cbone_web_listing_photo($listing_node->nid, 'home-five');
+    //$first_image = cbone_web_listing_photo($listing_node->nid, 'five');
+  }
+  else {
+    $first_image = cbone_web_listing_photo($listing_node->nid, 'home-first');
+  }
+  $title = isset($listing_node->field_lms_listing_headline['und']['0']['value']) ? $listing_node->field_lms_listing_headline['und']['0']['value'] : $listing_address;
+  $bedroom = array();
+  if(isset($listing_node->field_lms_square_feet['und']['0']['value'])) {
+    $bedroom[] = 'Approx. '.number_format($listing_node->field_lms_square_feet['und']['0']['value']).' sq. ft.';
+  }
+  if(isset($listing_node->field_lms_total_bedrooms['und']['0']['value'])) {
+    $room = $listing_node->field_lms_total_bedrooms['und']['0']['value'];
+    if($room > 1) {
+      $bedroom[] = $listing_node->field_lms_total_bedrooms['und']['0']['value'].' Bedrooms';
+    }
+    else {
+      $bedroom[] = $listing_node->field_lms_total_bedrooms['und']['0']['value'].' Bedroom';
+    }
+  }
+  if(isset($listing_node->field_lms_total_baths['und']['0']['value'])) {
+    $bath = $listing_node->field_lms_total_baths['und']['0']['value'];
+    if($room > 1) {
+      $bedroom[] = $listing_node->field_lms_total_baths['und']['0']['value'].' Bathrooms';
+    }
+    else {
+      $bedroom[] = $listing_node->field_lms_total_baths['und']['0']['value'].' Bathroom';
+    }
+  }
+  
+  if(isset($listing_node->field_lms_list_price['und']['0']['value']) || isset($listing_node->field_lms_listing_data['und']['0']['value']) ) {
+    if( isset($listing_node->field_lms_listing_data['und']['0']['value']) && $listing_node->field_lms_listing_data['und']['0']['value']== 1){
+      $bedroom[] = t('Price Upon Request');
+    }
+    else if( isset($listing_node->field_lms_list_price['und']['0']['value'])){
+      if(is_numeric($listing_node->field_lms_list_price['und']['0']['value'])) {
+        $bedroom[] = '$'. number_format($listing_node->field_lms_list_price['und']['0']['value']);
+      }
+      else {
+        $bedroom[] = $listing_node->field_lms_list_price['und']['0']['value'];
+      }
+    }
+    
+  }
+  $status = '';
+  if($listing_node->field_lms_listing_status['und']['0']['tid'] == '197') {
+    $status = '<span>SOLD</span>';
+  }
+  elseif($listing_node->field_lms_listing_status['und']['0']['tid'] == '199') {
+    $status = '<span>PENDING</span>';
+  }
+  $bedroom_detail = implode(' | ', $bedroom);
+  $data = array(
+    'listing_nid' => $nid,
+    'address' => $listing_address,
+    'first_image' => $first_image,
+    'title' => $title,
+    'bedroom_detail' => $bedroom_detail,
+    'design' => $design,
+    'status' => $status,
+  );
+  $output = theme('web_listing_home', array('var_name' => $data));
+  
+  
+  return $output;
+}
+/**
+ * Callback function cbone_web_listing_gallery()
+ * to displayed listing Gallery page data
+ **/
+function cbone_web_listing_gallery($nid = NULL){
+  $nid = ($nid == NULL) ? arg(1) : $nid;
+  $active= active_inactive_listing($nid);
+  if($active==1){
+    $node = node_load($nid);
+    $design = cbone_web_listing_design($nid);
+    $photos = cbone_web_listing_photo($node->nid, 'all');
+    $data = array(
+      'photos' => $photos,
+      'design' => $design,
+    );
+    $output = theme('web_listing_gallery', array('var_name' => $data));
+  }
+  else{
+    $output='';
+  }
+  return $output;
+}
+/**
+ * Callback function cbone_web_listing_features()
+ * to displayed listing Features page data
+ **/
+function cbone_web_listing_features($nid = NULL){
+  $nid = ($nid == NULL) ? arg(1) : $nid;
+  $active= active_inactive_listing($nid);
+  if($active==1){
+    $node = node_load($nid);
+    $design = cbone_web_listing_design($nid);
+    if($design == 'mc_design') {
+      $feature_content = isset($node->field_lms_online_copy['und']['0']['value']) ? $node->field_lms_online_copy['und']['0']['value'] : '';
+      $second_image = cbone_web_listing_photo($node->nid, 'second1');
+    }
+    else {
+      $second_image = cbone_web_listing_photo($node->nid, 'second2');
+      $feature_content = isset($node->field_lms_online_copy['und']['0']['value']) ? $node->field_lms_online_copy['und']['0']['value'] : '';
+      //$feature_content = isset($node->field_lms_online_copy['und']['0']['value']) ? substr($node->field_lms_online_copy['und']['0']['value'], 0, 150).'...' : '';
+    }
+    $download_documents = 0;
+    $lms_document_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_document_nid->fields('lr', array('entity_id'));
+    $lms_document_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_document_nid->condition('lr.bundle', 'lms_listing_document', 'LIKE');
+    $lms_document_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $document_nid = $lms_document_nid->execute()->fetchField();
+    $document_node = node_load($document_nid);
+    $items = field_get_items('node', $document_node, 'field_lms_listing_documents');
+    if(!empty($items)) {
+      $download_documents = 1;
+    }
+    $lms_video_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_video_nid->fields('lr', array('entity_id'));
+    $lms_video_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_video_nid->condition('lr.bundle', 'lms_video', 'LIKE');
+    $lms_video_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $video_nid = $lms_video_nid->execute()->fetchField();
+    $listing_video = node_load($video_nid);
+    
+    $active_url = isset($listing_video->field_active_video['und']['0']['value']) ? $listing_video->field_active_video['und']['0']['value'] : '';
+    if($active_url == 'embed') {
+      $youtube_url = isset($listing_video->field_lms_embed_video['und']['0']['uri']) ? file_create_url($listing_video->field_lms_embed_video['und']['0']['uri']).'': '';
+    }
+    else if($active_url == 'create' || empty($active_url)) {
+      $youtube_url = isset($listing_video->field_you_tube_url['und']['0']['value']) ? $listing_video->field_you_tube_url['und']['0']['value'] : '';
+    }
+    //Query to get pdf brouchers, display document values
+    $query=db_select('cbone_website_settings', 'cws')
+      ->fields('cws')
+      ->condition('nid', $nid, '=');
+    $result= $query->execute()->fetchAll();
+    if(!empty($result)){
+      foreach($result as $value){
+        $display_document = $value->display_documents;
+        $pdf_brochure = $value->pdf_brochure;
+        $background_music = $value->background_music;
+        $mcpdf= $value->print_and_go;
+      }
+    }
+    else{
+      $display_document = 0;
+      $pdf_brochure = 0;
+      $background_music = 0;
+      $mcpdf= 0;
+    }
+    $pdf_design_id='';
+    if(!empty($mcpdf)){
+      $query=db_select('field_data_field_template_reference', 'n')
+        ->fields('n')
+        ->condition('n.entity_id', $mcpdf, '=');
+      $result = $query->execute()->fetchAll();
+      foreach($result as $value){
+        $pdf_design_id=$value->field_template_reference_nid;
+      }
+    }
+    $data = array(
+      'listing_nid' => $nid,
+      'feature_content' => $feature_content,
+      'second_image' => $second_image,
+      'youtube_url' => $youtube_url,
+      'design' => $design,
+      'display_document' => $display_document,
+      'pdf_brochure' => $pdf_brochure,
+      'background_music' => $background_music,
+      'pdf_design_nid' => $pdf_design_id,
+      'download_documents' => $download_documents,
+    );
+    $output = theme('web_listing_features', array('var_name' => $data));
+  }
+  else{
+    $output='';
+  }
+  return $output;
+}
+/**
+ * Callback function cbone_web_listing_video()
+ * to displayed listing video page data
+ * for MC Design
+ **/
+function cbone_web_listing_video($nid = NULL){
+  $nid = ($nid == NULL) ? arg(1) : $nid;
+  $active = active_inactive_listing($nid);
+  if($active==1){
+    $listing_node = node_load($nid);
+    $design = cbone_web_listing_design($nid);
+    //$third_image = cbone_web_listing_photo($listing_node->nid, 'third');
+    $third_image = cbone_web_listing_photo($listing_node->nid, 'video_third');
+    //$video_url = file_create_url('public://lms/'.$listing_node->nid.'/video/cbone_listing.mp4');
+    //Listing Video Node
+    $lms_video_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_video_nid->fields('lr', array('entity_id'));
+    $lms_video_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_video_nid->condition('lr.bundle', 'lms_video', 'LIKE');
+    $lms_video_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+    $video_nid = $lms_video_nid->execute()->fetchField();
+    $listing_video = node_load($video_nid);
+    
+    $video_url = isset($listing_video->field_lms_listing_video['und']['0']['uri']) ? file_create_url($listing_video->field_lms_listing_video['und']['0']['uri']) : '';
+    $youtube_url = '';
+    $active_url = isset($listing_video->field_active_video['und']['0']['value']) ? $listing_video->field_active_video['und']['0']['value'] : '';
+    if($active_url == 'embed') {
+      $youtube_url = isset($listing_video->field_lms_embed_video['und']['0']['uri']) ? file_create_url($listing_video->field_lms_embed_video['und']['0']['uri']).'': '';
+    }
+    else if($active_url == 'create' || empty($active_url)) {
+      $youtube_url = isset($listing_video->field_you_tube_url['und']['0']['value']) ? $listing_video->field_you_tube_url['und']['0']['value'] : '';
+    }
+
+    $data = array(
+      'third_image' => $third_image,
+      'video_url' => $video_url,
+      'design' => $design,
+      'youtube_url' => $youtube_url,
+    );
+    $output = theme('web_listing_video', array('var_name' => $data));
+  }
+  else{
+    $output='';
+  }
+  return $output;
+}
+
+/**
+ * Callback function cbone_web_listing_directions()
+ * to displayed listing Directions page data
+ **/
+function cbone_web_listing_directions($nid = NULL){
+  $nid = ($nid == NULL) ? arg(1) : $nid;
+  $active = active_inactive_listing($nid);
+  $design = cbone_web_listing_design($nid);
+  if($active==1){
+    $node = node_load($nid);
+    $agent_detail = user_load($node->uid);
+    if(!isset($agent_detail->data['contact'])) {
+      $agent_detail->data['contact'] = 1;
+      user_save($agent_detail);
+    }
+    $map_img = '';
+    $map_link = '';
+    if(isset($node->field_lms_gps_coordinates['und']['0']['lat'])) {
+      $lat_key = $node->field_lms_gps_coordinates['und']['0']['lat'];
+      $lng_key = $node->field_lms_gps_coordinates['und']['0']['lng'];
+      $query = array(
+        'sensor' => 'false',
+        'zoom' => 14,
+        'size' => "1200x400",
+        'format' => 'png8',
+        'maptype' => 'roadmap',
+        'markers' => 'size:mid|color:red|' . $lat_key . ',' . $lng_key,
+      );
+	  if($design == 'mc_design') {
+		  $variables = array(
+			'path' => url('//maps.google.com/maps/api/staticmap', array('query' => $query, 'external' => TRUE)),
+			'alt' => 'Geolocation',
+			'attributes' => array('class' => 'geolocation-googlemaps-static', 'style' => array('width: 100%; height: auto;')),
+		  );
+	  }
+	  else {
+		  $variables = array(
+			'path' => url('//maps.google.com/maps/api/staticmap', array('query' => $query, 'external' => TRUE)),
+			'alt' => 'Geolocation',
+			'attributes' => array('class' => 'geolocation-googlemaps-static'),
+		  );
+	  }
+      $map_img = theme('image', $variables);
+      $map_link_query['q'] = $lat_key . ',' . $lng_key;
+      $map_link = l('Get Directions', '//maps.google.com/maps', array('query' => $map_link_query, 'external' => TRUE, 'html' => TRUE, 'attributes' => array('target' => '_blank')));
+    }
+    //$open_house_date = views_embed_view('lms_open_house','block', $nid);
+	$open_house_date = '';
+	$view = views_get_view('lms_open_house');
+	$print_view = $view->preview('block', array($nid));
+	if(!empty($view->result)) {
+		$open_house_date = $print_view;
+	}
+    $data = array(
+      'map' => $map_img,
+      'map_link' => $map_link,
+      'agent_id' => $node->uid,
+      'listing_id' => $node->nid,
+      'open_house_date' => $open_house_date,
+    );
+    $output = theme('web_listing_directions', array('var_name' => $data));
+  }
+  else{
+    $output='';
+  }
+  return $output;
+}
+/**
+ * Callback function cbone_web_listing_contact()
+ * to displayed listing Contact page data
+ **/
+function cbone_web_listing_contact($nid = NULL){
+  $nid = ($nid == NULL) ? arg(1) : $nid;
+  $node = node_load($nid);
+  $design = cbone_web_listing_design($nid);
+  if(isset($node->field_lms_sales_team['und']['0']['nid'])) {
+    $nid = $node->field_lms_sales_team['und']['0']['nid'];
+    $sales_team = node_load($nid);
+    $profile_image = isset($sales_team->field_sales_team_photo['und']['0']['uri']) ? file_create_url($sales_team->field_sales_team_photo['und']['0']['uri']) : '/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $profile_text = isset($sales_team->body['und']['0']['value']) ? $sales_team->body['und']['0']['value'] : '';
+    //$profile_text = isset($sales_team->body['und']['0']['value']) ? substr($sales_team->body['und']['0']['value'], 0, 150) : '';
+    $profile_name = isset($sales_team->title) ? $sales_team->title : '--';
+  }
+  else if(isset($node->field_lms_other_agent['und']['0']['uid'])) {
+    $uid = $node->field_lms_other_agent['und']['0']['uid'];
+    $agent_detail = user_load($uid);
+    $profile_image = isset($agent_detail->picture->fid) ? file_create_url($agent_detail->picture->uri) : '/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $aimage = image_style_url('agent_photo_with_primary', $agent_detail->picture->uri);
+
+    $profile_text = isset($agent_detail->field_person_about['und']['0']['value']) ? $agent_detail->field_person_about['und']['0']['value'] : '';
+    //$profile_text = isset($agent_detail->field_person_about['und']['0']['value']) ? substr($agent_detail->field_person_about['und']['0']['value'], 0, 150) : '';
+    $profile_name = isset($agent_detail->field_firstname['und']['0']['value']) ? $agent_detail->field_firstname['und']['0']['value'].' ' : $agent_detail->name;
+    $profile_name .= isset($agent_detail->field_lastname['und']['0']['value']) ? $agent_detail->field_lastname['und']['0']['value'] : '';
+  }
+  else {
+    $uid = $node->uid;
+    $agent_detail = user_load($uid);
+    $profile_image = isset($agent_detail->picture->fid) ? file_create_url($agent_detail->picture->uri) : '/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $aimage = image_style_url('agent_photo_with_primary', $agent_detail->picture->uri);
+    $profile_text = isset($agent_detail->field_person_about['und']['0']['value']) ? $agent_detail->field_person_about['und']['0']['value'] : '';
+    //$profile_text = isset($agent_detail->field_person_about['und']['0']['value']) ? substr($agent_detail->field_person_about['und']['0']['value'], 0, 150) : '';
+    $profile_name = isset($agent_detail->field_firstname['und']['0']['value']) ? $agent_detail->field_firstname['und']['0']['value'].' ' : $agent_detail->name;
+    $profile_name .= isset($agent_detail->field_lastname['und']['0']['value']) ? $agent_detail->field_lastname['und']['0']['value'] : '';
+  }
+  if($design == 'mc_design') {
+    $third_image = cbone_web_listing_photo($node->nid, 'fourth');
+  }
+  else {
+    $third_image = cbone_web_listing_photo($node->nid, 'third');
+  }
+  $data = array(
+    'node_nid'=> $node->nid,
+    'primary_agent'=> $node->uid,
+    'third_image' => $third_image,
+    'profile_image' => $profile_image,
+    'profile_text' => $profile_text,
+    'profile_name' => $profile_name,
+    'design' => $design,
+  );
+  $output = theme('web_listing_contact', array('var_name' => $data));
+  return $output;
+}
+/**
+ * Callback function cbone_listing_step_by_step()
+ * to displayed the Step By Step head
+ * @return $output
+ **/
+function cbone_listing_step_by_step(){
+  $nid = arg(1);
+  global $user;
+  $output = '';
+  $step_by_step_node = node_load($nid);
+  $step_body = $step_by_step_node->body['und']['0']['value'];
+  //fetch Step By Step nid
+  $lms_listing_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+  $lms_listing_nid->fields('lr', array('field_lms_listing_reference_nid'));
+  $lms_listing_nid->condition('lr.entity_type', 'node', 'LIKE');
+  $lms_listing_nid->condition('lr.bundle', 'lms_step_by_step_guide', 'LIKE');
+  $lms_listing_nid->condition('lr.entity_id', $nid, '=');
+  $listing_nid = $lms_listing_nid->execute()->fetchField();
+  $listing_node = node_load($listing_nid);
+  //Listing Address
+  if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+    $listing_address = t('Address Available Upon Request');
+  }
+  else {
+    $address = array();
+    if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_listing_city['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_city['und']['0']['value'];
+    }
+    $listing_address = implode(', ', $address);
+  }
+
+  $variables = array(
+    'listing_address' => $listing_address,
+    'listing_nid' => $nid,
+    'step_body' => $step_body,
+  );
+  $output = theme('listing_step_by_step', array('var_name' => $variables));
+  return $output;
+}
+/*Autocomplete call back to show list of agents */
+function _agents_autocomplete($nid, $string){
+  $userlist=array(0);
+  $node=node_load($nid);
+  $userlist[]=$node->uid;
+  if( !empty($node->field_lms_shared_agent) && isset($node->field_lms_shared_agent) ){
+    foreach($node->field_lms_shared_agent['und'] as $value){
+      $users=user_load($value['uid']);
+        $userlist[]=$users->uid;
+    }
+  }
+  
+  
+  if( !empty($node->field_lms_sales_team) && isset($node->field_lms_sales_team) ){
+    $sales_user=array();
+    $sale_id=$node->field_lms_sales_team['und'][0]['nid'];
+    
+    $query = array();
+    $query = db_select('og_membership', 'og')
+        ->fields('og', array('etid'))
+        ->condition('gid', $sale_id, '=')
+        ->execute();
+    foreach ($query as $row) {
+    
+      $userlist[].=$row->etid;
+    }    
+  }
+  
+  if( !empty($node->field_lms_other_agent) && isset($node->field_lms_other_agent) ){
+    $agent_id=$node->field_lms_other_agent['und'][0]['uid'];
+    $userlist[].=$agent_id;
+  }
+  
+  $matches = array();
+    $result = db_select('field_data_field_preferred_name', 'u')
+        ->fields('u', array('entity_id', 'field_preferred_name_value'))
+        ->condition('field_preferred_name_value', '%' . db_like($string) . '%', 'LIKE')
+        ->condition('entity_id', $userlist, 'NOT IN')
+        ->execute();
+
+  // save the query to matches
+  foreach ($result as $row) {
+    $user_load=user_load($row->entity_id);
+    if(in_array('Agent', $user_load->roles)){
+    $matches["$row->field_preferred_name_value [uid:$row->entity_id]"] = check_plain($row->field_preferred_name_value);
+    }
+  }
+
+  // Return the result to the form in json
+  drupal_json_output($matches);
+  drupal_exit();
+}
+/**
+ * Callback function cbone_embed_code_download()
+ * to download the embed code in .txt file
+ * //embed-code/download
+ **/
+function cbone_embed_code_download($nid){
+  global $base_url;
+  $path = $base_url.'/embed-listing/'.$nid;
+  $code = '<!DOCTYPE html>
+  <html>
+    <body>
+      <iframe src="'.$path.'" width="100%" height="900">
+        <p>Your browser does not support iframes.</p>
+      </iframe>
+    </body>
+  </html>';
+  header("Content-type: text/plain");
+  header("Content-Disposition: attachment; filename=listing-embed-code.txt");
+
+  // do your Db stuff here to get the content into $content
+  print "$code\n";
+    exit;
+    /*$handle = fopen("listing-embed-code.txt", "w");
+  if(isset($_GET['code'])) {
+    $code = $_GET['code'];
+    fwrite($handle, $code);
+  }
+  else {
+    fwrite($handle, ".....");
+  }
+    fclose($handle);
+  
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename='.basename('listing-embed-code.txt'));
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize('listing-embed-code.txt'));
+    readfile('listing-embed-code.txt');
+    exit;*/
+}
+/**
+ * Form API for Batch Operation
+ * Import LM Photo feeds
+ * //admin/config/lms/photo-feeds
+ **/
+function import_photo_feeds_form(){
+  $form = array();
+   $term = taxonomy_get_term_by_name('Listing Photo Feed');
+  $tid = array_shift($term)->tid;
+  $photo_term = taxonomy_term_load($tid);
+  $path = $photo_term->field_local_destination_path['und']['0']['value'];
+  //Load photo feed file
+  $scanned_directory = array_diff(scandir($path), array('..', '.'));
+  $options = array('0' => t('Select File'));
+  foreach($scanned_directory as $values) {
+    //$substr = substr($values, 17, -4);
+    $options[$values] = $values;
+  }
+  
+  $form['feed_file'] = array(
+    '#type' => 'select',
+    '#title' => 'Choose File',
+    '#options' => $options,
+  );
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Click here to Start'));
+  return $form;
+}
+/**
+ * Form API for Batch Operation
+ * Submit API
+ **/
+function import_photo_feeds_form_submit($form, $form_state){
+  $feed_file = $form_state['values']['feed_file'];
+  unset($_SESSION['feed_file']);
+  if($feed_file != '0') {
+    $_SESSION['feed_file'] = $feed_file;
+  }
+  $function = 'photo_feeds_batch';
+  $_SESSION['http_request_count'] = 0; // reset counter for debug information.
+  $batch = $function();
+  batch_set($batch);
+}
+/**
+ * Callback function photo_feeds_batch()
+ * to set the batch
+ **/
+function photo_feeds_batch(){
+   $term = taxonomy_get_term_by_name('Listing Photo Feed');
+  $tid = array_shift($term)->tid;
+  $photo_term = taxonomy_term_load($tid);
+  $path = $photo_term->field_local_destination_path['und']['0']['value'];
+  $retention = $photo_term->field_results_retention['und']['0']['value'];
+  $notification_email = $photo_term->field_notification_email['und']['0']['value'];
+  //Delete saved processing results
+  $retention_time = strtotime(date('Y-m-d', strtotime('-'.$retention.' days')));
+  $num_deleted = db_delete('feed_processing_results')
+    ->condition('feed_timestamp', $retention_time, '<')
+    ->condition('feed_type', 'Listing Photo Feed', '=')
+    ->execute();
+
+  //Load photo feed file
+  $current_date = date('Ymd');
+  //$date = isset($_GET['date']) ? $_GET['date'] : 20150430;
+  if(isset($_SESSION['feed_file'])) {
+    $file_name = $_SESSION['feed_file'];
+  }
+  else {
+    $date = $current_date;
+    $scanned_directory = array_diff(scandir($path), array('..', '.'));
+    foreach($scanned_directory as $values) {
+      $substr = substr($values, 17, -4);
+      if($substr == $date) {
+        $file_name = $values;
+      }
+    }
+  }
+  //$file_name = array_shift($scanned_directory);
+  @$file_path = $path.'/'.$file_name;
+  
+  $photo_feeds = array_map('str_getcsv', file($file_path));
+  unset($photo_feeds[0]);
+  $x = 0;
+  foreach($photo_feeds as $values) {
+    $values['file_name'] = $file_name;
+    $operations[] = array('photo_feeds_batch_process', array($values, t('(Operation @operation)', array('@operation' => $i))));
+    $i++;
+  }
+  $batch = array(
+    'operations' => $operations,
+    'finished' => 'photo_feeds_batch_finished',
+  );
+  return $batch;
+}
+/**
+ * Callback function photo_feeds_batch_process()
+ * to process photo import
+ **/
+function photo_feeds_batch_process($value, $operation_details, &$context){
+  $nrt_id = $value[0];
+  $url_path = $value[1];
+  $update_date = $value[3];
+  $file_name = $value['file_name'];
+  $update_time = strtotime($update_date);
+  //print "<pre>";print_r($photo_feed);exit;
+  //fetch Listing nid
+  $lms_listing_nid = db_select("field_data_field_lms_listing_nrt_id", 'nrt');
+  $lms_listing_nid->fields('nrt', array('entity_id'));
+  $lms_listing_nid->condition('nrt.field_lms_listing_nrt_id_value', $nrt_id, '=');
+  $listing_nid = $lms_listing_nid->execute()->fetchField();
+
+  if(empty($listing_nid)) {
+
+    $message = 'Listing has not created for NRT ID: '.$nrt_id;
+    $agent_id = 0;
+    $result_id = db_insert('feed_processing_results')
+      ->fields(array(
+        'feed_file_name' => $file_name,
+        'feed_type' => 'Listing Photo Feed',
+        'feed_timestamp' => REQUEST_TIME,
+        'feed_nrt_id' => $nrt_id,
+        'feed_agent_id' => $agent_id,
+        'feed_result_status' => 'Fail',
+        'feed_result_message' => $message,
+      ))
+      ->execute();
+  }
+  else {
+
+    //fetch photos nid
+    $lms_photo_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+    $lms_photo_nid->fields('lr', array('entity_id'));
+    $lms_photo_nid->condition('lr.entity_type', 'node', 'LIKE');
+    $lms_photo_nid->condition('lr.bundle', 'lms_photos', 'LIKE');
+    $lms_photo_nid->condition('lr.field_lms_listing_reference_nid', $listing_nid, '=');
+    $photo_nid = $lms_photo_nid->execute()->fetchField();
+    $photo_node = node_load($photo_nid);
+    //print '<pre>';print_r($photo_node);exit;
+    //$url_path = 'http://img3.nrtwebservices.com/California/Properties/JPG_Main/330/3964330_2.jpg';
+    $image = file_get_contents($url_path);
+    $image_name = basename($url_path);
+
+    //$filepath = 'public://lms/agent-'.$photo_node->uid;
+    $filepath = 's3://lms/agent-'.$photo_node->uid;
+    file_prepare_directory($filepath, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+    $destination = $filepath.'/'.$image_name;
+    $replace = FILE_EXISTS_REPLACE;
+    //$file = file_save_data($image, $destination, FILE_EXISTS_RENAME);
+    if ($uri = file_unmanaged_save_data($image, $destination, $replace)) {
+      // Create a file object.
+      $file = new stdClass();
+      $file->fid = NULL;
+      $file->uri = $uri;
+      $file->filename = drupal_basename($uri);
+      $file->filemime = file_get_mimetype($file->uri);
+      $file->uid = $photo_node->uid;
+      $file->status = FILE_STATUS_PERMANENT;
+      // If we are replacing an existing file re-use its database record.
+      if ($replace == FILE_EXISTS_REPLACE) {
+        $existing_files = file_load_multiple(array(), array('uri' => $uri));
+        if (count($existing_files)) {
+          $existing = reset($existing_files);
+          $file->fid = $existing->fid;
+          $file->filename = $existing->filename;
+        }
+      }
+      elseif ($replace == FILE_EXISTS_RENAME && is_file($destination)) {
+        $file->filename = drupal_basename($destination);
+      }
+      file_save($file);
+    }
+    //print '<pre>';print_r($file);exit;
+    $fc_item = entity_create('field_collection_item', array('field_name' => 'field_lms_listing_photos'));
+    $file = (array)$file;
+    $fc_item->field_lms_listing_photo['und'][] = $file;
+    $fc_item->field_lms_listing_photo_update['und'][] = $update_time;
+    $fc_item->setHostEntity('node', $photo_node);
+    $fc_item->save(TRUE);
+    node_save($photo_node);
+  }
+}
+/**
+ * Callback function photo_feeds_batch_finished()
+ * to process batch finish
+ **/
+function photo_feeds_batch_finished($success, $results, $operations) {
+  if ($success) {
+    // Here we could do something meaningful with the results.
+    // We just display the number of data we processed...
+    drupal_set_message(t('@count songs processed.', array('@count' => count($results))));
+  } else {
+    // An error occurred.
+    // $operations contains the operations that remained unprocessed.
+    $error_operation = reset($operations);
+    drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+  }
+}
+
+
+/**
+ * Implements hook_mail().
+ */
+function listing_marketing_system_mail($key, &$message, $params) {
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['body'];
+
+  // Add attachment when available.
+  if (isset($params['attachment'])) {
+    $message['params']['attachments'][] = $params['attachment'];
+  }
+}
+/**
+ * Callback function cbone_lms_report_page()
+ * to displayed node data
+ * //embed-code/download
+ **/
+function cbone_lms_report_mail($nid){
+  global $base_url;
+  $node = node_load($nid);
+  $listing_nid = $node->field_lms_listing_reference['und']['0']['nid'];
+  $listing_node = node_load($listing_nid);
+  $client_name = isset($listing_node->field_client_first_name['und']['0']['value']) ? $listing_node->field_client_first_name['und']['0']['value'] : 'Seller';
+
+  if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+    $listing_address = t('Address Available Upon Request');
+  }
+  else {
+    $address = array();
+    if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+    }
+    $listing_address = implode(', ', $address);
+  }
+  if(isset($listing_node->field_lms_sales_team['und']['0']['nid'])) {
+    $nid = $node->field_lms_sales_team['und']['0']['nid'];
+    $sales_team = node_load($nid);
+    $profile_image = isset($sales_team->field_sales_team_photo['und']['0']['uri']) ? file_create_url($sales_team->field_sales_team_photo['und']['0']['uri']) : '/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $profile_text = isset($sales_team->body['und']['0']['value']) ? substr($sales_team->body['und']['0']['value'], 0, 150) : '';
+    $profile_name = $sales_team->title;
+  }
+  else if(isset($listing_node->field_lms_other_agent['und']['0']['uid'])) {
+    $uid = $listing_node->field_lms_other_agent['und']['0']['uid'];
+    $agent_detail = user_load($uid);
+    $profile_image = isset($agent_detail->picture->fid) ? file_create_url($agent_detail->picture->uri) : '/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $field_job_title = isset($agent_detail->field_job_title['und']['0']['value']) ? $agent_detail->field_job_title['und']['0']['value'] : '';
+    $profile_name = isset($agent_detail->field_firstname['und']['0']['value']) ? $agent_detail->field_firstname['und']['0']['value'].' ' : $agent_detail->name;
+    $profile_name .= isset($agent_detail->field_lastname['und']['0']['value']) ? $agent_detail->field_lastname['und']['0']['value'] : '';
+    $phone = isset($agent_detail->field_phone_direct['und']['0']['value']) ? $agent_detail->field_phone_direct['und']['0']['value'] : '';
+    $mobile = isset($agent_detail->field_phone_mobile['und']['0']['value']) ? $agent_detail->field_phone_mobile['und']['0']['value'] : '';
+    $person_email = isset($agent_detail->field_person_email['und']['0']['value']) ? $agent_detail->field_person_email['und']['0']['value'] : '';
+    $web_site = isset($agent_detail->field_agent_web_site['und']['0']['value']) ? $agent_detail->field_agent_web_site['und']['0']['value'] : '';
+    $state_license = isset($agent_detail->field_state_license['und']['0']['value']) ? $agent_detail->field_state_license['und']['0']['value'] : '';
+  }
+  else {
+    $uid = $listing_node->uid;
+    $agent_detail = user_load($uid);
+    //print "<pre>";print_r($agent_detail);exit;
+    $profile_image = isset($agent_detail->picture->fid) ? file_create_url($agent_detail->picture->uri) : '/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $field_job_title = isset($agent_detail->field_job_title['und']['0']['value']) ? $agent_detail->field_job_title['und']['0']['value'] : '';
+    $profile_name = isset($agent_detail->field_firstname['und']['0']['value']) ? $agent_detail->field_firstname['und']['0']['value'].' ' : $agent_detail->name;
+    $profile_name .= isset($agent_detail->field_lastname['und']['0']['value']) ? $agent_detail->field_lastname['und']['0']['value'] : '';
+    $phone = isset($agent_detail->field_phone_direct['und']['0']['value']) ? $agent_detail->field_phone_direct['und']['0']['value'] : '';
+    $mobile = isset($agent_detail->field_phone_mobile['und']['0']['value']) ? $agent_detail->field_phone_mobile['und']['0']['value'] : '';
+    $person_email = isset($agent_detail->field_person_email['und']['0']['value']) ? $agent_detail->field_person_email['und']['0']['value'] : $agent_detail->mail;
+    $web_site = isset($agent_detail->field_agent_web_site['und']['0']['value']) ? $agent_detail->field_agent_web_site['und']['0']['value'] : '';
+    $state_license = isset($agent_detail->field_state_license['und']['0']['value']) ? $agent_detail->field_state_license['und']['0']['value'] : '';
+  }
+
+
+  $message = '<div id="node-'.$node->nid.'" class="lms-report-mail">
+    <div class="lms-client-report-node" style="width: 850px; margin-left: auto; margin-right: auto;">
+    <div class="lms-client-report-header"><img src="'.$base_url.'/sites/default/files/images/email/client_report_email_header.jpg"></div>
+    <div class="lms-client-report-body" style="margin-left: 30px; font-size: 17px;">
+      <div>Dear '.$client_name.'</div>
+      <div class="report_intro_copy">'.$node->field_client_report_intro_copy['und']['0']['value'].'</div>
+      <div class="completed-item">
+        <ul style="margin: 0px; padding: 0px 0px 0px 10px;">';
+        
+          foreach($node->field_client_report_items['und'] as $items) {
+        
+            $message .= '<li style="padding-bottom: 5px; list-style: none;"><img src="'.$base_url.'/sites/default/files/images/email/email_client_report_bullet.jpg"> '.$items['value'].'</li>';
+        
+          }
+          if(isset($node->field_client_report_addl_items['und']['0']['value'])) {
+            foreach($node->field_client_report_addl_items['und'] as $items) {
+        
+              $message .= '<li style="padding-bottom: 5px; list-style: none;"><img src="'.$base_url.'/sites/default/files/images/email/email_client_report_bullet.jpg"> '.$items['value'].'</li>';
+        
+            }
+          }
+        
+  $message .= '</ul>
+        </div>
+        <div class="report_conclusion">'.$node->field_client_report_conclusion['und']['0']['value'].'</div>
+        <div class="report-footer">
+          <div class="sincerely" style="margin-bottom: 25px;">Sincerely,</div>
+          <div class="sender-info">
+            <div class="sender-image" style="display: inline-block; vertical-align: top;"><img src="'.$profile_image.'" style="width: 130px; height: 160px;"/></div>
+            <div class="sender-detail" style="display: inline-block; vertical-align: top; margin-left: 20px; font-size: 16px; line-height: normal;">
+              <div class="name" style="font-size: 22px; margin-bottom: 15px;">'.$profile_name.'</div>
+              <div class="title">'.$field_job_title.'</div>
+              <div class="phone">'.$phone.'</div>
+              <div class="mobile">'.$mobile.'</div>
+              <div class="email">'.$person_email.'</div>
+              <div class="website">'.$web_site.'</div>
+              <div class="extra">'.$state_license.'</div>
+            </div>
+          </div>
+          <div class="disclaimer-text" style="margin-top: 25px; font-size: 11px; line-height: normal;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. </div>
+        </div>
+      </div>
+    </div>
+  </div>';
+  
+  $css_file = drupal_get_path('module', 'listing_marketing_system') . '/css/listing.css';
+  $css = file_get_contents($css_file);
+
+  $uid = $listing_node->uid;
+  $agent_detail = user_load($uid);
+  $primary_agent_email = isset($agent_detail->field_person_email['und']['0']['value']) ? $agent_detail->field_person_email['und']['0']['value'] : $agent_detail->mail;
+  
+    $mailto = $primary_agent_email;
+    $subject = 'Client Report Email for '.$listing_address;
+    $header = "From: CB|One <support@cbone.me>\r\n";
+    $header .= "Reply-To: support@cbone.me\r\n";
+    $header .='MIME-Version: 1.0' . "\r\n";
+    $header .= 'Content-Type: text/html; charset=ISO-8859-1' . "\r\n";
+    if (mail($mailto, $subject, $message, $header)) {
+      drupal_set_message('A mail has sent to '.$agent_detail->field_preferred_name['und']['0']['value']);
+    }
+  return $message;
+}
+
+/**
+ * Callback function cbone_lms_report_page()
+ * to displayed node data
+ * //embed-code/download
+ **/
+function cbone_lms_pdf_report_mail($nid) {
+  global $base_url;
+  $node = node_load($nid);
+  $aget2 = 0;
+  //print "<pre>";print_r($node);exit;
+  $listing_nid = $node->field_lms_listing_reference[LANGUAGE_NONE]['0']['nid'];
+  $nodedata = get_all_listing_attached_recoreds($listing_nid);
+  $designnid = get_property_flyer_dnid($listing_nid);
+  $yourtube = '';
+  $yourtubelink = '';
+  if (isset($nodedata['lms_video']) && !empty(($nodedata['lms_video']))) { 
+    $video_entity = entity_load_single('node', $nodedata['lms_video']);
+    if (isset( $video_entity->field_you_tube_url) && !empty( $video_entity->field_you_tube_url)) {
+     $yourtube =  $video_entity->field_you_tube_url[LANGUAGE_NONE][0]['value'];
+      $yourtubelink = l('video slideshow', $yourtube, array('external' => TRUE));
+    } 
+  } 
+  if (isset($nodedata['lms_video']) && !empty($nodedata['lms_video'])) {
+    $video_entity_posted_you = entity_load_single('node', $nodedata['lms_video']);
+    if (isset($video_entity_posted_you->field_lms_embed_video) && !empty($video_entity_posted_you->field_lms_embed_video)) {
+      $yourtube = $video_entity_posted_you->field_lms_embed_video[LANGUAGE_NONE][0]['value'];
+      $yourtubelink = l('video slideshow', $yourtube, array('external' => TRUE));
+    }
+  }
+  $listingpdf = list_pdf_postcard_data($listing_nid, $node->nid);
+  $listing_node = node_load($listing_nid);
+  $markatingdetail = '';
+  if (isset($listing_node->field_lms_marketing_coordinator)) {
+    $markatingdetail = user_load($listing_node->field_lms_marketing_coordinator['und'][0]['uid'])->name;
+  }
+  if(isset($listing_node->field_lms_hide_listing_address['und']['0']['value']) && $listing_node->field_lms_hide_listing_address['und']['0']['value'] == 1) {
+    $listing_address = t('Address Available Upon Request');
+  }
+  else {
+    $address = array();
+    if(isset($listing_node->field_lms_listing_address['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_listing_address['und']['0']['value'];
+    }
+    if(isset($listing_node->field_lms_address_unit['und']['0']['value'])) {
+      $address[] = $listing_node->field_lms_address_unit['und']['0']['value'];
+    }
+    $listing_address = implode(', ', $address);
+  }
+
+  
+  $lms_photo_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+	$lms_photo_nid->fields('lr', array('entity_id'));
+	$lms_photo_nid->condition('lr.entity_type', 'node', 'LIKE');
+	$lms_photo_nid->condition('lr.bundle', 'lms_photos', 'LIKE');
+	$lms_photo_nid->condition('lr.field_lms_listing_reference_nid', $listing_nid, '=');
+	$photo_nid = $lms_photo_nid->execute()->fetchField();
+	$photo_node = node_load($photo_nid);
+	$items = field_get_items('node', $photo_node, 'field_lms_listing_photos');
+	$listing_photos = field_collection_field_get_entity($items[0]);
+	
+  $client_name = isset($listing_node->field_client_first_name[LANGUAGE_NONE]['0']['value']) ? $listing_node->field_client_first_name[LANGUAGE_NONE]['0']['value'] : 'Seller';
+  if(isset($listing_node->field_lms_sales_team[LANGUAGE_NONE]['0']['nid'])) {
+    $nid = $node->field_lms_sales_team[LANGUAGE_NONE]['0']['nid'];
+    $sales_team = node_load($nid);
+    $profile_image = isset($sales_team->field_sales_team_photo[LANGUAGE_NONE]['0']['uri']) ? file_create_url($sales_team->field_sales_team_photo[LANGUAGE_NONE]['0']['uri']) : $base_url.'/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $aimage = image_style_url('agent_photo_with_primary', $sales_team->field_sales_team_photo[LANGUAGE_NONE]['0']['uri']);
+    $profile_text = isset($sales_team->body[LANGUAGE_NONE]['0']['value']) ? substr($sales_team->body[LANGUAGE_NONE]['0']['value'], 0, 150) : '';
+    $profile_name = $sales_team->title;
+    
+    $profile_image_img = '<img style=" height: 200px; width: auto;margin: 6px;" src="'.$profile_image.'" />';
+  }
+  else {
+    $uid = $listing_node->uid;
+    $agent_detail = user_load($uid);
+    $profile_image = isset($agent_detail->picture->fid) ? file_create_url($agent_detail->picture->uri) : '/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+    $aimage = image_style_url('agent_photo_with_primary', $agent_detail->picture->uri);
+    $field_job_title = isset($agent_detail->field_job_title[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_job_title[LANGUAGE_NONE]['0']['value'] : '';
+    $profile_name = isset($agent_detail->field_firstname[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_firstname[LANGUAGE_NONE]['0']['value'].' ' : $agent_detail->name;
+    $profile_name .= ' ' . isset($agent_detail->field_lastname[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_lastname[LANGUAGE_NONE]['0']['value'] : '';
+    if (isset($agent_detail->field_preferred_name) && !empty($agent_detail->field_preferred_name)) {
+      $profile_name = $agent_detail->field_preferred_name[LANGUAGE_NONE][0]['value'];
+    }
+    if (!empty($field_job_title)) {
+      $profile_name = $profile_name;// . ', <span>' . $field_job_title . '</span>';
+    }
+    $phone = isset($agent_detail->field_phone_direct[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_phone_direct[LANGUAGE_NONE]['0']['value'] : '';
+    $mobile = isset($agent_detail->field_phone_mobile[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_phone_mobile[LANGUAGE_NONE]['0']['value'] : '';
+    $person_email = isset($agent_detail->field_person_email[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_person_email[LANGUAGE_NONE]['0']['value'] : '';
+    $web_site = isset($agent_detail->field_agent_web_site[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_agent_web_site[LANGUAGE_NONE]['0']['value'] : '';
+    $state_license = isset($agent_detail->field_state_license[LANGUAGE_NONE]['0']['value']) ? $agent_detail->field_state_license[LANGUAGE_NONE]['0']['value'] : '';
+    $profile_image_img = '<img style=" height: 200px; width: auto;margin: 6px;" src="'.$profile_image.'" />';
+    if (isset($listing_node->field_lms_other_agent)) {
+      $uid1 = $listing_node->field_lms_other_agent[LANGUAGE_NONE]['0']['uid'];
+      $agent_detail1 = user_load($uid1);
+
+      $profile_image1 = isset($agent_detail1->picture->fid) ? file_create_url($agent_detail1->picture->uri) : $base_url.'/sites/all/modules/custom/listing_marketing_system/images/default-image.jpg';
+      $aimage1 = image_style_url('agent_photo_with_primary', $agent_detail1->picture->uri);
+      $field_job_title1 = isset($agent_detail1->field_job_title[LANGUAGE_NONE]['0']['value']) ? $agent_detail1->field_job_title[LANGUAGE_NONE]['0']['value'] : '';    
+      $profile_name1 = isset($agent_detail1->field_firstname[LANGUAGE_NONE]['0']['value']) ? $agent_detail1->field_firstname[LANGUAGE_NONE]['0']['value'].' ' : $agent_detail1->name;
+      $profile_name1 .= isset($agent_detail1->field_lastname[LANGUAGE_NONE]['0']['value']) ? $agent_detail1->field_lastname[LANGUAGE_NONE]['0']['value'] : '';
+      
+      if (isset($agent_detail1->field_preferred_name) && !empty($agent_detail1->field_preferred_name)) {
+        $profile_name1 = $agent_detail1->field_preferred_name[LANGUAGE_NONE][0]['value'];
+      }
+      $mail_token['colisting_agent_name'] = $profile_name1;
+      if (!empty($field_job_title1)) {
+        $profile_name1 = $profile_name1;// . ', <span>' . $field_job_title1 . '</span>';
+      }
+      $phone1 = (isset($agent_detail1->field_phone_direct[LANGUAGE_NONE]['0']['value']) && !empty($agent_detail1->field_phone_direct[LANGUAGE_NONE]['0']['value'])) ? $agent_detail1->field_phone_direct[LANGUAGE_NONE]['0']['value'] : '';
+      $mobile1 = isset($agent_detail1->field_phone_mobile[LANGUAGE_NONE]['0']['value']) ? $agent_detail1->field_phone_mobile[LANGUAGE_NONE]['0']['value'] : '';
+      $person_email1 = isset($agent_detail1->field_person_email[LANGUAGE_NONE]['0']['value']) ? $agent_detail1->field_person_email[LANGUAGE_NONE]['0']['value'] : '';
+      $web_site1 = isset($agent_detail1->field_agent_web_site[LANGUAGE_NONE]['0']['value']) ? $agent_detail1->field_agent_web_site[LANGUAGE_NONE]['0']['value'] : '';
+      $state_license1 = isset($agent_detail1->field_state_license[LANGUAGE_NONE]['0']['value']) ? $agent_detail1->field_state_license[LANGUAGE_NONE]['0']['value'] : '';
+    }
+    $dataagent1 = '<div style="float:left; width:390px;"><div style="float:left;"><img style="max-height: 170px; max-width:110px; margin:0px 6px;" src="'.$profile_image.'" /></div><div><div class="name" style="font-size: 16px;">Sincerely,<br/>'.$profile_name.'</div>
+              <div>Coldwell Banker Residential Brokerage</div>
+              <div class="phone">'.$phone.'</div>
+              <div class="email">'.$person_email.'</div>
+              <div class="extra">'.str_replace('CA=', 'CalBRE #', $state_license).'</div></div></div>';
+    $dataagent2 = '';
+    if(!empty($profile_name1)) {
+      $aget2 = 1;
+      $profile_image_img = '<img style=" height: 200px; width: auto;margin: 6px;" src="'.$profile_image.'" />';
+      $dataagent2 = '<div style="float:left; width:390px;"><div style="float:left;"><img style="max-height: 170px; max-width:110px; margin: 0px 6px;" src="'.$profile_image1.'" /></div><div><div class="name" style="font-size: 16px;">Sincerely,<br/>'.$profile_name1.'</div>
+          <div>Coldwell Banker Residential Brokerage</div>
+          <div class="phone">'.$phone1.'</div>
+          <div class="email">'.$person_email1.'</div>
+          <div class="extra">'.str_replace('CA=', 'CalBRE #', $state_license1).'</div></div></div>';
+    }
+    
+  }
+  $header_image = ($listing_photos) ? image_style_url('1920x805', $listing_photos->field_lms_listing_photo['und']['0']['uri']) :  $base_url.'/sites/all/modules/custom/listing_marketing_system/images/tes.png';
+
+		$query = db_select('cbone_mails_settings_mail', 'mcn');
+		$query->fields('mcn');
+		$query->condition('mcn.id', 1, '=');
+		$result_row = $query->execute()->fetchAssoc();
+	
+ /* $message = '<div id="node-'.$node->nid.'" class="lms-report-mail">
+    <div class="lms-client-report-node" style="width: 850px; margin-left: auto; margin-right: auto;">
+    <div class="lms-client-report-header"><img src="'.$base_url.'/sites/default/files/images/email/client_report_email_header.jpg"></div>
+    <div class="lms-client-report-body" style="margin-left: 30px; font-size: 17px;">
+      <div>Dear '.$client_name.'</div>
+      <div class="report_intro_copy">'.$node->field_client_report_intro_copy['und']['0']['value'].'</div>
+      <div class="completed-item">
+        <ul style="margin: 0px; padding: 0px 0px 0px 10px;">';
+        
+          foreach($node->field_client_report_items['und'] as $items) {
+        
+            $message .= '<li style="padding-bottom: 5px; list-style: none;"><img src="'.$base_url.'/sites/default/files/images/email/email_client_report_bullet.jpg"> '.$items['value'].'</li>';
+        
+          }
+          if(isset($node->field_client_report_addl_items['und']['0']['value'])) {
+            foreach($node->field_client_report_addl_items['und'] as $items) {
+        
+              $message .= '<li style="padding-bottom: 5px; list-style: none;"><img src="'.$base_url.'/sites/default/files/images/email/email_client_report_bullet.jpg"> '.$items['value'].'</li>';
+        
+            }
+          }
+        
+  $message .= '</ul>
+        </div>
+        <div class="report_conclusion">'.$node->field_client_report_conclusion['und']['0']['value'].'</div>
+        <div class="report-footer">
+          <div class="sincerely" style="margin-bottom: 25px;">Sincerely,</div>
+          <div class="sender-info">
+            <div class="sender-image" style="display: inline-block; vertical-align: top;"><img src="'.$profile_image.'" style="width: 130px; height: 160px;"/></div>
+            <div class="sender-detail" style="display: inline-block; vertical-align: top; margin-left: 20px; font-size: 16px; line-height: normal;">
+              <div class="name" style="font-size: 22px; margin-bottom: 15px;">'.$profile_name.'</div>
+              <div class="title">'.$field_job_title.'</div>
+              <div class="phone">'.$phone.'</div>
+              <div class="mobile">'.$mobile.'</div>
+              <div class="email">'.$person_email.'</div>
+              <div class="website">'.$web_site.'</div>
+              <div class="extra">'.$state_license.'</div>
+            </div>
+          </div>
+          <div class="disclaimer-text" style="margin-top: 25px; font-size: 11px; line-height: normal;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. </div>
+        </div>
+      </div>
+    </div>
+  </div>';*/
+
+
+  $clientreportitem = '';
+  foreach($node->field_client_report_items[LANGUAGE_NONE] as $items) {
+    $clientreportitem .= '<li>' . $items['value'].'</li>';
+  }
+  if (isset($nodedata['commerce_order']) && !empty($nodedata['commerce_order'])) {
+    foreach($node->field_completed_item2[LANGUAGE_NONE] as $items) {
+      $clientreportitem .= '<li>' . $items['value'].'</li>';
+    }  
+  }
+  $clientreportitem = str_replace("ColdwellBankerHomes.com", "<a href='//www.ColdwellBankerHomes.com' target='_blank'>ColdwellBankerHomes.com</a>", $clientreportitem);
+  $clientreportitem = str_replace("ColdwellBanker.com", "<a href='//www.ColdwellBanker.com' target='_blank'>ColdwellBanker.com</a>", $clientreportitem);
+  $clientreportitem = str_replace("CBPLuxury.com", "<a href='//www.CBPLuxury.com' target='_blank'>CBPLuxury.com</a>", $clientreportitem);
+  $clientreportitem = str_replace("video slideshow", $yourtubelink, $clientreportitem);
+  if (isset($listingpdf) && !empty($listingpdf)) {
+    foreach ($listingpdf as $key => $value) {
+       if($key == 'probrochure') {
+         $clientreportitem = str_replace("high-end, professional property", $value, $clientreportitem);
+       }
+       if($key == 'postcard') {
+         $clientreportitem = str_replace("Just Listed postcard", $value, $clientreportitem);
+       }
+       if ($listing_node->status == 1) {
+         $clientreportitem = str_replace('property website', l('property website', 'http://www.homecb.com/node/'.$listing_node->nid), $clientreportitem);
+       }
+    }
+  }
+  if (isset($designnid) && !empty($designnid) ) {
+    $clientreportitem = str_replace('property flyer', l('property flyer', 'download_pdf/'.$listing_node->nid.'/'.$designnid), $clientreportitem);
+  }
+  $lidata = '';
+  if(isset($node->field_client_report_addl_items[LANGUAGE_NONE]['0']['value'])) {
+    foreach($node->field_client_report_addl_items[LANGUAGE_NONE] as $items) {
+      $lidata .= '<li>'.$items['value'].'</li>';
+    }
+  }
+  if (isset($node->field_additional_completed_items) && !empty($node->field_additional_completed_items)) {
+    $string = $node->field_additional_completed_items[LANGUAGE_NONE][0]['value'];
+    $string = strip_tags($string, '<a>');
+    $bits = explode("\n", $string);
+    $num = 1;
+    foreach($bits as $bit) {                
+        if ( $num & 1 )  {
+          $newstring .= "<li>" . $bit . "</li>";
+        }
+        $num++;
+      }
+  }
+  
+  $css_file = drupal_get_path('module', 'listing_marketing_system') . '/css/listing.css';
+  $css = file_get_contents($css_file);
+
+  $uid = $listing_node->uid;
+  $agent_detail = user_load($uid);
+  $primary_agent_email = isset($agent_detail->field_person_email['und']['0']['value']) ? $agent_detail->field_person_email['und']['0']['value'] : $agent_detail->mail;
+    $fid = $node->field_document['und'][0]['fid'];
+    $attachments = $node->field_document['und'][0];
+    $pdf_url = file_create_url($attachments['uri']);
+    $pdf_content = file_get_contents($pdf_url);
+    $filepath = 'public://client_report_pdf/';
+    $pdf_path = drupal_realpath($filepath).'/'.$pdf_file_name;	
+    file_put_contents($pdf_path, $pdf_content);
+    $pdf_file = drupal_realpath($pdf_path);
+    $attachment = array(
+      'filepath' => $pdf_file,
+      'filecontent' => file_get_contents(file_create_url($attachments['uri'])),
+      'filename' => $attachments['filename'],
+      'filemime' => $attachments['filemime']
+    );
+    $mail_token['pdf_url'] = '<a href="'.file_create_url($attachments['uri']).'">'.file_create_url($attachments['uri']).'</a>';
+    $mail_token['lms_listing_title'] = $node->title; 
+
+  /* $node->field_client_salutation[LANGUAGE_NONE]['0']['value'];
+   $node->field_client_report_intro_copy[LANGUAGE_NONE]['0']['value'];
+   $clientreportitem;
+   $lidata;
+   $newstring;
+   
+   
+   $profile_name;
+   $phone;
+   $mobile;
+   $person_email;
+   $web_site;
+   */
+   
+  $mail_token['lms_listing_address'] = $listing_address;
+  $mail_token['lms_listing_city'] = 'city';
+  $mail_token['seller_name'] = $node->field_client_salutation[LANGUAGE_NONE]['0']['value'];;
+  $mail_token['intro_copy'] = $node->field_client_report_intro_copy['und']['0']['value'];
+  $mail_token['completed_item'] = '<ul>'.$clientreportitem.$lidata.$newstring .'</ul>';
+  $mail_token['conclusion_copy'] = $node->field_client_report_conclusion[LANGUAGE_NONE]['0']['value'];
+  $mail_token['year'] = date('Y');
+  $mail_token['pdf_link'] = '';
+  $mail_token['agent_images'] = '<img style="height: 200px; width: auto;margin: 6px;" src="'.$aimage.'"><img style=" height: 200px; width: auto;margin: 6px;" src="'.$aimage1.'">';
+  $mail_token['agents_info'] = $dataagent1.$dataagent2;
+  $mail_token['token_active_key'] = '';
+  $message = $result_row['body'];
+  $linkdowonload = l('Here is a link to the items', $mail_token['pdf_url'], array('attributes' => array('target' => '_blank')));
+  $message = str_replace('Here is a link to the items', $linkdowonload, $message);
+  $message = str_replace('INSERT MARKETING COORDINATOR NAME', $markatingdetail, $message);
+  $message = token_replace($message, array('data' => $mail_token));
+    
+    $mailto = $primary_agent_email;
+    $subject = token_replace($result_row['subject'], array('data' => $mail_token));
+    $header = "From: CB|One <support@cbone.me>\r\n";
+    $header .= "Reply-To: support@cbone.me\r\n";
+    $header .='MIME-Version: 1.0' . "\r\n";
+    $header .= 'Content-Type: text/html; charset=ISO-8859-1' . "\r\n";
+    $params = array(
+      'key' => 'my_email_template',
+      'to' => $mailto,
+      'from' => 'support@cbone.me',
+      'subject' => $subject,
+      'body' => $message,
+      'attachment' => $attachment
+    );
+    if (drupal_mail('listing_marketing_system', $key, $mailto,  language_default(), $params, 'support@cbone.me')) {
+      drupal_set_message('The Seller Report has been sent to '.$agent_detail->field_preferred_name['und']['0']['value']);
+    }
+  return $message;
+}
+
+/**
+ * Callback function get_user_office()
+ * to get the user primary office title
+ **/
+function get_user_office($office_id){
+  $office_node_title = '';
+  $query = db_select("field_data_field_office_id", 'oi');
+  $query->fields('oi', array('entity_id'));
+  $query->condition('oi.entity_type', 'node', 'LIKE');
+  $query->condition('oi.bundle', 'office_group', 'LIKE');
+  $query->condition('oi.field_office_id_value', $office_id, '=');
+  $office_nid = $query->execute()->fetchField();
+  if(!empty($office_nid)) {
+    $office_node = node_load($office_nid);
+    $office_node_title = $office_node->title;
+  }
+  return $office_node_title;
+}
+/**
+ * Get all users of a group
+ */
+function _get_users_in_group($gid) {
+  $query = db_select('users', 'u');
+ 
+  $query
+    ->condition('u.uid', 0, '<>')
+    ->condition('u.status', 1, '=')
+    ->fields('u', array('uid', 'name'))
+    ->join('og_membership', 'ogm', "ogm.gid = :gid AND u.uid = ogm.etid AND ogm.entity_type = 'user'", array(':gid' => $gid));
+  return $query->execute();
+}
+/**
+ * Implements hook_menu_alter() 
+ */
+function listing_marketing_system_menu_alter(&$items) {
+	$items['field-collection/field-lms-listing-documents/%field_collection_item/edit']['access callback'] = 'cbone_field_collection_item_access';
+}
+/**
+ * Determines whether the given user has access to a field collection.
+ *
+ * @param $op
+ *   The operation being performed. One of 'view', 'update', 'create', 'delete'.
+ * @param $item
+ *   Optionally a field collection item. If nothing is given, access for all
+ *   items is determined.
+ * @param $account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ * @return boolean
+ *   Whether access is allowed or not.
+ */
+function cbone_field_collection_item_access($op, FieldCollectionItemEntity $item = NULL, $account = NULL) {
+	global $user;
+	// We do not support editing field collection revisions that are not used at
+	// the hosts default revision as saving the host might result in a new default
+	// revision.
+	if (isset($item) && !$item->isInUse() && $op != 'view') {
+		return FALSE;
+	}
+	if (user_access('administer field collections', $account)) {
+		return TRUE;
+	}
+	if (!isset($item)) {
+		return FALSE;
+	}
+    $roles = array(6 => 'Manager', 13 => 'Office Administrator');
+    //$roles = array(6 => 'Manager', 13 => 'Office Administrator', 14 => 'Agent');
+    $roles_result = array_intersect_key($roles, $user->roles);
+	if (!empty($roles_result)) {
+		return TRUE;
+	}
+
+	$op = $op == 'view' ? 'view' : 'edit';
+	// Access is determined by the entity and field containing the reference.
+	$field = field_info_field($item->field_name);
+	$entity_access = entity_access($op == 'view' ? 'view' : 'update', $item->hostEntityType(), $item->hostEntity(), $account);
+	return $entity_access && field_access($op, $field, $item->hostEntityType(), $item->hostEntity(), $account);
+}
+/*
+function listing_marketing_system_user_edit_access($account) {
+  return $account && $account->uid && user_access('administer users');
+}
+*/
+function listing_marketing_system_js_alter (&$javascript)
+{
+//  $javascript['sites/all/modules/contrib/jquery_update/replace/jquery/1.8/jquery.min.js']['defer'] = TRUE;
+}
+
+/*****
+**** Function to check active or inactive condition of listing
+******/
+function active_inactive_listing( $nid = NULL ){
+  
+  $query= db_select('cbone_website_settings', 'cb')
+    ->fields('cb', array('web_page_active'))
+    ->condition('nid', $nid, '=');
+  $result = $query->execute()->fetchField();
+  return $result;
+}
+/**
+ * Callback function create_listing_pdf
+ * to create pdf by custom code.
+ **/
+function create_listing_pdf(){
+  return "Comming soon !";
+}
+/**
+ * Callabck function listing_video_active_url()
+ * to update the active url in listing video node 
+ **/
+function listing_video_active_url(){
+  if(isset($_POST['video_nid']) && !empty($_POST['video_nid'])) {
+    $video_nid = $_POST['video_nid'];
+    $active = $_POST['active'];
+    $video_node = node_load($video_nid);
+    $video_node->field_active_video['und']['0']['value'] = trim($active);
+    node_save($video_node);
+    return 'done';
+  }
+}
+
+
+function get_all_listing_attached_recoreds($nid = '', $type = 'All') {
+  if (empty($nid)) {
+    return NULL;
+  }
+	$lms_video_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+	$lms_video_nid->fields('lr', array('entity_id', 'bundle'));
+	$lms_video_nid->condition('lr.field_lms_listing_reference_nid', $nid, '=');
+	$video_nid = $lms_video_nid->execute()->fetchAll();
+	$nids = array();
+	foreach ($video_nid as  $key => $value) {
+	  $nids[$value->bundle] = $value->entity_id;
+	}
+	return $nids;
+}
+
+function list_pdf_postcard_data($nid, $reportnid){
+  $query = db_select('cbone_listing_approve_pdf', 'apdf');
+  $query->fields('apdf', array('pnid', 'pdf_section'))
+	  ->condition('apdf.lnid', $nid, '=');
+  $approve_pdf_nids = $query->execute()->fetchAll();
+  $approve_pdf_status = array();
+  $listed = '';
+  $sold = '';
+  if(!empty($approve_pdf_nids)) {
+	  foreach($approve_pdf_nids as $approve_pdf_nid) {
+		  $approve_mcpdf = node_load($approve_pdf_nid->pnid);
+		  $template_id = $approve_mcpdf->field_template_reference['und']['0']['nid'];
+		  if(isset($approve_mcpdf->field_mc_pdf_status['und']['0']['tid'])) {
+			  $pdf_status_term = taxonomy_term_load($approve_mcpdf->field_mc_pdf_status['und']['0']['tid']);
+			  if($approve_pdf_nid->pdf_section == 'post-card') {
+				  if($approve_mcpdf->field_postcard_type['und']['0']['value'] == 'listed') {
+					  $approve_pdf_status['postcard'] = '<a href="/download_pdf/'.$nid.'/'.$template_id.'?destination=node/'.$reportnid.'">Just Listed Postcard</a>';
+					  $listed = 1;
+				  }
+				  else if($approve_mcpdf->field_postcard_type['und']['0']['value'] == 'sold') {
+					  $approve_pdf_status['postcard'] = '<a href="/download_pdf/'.$nid.'/'.$template_id.'?destination=node/'.$reportnid.'">Just Sold Postcard</a>';
+					  $sold = 1;
+				  }
+				  if($listed == 1 && $sold == 1) {
+					  //$result_row['post_cards'] = 0;
+					  $postcard_mc_pdf_count = 0;
+				  }
+			  }
+			  else {
+				  $approve_pdf_status['probrochure'] = '<a href="/download_pdf/'.$nid.'/'.$template_id.'?destination=node/'.$reportnid.'">high-end, professional property</a>';
+				  //$result_row['pro_brochures'] = 0;
+				  $pro_brochure_mc_pdf_count = 0;
+			  }
+		  }
+	  }
+  }
+  return $approve_pdf_status;
+}
+
+function get_property_flyer_dnid($nid) {
+  $query = db_select('cbone_website_settings', 'apdf');
+  $query->fields('apdf', array('print_and_go'))
+	  ->condition('apdf.nid', $nid, '=');
+ $approve_pdf_nids = $query->execute()->fetchAssoc();
+ if(isset($approve_pdf_nids['print_and_go']) && !empty($approve_pdf_nids['print_and_go'])) {
+    $dnid = node_load($approve_pdf_nids['print_and_go'])->field_template_reference;
+    return $dnid['und'][0]['nid'];
+ }
+}

@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function mc_notifications_schema() {
+  //Saved LMS Tool Matrix
+  $schema['mc_notifications'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+		'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'MC notifications serial id',
+      ),
+      'title' => array(
+        'description'   => 'Notifications message title',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'mc_status' => array(
+        'description'   => 'MC status for notifications',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'mc_send_to' => array(
+        'description'   => 'Notification received user UID',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'mc_reply_to' => array(
+        'description'   => 'User reply received user UID',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'subject' => array(
+        'description'   => 'Notification Mail Subject',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'header_image' => array(
+        'description'   => 'Mail Header Image',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'body' => array(
+        'description'   => 'Notification Mail Body',
+        'type'          => 'text',
+		'size' 			=> 'big',
+        'not null'      => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  return $schema;
+}

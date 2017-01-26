@@ -1,0 +1,10 @@
+name = "CB|ONE Feed (LMS)"
+description = "CB|ONE Listing Marketing System (LMS) module."
+core = "7.x"
+package = "CB|ONE LMS"
+version = "7.x-1.0"
+project = "CB|ONE LMS"
+datestamp = ""
+; Add a style sheet for all media
+stylesheets[all][] = css/cbone_feed.css
+

@@ -1,0 +1,124 @@
+.node-type-lms-client-report .container {
+   /* padding: 0;
+    width: 100%;*/
+}
+
+.node-type-lms-client-report .lms-client-report-node {
+   /* width: 100%;*/
+}
+
+.node-type-lms-client-report .lms-client-report-body {
+   /* margin: auto;
+    max-width: 1024px;*/
+}
+
+.node-type-lms-client-report .overlay{
+  background-color: rgba(0, 41, 77, 0.7);
+  color: #fff;
+  font-family: "Raleway";
+  font-size: 4em;
+  font-style: normal;
+  font-weight: normal;
+  padding: 20px 0 20px 80px;
+  position: absolute;
+  top: 59%;
+  width: 76%;
+}
+
+.node-type-lms-client-report .overlay > img {
+  float: left;
+  margin-right: 18px;
+  margin-top: 11px;
+  width: 167px;
+}
+.node-type-lms-client-report .overlay h1 {
+  color: #fff;
+  float: left;
+  font-family: Raleway;
+  font-size: 0.8em;
+  font-weight: 100;
+  margin-top: 0;
+  width: 68%;
+}
+.node-type-lms-client-report .sticky-wrapper {
+  display:none;
+}
+.page-node-edit.node-type-lms-client-report .sticky-wrapper {
+    display: block;
+}
+.node-type-lms-client-report .completed-item li {
+    list-style: outside none disc!important;
+}
+
+.node-type-lms-client-report .form-disabled label, .page-node-add-lms-client-report .form-disabled label {
+    color: #dcc;
+}
+
+.node-type-lms-client-report .sender-detail div{
+  font-family: "Helvetica Neue Light";
+  font-size:14pt;
+}
+.node-type-lms-client-report .sender-detail .name{
+  font-size:16pt;
+}
+
+.node-type-lms-client-report .sender-image img {
+    height: 200px;
+    width: auto;
+    margin: 6px;
+}
+
+
+.page-node-add-lms-client-report .manage-listing-photos, .page-node-edit-lms-client-report .manage-listing-photos {
+    width: 86%;
+}
+
+#my-custom-listing li {
+    background: #eee url("/sites/all/modules/custom/listing_marketing_system/images/draggable.png") no-repeat scroll 8px 12px;
+}    
+
+.ctools-modal-content {
+    background: transparent!important;
+    border: none!important;
+}
+
+.modal-default .ctools-modal-content .modal-header {
+    background: transparent!important;
+}
+
+.ctools-modal-content .modal-content {
+    background: #fff none repeat scroll 0 0;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    height: auto !important;
+    min-height: 200px !important;
+    width: 100%!important;
+    padding-top: 32px !important;
+}
+
+
+.ctools-modal-content .modal-header .modal-title {
+    display: none;
+}
+
+.ctools-modal-content .btn.form-submit {
+    margin-right: 13px;
+}
+
+.ctools-modal-content .modal-header {
+    position: absolute;
+    right: 0;
+    z-index: 9;
+}
+.ctools-modal-content .modal-header .close {
+    font-size: 0px;
+}
+
+#my-custom-listing .ctools-use-modal.ctools-use-modal-processed {
+    float: right;
+    background: #000;
+    padding: 0 7px;
+    font-weight: 900;
+    border-radius: 50%;
+    color: #fff;
+}

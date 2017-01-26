@@ -1,0 +1,214 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function cbone_flags_menu() {
+  $items = array();
+  //Menu for admin to Update subscription mail template
+  $items['admin/config/cbone-flag'] = array(
+    'title'				=> 'CB|One Flag setup',
+    'description'		=> 'CB|One Flag setup systems.',
+    'page callback'		=> 'system_admin_menu_block_page',
+    'access arguments'	=> array('access administration pages'),
+    'file'				=> 'system.admin.inc',
+    'file path'			=> drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/cbone-flag/tracking'] = array(
+    'title'				=> 'CB|One Flag Tracking',
+    'description'		=> 'CB|One Flag Tracking.',
+	'weight'			=> 1,
+    'page callback'		=> 'cbone_flag_tracking',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/cbone_flag_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/cbone-flag/add'] = array(
+    'title'				=> 'CB|One Flag Add Tracking',
+    'description'		=> 'CB|One Flag Add New Tracking Setup.',
+	'weight'			=> 2,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('cbone_flag_tracking_form'),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/cbone_flag_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/cbone-flag/tracking/delete/%'] = array(
+    'title'				=> 'Percent Tracking Delete',
+    'description'		=> 'Percent Tracking Delete.',
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('cbone_flag_tracking_delete_confirm_form', 5),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/cbone_flag_tracking.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['cbone/nojs/%/%/%'] = array(
+    'title' => 'CB|ONE Flags',
+    'description' => 'CB|ONE Flags',
+    'page callback'		=> 'cbone_flag_page',
+    'page arguments' => array(1, 2, 3, 4),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'file' => 'includes/cbone_flag.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items['cbone/ajax/%/%/%'] = array(
+  'delivery callback' => 'ajax_deliver',
+  ) + $items['cbone/nojs/%/%/%'];
+
+  $items['cbone-flag'] = array(
+    'title' => 'Custom Flag',
+    'page callback' => 'my_custom_flag',
+    'access callback'	=> 'user_is_logged_in',
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+/**
+ * Implements hook_init()
+ */
+function cbone_flags_init(){
+	drupal_add_css(drupal_get_path('module', 'cbone_flags') . '/css/cbone_flag.css');
+}
+/**
+ * Implements hook_views_api
+ **/
+function cbone_flags_views_api() {
+  return array(
+    'api' => 3.0,
+    'path' => drupal_get_path('module', 'cbone_flags') . '/includes/views',
+  );
+}
+
+/**
+ * Callback function cbone_flag_link()
+ * to displayed custom flag link
+ * return $output;
+ **/
+function cbone_flag_link($pnid = NULL, $cnid = NULL){
+	global $user;
+	$old_revision = entity_load('node', array(), array('vid' => $cnid));
+	
+	if($pnid != NULL && $cnid != NULL && $user->uid != 0) {
+		drupal_add_library('system', 'drupal.ajax');
+		$flag = db_select("cbone_flags", 'cf');
+		$flag->fields('cf', array('flag'));
+		$flag->condition('pnid', $pnid, '=');
+		$flag->condition('cnid', $cnid, '=');
+		$flag->condition('uid', $user->uid, '=');
+		$flag = $flag->execute()->fetchField();
+		if($flag == 0){
+			//$output = '<div class="cbone-flag">'.l(t('Flag'), 'cbone/nojs/flag/'.$pnid.'/'.$cnid, array('attributes' => array('class' => 'use-ajax'))).'</div>';
+			$output = '<div class="cbone-flag-'.$pnid.'-'.$cnid.' cbone-flag-div"><a href="/cbone/nojs/flag/'.$pnid.'/'.$cnid.'" class="use-ajax"><img src="/sites/default/files/images/icon/flag/not-completed-gray.png" border="0"></a></div>';
+		}
+		else {
+			//$output = '<div class="cbone-unflag">'.l(t('Un Flag'), 'cbone/nojs/unflag/'.$pnid.'/'.$cnid, array('attributes' => array('class' => 'use-ajax'))).'</div>';
+			$output = '<div class="cbone-flag-'.$pnid.'-'.$cnid.' cbone-flag-div"><a href="/cbone/nojs/unflag/'.$pnid.'/'.$cnid.'" class="use-ajax"><img src="/sites/default/files/images/icon/flag/completed_gray.png" border="0"></a></div>';
+		}
+	}
+	else {
+		$output = '<div class="no-flag">No Flag</div>';
+	}
+	return $output;
+}
+/**
+ * Callback function cbone_listing_percent_meter()
+ * to displayed the listing percent meter 
+ **/
+function cbone_listing_percent_meter($pnid = NULL, $cnid = NULL) {
+	global $user;
+	$percent = 0;
+	$nids = array();
+	if($pnid != NULL && $cnid != NULL && $user->uid != 0) {
+		$p_node = node_load($pnid);
+		//$nids = array(74, 76, 77, 78, 105, 917, 918, 933, 948, 953, 956, 958, 971, 974, 976, 980, 982, 984, 986, 990, 988, 992, 994, 998, 1030, 1031, 1032, 1035, 1061, 1068, 1070, 1072, 1074);
+
+		$query = db_select("cbone_flags_tracking", "ft");
+		$query->fields("ft", array('cnid'));
+		$query->condition('ft.type', 'listing','LIKE');
+		$result = $query->execute();
+		foreach($result as $data) {
+			$nids[] = $data->cnid;
+		}
+		//$total_nids = isset($p_node->field_step_block_count['und']['0']['value']) ? $p_node->field_step_block_count['und']['0']['value'] : 13;
+		$total_nids = count($nids);
+		$flag = db_select("cbone_flags", 'cf');
+		$flag->fields('cf', array('id'));
+		$flag->condition('pnid', $pnid, '=');
+		$flag->condition('cnid', $nids, 'IN');
+		$flag->condition('flag', 1, '=');
+		$flag->condition('uid', $user->uid, '=');
+		$flagged_count = $flag->execute()->rowCount();
+		if($flagged_count != 0) {
+			$percent = round($flagged_count/$total_nids*100);
+			$percent_width = $percent;
+		}
+	}
+	$output = '<div class="listing-pc-meter">
+	<div class="width-100-number"><div class="number-100" style="width: '.$percent.'% !important;"><span class="meter-number">'.$percent.'%</span></div></div>
+	<div class="width-100"><div class="width-34" style="width: '.$percent.'% !important;"><span class="meter-point">&nbsp;</span></div></div>
+		</div>';	
+	return $output;
+}
+function my_custom_flag(){
+	/*$output = cbone_flag_link(1087, 14881).'<br/>';
+	$output .= cbone_flag_link(1087, 14882).'<br/>';
+	$output .= cbone_flag_link(1087, 14883).'<br/>';*/
+	//$output .= cbone_listing_percent_meter(1087, 14880);
+	$output .= cbone_flag_meter_status(14881);
+	//$output = 'sadfsadfsda';
+	return $output;
+}
+
+/**
+ * Call back function percent_meter_test()
+ * to test percent meter
+ **/
+function cbone_flag_meter_status($nid = NULL){
+	global $user;
+	$flagged_count = 0;
+	$percent = 0;
+	$pnid = '';
+	$query = db_select("cbone_flags_tracking", "ft");
+	$query->fields("ft");
+	if($nid != NULL) {
+		$query->condition('ft.pnid', $nid,'=');
+		$pnid = arg(1);
+	}
+	else {
+		$lms_step_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+		$lms_step_nid->fields('lr', array('entity_id'));
+		$lms_step_nid->condition('lr.entity_type', 'node', 'LIKE');
+		$lms_step_nid->condition('lr.bundle', 'lms_step_by_step_guide', 'LIKE');
+		$lms_step_nid->condition('lr.field_lms_listing_reference_nid', arg(1), '=');
+		$step_nid = $lms_step_nid->execute()->fetchField();
+		$pnid = $step_nid;
+	}
+	$result = $query->execute();
+
+	foreach($result as $data) {
+		$nids[] = $data->cnid;
+	}
+	$nids = array_unique($nids);
+	$total_nids = count($nids);
+	if($total_nids > 0) {
+		$flag = db_select("cbone_flags", 'cf');
+		$flag->fields('cf', array('id'));
+		$flag->condition('pnid', $pnid, '=');
+		$flag->condition('cnid', $nids, 'IN');
+		$flag->condition('flag', 1, '=');
+		$flag->condition('uid', $user->uid, '=');
+		$flagged_count = $flag->execute()->rowCount();
+	}
+	
+	if($flagged_count != 0) {
+		$percent = round($flagged_count/$total_nids*100);
+	}
+	//echo "<pre>";
+	//print_r ($nids);
+	//echo "<br/>";
+	//print_r ($flagged_count);
+	//echo "<br/>";
+	//print_r ($percent);
+	//echo "</pre>";
+	return (int)$percent;
+}

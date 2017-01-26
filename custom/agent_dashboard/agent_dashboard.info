@@ -1,0 +1,11 @@
+name = "CB|ONE Agent Dashboard"
+description = "CB|ONE My Network Feature"
+core = "7.x"
+package = "CB|ONE My Network"
+
+files[] = agent_dashboard.module
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE My Network"
+datestamp = ""

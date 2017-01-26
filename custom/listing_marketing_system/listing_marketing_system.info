@@ -1,0 +1,21 @@
+name = "CB|ONE Listing Marketing System (LMS)"
+description = "CB|ONE Listing Marketing System (LMS) module. The LMS module for CB|One will provide real estate agents a complete suite of tools for marketing their listings on the web, in social media, and in print."
+core = "7.x"
+package = "CB|ONE LMS"
+configure = "admin/config/lms"
+
+;dependencies[] = text
+
+files[] = listing_marketing_system.module
+files[] = includes/views/lms_handler_field_marketing_concierge.inc
+files[] = includes/views/lms_handler_field_marketing_concierge_link.inc
+files[] = includes/views/lms_handler_field_listing_photos_count.inc
+files[] = includes/views/lms_handler_field_listing_videos_count.inc
+files[] = includes/views/lms_handler_field_web_listing_path.inc
+files[] = includes/views/lms_handler_field_listing_mc_status.inc
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE LMS"
+datestamp = ""
+

@@ -1,0 +1,159 @@
+<?php
+/**
+ * Implements hook_init()
+ */
+function buyer_init(){
+	global $base_url, $user;
+	drupal_add_css(drupal_get_path('module', 'buyer') . '/css/buyer.css');
+}
+/**
+ * Implementation of hook_menu()
+**/
+function buyer_menu() {
+	$items = array();
+	$items['my-buyers'] = array(
+		'title'	=>	'CB|ONE Buyers',
+		'description'	=>	'CB|ONE My Buyers',
+		'page callback'	=>	'buyers',
+		'access callback'	=>	TRUE,
+	);
+	$items['buyer/%/steps'] = array(
+		'title'	=>	'CB|ONE Buyers Steps',
+		'description'	=>	'CB|ONE My Buyers Steps',
+		'page callback'	=>	'buyers_steps',
+		'page arguments' 	=> array(1),
+		'file'				=> 'includes/buyers.inc',
+		'access callback'	=>	TRUE,
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	return $items;
+}
+
+/**
+ * Callback function buyers()
+ * to test node URL
+ **/
+function buyers(){
+	global $user, $base_url;
+	$form = drupal_get_form('new_buyer_title_form');
+	$output = drupal_render($form);
+	return $output;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function buyer_block_info() {
+	$blocks = array();
+	$blocks['step_by_step_buyer'] = array(
+		'info' => t('Buyer Step by Step'),
+	);
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function buyer_block_view($delta='') {
+	$block = array();
+	switch($delta) {	
+		case 'step_by_step_buyer' :
+			$block['content'] = cbone_buyer_step_by_step();
+		break;
+	}
+
+	return $block;
+}
+
+/**
+ * Implements hook_theme
+ **/
+function buyer_theme($existing, $type, $theme, $path) {
+	return array(
+		'buyer_step_by_step' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/buyer_step_by_step', // do not include .tpl.php
+		),
+		
+		
+	);
+      return $theme;
+}
+
+/**
+ * Callback function cbone_buyer_step_by_step()
+ * to displayed the Step By Step head
+ * @return $output
+ **/
+function cbone_buyer_step_by_step(){
+	$nid = arg(1);
+	global $user;
+	$output = '';
+	$query=db_select('node', 'n');
+	$query->innerJoin('field_data_field_step_by_step_type', 'fs', 'n.nid = fs.entity_id');
+	$query->fields('n', array('nid', 'title'))
+			->condition('n.type', 'step_by_step_section', '=')
+			->condition('fs.field_step_by_step_type_value', 'Buyer', '=');
+	$result=$query->execute()->fetchAll();
+	$buyer_sections=array();
+	foreach($result as $value){
+		$buyer_sections[]=$value->title;
+	}
+	$variables = array(
+		'buyer_nid' => $nid,
+		'buyer_sections' => $buyer_sections,
+	);
+	$output = theme('buyer_step_by_step', array('var_name' => $variables));
+	return $output;
+}
+
+/**
+ * Drupal form API
+ * to enter buyer title at my Buyer page
+ * @return $form
+ */
+function new_buyer_title_form($form, &$form_state) {
+	$form['from'] = array(
+		'#type' => 'item',
+		'#markup' => '<img src="/sites/all/modules/custom/listing_marketing_system/images/placeholder-arrow.jpg">',
+	);
+	$form['new_buyer_title'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Add New Buyer'),
+		'#size' => 80,
+		'#attributes' => array('placeholder' => t('Enter Buyer Title')),
+		'#required' => TRUE,
+	);
+	$form['actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Add'),
+		'#required' => TRUE,
+	);
+	return $form;
+}
+
+/**
+ * Drupal form API
+ * submit buyer form
+ */
+function new_buyer_title_form_submit($form, &$form_state) {
+	$path=drupal_get_destination();
+	$title = $form_state['values']['new_buyer_title'];
+	drupal_goto('node/add/client', array('query' => array('title' => $title, 'destination' =>$path['destination'] )));
+}
+
+/**
+ * Implements hook_form_alter()
+ */
+ 
+function buyer_form_alter(&$form, &$form_state, $form_id) {
+	global $user;
+	$user_detail = user_load($user->uid);
+	$roles = array_map('strtolower', $user->roles);	
+	if($form_id == 'client_node_form') {
+		if(isset($_GET['title'])){
+			$form['title']['#default_value'] = $_GET['title'];
+			$form['field_client_agent']['und'][0]['uid']['#default_value'] = $user->uid;
+		}
+	} 
+}

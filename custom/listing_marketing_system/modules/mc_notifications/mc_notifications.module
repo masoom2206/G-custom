@@ -1,0 +1,563 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function mc_notifications_menu() {
+  $items = array();
+  //Menu for admin to Update subscription mail template
+  $items['admin/config/marketing-concierge'] = array(
+    'title'				=> 'Marketing Concierge',
+    'description'		=> 'Marketing Concierge Notifications.',
+    'page callback'		=> 'system_admin_menu_block_page',
+    'access arguments'	=> array('access administration pages'),
+    'file'				=> 'system.admin.inc',
+    'file path'			=> drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/marketing-concierge/mc-notifications'] = array(
+    'title'				=> 'Notifications',
+    'description'		=> 'Notifications Message List.',
+	'weight'			=> 1,
+    'page callback'		=> 'notification_message_list',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/notification_message.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/marketing-concierge/mc-notifications/message'] = array(
+    'title' => 'Notifications Message List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/config/marketing-concierge/mc-notifications/add-message'] = array(
+    'title'				=> 'Add Notification Message',
+    'description'		=> 'Add Notification Message',
+	'weight'			=> 3,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('add_mc_notification_message_form'),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/notification_message.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  $items['admin/config/marketing-concierge/mc-notifications/message/delete/%'] = array(
+    'title'				=> 'Notification Message Delete',
+    'description'		=> 'Notification Message Delete.',
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('mc_notification_delete_confirm_form', 6),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/notification_message.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  $items['mcn/message-body/%'] = array(
+	'title'				=>	'MC Notification Message Body',
+	'description'		=>	'MC Notification Message Body',
+	'page callback'		=>	'mc_notification_message_body',
+	'page arguments'	=> array(2),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/notification_message.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  $items['mcn/message'] = array(
+	'title'				=>	'MC Notification Message',
+	'description'		=>	'MC Notification Message',
+	'page callback'		=>	'mc_notification_message',
+	'access callback'	=> TRUE,
+    'file'				=> 'includes/notification_message.inc',
+  );
+/*  $items['admin/config/mc-notifications/delete-message'] = array(
+    'title'				=> 'Add Notification Message',
+    'description'		=> 'Add Notification Message',
+	'weight'			=> 1,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('add_mc_notification_message'),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/notification_message.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );*/
+
+  /*$items['lms-listing/mcc-order-confirm'] = array(
+	'title'				=>	'MCC order confirm',
+	'description'		=>	'LMS Listing MCC order confirm',
+	'page callback'		=>	'mcc_listing_orders_confirm',
+	'access callback'	=> 'user_is_logged_in',
+  );*/
+ return $items;
+}
+/**
+ * Implements hook_theme
+ **/
+function mc_notifications_theme($existing, $type, $theme, $path) {
+	return array(
+		'header_image_preview' => array(
+			'render element' => 'element',
+		),
+		'notification_message' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/notification_message', // do not include .tpl.php
+		),
+	);
+    return $theme;
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function mc_notifications_token_info() {
+	$type = array(
+		'name' => t('Notifications Message'),
+		'description' => t('Tokens related MC Notifications Message.'),
+		'needs-data' => 'mc_notifications',
+	);
+
+	$mc_notifications['afname'] = array(
+		'name' => t('Agent first name'),
+		'description' => t('Agent first name'),
+	);
+	$mc_notifications['alname'] = array(
+		'name' => t('Agent Last name'),
+		'description' => t('Agent Last name'),
+	);
+	$mc_notifications['apname'] = array(
+		'name' => t('Agent Preferred name'),
+		'description' => t('Agent Preferred name'),
+	);
+	$mc_notifications['mcpname'] = array(
+		'name' => t('Marketing Coordinator Preferred name'),
+		'description' => t('Marketing Coordinator Preferred name'),
+	);
+	$mc_notifications['mcdphone'] = array(
+		'name' => t('Marketing Coordinator Direct Phone Number'),
+		'description' => t('Marketing Coordinator Direct Phone Number'),
+	);
+	$mc_notifications['mcemail'] = array(
+		'name' => t('Marketing Coordinator Email Address'),
+		'description' => t('Marketing Coordinator Email Address'),
+	);
+	$mc_notifications['lnid'] = array(
+		'name' => t('Listing NID'),
+		'description' => t('Listing NID'),
+	);
+	$mc_notifications['laddress'] = array(
+		'name' => t('Listing Address'),
+		'description' => t('Property Address of the referenced property for the order'),
+	);
+	$mc_notifications['loid'] = array(
+		'name' => t('Listing Order ID'),
+		'description' => t('Listing Order ID'),
+	);
+	$mc_notifications['lordertotal'] = array(
+		'name' => t('Listing Order Amount'),
+		'description' => t('Listing Order Amount Paid'),
+	);
+	$mc_notifications['loname'] = array(
+		'name' => t('Listing Order name'),
+		'description' => t('Listing Order package name, e.g. Premier, Platinum, Platinum Plus'),
+	);
+	$mc_notifications['order_note_to_mc'] = array(
+		'name' => t('Order Note To MC'),
+		'description' => t('Order note to Marketing Coordinator by user'),
+	);
+	$mc_notifications['pwplink'] = array(
+		'name' => t('Property Web Page link'),
+		'description' => t('Property Web Page link for the referenced listing (e.g. http://homecb.com/*)'),
+	);
+	$mc_notifications['approved_pdfthumb'] = array(
+		'name' => t('Thumbnails of Approved PDF'),
+		'description' => t('Thumbnails of approved PDF where taxonomy term for Marketing Concierge Commerce Order Status Like mc_status like "Proofs Approved", "Print Processing" and "Print Order Shipped". Thumbnails are found in the mc_pdf nodes.'),
+		//'description' => t('Thumbnails of PDF where taxonomy term for Marketing Concierge Commerce Order Status = "Proof Pending Approval". This will be a responsive grid that inserts the thumbnails for all of the PDFs for the Order ID. Thumbnails are found in the mc_pdf nodes.'),
+	);
+	$mc_notifications['pdf_type'] = array(
+		'name' => t('PDF Type'),
+		'description' => t('"Pro Brochure", "Just Listed Post Card", or "Just Sold Post card"'),
+	);
+	$mc_notifications['agentnote'] = array(
+		'name' => t('Agent note'),
+		'description' => t('The agent note by marketing coordinator.'),
+	);
+	//Print Vendor tokens
+	$mc_notifications['vendor_mc_orderid-mc_pdfnid'] = array(
+		'name' => t('Vendor MC-PDF Order ID'),
+		'description' => t('MC-PDF NID and Listing Order ID like "[mc_orderid]-[mc_pdf-nid]".'),
+	);
+	$mc_notifications['vendor_id'] = array(
+		'name' => t('Vendor ID'),
+		'description' => t('Print vendor ID.'),
+	);
+	$mc_notifications['vendor_auth'] = array(
+		'name' => t('Vendor auth'),
+		'description' => t('Print vendor secrect key.'),
+	);
+	$mc_notifications['vendor_order_id'] = array(
+		'name' => t('Vendor order ID'),
+		'description' => t('Print vendor order ID.'),
+	);
+	$mc_notifications['vendor_order_status'] = array(
+		'name' => t('Vendor order status'),
+		'description' => t('Print vendor order status.'),
+	);
+	$mc_notifications['vendor_message'] = array(
+		'name' => t('Vendor message'),
+		'description' => t('Print vendor message.'),
+	);
+	$mc_notifications['vendor_shipment'] = array(
+		'name' => t('Vendor shipment'),
+		'description' => t('Print vendor shipment tracking uri.'),
+	);
+	$mc_notifications['vendor_print_created'] = array(
+		'name' => t('Vendor Print created'),
+		'description' => t('Print order created date.'),
+	);
+	$mc_notifications['vendor_print_confirm'] = array(
+		'name' => t('Vendor Print confirm'),
+		'description' => t('Print order confirm by vendor date.'),
+	);
+	$mc_notifications['vendor_print_shipped'] = array(
+		'name' => t('Vendor Print shipped'),
+		'description' => t('Print order shipped by vendor date.'),
+	);
+	$mc_notifications['single_property_website'] = array(
+		'name' => t('Single Property Website'),
+		'description' => t('Single Property Website'),
+	);
+	$mc_notifications['print_and_go_flyer'] = array(
+		'name' => t('Print and Go flyer'),
+		'description' => t('Token will provide link to the selected "Print and Go" brochure in the P&G tool'),
+	);
+	$mc_notifications['print_and_go_pdf_url'] = array(
+		'name' => t('Print and Go PDF url'),
+		'description' => t('Token will be provide URL of the selected "Print and Go" brochure in the P&G tool'),
+	);
+	$mc_notifications['lms_youtube_video_link'] = array(
+		'name' => t('LMS YouTube Video link'),
+		'description' => t('LMS YouTube Video link'),
+	);
+	$mc_notifications['lms_email_link'] = array(
+		'name' => t('LMS Email link'),
+		'description' => t('LMS Email link'),
+	);
+	$mc_notifications['agent_primary_office'] = array(
+		'name' => t('Agent Primary Office'),
+		'description' => t('Agent Primary Office'),
+	);
+  $mc_notifications['paper_preference'] = array(
+		'name' => t('Paper Preference'),
+		'description' => t('Paper Preference'),
+	);
+  $mc_notifications['brochure_size'] = array(
+		'name' => t('Brochure Size'),
+		'description' => t('Brochure Size'),
+	);
+	return array(
+		'types' => array('mc_notifications' => $type),
+		'tokens' => array('mc_notifications' => $mc_notifications),
+	);
+}
+/**
+ * Callback function mc_status_notifications_mail()
+ * to send MC status notification
+ **/
+/*function mc_status_notifications_mail($uid, $order, $type){
+	if($type == 'primary_listing_agent') {
+		$agent_detail = user_load($uid);
+		//$mailto = isset($agent_detail->field_person_email['und']['0']['value']) ? $agent_detail->field_person_email['und']['0']['value'] : $agent_detail->mail;
+		$mailto = $agent_detail->mail;
+		$build = entity_view('commerce_order', array($order->order_id => $order), $view_mode = 'customer', NULL, TRUE);
+		$markup = drupal_render($build);
+		$subject = 'Order Confirmation';
+		$message = '"Thank You For Your Order" below<br/><br/>'.$markup;
+	}
+	else if($type == 'marketing_coordinator') {
+		$mailto = '';
+		if(is_array($uid)) {
+			foreach($uid as $user_uid) {
+				$coordinator_detail = user_load($user_uid);
+				//$mailto .= isset($coordinator_detail->field_person_email['und']['0']['value']) ? $coordinator_detail->field_person_email['und']['0']['value'] : $coordinator_detail->mail;
+				$mailto .= $coordinator_detail->mail.', ';
+			}
+		}
+		else {
+			$coordinator_detail = user_load($uid);
+			//$mailto = isset($coordinator_detail->field_person_email['und']['0']['value']) ? $coordinator_detail->field_person_email['und']['0']['value'] : $coordinator_detail->mail;
+			$mailto = $coordinator_detail->mail;
+		}
+		$build = entity_view('commerce_order', array($order->order_id => $order), $view_mode = 'customer', NULL, TRUE);
+		$markup = drupal_render($build);
+		$subject = 'New Order Information';
+		$message = '"Your have a new Order" below<br/><br/>'.$markup;
+	}
+	$header = "From: CB|One <support@cbone.me>\r\n";
+	$header .= "Reply-To: support@cbone.me\r\n";
+	$header .='MIME-Version: 1.0' . "\r\n";
+	$header .= 'Content-Type: text/html; charset=ISO-8859-1' . "\r\n";
+	mail($mailto, $subject, $message, $header);
+}*/
+/**
+ * Callback function header_image_preview()
+ * to theme the uploaded image at mc notification
+ * message add page
+ **/
+function theme_header_image_preview($variables) {
+	$element = $variables['element'];
+	$output = '<div class="form-item">';
+	if (isset($element['#file']->uri)) {
+		$output .= '<div class="managed-file-preview">';
+		//$output .= '<img src="' . image_style_url('my_listing_160x110', $element['#file']->uri) . '" />';
+		$output .= '<img height="210px" src="' . file_create_url($element['#file']->uri) . '" />';
+		$output .= '</div>';
+	}
+	$output .= theme_file_managed_file($variables);
+	$output .= "</div>";
+	return $output;
+}
+/**
+ * Callback function mc_notifications_token_replace()
+ * to replaced the mc token with real text
+ * @return $message
+ **/
+function mc_notifications_token_replace($message, $lnid) {
+	global $base_url;
+	if(is_numeric($lnid)) {
+		$listing_node = node_load($lnid);
+		//agent uid
+		$uid = isset($listing_node->field_lms_agent_uid['und']['0']['uid']) ? $listing_node->field_lms_agent_uid['und']['0']['uid'] : $listing_node->uid;
+		$agent_detail = user_load($uid);
+		//agent first name
+		$afname = isset($agent_detail->field_first_name['und']['0']['value']) ? $agent_detail->field_first_name['und']['0']['value'] : $agent_detail->name;
+		//agent last name
+		$alname = isset($agent_detail->field_last_name['und']['0']['value']) ? $agent_detail->field_last_name['und']['0']['value'] : $agent_detail->name;
+		//agent Preferred Name
+		$apname = isset($agent_detail->field_preferred_name['und']['0']['value']) ? $agent_detail->field_preferred_name['und']['0']['value'] : $agent_detail->name;
+		//marketing coordinator uid
+		$mcpname = '';
+		$mcdphone = '';
+		$mcemail = '';
+		if(isset($listing_node->field_lms_marketing_coordinator['und']['0']['uid'])) {
+			$mc_uid = $listing_node->field_lms_marketing_coordinator['und']['0']['uid'];
+			$mc_detail = user_load($mc_uid);
+			//marketing coordinator Preferred Name
+			$mcpname = isset($mc_detail->field_preferred_name['und']['0']['value']) ? $mc_detail->field_preferred_name['und']['0']['value'] : $mc_detail->name;
+			//marketing coordinator direct phone
+			$mcdphone = isset($mc_detail->field_phone_direct['und']['0']['value']) ? $mc_detail->field_phone_direct['und']['0']['value'] : '---';
+			//marketing coordinator email
+			$mcemail = isset($mc_detail->field_person_email['und']['0']['value']) ? $mc_detail->field_person_email['und']['0']['value'] : $mc_detail->mail;;
+		}
+		//listing address
+		$laddress = isset($listing_node->field_lms_listing_address['und']['0']['value']) ? $listing_node->field_lms_listing_address['und']['0']['value'] : '---';
+		$query = db_select('field_data_field_lms_listing_reference', 'lms')
+			->fields('lms', array('entity_id'))
+			->condition('field_lms_listing_reference_nid', $lnid, '=')
+			->condition('entity_type', 'commerce_order', '=')
+			->condition('bundle', 'commerce_order', '=');
+		$loid = $query->execute()->fetchField();
+		$order_detail = commerce_order_load($loid);
+		//listing order total
+		$wrapper = entity_metadata_wrapper('commerce_order', $order_detail);
+		// Order total. 
+		$order_total = $wrapper->commerce_order_total->value();
+		$amount = commerce_currency_amount_to_decimal($order_total['amount'], $order_total['currency_code']);
+		// Load the currency object.
+		$currency = commerce_currency_load($order_total['currency_code']);
+		$lordertotal = '$ '.number_format(commerce_currency_round($amount, $currency), $currency['decimals'], $currency['decimal_separator'], $currency['thousands_separator']);
+		//Order Note to MC
+		$order_note_to_mc = isset($order_detail->field_mc_order_note_to_mc['und']['0']['value']) ? $order_detail->field_mc_order_note_to_mc['und']['0']['value'] : '';
+		//Listing Order Name
+		$line_item = commerce_line_item_load($order_detail->commerce_line_items['und']['0']['line_item_id']);
+		$product_id = $line_item->commerce_product['und']['0']['product_id'];
+		$product = commerce_product_load($product_id);
+		$loname = $product->title;
+		//Property Web Page link
+		$urlAlias = db_query("SELECT alias FROM url_alias WHERE source = :source ORDER BY pid DESC LIMIT 0, 1", array(':source'=> "node/".$lnid))->fetchField();	
+		$pwplink = '<a href="http://www.homecb.com/'.$urlAlias.'" target="_blank">http://homecb.com/'.$urlAlias.'</a>';
+		//listing Video
+		$lms_video_nid = db_select("field_data_field_lms_listing_reference", 'lr');
+		$lms_video_nid->fields('lr', array('entity_id'));
+		$lms_video_nid->condition('lr.entity_type', 'node', 'LIKE');
+		$lms_video_nid->condition('lr.bundle', 'lms_video', 'LIKE');
+		$lms_video_nid->condition('lr.field_lms_listing_reference_nid', $lnid, '=');
+		$video_nid = $lms_video_nid->execute()->fetchField();
+		$listing_video = node_load($video_nid);
+		$youtube_url = '';
+		$active_url = isset($listing_video->field_active_video['und']['0']['value']) ? $listing_video->field_active_video['und']['0']['value'] : '';
+		$lms_youtube_video_link = '';
+		if($active_url == 'embed') {
+			$lms_youtube_link = isset($listing_video->field_lms_embed_video['und']['0']['uri']) ? file_create_url($listing_video->field_lms_embed_video['und']['0']['uri']).'': '';
+			$lms_youtube_video_link = '<a href="'.$lms_youtube_link.'" target="_blank">'.$lms_youtube_link.'</a>';
+		}
+		else if($active_url == 'create' || empty($active_url)) {
+			$lms_youtube_link = isset($listing_video->field_you_tube_url['und']['0']['value']) ? $listing_video->field_you_tube_url['und']['0']['value'] : '';
+			if(!empty($lms_youtube_link)) {
+				$lms_youtube_video_link = '<a href="'.$lms_youtube_link.'" target="_blank">'.$lms_youtube_link.'</a>';
+			}
+		}
+		//Query to get pdf brouchers, display document values
+		$print_and_go_flyer = '';
+		$query=db_select('cbone_website_settings', 'cws')
+		  ->fields('cws', array('print_and_go'))
+		  ->condition('nid', $lnid, '=');
+		$mcpdf= $query->execute()->fetchField();
+		
+		if(!empty($mcpdf)){
+			$query=db_select('field_data_field_template_reference', 'tr')
+				->fields('tr', array('field_template_reference_nid'))
+				->condition('tr.entity_id', $mcpdf, '=');
+			$pdf_design_id = $query->execute()->fetchField();
+			$print_and_go_flyer = '<a href="'.$base_url.'/download_pdf/'.$lnid.'/'.$pdf_design_id.'">Download Brochure</a>';
+		}
+		$print_and_go_pdf_url = '';
+		if(!empty($mcpdf)){
+			$mcpdf_detail = node_load($mcpdf);
+			if(isset($mcpdf_detail->field_generated_pdf['und']['0']['uri'])){
+				$uri = $mcpdf_detail->field_generated_pdf['und']['0']['uri'];
+				$print_and_go_pdf_url = file_create_url($uri);
+			}
+		}
+		$lms_email_link = $base_url.'/listing-email/'.$lnid;
+		$paper_preference = isset($order_detail->field_paper_preference) ? $order_detail->field_paper_preference['und'][0]['value'] : '';
+  $brochure_size = isset($order_detail->field_brochure_size) ? $order_detail->field_brochure_size['und'][0]['value'] : '';
+		$primary_agent_uid = isset($listing_node->field_lms_agent_uid['und']['0']['uid']) ? $listing_node->field_lms_agent_uid['und']['0']['uid'] : $listing_node->uid;
+		
+		$agent_primary_office = '';
+		$query=db_select('field_data_field_office_id', 'foid')->distinct();
+		$query->innerJoin('field_data_field_member_office', 'fmo', 'foid.field_office_id_value = fmo.field_member_office_value');
+		$query->fields('foid', array('entity_id'));
+		$query->condition('fmo.entity_id', $primary_agent_uid, '=');
+		$result= $query->execute()->fetchField();
+		
+		if(!empty($result)){
+			$office_node = node_load($result);
+			$agent_primary_office = $office_node->title;
+		}
+		$mc_notifications_tokens = array(
+			'/\[mc_notifications:afname\]/is',
+			'/\[mc_notifications:alname\]/is',
+			'/\[mc_notifications:apname\]/is',
+			'/\[mc_notifications:mcpname\]/is',
+			'/\[mc_notifications:mcdphone\]/is',
+			'/\[mc_notifications:mcemail\]/is',
+			'/\[mc_notifications:lnid\]/is',
+			'/\[mc_notifications:laddress\]/is',
+			'/\[mc_notifications:loid\]/is',
+			'/\[mc_notifications:lordertotal\]/is',
+			'/\[mc_notifications:order_note_to_mc\]/is',
+			'/\[mc_notifications:loname\]/is',
+			'/\[mc_notifications:pwplink\]/is',
+			'/\[mc_notifications:single_property_website\]/is',
+			'/\[mc_notifications:print_and_go_flyer\]/is',
+			'/\[mc_notifications:print_and_go_pdf_url\]/is',
+			'/\[mc_notifications:lms_youtube_video_link\]/is',
+			'/\[mc_notifications:lms_email_link\]/is',
+			'/\[mc_notifications:paper_preference\]/is',
+			'/\[mc_notifications:brochure_size\]/is',
+			'/\[mc_notifications:agent_primary_office\]/is',
+		);
+		$real_text = array(
+			$afname,
+			$alname,
+			$apname,
+			$mcpname,
+			$mcdphone,
+			$mcemail,
+			$lnid,
+			$laddress,
+			$loid,
+			$lordertotal,
+			$order_note_to_mc,
+			$loname,
+			$pwplink,
+			$pwplink,
+			$print_and_go_flyer,
+			$print_and_go_pdf_url,
+			$lms_youtube_video_link,
+			$lms_email_link,
+			$paper_preference,
+			$brochure_size,
+			$agent_primary_office,
+		);
+		$message = preg_replace($mc_notifications_tokens, $real_text, $message);
+	}
+	return $message;
+}
+
+/**
+ * Callback function mc_notifications_vendor_token_replace()
+ * to replaced the mc token with real text
+ * @return $message
+ **/
+function mc_notifications_vendor_token_replace($message, $lnid, $pnid, $pdf_section) {
+	if(is_numeric($lnid) && is_numeric($pnid)) {
+		$message = mc_notifications_token_replace($message, $lnid);
+		$query = db_select('field_data_field_lms_listing_reference', 'lms')
+			->fields('lms', array('entity_id'))
+			->condition('field_lms_listing_reference_nid', $lnid, '=')
+			->condition('entity_type', 'commerce_order', '=')
+			->condition('bundle', 'commerce_order', '=');
+		$loid = $query->execute()->fetchField();
+		$mc_orderid_mc_pdfnid = $loid.'-'.$pnid;
+		$query = db_select('cbone_listing_approve_pdf', 'lap')
+			->fields('lap')
+			->condition('lnid', $lnid, '=')
+			->condition('pnid', $pnid, '=')
+			->condition('pdf_section', $pdf_section, '=');
+		$vendor = $query->execute()->fetchObject();
+		$vendor_id = $vendor->vendor_id;
+		$vendor_print_confirm = $vendor->confirm;
+		$vendor_print_created = $vendor->created;
+		$vendor_print_shipped = $vendor->shipped;
+		$vendor_auth = $vendor->vendor_auth;
+		$vendor_message = $vendor->vendor_message;
+		$vendor_order_id = $vendor->vendor_order_id;
+		$vendor_order_status = $vendor->vendor_order_status;
+		$vendor_shipment = $vendor->shipment_tracking;
+		$approved_pdfthumb = '';
+		$pdf_type = '';
+		$mc_pdf_detail = node_load($pnid);
+		$config = array(
+			"style_name" => "pdf_thumbnail_-_120h",
+			"path" => $mc_pdf_detail->field_pdf_preview_image['und'][0]['uri'],
+			"height" => NULL,
+			"width" => NULL,
+		);
+		$approved_pdfthumb= theme_image_style($config);
+		if($pdf_section == 'pro-brochure') {
+			$pdf_type = 'Pro Brochure';
+		}
+		else if($pdf_section == 'post-card'){
+			if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'listed'){
+				$pdf_type = 'Just Listed Postcard';
+			}
+			else if(isset($mc_pdf_detail->field_postcard_type['und']['0']['value']) && $mc_pdf_detail->field_postcard_type['und']['0']['value'] == 'sold'){
+				$pdf_type = 'Just Sold Postcard';
+			}
+		}
+		
+		//replace array
+		$mc_notifications_tokens = array(
+			'/\[mc_notifications:vendor_id\]/is',
+			'/\[mc_notifications:vendor_mc_orderid-mc_pdfnid\]/is',
+			'/\[mc_notifications:vendor_print_confirm\]/is',
+			'/\[mc_notifications:vendor_print_created\]/is',
+			'/\[mc_notifications:vendor_print_shipped\]/is',
+			'/\[mc_notifications:vendor_auth\]/is',
+			'/\[mc_notifications:vendor_message\]/is',
+			'/\[mc_notifications:vendor_order_id\]/is',
+			'/\[mc_notifications:vendor_order_status\]/is',
+			'/\[mc_notifications:vendor_shipment\]/is',
+			'/\[mc_notifications:approved_pdfthumb\]/is',
+			'/\[mc_notifications:pdf_type\]/is',
+		);
+		$real_text = array(
+			$vendor_id,
+			$mc_orderid_mc_pdfnid,
+			$vendor_print_confirm,
+			$vendor_print_created,
+			$vendor_print_shipped,
+			$vendor_auth,
+			$vendor_message,
+			$vendor_order_id,
+			$vendor_order_status,
+			$vendor_shipment,
+			$approved_pdfthumb,
+			$pdf_type,
+		);
+		$message = preg_replace($mc_notifications_tokens, $real_text, $message);
+	}
+	return $message;
+}

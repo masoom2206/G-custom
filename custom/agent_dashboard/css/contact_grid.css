@@ -1,0 +1,36 @@
+/**
+ * Css File for Agent Dashboard.
+ **/
+
+.slider .user-picture > img {
+    border-radius: 50% !important;
+    display: -moz-grid !important;
+    height: 100px;
+    width: 100px !important;
+	margin: 0px auto;
+}
+.flex-control-nav {
+	display: none;
+}
+.flexslider.carousel ul li {
+    list-style: none !important;
+}
+.flex-nav-prev a {
+    font-size: 0;
+    overflow: visible !important;
+}
+.flex-nav-next a {
+    font-size: 0;
+    overflow: visible !important;
+}
+.slider .less_slides_list > li {
+    display: inline-block;
+    list-style: none;
+    padding: 0 6px;
+}
+
+.slider .less_slides {
+	display: table;
+    min-width: 200px;
+    margin: 0px auto;
+}

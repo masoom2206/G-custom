@@ -1,0 +1,1263 @@
+<?php
+/**
+ * Implements hook_init()
+ */
+function lms_dashboard_init(){
+	global $user, $base_url;
+	$roles = array("Office Assistant", "Manager", "Marketing Coordinator");
+	$roles_result = array_intersect($user->roles, $roles);	
+	
+	if(arg(0)=='office' || arg(1)=='dashboard' || arg(0)=='agents-info'){
+		drupal_add_css(drupal_get_path('module', 'lms_dashboard') . '/css/dashboard.css');
+	}
+	if(arg(0)=='node' && arg(1)=='510' && arg(2) != 'edit') {
+		if(in_array("Marketing Coordinator", $roles_result)) {
+			drupal_goto('lms/mc/dashboard');
+			//print "here";
+		}
+		if(in_array("Office Assistant", $roles_result) || in_array("Manager", $roles_result)) {
+			drupal_goto('office/dashboard');
+		}
+	}
+}
+/**
+* Implementation of hook_menu
+*/
+function lms_dashboard_menu() {
+  $items = array();
+  
+  //menu for Office Assistant or Manager Dashboard  
+  $items['office/dashboard'] = array(
+    'title'				=> 'Office Assistant or Manager Dashboard',
+    'description'		=> 'listings and Marketing Concierge orders for listings associated with their office.',
+    'page callback'		=> 'cbone_office_dashboard',
+	'access callback' 	=> 'dashboard_access',
+  );
+  $items['office/dashboard/%'] = array(
+    'title'				=> 'Office Assistant or Manager Dashboard',
+    'description'		=> 'listings and Marketing Concierge orders for listings associated with their office.',
+    'page callback'		=> 'cbone_office_dashboard',
+	'access callback' 	=> 'dashboard_access',
+  );
+  $items['active-orders'] = array(
+	'title'				=>	'Active Orders',
+	'description'		=>	'Listings of active orders',
+	'page callback'		=>	'listing_active_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['pending-orders'] = array(
+	'title'				=>	'Pending Orders',
+	'description'		=>	'Listings of pending orders',
+	'page callback'		=>	'listing_pending_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['completed-orders'] = array(
+	'title'				=>	'Completed Orders',
+	'description'		=>	'Listings of Completed orders',
+	'page callback'		=>	'listing_completed_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['new-orders'] = array(
+	'title'				=>	'New Orders',
+	'description'		=>	'Listings of New orders',
+	'page callback'		=>	'listing_new_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['agents-info/%'] = array(
+	'title'				=>	'Agents Info',
+	'description'		=>	'Agents Info',
+	'page callback'		=>	'agents_info',
+	'page arguments' 	=> array(1),
+	'access callback'	=> 	TRUE,
+  );
+ return $items;
+}
+
+/**
+* Implements hook_block_info().
+*/
+function lms_dashboard_block_info() {
+  $blocks = array();
+  $blocks['office-dashboard-menu'] = array(
+    'info' => t('Menu links for Office Dashboard'),
+  );
+  $blocks['office-dashboard-top-menu'] = array(
+    'info' => t('Top Menu links for Office Dashboard'),
+  );
+   $blocks['active-order'] = array(
+    'info' => t('Active Orders'),
+  );
+  $blocks['pending-order'] = array(
+    'info' => t('Pending Orders'),
+  );
+  $blocks['completed-order'] = array(
+    'info' => t('Completed Orders'),
+  );
+  $blocks['new-order'] = array(
+    'info' => t('New Orders'),
+  );
+  $blocks['recent-activity'] = array(
+    'info' => t('Recent Activity'),
+  );
+  $blocks['daily-quiz'] = array(
+    'info' => t('Daily Quiz'),
+  );
+  $blocks['my-agents'] = array(
+    'info' => t('My Agents'),
+  );
+  return $blocks;
+}
+/**
+* Implements hook_block_view().
+*/
+function lms_dashboard_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'office-dashboard-menu':
+      $block['subject'] = '';
+      $block['content'] = office_dashboard_menu();
+      break;
+	case 'office-dashboard-top-menu':
+      $block['subject'] = '';
+      $block['content'] = office_dashboard_top_menu();
+      break;
+	case 'active-order':
+      $block['subject'] = '';
+      $block['content'] = active_order();
+      break;
+	case 'pending-order':
+      $block['subject'] = '';
+      $block['content'] = pending_order();
+      break;
+	case 'completed-order':
+      $block['subject'] = '';
+      $block['content'] = completed_order();
+      break;
+	case 'new-order':
+      $block['subject'] = '';
+      $block['content'] = new_order();
+      break;
+	case 'recent-activity':
+      $block['subject'] = '';
+      $block['content'] = recent_activity();
+      break;
+	case 'daily-quiz':
+      $block['subject'] = '';
+      $block['content'] = daily_quiz();
+      break;
+	case 'my-agents':
+      $block['subject'] = '';
+      $block['content'] = my_agents();
+      break;
+  }
+  return $block;
+}
+
+
+/**
+ * Callback function dashboard_access()
+ * to set the access of Dashboard page
+ * "cbone_office_dashboard"
+ * @return TRUE/FALSE
+ **/
+function dashboard_access() {
+	global $user;
+	$roles = array("Office Assistant", "Manager", "Administrator");
+	//$roles_result = array_intersect($roles, $user->roles);
+	foreach ($roles as $role) {
+		if (in_array($role, $user->roles)) {
+		  return TRUE;
+		}
+	}
+	return FALSE; 
+}
+/**
+ * Callback function cbone_office_dashboard()
+ * to displayed the Dashboard page to view listing
+ * @return $output
+ **/
+function cbone_office_dashboard() {
+	global $user;
+	$output = '';
+	
+	$recent_block = module_invoke('lms_dashboard', 'block_view', 'recent-activity');
+	$recent_orders ='<div class="recent_orders dashboard_order"><h3 class="block-title">Recent Activity</h3>'. render($recent_block['content']). '</div>';
+	
+	$quiz_block = module_invoke('lms_dashboard', 'block_view', 'daily-quiz');
+	$daily_quiz ='<div class="daily_quiz dashboard_order"><h3 class="block-title">Daily Quiz</h3>'. render($quiz_block['content']). '</div>';
+	
+	$new_block = module_invoke('lms_dashboard', 'block_view', 'new-order');
+	$new_orders ='<div class="new_orders dashboard_order"><h3 class="block-title">New Orders</h3>'. render($new_block       ['content']). '</div>';
+	
+	$active_block = module_invoke('lms_dashboard', 'block_view', 'active-order');
+	$active_orders ='<div class="active_orders dashboard_order"><h3 class="block-title">Active Orders</h3>'. render($active_block['content']). '</div>';
+	
+	$pending_block = module_invoke('lms_dashboard', 'block_view', 'pending-order');
+	$pending_orders ='<div class="pending_orders dashboard_order"><h3 class="block-title">Pending Orders</h3>'. render($pending_block['content']). '</div>';
+	
+	$completed_block = module_invoke('lms_dashboard', 'block_view', 'completed-order');
+	$completed_orders ='<div class="completed_orders dashboard_order"><h3 class="block-title">Completed Orders</h3>'. render($completed_block['content']). '</div>';
+	
+	$output.='<div class="left_block_sections">'.$recent_orders.' '.$daily_quiz.'</div><div class="right_block_sections">'.$new_orders.' '.$active_orders.' '.$pending_orders.' '.$completed_orders.'</div>';
+	
+	return $output;
+}
+/*
+Function to get user picture
+*/
+
+function get_user_profile_picture($user){
+	if (!empty($account->picture)) {
+		if (is_numeric($account->picture)) {
+			$account->picture = file_load($account->picture);
+		}
+		if (!empty($account->picture->uri)) {
+			$filepath = $account->picture->uri;
+		}
+	}
+	elseif (variable_get('user_picture_default', '')) {
+		$filepath = variable_get('user_picture_default', '');
+	}
+	$build = array(
+	  '#theme' => 'user_picture',
+	  '#account' => $user,
+	);
+	//$picture = drupal_render($build);
+	$picture='<div class="user-picture">'.theme('image_style', array('path' => !empty($user->picture->uri) ? $user->picture->uri : variable_get('user_picture_default'), 'style_name' => 'thumbnail')).'</div>';
+	return $picture;
+}
+/*
+Function to get office group nid for users
+*/
+
+function get_office_group_nid() {
+	global $user, $base_url;
+	$office_nid='';
+	$office_nids='';
+	$roles = array("Office Assistant", "Manager", "Marketing Coordinator", "Administrator");
+	$roles_result = array_intersect($user->roles, $roles);	
+	if(in_array("Marketing Coordinator", $roles_result) || in_array("Administrator", $roles_result)) {
+		$office_nids = arg(3);
+	}
+	if(in_array("Office Assistant", $roles_result) || in_array("Manager", $roles_result) || in_array("Administrator", $roles_result)) {
+			$office_nids = arg(2);
+	}
+	
+	if(is_numeric($office_nids) && $office_nids!='' ){
+		$office_nid=$office_nids;
+	}
+	else{
+		$query=db_select('field_data_field_office_id', 'foid')->distinct();
+		$query->innerJoin('field_data_field_member_office', 'fmo', 'foid.field_office_id_value = fmo.field_member_office_value');
+		$query->fields('foid', array('entity_id', 'field_office_id_value'))
+			->fields('fmo', array('entity_id', 'field_member_office_value'));
+		$query->condition('fmo.entity_id', $user->uid, '=');
+		$result= $query->execute()->fetchAll();
+		if(!empty($result)){
+			foreach($result as $value){
+			$office_nid=$value->entity_id;			
+			}
+		}
+	}
+	return $office_nid;
+}
+function office_dashboard_menu() {
+	global $user;
+	$users= user_load($user->uid);
+	$picture=get_user_profile_picture($users);
+	$output='<div class="office_dashboard_menu_links">';
+	$output.='<div class="user_info"><div class="picture"><span>'.$picture.'</span></div><div class="title"><span><h4>'.$user->name.'</h4></span></div></div>';
+	$output.='</div>';
+	return $output;
+}
+
+function office_dashboard_top_menu() {
+global $user, $base_url;
+$roles = array("Office Assistant", "Manager", "Marketing Coordinator", "Administrator");
+$roles_result = array_intersect($user->roles, $roles);	
+$nid = get_office_group_nid();
+	if(in_array("Office Assistant", $roles_result) || in_array("Manager", $roles_result) || in_array("Administrator", $roles_result)) {
+			drupal_add_js('jQuery(document).ready(function () {
+							jQuery(".office_dashboard_group_title .form-select").change( function() {
+							  var id = jQuery(this).val();
+							  location.href = Drupal.settings.basePath + "office/dashboard/"+id;
+						   });
+						  });', 'inline');
+	}
+	if(in_array("Marketing Coordinator", $roles_result) || in_array("Administrator", $roles_result)) {
+		/*drupal_add_js('jQuery(document).ready(function () {
+							jQuery(".office_dashboard_group_title .form-select").change( function() {
+							  var id = jQuery(this).val();
+							  location.href = Drupal.settings.basePath + "lms/mc/dashboard/"+id;
+						   });
+						  });', 'inline');*/
+		
+	}
+	$user_info=user_load($user->uid);
+	$titles=array();	
+	$title_list = '';
+	
+	$output='<div class="office_dashboard_top_menu_links">';
+	$output.='	<ul>
+					<li><a href="#" class="links">Notifications</a></li>
+					<li><a href="#" class="links">Messages</a></li>
+					<li><a href="'.$base_url.'/user/logout" class="links">Log Out</a></li>
+				</ul>';
+	
+	
+	if(arg(0) == 'office' && (in_array("Office Assistant", $roles_result) || in_array("Manager", $roles_result) || in_array("Administrator", $roles_result))) {
+		if(isset($user_info->og_user_node['und']) && !empty($user_info->og_user_node['und'])){
+			foreach($user_info->og_user_node['und'] as $value){
+				$user_gid=$value['target_id'];
+				$node=node_load($user_gid);
+				if($node->type=='office_group'){
+					$titles[$node->nid]=$node->title;
+				}
+				
+			}
+		}
+			$render_array = array(
+				'#theme' => 'select',
+				'#options' => $titles,
+				'#value'=>$nid,
+			);
+		$title_list=drupal_render($render_array);
+		$output.='<div class="office_dashboard_group_title">'.$title_list.'</div>';
+	}
+	if((arg(0) == 'lms' && arg(1) == 'mc') && (in_array("Marketing Coordinator", $roles_result) || in_array("Administrator", $roles_result)))
+	{
+		$title_list= "Marketing Concierge";
+		$output.='<div class="office_dashboard_group_title_name">'.$title_list.'</div>';
+	}
+	$output.='</div>';
+	return $output;
+}
+
+function active_order(){
+	global $user, $base_url;
+	$output='';
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('n.uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->condition('fmc.field_mc_status_ref_tid', 212, '=');
+	$query->range(0,5);
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$more_link=  $base_url.'/active-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No record found for active orders';
+	}
+	return $output;
+}
+function pending_order(){
+	global $user, $base_url;
+	$output='';
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('n.uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->condition('fmc.field_mc_status_ref_tid', 211, '=');
+	$query->range(0,5);
+	$result= $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$more_link=  $base_url.'/pending-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No record found for pending orders';
+	}
+	return $output;	
+}
+
+function completed_order(){
+	global $user, $base_url;
+	$output='';
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('n.uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->condition('fmc.field_mc_status_ref_tid', 215, '=');
+	$query->range(0,5);
+	$result=  $query->execute()->fetchAll();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$more_link=  $base_url.'/completed-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No record found for completed orders';
+	}
+	return $output;
+}
+function lms_dashboard_block_view_alter(&$data, $block) {
+  switch ($block->delta) {
+    case 'dashboard_links':
+	if(is_numeric(arg(2)) ){
+		$nid=arg(2);
+		$link = 'office/dashboard/'.$nid;
+	}
+	else{
+		$nid='';
+		$link = 'office/dashboard';
+	}
+	$data['content']['#attached']['js'][2]['data']['quicktabs']['qt_dashboard_links']['tabs'][0]['ajax_path']= 'office%2Fdashboard%2F'.$nid;
+	$data['content']['#attached']['js'][2]['data']['quicktabs']['qt_dashboard_links']['tabs'][0]['actual_path']= $link;
+  }
+}
+
+/*
+function to create new order block on dashboard
+*/
+function new_order(){
+global $user, $base_url;
+	$output='';
+	$office_nid = get_office_group_nid();
+	$users=array($user->uid);
+	
+	if( isset($office_nid) && $office_nid!='' ){
+		$users= get_user_lists($office_nid);
+	}
+	if( isset($users) && !empty($users) ){
+		$user_list=array_unique($users);
+		foreach($user_list as $user_value){
+			$node_list = office_group_nids($user_value);
+			$output.=$node_list;
+		}
+		$more_link=  $base_url.'/new-orders';
+		$output.='<div class="more_links">'.l('More', $more_link).'</div>';
+	}
+	else{
+		$output.='No data found';
+	}
+	return $output;
+	
+}
+function recent_activity() {
+global $user, $base_url;
+	$output='';
+	$office_nid = '';
+	$roles = array("Office Assistant", "Manager", "Marketing Coordinator", "Administrator");
+	$roles_result = array_intersect($user->roles, $roles);	
+	
+	$office_nid = get_office_group_nid();
+	// isset nid of office group content type
+	if($office_nid != '' && isset($office_nid)) {
+		$agents_sql = "SELECT distinct(u.uid), 											field_data_field_preferred_name.field_preferred_name_value, fm.timestamp
+		FROM og_membership g, users_roles r, users u 
+		LEFT JOIN field_data_field_preferred_name ON u.uid=field_data_field_preferred_name.entity_id
+		LEFT JOIN  file_managed fm ON u.uid = fm.uid
+		WHERE g.etid=u.uid AND u.uid=r.uid AND r.rid=4 AND fm.uid = g.etid AND g.gid= :get_gid";
+		$agents_query = db_query($agents_sql, array(':get_gid' => $office_nid));
+		$agents_results = $agents_query->fetchAll();
+		$agent_result=array();
+		$result = array();
+		foreach($agents_results as $value){
+			$agent_result[$value->timestamp]=$value->uid;
+		}
+		//Sql for getting recent update of basic task.
+		$basic_sql =  "SELECT DISTINCT(flg.uid), flg.entity_id, flg.timestamp       
+				FROM og_membership g, users_roles r, users u, flagging flg
+				where flg.uid = u.uid and g.gid = :get_gid and g.etid = flg.uid and g.etid = u.uid";
+		$basic_query = db_query($basic_sql, array(':get_gid' => $office_nid));
+		$basic_results = $basic_query->fetchAll();
+		$basic_result = array();
+		foreach($basic_results as $results) {
+			$basic_result[$results->timestamp] = $results->uid.','.$results->entity_id;
+		}
+		$result = $agent_result + $basic_result;
+		$result_reverse = array_reverse($result, true);
+		$result_slice = array_slice($result_reverse,0,5,true);
+		
+		$agents = $result_slice;
+	
+		if(!empty($agents)) {
+				foreach($agents as $agent) {
+					$getvalue = explode(",", $agent);
+					$uid = $getvalue[0];
+					if(!empty($getvalue[1]) && $getvalue[1] !='') {
+						$nid = $getvalue[1];
+					}
+					$load = isset($nid) ? node_load($nid) : '';
+					
+					$agent_load = user_load($uid);
+					$picture=get_user_profile_picture($agent_load);
+					
+					$output.= '<div class="recent_activity_user_info">'.$picture.'<span class="user_name">';
+					$output.= isset($agent_load->field_preferred_name['und'][0]['value']) ? $agent_load->field_preferred_name['und'][0]['value'] : '';
+					$output.= '</spn></div><div class="recent_activity_listing_info">';
+					$output.= isset($load->title) ? '&nbsp;Completed a task in '.$load->title : 'Updated profile picture';
+					$output.= '</div>';
+				}	
+		}
+		else {
+			$output.= "Not result found";
+		}
+	}
+	else{
+		$output.= "Not result found";
+	}
+	
+	return $output;
+}
+
+function daily_quiz() {
+	global $user, $base_url;
+	$output = '';
+	$office_nid = '';
+	$roles = array("Office Assistant", "Manager", "Marketing Coordinator", "Administrator");
+	$roles_result = array_intersect($user->roles, $roles);	
+	$office_nid = get_office_group_nid();
+	
+	// isset nid of office group content type
+	if($office_nid != '' && isset($office_nid)) {
+		// Sql for listing of most 5 recent agents that have earned badge levels or completed the Daily Quiz.
+		$quiz_sql = "select ut.uid, ut.last_level, ut.question_count 
+					from dailyquiz_user_last ut, og_membership g,  users_roles ur,users u, role r 
+					where u.uid = ut.uid and u.uid = ur.uid and g.etid=ut.uid and ur.rid = r.rid and r.name='Agent' and g.gid = :get_gid order by timestamp desc limit 0, 5";
+		$quiz_query = db_query($quiz_sql , array(':get_gid' => $office_nid));
+		$quiz_results = $quiz_query->fetchAll();
+		
+		if(!empty($quiz_results)) {
+			foreach($quiz_results as $results) {
+				$user_load = user_load($results->uid);
+				$picture=get_user_profile_picture($user_load);
+				$last_level_tid = $results->last_level;
+				$last_level = taxonomy_term_load($last_level_tid);
+				$question_count = $results->question_count;
+				if($question_count < 5) {
+					$msg = "Completed today's quiz";
+				}
+				if($question_count == 5) {
+					$msg = "Earned the ".$last_level->name;
+				}
+				
+				$output.= '<div class="daily_quiz_user_info">'.$picture.'<span class="user_name">';
+				$output .= isset($user_load->field_preferred_name['und'][0]['value']) ? $user_load->field_preferred_name['und'][0]['value'] : '';
+				$output.= '</span></div><div class="daily_quiz_listing_info">';
+				$output .= $msg;
+				$output.= '</div>';
+			}
+		}
+		else {
+			$output .= "Not result found";
+		}
+	}
+	if($office_nid == '') {
+		$output .= "Not result found";
+	}
+	return $output;
+}
+
+/*
+Function to get list of user on the basis of office group nid
+*/
+function get_user_lists($nid){
+global $user, $base_url;
+	$agents_sql = "SELECT distinct(u.uid), field_data_field_preferred_name.field_preferred_name_value, fm.timestamp
+	FROM og_membership g, users_roles r, users u 
+	LEFT JOIN field_data_field_preferred_name ON u.uid=field_data_field_preferred_name.entity_id
+	LEFT JOIN  file_managed fm ON u.uid = fm.uid
+	WHERE g.etid=u.uid AND u.uid=r.uid AND r.rid=4 AND fm.uid = g.etid AND g.gid= :get_gid limit 0, 5";
+	$agents_query = db_query($agents_sql, array(':get_gid' => $nid));
+	$agents_results = $agents_query->fetchAll();
+	$agent_result=array();
+	foreach($agents_results as $value){
+		$agent_result[]=$value->uid;
+	}
+	return $agent_result;
+}
+
+/*
+Function to get listing node nids on the basis of uid who created and made order.
+*/
+function office_group_nids($uid){
+	global $user, $base_url;
+	$output='';
+	$output.='<div class="listings">';
+		$users=user_load($uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+		$output.='</div>';
+		$query=db_select('node', 'n')->distinct();
+		$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+		$query->fields('n', array('nid', 'title'));
+		$query->fields('lr', array('entity_id'));
+		$query->condition('n.uid', $uid, '=');
+		$query->condition('n.type', 'lms_listing', '=');
+		$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+		$query->range(0,5);
+		$result= $query->execute();
+		$all_nids=array();
+			foreach($result as $value){
+				$all_nids[]=array('nid'=>$value->nid, 'order_id'=>$value->entity_id);
+			}
+		if(!empty($all_nids)){
+			$output.='<div class="user_listings"><ul>';
+			foreach($all_nids as $allvalue){
+				$order = commerce_order_load($allvalue['order_id']);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				$node=node_load($allvalue['nid']);
+				$links= $base_url.'/manage-listing/'.$node->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($node->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		}
+		$output.='</ul></div>';
+		
+		}
+		else{
+			$output.='No record found for new orders for this user';
+		}
+		$output.='</div>';
+		return $output;
+}
+
+/**
+ * Callback function listing_active_orders()
+ * to displayed the page of active orders
+ * @return $output
+ **/
+function listing_active_orders() {
+	global $user, $base_url;
+	$office_nid='';
+	$output='<div class="active_orders dashboard_order"><h3 class="block-title">Active Orders</h3>';
+	$office_nid = get_office_group_nid();
+	$users=array($user->uid);
+	if( isset($office_nid) && $office_nid!='' ){
+		$users= get_user_all_lists($office_nid);
+	}
+	if( isset($users) && !empty($users) ){
+		$user_list=array_unique($users);
+		foreach($user_list as $user_value){
+			$node_list = office_group_all_active_order_nids($user_value);
+			$output.=$node_list;
+		}
+	}
+	else{
+		$output.='No data found';
+	}
+	$output.='</div>';
+	return $output;
+	
+}
+
+/**
+ * Callback function listing_pending_orders()
+ * to displayed the page of active orders
+ * @return $output
+ **/
+function listing_pending_orders() {
+	global $user, $base_url;
+	$office_nid='';
+	$output='<div class="pending_orders dashboard_order"><h3 class="block-title">Pending Orders</h3>';
+	$office_nid = get_office_group_nid();
+	$users=array($user->uid);
+	if( isset($office_nid) && $office_nid!='' ){
+		$users= get_user_all_lists($office_nid);
+	}
+	if( isset($users) && !empty($users) ){
+		$user_list=array_unique($users);
+		foreach($user_list as $user_value){
+			$node_list = office_group_all_pending_order_nids($user_value);
+			$output.=$node_list;
+		}
+	}
+	else{
+		$output.='No data found';
+	}
+	$output.='</div>';
+	return $output;
+}
+
+/**
+ * Callback function listing_completed_orders()
+ * to displayed the page of active orders
+ * @return $output
+ **/
+function listing_completed_orders() {
+	global $user, $base_url;
+	$office_nid='';
+	$output='<div class="completed_orders dashboard_order"><h3 class="block-title">Completed Orders</h3>';
+	$office_nid = get_office_group_nid();
+	$users=array($user->uid);
+	if( isset($office_nid) && $office_nid!='' ){
+		$users= get_user_all_lists($office_nid);
+	}
+	if( isset($users) && !empty($users) ){
+		$user_list=array_unique($users);
+		foreach($user_list as $user_value){
+			$node_list = office_group_all_completed_order_nids($user_value);
+			$output.=$node_list;
+		}
+	}
+	else{
+		$output.='No data found';
+	}
+	$output.='</div>';
+	return $output;
+}
+/**
+ * Callback function my_agents()
+ * to displayed the list of Agents
+ * @return $output
+ **/
+function my_agents() {
+	global $user, $base_url;
+	$output='';
+	$office_nid = '';
+	
+	$office_nid = get_office_group_nid();
+	
+	if($office_nid != '' && isset($office_nid)) {
+		//Sql for My Agents Section
+		$user_ids=array();
+		$querys= db_select('og_membership', 'om');
+		$querys->innerJoin('users_roles', 'ur', 'om.etid = ur.uid');
+		$querys->leftJoin('field_data_field_last_name', 'ln', 'om.etid = ln.entity_id');
+		$querys->leftJoin('field_data_field_first_name', 'fn', 'om.etid = fn.entity_id');
+		$querys->leftJoin('field_data_field_preferred_name', 'pn', 'om.etid = pn.entity_id');
+		$querys->fields('om', array('etid'))
+				->condition('om.gid', $office_nid, '=')
+				->condition('om.group_type', 'node', '=')
+				->condition('om.entity_type', 'user', '=')
+				->condition('ur.rid', 14, '=')
+				->orderby('ln.field_last_name_value', 'ASC')
+				->orderby('fn.field_first_name_value', 'ASC')
+				->orderby('pn.field_preferred_name_value', 'ASC');
+		$results= $querys->execute()->fetchAll();
+		if (!empty($results)) {
+			foreach($results as $values){
+				$user_ids[]=$values->etid;
+			}
+		}
+		if(!empty($user_ids)) {
+		
+			foreach($user_ids as $results) {
+						
+				$user_load = user_load($results);
+				$output.='<a rel="modal-node-popup" href="/agents-info/'.$user_load->uid.'"><div class="user_profiles">';
+		
+				$picture=theme('image_style', array('path' => !empty($user_load->picture->uri) ? $user_load->picture->uri : variable_get('user_picture_default'), 'style_name' => 'thumbnail'));
+				
+				$output.='<div class="user_pics">'.$picture.'</div>';
+				
+				if(!empty($user_load->field_preferred_name)){
+					$output.='<div class="user_datas name">'.$user_load->field_preferred_name['und'][0]['value'].'</div>';
+				}
+				if(!empty($user_load->field_phone_direct)){
+					$output.='<div class="user_datas phone">'.$user_load->field_phone_direct['und'][0]['value'].'</div>';
+				}
+				if(!empty($user_load->field_person_email)){
+					$output.='<div class="user_datas email">'.$user_load->field_person_email['und'][0]['value'].'</div>';
+				}
+				$output.='</div></a>';	
+			}
+		}
+		else {
+			$output .= "No agent is assigned to office group";
+		}
+	}
+	else {
+		$output .= "No agent is assigned to office group";
+	}
+	return $output;
+}
+/**
+ * Callback function agents_info()
+ * to displayed the Agents Information
+ * @return $output
+ **/
+function agents_info($user_id){
+	global $user, $base_url;
+	$output='';
+	$user_load = user_load($user_id);
+	$daily_sql = "SELECT qut.question_count FROM dailyquiz_user_last as qut where qut.uid = :agents";
+	$daily_query = db_query($daily_sql, array(':agents' => $user_load->uid));
+	$daily_result = $daily_query->fetchField();
+	$percent = ($daily_result/50) * 100;
+	$percent_value = $percent.'%';
+	
+	$picture=theme('image_style', array('path' => !empty($user_load->picture->uri) ? $user_load->picture->uri : variable_get('user_picture_default'), 'style_name' => 'thumbnail'));	
+	
+	$output.='<div><div class="user_details"><div class="user_pics">'.$picture.'</div>';
+	if(!empty($user_load->field_preferred_name)){
+		$output.='<div class="user_popup_datas name">'.$user_load->field_preferred_name['und'][0]['value'].'</div>';
+	}
+	if(!empty($user_load->field_phone_direct)){
+		$output.='<div class="user_popup_datas phone">'.$user_load->field_phone_direct['und'][0]['value'].'</div>';
+	}
+	if(!empty($user_load->field_person_email)){
+		$output.='<div class="user_popup_datas email">'.$user_load->field_person_email['und'][0]['value'].'</div>';
+	}
+	$output.= '</div><div class="percent_meteres"><div id="progress" class="graph"><div id="bar" style="width:'.$percent_value.'"><p>'.$percent_value.' complete</p></div></div>';
+	$output.= '<div id="daily-quiz"><span>Daily Quiz</span></div>';
+
+	$basic =  user_percent_basic_meter($user_load->uid);
+	$output.= $basic;
+	$output.='</div>';
+	$output.='</div>';
+	return $output;
+}
+/**
+ * Callback function listing_new_orders()
+ * to displayed the page of New orders
+ * @return $output
+ **/
+ 
+function listing_new_orders() {
+	global $user, $base_url;
+	$office_nid='';
+	$output='<div class="new_orders dashboard_order"><h3 class="block-title">New Orders</h3>';
+	$office_nid = get_office_group_nid();
+	$users=array($user->uid);
+	if( isset($office_nid) && $office_nid!='' ){
+		$users= get_user_all_lists($office_nid);
+	}
+	if( isset($users) && !empty($users) ){
+		$user_list=array_unique($users);
+		foreach($user_list as $user_value){
+			$node_list = office_group_all_nids($user_value);
+			$output.=$node_list;
+		}
+	}
+	else{
+		$output.='No data found';
+	}
+	$output.='</div>';
+	return $output;
+}
+/*
+Function to get list of user on the basis of office group nid
+*/
+function get_user_all_lists($nid){
+global $user, $base_url;
+	$agents_sql = "SELECT distinct(u.uid), field_data_field_preferred_name.field_preferred_name_value, fm.timestamp
+	FROM og_membership g, users_roles r, users u 
+	LEFT JOIN field_data_field_preferred_name ON u.uid=field_data_field_preferred_name.entity_id
+	LEFT JOIN  file_managed fm ON u.uid = fm.uid
+	WHERE g.etid=u.uid AND u.uid=r.uid AND r.rid=4 AND fm.uid = g.etid AND g.gid= :get_gid";
+	$agents_query = db_query($agents_sql, array(':get_gid' => $nid));
+	$agents_results = $agents_query->fetchAll();
+	$agent_result=array();
+	foreach($agents_results as $value){
+		$agent_result[]=$value->uid;
+	}
+	return $agent_result;
+}
+
+/*
+Function to get listing node nids on the basis of uid who created and made order.
+*/
+function office_group_all_nids($uid){
+	global $user, $base_url;
+	$output='';
+	$output.='<div class="listings">';
+		$users=user_load($uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+		$output.='</div>';
+		$query=db_select('node', 'n')->distinct();
+		$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+		$query->fields('n', array('nid', 'title'));
+		$query->fields('lr', array('entity_id'));
+		$query->condition('n.uid', $uid, '=');
+		$query->condition('n.type', 'lms_listing', '=');
+		$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+		$result= $query->execute();
+		$all_nids=array();
+			foreach($result as $value){
+				$all_nids[]=array('nid'=>$value->nid, 'order_id'=>$value->entity_id);
+			}
+		if(!empty($all_nids)){
+			$output.='<div class="user_listings"><ul>';
+			foreach($all_nids as $allvalue){
+				$order = commerce_order_load($allvalue['order_id']);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				$node=node_load($allvalue['nid']);
+				$links= $base_url.'/manage-listing/'.$node->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($node->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		}
+		$output.='</ul></div>';
+		
+		}
+		else{
+			$output.='No record found for new orders for this user';
+		}
+		$output.='</div>';
+		return $output;
+}
+/*
+Function to get listing node nids on the basis of uid who created and made order.
+*/
+function office_group_all_completed_order_nids($uid){
+	global $user, $base_url;
+	$output='';
+	$output.='<div class="listings">';
+		$users=user_load($uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+		$output.='</div>';
+		
+		$query=db_select('node', 'n')->distinct();
+		$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+		$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+		$query->fields('n', array('nid', 'title'));
+		$query->fields('lr', array('entity_id'));
+		$query->condition('n.uid', $uid, '=');
+		$query->condition('n.type', 'lms_listing', '=');
+		$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+		$query->condition('fmc.field_mc_status_ref_tid', 215, '=');
+		$result= $query->execute();
+		$all_nids=array();
+			foreach($result as $value){
+				$all_nids[]=array('nid'=>$value->nid, 'order_id'=>$value->entity_id);
+			}
+		if(!empty($all_nids)){
+			$output.='<div class="user_listings"><ul>';
+			foreach($all_nids as $allvalue){
+				$order = commerce_order_load($allvalue['order_id']);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				$node=node_load($allvalue['nid']);
+				$links= $base_url.'/manage-listing/'.$node->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($node->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		}
+		$output.='</ul></div>';
+		
+		}
+		else{
+			$output.='No record found for new orders for this user';
+		}
+		$output.='</div>';
+		return $output;
+}
+
+/*
+Function to get listing node nids on the basis of uid who created and made order for status pending.
+*/
+function office_group_all_pending_order_nids($uid){
+	global $user, $base_url;
+	$output='';
+	$output.='<div class="listings">';
+		$users=user_load($uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+		$output.='</div>';
+		
+		$query=db_select('node', 'n')->distinct();
+		$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+		$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+		$query->fields('n', array('nid', 'title'));
+		$query->fields('lr', array('entity_id'));
+		$query->condition('n.uid', $uid, '=');
+		$query->condition('n.type', 'lms_listing', '=');
+		$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+		$query->condition('fmc.field_mc_status_ref_tid', 211, '=');
+		$result= $query->execute()->fetchAll();
+		$all_nids=array();
+			foreach($result as $value){
+				$all_nids[]=array('nid'=>$value->nid, 'order_id'=>$value->entity_id);
+			}
+		if(!empty($all_nids)){
+			$output.='<div class="user_listings"><ul>';
+			foreach($all_nids as $allvalue){
+				$order = commerce_order_load($allvalue['order_id']);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				$node=node_load($allvalue['nid']);
+				$links= $base_url.'/manage-listing/'.$node->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($node->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		}
+		$output.='</ul></div>';
+		
+		}
+		else{
+			$output.='No record found for new orders for this user';
+		}
+		$output.='</div>';
+		return $output;
+}
+/*
+Function to get listing node nids on the basis of uid who created and made order for status active.
+*/
+function office_group_all_active_order_nids($uid){
+	global $user, $base_url;
+	$output='';
+	$output.='<div class="listings">';
+		$users=user_load($uid);
+		$output.='<div class="user_pro">';
+		
+		$picture=get_user_profile_picture($users);
+		$output.='<div class="user_pic">'.$picture.'</div>';
+		
+		if(!empty($users->field_preferred_name)){
+			$output.='<div class="user_data name">'.$users->field_preferred_name['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_phone_direct)){
+			$output.='<div class="user_data phone">'.$users->field_phone_direct['und'][0]['value'].'</div>';
+		}
+		if(!empty($users->field_person_email)){
+			$output.='<div class="user_data email">'.$users->field_person_email['und'][0]['value'].'</div>';
+		}
+		$output.='</div>';
+		
+		$query=db_select('node', 'n')->distinct();
+		$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+		$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+		$query->fields('n', array('nid', 'title'));
+		$query->fields('lr', array('entity_id'));
+		$query->condition('n.uid', $uid, '=');
+		$query->condition('n.type', 'lms_listing', '=');
+		$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+		$query->condition('fmc.field_mc_status_ref_tid', 212, '=');
+		$result= $query->execute()->fetchAll();
+		$all_nids=array();
+			foreach($result as $value){
+				$all_nids[]=array('nid'=>$value->nid, 'order_id'=>$value->entity_id);
+			}
+		if(!empty($all_nids)){
+			$output.='<div class="user_listings"><ul>';
+			foreach($all_nids as $allvalue){
+				$order = commerce_order_load($allvalue['order_id']);
+				$line_item_id=$order->commerce_line_items['und'][0]['line_item_id'];
+							
+				$order_id = db_select("field_data_commerce_product", 'cp');
+				$order_id->fields('cp', array('commerce_product_product_id'));
+				$order_id->condition('cp.entity_id', $line_item_id, '=');
+				$result = $order_id->execute()->fetchField();
+				$product_icon='';
+				if($result==1){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-premier.png" height="50" width="50"></span>';
+				}
+				else if($result==3){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum.png" height="50" width="50"></span>';
+				}
+				else if($result==4){
+					$product_icon= '<span class="product_icon"><img src="'.$base_url.'/sites/all/modules/custom/listing_marketing_system/images/mc-platinum-plus.png" height="50" width="50"></span>';
+				}
+				$node=node_load($allvalue['nid']);
+				$links= $base_url.'/manage-listing/'.$node->nid;
+			$output.='<li><div class="node_lists">'.$product_icon.' '.l($node->title, $links).'<a href="'.$links.'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div><div class="icon"></div></li>';
+		}
+		$output.='</ul></div>';
+		
+		}
+		else{
+			$output.='No record found for new orders for this user';
+		}
+		$output.='</div>';
+		return $output;
+}
+/**
+ * Callback function user_percent_meter
+ * to generate percent meter.
+ **/
+
+function user_percent_basic_meter($uid){
+	$section_meter = '';
+	$total_percent = 0;
+	$total_count = 0;
+	$total_percent_meter = '';
+	$total_percent_display = "0%";
+	$total_percent_display_width = "0%";
+	$percent = "0%";
+	$percent_width = "3%";
+	$output = '';
+	//fetch data from percent_complete table
+	$query = db_select("percent_complete", "pc");
+	$query->join('percent_tracking', 'pt', 'pt.pcid = pc.pcid');		
+	$query->condition("pt.tracking_status", '1', '=');
+	$query->condition("pc.parent_entity_id", '0', '<>');
+	$query->fields("pc");
+	$result = $query->execute();
+	while($data = $result->fetchObject()){
+		$query1 = db_select("percent_complete_child", "pcc");
+		$query1->fields("pcc", array('child_entity_id'));
+		$query1->condition("pcc.pcid", $data->pcid, '=');
+		$result1 = $query1->execute();
+		$x = 0; $y = 0;
+		foreach($result1 as $child_entity_ids) {
+			$entity_id = $child_entity_ids->child_entity_id;
+			//$user_flags = flag_get_user_flags('node', $entity_id, $uid);
+			$user_flags = details_page_completed_flagged($entity_id, 2, $uid);
+			if($user_flags == 0) {
+				$y = $y + 1;
+			}
+			else {
+				$x = $x + 1;
+				$y = $y + 1;
+			}
+		}
+		if($x != 0 && $y != 0) {
+			$percent = round($x/$y*100);
+			$percent = $percent."%";
+			$percent_width = $percent;
+			$total_percent = $total_percent + $percent;
+			$total_count = $total_count + 1;
+		}
+		$parent_entity = node_load($data->parent_entity_id);
+		$section = ucwords(t($parent_entity->title)).' section Detail pages';
+		$section_meter .= $section.'! <div class="percent-meter"><div style="width: '.$percent_width.'!important">'.$percent.'</div></div><br/>';
+	}
+	if($total_count != 0) {
+		$total_count = $total_count*100;
+		$total_percent_display = round($total_percent/$total_count*100);
+		$total_percent_display = $total_percent_display."%";
+		$total_percent_display_width = $total_percent_display;
+	}
+	$total_percent_meter= '<div id="progress" class="graph"><div id="bar" style="width:'.$total_percent_display_width.'"><p>'.$total_percent_display_width.' complete</p></div></div>';
+	
+	$total_percent_meter.= '<div id="daily-quiz"><span>Basics</span></div>';
+			
+	$output = $total_percent_meter.'<div class="user-section-meter user-section-meter-'.$uid.'" style="display:none;">'.$section_meter.'</div>';
+	return $output;
+}
+
+/**
+ * Implements hook_menu_link_alter.
+ */
+ 
+ function lms_dashboard_menu_link_alter(&$items) {
+	//print '<pre>';
+	//print_r($items);
+	//print '</pre>';
+	//exit;
+}
+ 

@@ -1,0 +1,214 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function marketing_concierge_schema() {  
+  //Saved MC matrix for icon permission at manage-listing/[nid] page
+  $schema['mc_lms_tool_matrix'] = array(
+  'fields' => array(
+  'id' => array(
+    'type' => 'serial',
+    'not null' => TRUE,
+    'description' => 'MC Matrix serial id',
+  ),
+  'user_role' => array(
+    'description' => 'The User role rid',
+    'type' => 'int',
+    'not null'  => TRUE,
+  ),
+  'mc_status' => array(
+    'description' => 'The mc_status tid',
+    'type' => 'int',
+    'not null'  => TRUE,
+  ),
+  'details' => array(
+    'description' => 'Details Yes/No',
+    'type' => 'int',
+    'not null'  => TRUE,
+  ),
+  'photos' => array(
+    'description' => 'Photos Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'documents' => array(
+    'description' => 'Documents Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'video' => array(
+    'description' => 'Video Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'website' => array(
+    'description' => 'Website Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'embed' => array(
+    'description' => 'Embed Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'email' => array(
+    'description' => 'Email Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'share' => array(
+    'description' => 'Share Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'analytics' => array(
+    'description' => 'Analytics Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'pro_brochures' => array(
+    'description' => 'pro_brochures Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'post_cards' => array(
+    'description' => 'post_cards Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'post_to_circle' => array(
+    'description' => 'post_to_circle Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  'client_report' => array(
+    'description' => 'client_report Yes/No',
+    'type' => 'int',
+    'not null'  => FALSE,
+  ),
+  ),
+  'primary key' => array('id'),
+  'indexes' => array(
+   'id' => array('id'),
+  ),
+  );
+  return $schema;
+}
+
+function marketing_concierge_update_7101() {
+  $schema['mc_package_configuration'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'MC Package serial id',
+      ),
+      'sku' => array(
+        'description' => 'The Product SKU id',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'product_name' => array(
+        'description' => 'The Product SKU id name',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'product_id' => array(
+        'description' => 'post_cards Yes/No',
+        'type' => 'int',
+        'length' => 11,
+        'not null'  => FALSE,
+      ),
+      'just_listed' => array(
+        'description' => 'The Just Listed value',
+        'type' => 'int',
+        'length' => 11,
+      ),
+      'just_sold' => array(
+        'description' => 'The Just Sold value',
+        'type' => 'int',
+        'length' => 11,
+      ),
+      'pro_brochures' => array(
+        'description' => 'The Pro Brochures value',
+        'type' => 'int',
+        'length' => 11,
+      ),
+      'other' => array(
+        'description' => 'The Pro Brochures value',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'id' => array('id'),
+    ),
+  );
+  db_create_table('mc_package_configuration', $schema['mc_package_configuration']);
+}
+
+function marketing_concierge_update_7102() {
+  $schema['mc_package_addon_configuration'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'MC Addon Package serial id',
+      ),
+      'sku' => array(
+        'description' => 'The Product SKU id',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'product_name' => array(
+        'description' => 'The Product SKU id name',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'product_id' => array(
+        'description' => 'post_cards Yes/No',
+        'type' => 'int',
+        'length' => 11,
+        'not null'  => FALSE,
+      ),
+      'product_addon_name' => array(
+        'description' => 'The Product Addon SKU id name',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'product_addon_sku' => array(
+        'description' => 'The Product Addon SKU id name',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'product_addon_id' => array(
+        'description' => 'Add-On id',
+        'type' => 'int',
+        'length' => 11,
+        'not null'  => FALSE,
+      ),
+      'addon_unit_price' => array(
+        'description' => 'The Unit Price value',
+        'type' => 'int',
+        'length' => 11,
+      ),
+      'other' => array(
+        'description' => 'The Pro Brochures value',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'product_id' => array('product_id'),
+      'product_addon_id' => array('product_addon_id'),
+    ),
+  );
+  db_create_table('mc_package_addon_configuration', $schema['mc_package_addon_configuration']);
+}

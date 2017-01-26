@@ -1,0 +1,5 @@
+1) Downloaded "nrt_team_feeds" module folder 
+
+2) Uploaded at below mention path over production server
+
+/var/www/html/sites/all/modules/custom/listing_marketing_system/modules

@@ -1,0 +1,309 @@
+<?php
+/**
+ * Implements hook_init()
+ */
+function company_directory_init(){
+	global $base_url, $user;
+	drupal_add_css(drupal_get_path('module', 'company_directory') . '/company_directory.css');
+}
+/**
+* Implementation of hook_menu
+*/
+function company_directory_menu() {
+  $items = array();
+  //menu for pro brochures the Listing
+	$items['company-directory'] = array(
+		'title' => 'Company Directory',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('company_directory_form'),
+		//'access callback' => TRUE,
+		'access callback' => 'user_is_logged_in',
+		'type' => MENU_NORMAL_ITEM
+	 );
+	$items['company-info/%'] = array(
+		'title'				=> 'Company Info',
+		'description'		=> 'Company Information',
+		'page callback'		=> 'comapny_info',
+		'access callback'	=> 'user_is_logged_in',
+		'page arguments' 	=> array(1),
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	return $items;
+}
+/**
+* Implementation of hook_block_info
+*/
+function company_directory_block_info() {
+	  $blocks['company-directory'] = array(
+		'info' => t('Company Directory'), 
+		'cache' => DRUPAL_NO_CACHE,
+	  );
+	  return $blocks;
+}
+/**
+* Implementation of hook_block_view
+*/
+function company_directory_block_view($delta = '') {
+  // This example is adapted from node.module.
+  $block = array();
+
+  switch ($delta) {
+    case 'company-directory':
+      $block['subject'] = t('Company Directory');
+      $block['content'] = company_directory_block();
+     break;
+  }
+  return $block;
+}
+/**
+ * function to create form for custom search
+ **/
+function company_directory_form($form, &$form_state) { 
+	global $base_url;
+	$header = array(
+		array('data' => t('')),
+		array('data' => t('Last Name')),
+		array('data' => t('First Name')),
+		array('data' => t('Preferred Email')),
+		array('data' => t('Direct Phone')),
+		array('data' => t('Office')),
+		array('data' => t('')),
+	  );
+	$query=db_select('users', 'u')->extend('PagerDefault')->extend('TableSort');
+	$query->innerJoin('users_roles', 'r', 'r.uid = u.uid');
+	$query->innerJoin('field_data_field_first_name', 'fn', 'fn.entity_id = u.uid');
+	$query->innerJoin('field_data_field_last_name', 'ln', 'ln.entity_id = u.uid');
+	$query->leftJoin('field_data_field_member_office', 'fmo', 'fmo.entity_id = u.uid');
+	$query->leftJoin('field_data_field_office_id', 'foi', 'foi.field_office_id_value = fmo.field_member_office_value');
+	$query->leftJoin('node', 'n', 'n.nid = foi.entity_id');
+	$query->fields('u', array('uid'));
+	$query->fields('fn', array('field_first_name_value'));
+	$query->fields('ln', array('field_last_name_value'));
+	$query->fields('n', array('title'));
+	
+	if (isset($_GET['search_by']) && $_GET['search_by'] == 'firstname') {
+	  $query->condition('fn.field_first_name_value', '%' . db_like($_GET['search_text']) . '%', 'LIKE');
+	}
+	else if (isset($_GET['search_by']) && $_GET['search_by'] == 'lastname') {
+	  $query->condition('ln.field_last_name_value', '%' . db_like($_GET['search_text']) . '%', 'LIKE');
+	}
+	else if (isset($_GET['search_by']) && $_GET['search_by'] == 'office') {
+	  $query->condition('n.title', '%' . db_like($_GET['search_text']) . '%', 'LIKE');
+	}
+	
+	$query->condition('r.rid', array(4,6,9,10,13,14,15,17), 'IN')
+			->condition('u.uid', '1', '!=')
+			->condition('fmo.field_member_office_value', array(100100), 'NOT IN');
+			
+	if (isset($_GET['sort_by']) && $_GET['sort_by'] == 'firstname') {
+	 $order = 'fn.field_first_name_value';
+		$query->orderBy($order, 'ASC');
+	}
+	else if (isset($_GET['sort_by']) && $_GET['sort_by'] == 'lastname') {
+		$order = 'ln.field_last_name_value';
+		$query->orderBy($order, 'ASC');
+	}
+	else if (isset($_GET['sort_by']) && $_GET['sort_by'] == 'office') {
+		$order = 'n.title';
+		$query->orderBy($order, 'ASC');
+	}
+	else{
+		$order = 'ln.field_last_name_value';
+		$order1 = 'fn.field_first_name_value';
+		$query->orderBy($order, 'ASC')
+				->orderBy($order1, 'ASC');
+	}
+	$query->limit(25)
+			->groupBy('u.uid');
+	$result = $query->execute();
+	
+	$rows = array();
+	// Looping for filling the table rows
+	  foreach ($result as $values) {
+		$user_load = user_load($values->uid);
+		$picture = !empty($user_load->picture->uri) ? $user_load->picture->uri : variable_get('user_picture_default');
+		$user_picture = theme('image_style', array('style_name' => 'user_avatar', 'path' => $picture));
+		$phone_direct = isset($user_load->field_phone_direct['und']['0']['value']) ? $user_load->field_phone_direct['und']['0']['value'] : '';
+		
+		$email = isset($user_load->field_person_email['und']['0']['value']) ? $user_load->field_person_email['und']['0']['value'] : $user_load->mail;
+	  
+		$social_icon_path = "sites/all/modules/custom/company_directory/social_icon";
+		$social = '<div class="social-icons">';
+		if( isset($user_load->field_user_facebook['und'][0]['value'])){
+			$url = $user_load->field_user_facebook['und'][0]['value'];
+			$url = preg_replace("(^https?:?//)", "", $url);
+			$social .='<span class="social_icon facebook-icon"><a href="http://'.$url.'" title="Facebook" target="_blank"><img src="'.$base_url.'/'.$social_icon_path.'/fb.png" width="25" height="25"></a></span>';					
+		}
+		if( isset($user_load->field_user_google_plus['und'][0]['value'])){
+			//$social .='<span class="social_icon google-plus-icon"><a href="'.$user_load->field_user_google_plus['und'][0]['value'].'" title="Google+"><img src="'.$base_url.'/'.$social_icon_path.'/gp.png" width="25" height="25"></a></span>';
+		}
+		if( isset($user_load->field_user_linked_in['und'][0]['value'])){
+			$url = $user_load->field_user_linked_in['und'][0]['value'];
+			$url = preg_replace("(^https?:?//)", "", $url);
+			$social .='<span class="social_icon linkedin-icon"><a href="http://'.$url.'" title="LinkedIn"><img src="'.$base_url.'/'.$social_icon_path.'/ln.png" width="25" height="25"></a></span>';
+		}
+		if( isset($user_load->field_user_twitter['und'][0]['value'])){
+			$url = $user_load->field_user_twitter['und'][0]['value'];
+			$url = preg_replace("(^https?:?//)", "", $url);
+			$social .='<span class="social_icon twitter-icon"><a href="http://'.$url.'" title="Twitter"><img src="'.$base_url.'/'.$social_icon_path.'/tw.png" width="25" height="25"></a></span>';
+		}
+		if( isset($user_load->field_user_instagram['und'][0]['value'])){
+			$social .='<span class="social_icon instagram-icon"><a href="'.$user_load->field_user_instagram['und'][0]['value'].'" title="Instagram"><img src="'.$base_url.'/'.$social_icon_path.'/ins.png" width="25" height="25"></a></span>';
+		}
+		$social .'</div>';
+		$rows[] = array(
+			 '<div class="company-picture"><a rel="modal-node-popup" href="/company-info/'.$user_load->uid.'">'.$user_picture.'</a></div>',
+			 $values->field_last_name_value,
+			 $values->field_first_name_value,
+			 $email,
+			 $phone_direct,
+			 $values->title,
+			 $social,
+		);
+	}
+  
+	$form=array();
+	$search_options = array(
+		'' => 'SEARCH BY',
+		'firstname' => 'First Name',
+		'lastname' => 'LastName',
+		'office' => 'Office',
+	);
+	$sort_options = array(
+		'' => 'SORT RESULTS BY',
+		'firstname' => 'First Name',
+		'lastname' => 'LastName',
+		'office' => 'Office',
+	);
+	$form['search_options'] = array(
+	  '#type' => 'select',
+	  '#title' => t(''),
+	  '#options' => $search_options,
+	  '#default_value' => isset($_GET['search_by']) ? $_GET['search_by'] : '',
+	  '#description' => t(''),
+	  '#prefix' => '<div class="views-exposed-widget"><div class="select_arrow"></div>',
+	  '#suffix' => '</div>',
+	);
+	$form['search_box'] = array(
+	  '#type' => 'textfield',
+	  '#title' => t(''),
+	  '#default_value' => isset($_GET['search_text']) ? $_GET['search_text'] : '',
+	  '#description' => t(''),
+	  '#prefix' => '<div class="views-exposed-widget">',
+	  '#suffix' => '</div>',
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Search'),
+		'#prefix'=> '<div class="views-exposed-widget">',
+		'#suffix'=> '</div>',
+	);
+	$form['sort'] = array(
+	  '#type' => 'select',
+	  '#title' => t(''),
+	  '#options' => $sort_options,
+	  '#default_value' => isset($_GET['sort_by']) ? $_GET['sort_by'] : '',
+	  '#description' => t(''),
+	  '#prefix' => '<div class="views-exposed-widget"><div class="select_arrow"></div>',
+	  '#suffix' => '</div>',
+	);
+	$form['table'] = array(
+	  '#theme' => 'table',
+	  '#header' => $header,
+	  '#sticky' => FALSE,
+	  '#rows' => $rows,
+	  '#empty' => t('Table has no row!'),
+	);
+	$form['pager'] = array('#markup' => theme('pager'));
+	return $form;
+}
+
+/**
+ * Callback function to submit company_directory_form() form
+ **/
+function company_directory_form_submit($form, &$form_state) {
+	$search_by = $form_state['values']['search_options'];
+	$search_text = $form_state['values']['search_box'];
+	$sort_by = $form_state['values']['sort'];
+	$form_state['redirect'] = array(
+	  'company-directory',
+	  array(
+		'query' => array(
+		  'search_by' => $search_by,
+		  'search_text' => $search_text,
+		  'sort_by' => $sort_by,
+		),
+	  ),
+	);
+}
+/**
+ * Callback function for Company info
+ **/
+function comapny_info($uid){
+	$user_load = user_load($uid);
+	//office
+	$office = array();
+	$office[] = isset($user_load->field_job_title['und']['0']['value']) ? $user_load->field_job_title['und']['0']['value'] : '';
+	$query=db_select('field_data_field_office_id', 'foid')->distinct();
+	$query->innerJoin('field_data_field_member_office', 'fmo', 'foid.field_office_id_value = fmo.field_member_office_value');
+	$query->fields('foid', array('entity_id'));
+	$query->condition('fmo.entity_id', $uid, '=');
+	$office_nid= $query->execute()->fetchField();
+	if(!empty($office_nid)){
+		$office_node = node_load($office_nid);
+		$office[] = $office_node->title;
+	}
+	$job = implode(" | ", array_filter($office) ); 
+	
+	$picture = !empty($user_load->picture->uri) ? $user_load->picture->uri : variable_get('user_picture_default');
+	$user_picture = theme('image_style', array('style_name' => 'user_avatar', 'path' => $picture));
+	$phone_direct = isset($user_load->field_phone_direct['und']['0']['value']) ? $user_load->field_phone_direct['und']['0']['value'] : '';
+	$email = isset($user_load->field_person_email['und']['0']['value']) ? $user_load->field_person_email['und']['0']['value'] : $user_load->mail;
+	$name = isset($user_load->field_preferred_name['und']['0']['value']) ? $user_load->field_preferred_name['und']['0']['value'] : '';
+	
+	$website = isset($user_load->field_agent_web_site['und']['0']['value']) ? $user_load->field_agent_web_site['und']['0']['value'] : '';
+	
+	$social_icon_path = "sites/all/modules/custom/company_directory/social_icon";
+		$social = '<div class="social-icons">';
+		if( isset($user_load->field_user_facebook['und'][0]['value'])){
+			$url = $user_load->field_user_facebook['und'][0]['value'];
+			$url = preg_replace("(^https?:?//)", "", $url);
+			$social .='<span class="social_icon facebook-icon"><a href="http://'.$url.'" title="Facebook" target="_blank"><img src="'.$base_url.'/'.$social_icon_path.'/fb.png" width="25" height="25"></a></span>';					
+		}
+		if( isset($user_load->field_user_google_plus['und'][0]['value'])){
+			//$social .='<span class="social_icon google-plus-icon"><a href="'.$user_load->field_user_google_plus['und'][0]['value'].'" title="Google+"><img src="'.$base_url.'/'.$social_icon_path.'/gp.png" width="25" height="25"></a></span>';
+		}
+		if( isset($user_load->field_user_linked_in['und'][0]['value'])){
+			$url = $user_load->field_user_linked_in['und'][0]['value'];
+			$url = preg_replace("(^https?:?//)", "", $url);
+			$social .='<span class="social_icon linkedin-icon"><a href="http://'.$url.'" title="LinkedIn"><img src="'.$base_url.'/'.$social_icon_path.'/ln.png" width="25" height="25"></a></span>';
+		}
+		if( isset($user_load->field_user_twitter['und'][0]['value'])){
+			$url = $user_load->field_user_twitter['und'][0]['value'];
+			$url = preg_replace("(^https?:?//)", "", $url);
+			$social .='<span class="social_icon twitter-icon"><a href="http://'.$url.'" title="Twitter"><img src="'.$base_url.'/'.$social_icon_path.'/tw.png" width="25" height="25"></a></span>';
+		}
+		if( isset($user_load->field_user_instagram['und'][0]['value'])){
+			$social .='<span class="social_icon instagram-icon"><a href="'.$user_load->field_user_instagram['und'][0]['value'].'" title="Instagram"><img src="'.$base_url.'/'.$social_icon_path.'/ins.png" width="25" height="25"></a></span>';
+		}
+	$social .'</div>';
+	
+	$output = '<div class="company-directory-user">
+		<div class="company_user_picture"> '.$user_picture.' </div>
+		<div class="company_user_name"> '.$name.' </div>
+		<div class="company_user_office"> '.$job.' </div>
+		<div class="company_user_phone"> '.$phone_direct.' </div>
+		<div class="company_email"> '.$email.' </div>
+		<div class="company_user_website"> '.$website.' </div>
+		<div class="company_user_social"> '.$social.' </div>
+	</div>';
+	return $output;
+} 
+/*
+** Implementation of company_directory_block callback
+*/
+function company_directory_block(){
+	$form = drupal_get_form('company_directory_form');
+	$content = drupal_render($form);
+	return $content;
+}

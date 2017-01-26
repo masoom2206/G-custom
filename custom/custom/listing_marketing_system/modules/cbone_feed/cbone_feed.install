@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function cbone_feed_schema() {
+	//Save Feed Processing Results
+  $schema['feed_processing_results'] = array(
+    'fields' => array(
+      'result_id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Feed Result ID',
+      ),
+      'feed_file_name' => array(
+        'description'   => 'Feed File Name',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'feed_type' => array(
+        'description'   => 'Feed Type',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+      'feed_timestamp' => array(
+        'description'   => 'Time when the feed has saved',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'feed_nrt_id' => array(
+        'description'   => 'The NRT Property ID from the listing and photo feeds. Note: This may null for non-listing related feeds coming later.',
+        'type'          => 'varchar',
+		'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'feed_agent_id' => array(
+        'description'   => 'In the lms listing feed this value = “primary agent id”. It will be null for photo feeds.',
+        'type'          => 'varchar',
+		'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'feed_result_status' => array(
+        'description'   => 'Result: Success / Fail',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'feed_result_message' => array(
+        'description'   => 'Details of the result message',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+    ),
+    'primary key' => array('result_id'),
+    'indexes' => array(
+       'result_id' => array('result_id'),
+    ),
+  );
+  return $schema;
+}

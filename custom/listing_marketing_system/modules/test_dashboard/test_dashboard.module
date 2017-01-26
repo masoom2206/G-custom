@@ -1,0 +1,588 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function test_dashboard_menu() {
+  $items = array();
+  
+  //menu for Office Assistant or Manager Dashboard  
+  $items['test/dashboard'] = array(
+    'title'				=> 'Office Assistant or Manager Dashboard',
+    'description'		=> 'listings and Marketing Concierge orders for listings associated with their office.',
+    'page callback'		=> 'test_cbone_office_dashboard',
+    //'access callback'	=> 'user_is_logged_in',
+	'access callback' 	=> 'test_dashboard_access',
+	//'access arguments' 	=> array(2),
+	//'page arguments' 	=>  array(0,1),
+  );
+  //menu for Marketing Coordinator Dashboard
+ $items['test/mc/dashboard'] = array(
+	'title'				=>	'Marketing Coordinator Dashboard',
+	'description'		=>	'Dashboard for Marketing Coordinator',
+	'page callback'		=>	'test_cbone_office_dashboard',
+	'access callback'	=> 	'test_mc_dashboard_access',
+	//'page arguments' 	=> array(0,1,2)
+  );
+   $items['modal-popup'] = array(
+	'title'				=>	'PopUp Modal',
+	'description'		=>	'Check modal popup',
+	'page callback'		=>	'modal_popup',
+	'access callback'	=> 	TRUE,
+	//'page arguments' 	=> array(0,1,2)
+  );
+ /*$items['active-orders'] = array(
+	'title'				=>	'Active Orders',
+	'description'		=>	'Listings of active orders',
+	'page callback'		=>	'listing_active_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['pending-orders'] = array(
+	'title'				=>	'Pending Orders',
+	'description'		=>	'Listings of pending orders',
+	'page callback'		=>	'listing_pending_orders',
+	'access callback'	=> 	TRUE,
+  );
+  $items['completed-orders'] = array(
+	'title'				=>	'Completed Orders',
+	'description'		=>	'Listings of Completed orders',
+	'page callback'		=>	'listing_completed_orders',
+	'access callback'	=> 	TRUE,
+  );*/
+  return $items;
+}
+
+/**
+ * Implements hook_init()
+ */
+function test_dashboard_init(){
+	drupal_add_css(drupal_get_path('module', 'test_dashboard') . '/css/test_dashboard.css');
+	//drupal_add_js(drupal_get_path('module', 'test_dashboard') . '/js/foundation_ess/js/vendor/jquery.js');
+	//drupal_add_js(drupal_get_path('module', 'test_dashboard') . '/js/foundation_ess/js/foundation/foundation.js');
+	//drupal_add_js(drupal_get_path('module', 'test_dashboard') . '/js/foundation_ess/js/foundation/foundation.reveal.js');
+}
+
+/**
+ * Callback function dashboard_access()
+ * to set the access of Dashboard page
+ * "test_cbone_office_dashboard"
+ * @return TRUE/FALSE
+ **/
+function test_dashboard_access() {
+	global $user;
+	$roles = array("Office Assistant", "Manager", "Administrator");
+	//$roles_result = array_intersect($roles, $user->roles);
+	foreach ($roles as $role) {
+		if (in_array($role, $user->roles)) {
+		  return TRUE;
+		}
+	}
+	return FALSE; 
+}
+
+/**
+ * Callback function mc_dashboard_access()
+ * to set the access of Marketing Coordinator 
+ * Dashboard page "test_cbone_office_dashboard"
+ * @return TRUE/FALSE
+ **/
+ 
+function test_mc_dashboard_access() {
+	global $user;
+	$mc_roles= array("Marketing Coordinator", "Administrator");
+	//$roles_result = array_intersect($roles, $user->roles);
+	foreach ($mc_roles as $mc_role) {
+		if (in_array($mc_role, $user->roles)) {
+		  return TRUE;
+		}
+	}	
+	return FALSE; 
+}
+
+/**
+ * Implements hook_theme
+ **/
+ 
+function test_dashboard_theme($existing, $type, $theme, $path) {
+	return array(
+		'dashboard' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/test_dashboard', // do not include .tpl.php
+		),
+	);
+      return $theme;
+}
+/**
+* Implements hook_block_info().
+
+function test_dashboard_block_info() {
+  $blocks = array();
+  
+  $blocks['my-agents'] = array(
+    'info' => t('My Agents'),
+  );
+  return $blocks;
+}
+/**
+* Implements hook_block_view().
+
+function test_dashboard_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'my-agents':
+      $block['subject'] = '';
+      $block['content'] = my_agents();
+      break;
+  }
+  return $block;
+}
+*/
+/**
+ * Callback function test_cbone_office_dashboard()
+ * to displayed the Dashboard page to view listing
+ * @return $output
+ **/
+ 
+function test_cbone_office_dashboard() {
+	global $user;
+	$output = '';
+	
+	
+	//arg(0); arg(1); arg(2);
+	//print "<pre>";
+	//print_r(user_load(34));
+	$office_nid = '';
+	$roles = array("Office Assistant", "Manager", "Marketing Coordinator", "Administrator");
+	$roles_result = array_intersect($user->roles, $roles);	
+	if(in_array("Marketing Coordinator", $roles_result) || in_array("Administrator", $roles_result)) {
+		print "Welcome to Marketing Coordinator";
+		if(arg(3) !='') {
+			$office_nid = arg(3);	
+		}
+	}
+	if(in_array("Office Assistant", $roles_result) || in_array("Manager", $roles_result) || in_array("Administrator", $roles_result)) {
+		print "Welcome to Office Assistant or Manager";
+		if(arg(2) != '') {
+			$office_nid = arg(2);
+		}
+	}
+	// isset nid of office group content type
+	if($office_nid != '' && isset($office_nid)) {
+		$agents_sql = "SELECT distinct(u.uid), 											field_data_field_preferred_name.field_preferred_name_value, fm.timestamp
+		FROM og_membership g, users_roles r, users u 
+		LEFT JOIN field_data_field_preferred_name ON u.uid=field_data_field_preferred_name.entity_id
+		LEFT JOIN  file_managed fm ON u.uid = fm.uid
+		WHERE g.etid=u.uid AND u.uid=r.uid AND r.rid=4 AND fm.uid = g.etid AND g.gid= :get_gid";
+		$agents_query = db_query($agents_sql, array(':get_gid' => $office_nid));
+		$agents_results = $agents_query->fetchAll();
+		$agent_result=array();
+		$result = array();
+		foreach($agents_results as $value){
+			$agent_result[$value->timestamp]=$value->uid;
+		}
+		//Sql for getting recent update of basic task.
+		$basic_sql =  "SELECT DISTINCT(flg.uid), flg.entity_id, flg.timestamp       
+				FROM og_membership g, users_roles r, users u, flagging flg
+				where flg.uid = u.uid and g.gid = :get_gid and g.etid = flg.uid and g.etid = u.uid";
+		$basic_query = db_query($basic_sql, array(':get_gid' => $office_nid));
+		$basic_results = $basic_query->fetchAll();
+		$basic_result = array();
+		foreach($basic_results as $results) {
+			$basic_result[$results->timestamp] = $results->uid.','.$results->entity_id;
+		}
+		$result = $agent_result + $basic_result;
+		$result_reverse = array_reverse($result, true);
+		$result_slice = array_slice($result_reverse,0,5,true);
+		// Sql for listing of most 5 recent agents that have earned badge levels or completed the Daily Quiz.
+		$quiz_sql = "select ut.uid, ut.last_level, ut.question_count 
+					from dailyquiz_user_last ut, og_membership g,  users_roles ur,users u, role r 
+					where u.uid = ut.uid and u.uid = ur.uid and g.etid=ut.uid and ur.rid = r.rid and r.name='Agent' and g.gid = :get_gid order by timestamp desc limit 0, 5";
+		$quiz_query = db_query($quiz_sql , array(':get_gid' => $office_nid));
+		$quiz_results = $quiz_query->fetchAll();
+		
+		//Sql for My Agents Section
+		
+		$agentlisting_sql = "select u.uid from users u, og_membership g, users_roles ur, role r 
+							where u.uid= ur.uid and ur.rid = r.rid and r.name='Agent' and u.uid = g.etid and g.gid = :get_gid";
+		$agentlisting_query = db_query($agentlisting_sql, array(':get_gid' => $office_nid));
+		$agentlisting_results = $agentlisting_query->fetchAll();
+		//print '<pre>';
+		//print_r($agentlisting_results);
+		//print '</pre>';
+		//exit;
+	}
+	if($office_nid == '') {
+		// Sql for getting nid of office group
+		//$get_onid_sql =  "select g.gid from users u,  og_membership g where g.etid= u.uid  And u.uid = :current_user";
+		$get_onid_sql = "select foi.entity_id from field_data_field_office_id as foi 
+					inner join field_data_field_member_office as fmo on foi.field_office_id_value = fmo.field_member_office_value where fmo.entity_id = :current_user";
+		$onid_query = db_query($get_onid_sql, array(':current_user' => $user->uid));
+		$get_gid = $onid_query->fetchField();
+		
+		// Sql for getting recent update profile picture of agents(uid)
+		$agents_sql = "SELECT distinct(u.uid),	field_data_field_preferred_name.field_preferred_name_value,fm.timestamp           
+		FROM og_membership g, users_roles r, users u 
+		LEFT JOIN field_data_field_preferred_name ON u.uid=field_data_field_preferred_name.entity_id
+		LEFT JOIN  file_managed fm ON u.uid = fm.uid
+		WHERE g.etid=u.uid AND u.uid=r.uid AND r.rid=4 AND fm.uid = g.etid AND g.gid= :get_gid";
+		$agents_query = db_query($agents_sql, array(':get_gid' => $get_gid));
+		$agents_results = $agents_query->fetchAll();
+		$agent_result=array();
+		$result = array();
+		foreach($agents_results as $value){
+			$agent_result[$value->timestamp]=$value->uid;
+		}
+		//Sql for getting recent update of basic task.
+		$basic_sql =  "SELECT DISTINCT(flg.uid), flg.entity_id, flg.timestamp       
+				FROM og_membership g, users_roles r, users u, flagging flg
+				where flg.uid = u.uid and g.gid = :get_gid and g.etid = flg.uid and g.etid = u.uid";
+		$basic_query = db_query($basic_sql, array(':get_gid' => $get_gid));
+		$basic_results = $basic_query->fetchAll();
+		$basic_result = array();
+		foreach($basic_results as $results) {
+			$basic_result[$results->timestamp] = $results->uid.','.$results->entity_id;
+		}
+		$result = $agent_result + $basic_result;
+		$result_reverse = array_reverse($result, true);
+		$result_slice = array_slice($result_reverse,0,5,true);
+		
+		// Sql for listing of most 5 recent agents that have earned badge levels or completed the Daily Quiz. On default setting of organic group
+		$quiz_sql = "select ut.uid, ut.last_level, ut.question_count 
+					from dailyquiz_user_last ut, og_membership g,  users_roles ur,users u, role r 
+					where u.uid = ut.uid and u.uid = ur.uid and g.etid=ut.uid and ur.rid = r.rid and r.name='Agent' and g.gid = :get_gid order by timestamp desc limit 0, 5";
+		$quiz_query = db_query($quiz_sql , array(':get_gid' => $get_gid));
+		$quiz_results = $quiz_query->fetchAll();
+		
+		//Sql for My Agents Section
+		
+		$agentlisting_sql = "select u.uid from users u, og_membership g, users_roles ur, role r 
+							where u.uid= ur.uid and ur.rid = r.rid and r.name='Agent' and u.uid = g.etid and g.gid = :get_gid";
+		$agentlisting_query = db_query($agentlisting_sql, array(':get_gid' => $get_gid));
+		$agentlisting_results = $agentlisting_query->fetchAll();
+		
+		//print '<pre>';
+		//print_r($agentlisting_results);
+		//print '</pre>';
+		//exit;
+	}
+	// Sql for getting nid based on "In Progress" order
+	$active_order_sql = "select n.nid from node n 
+	inner join field_data_field_mc_status_ref fmc on n.nid = fmc.entity_id
+	inner join taxonomy_term_data td on td.tid = fmc.field_mc_status_ref_tid 
+	where n.uid = :current_user and td.name = 'In Progress' and n.type = 'lms_listing' order by changed desc limit 0,5";
+	$active_order_query = db_query($active_order_sql , array(':current_user' => $user->uid));
+	$get_nid = $active_order_query->fetchAll();
+	// Sql for getting nid based on "Pending Order Confirmation" order
+	$pending_order_sql = "select n.nid from node n 
+	inner join field_data_field_mc_status_ref fmc on n.nid = fmc.entity_id
+	inner join taxonomy_term_data td on td.tid = fmc.field_mc_status_ref_tid 
+	where n.uid = :current_user and td.name = 'Pending Order Confirmation' and n.type = 'lms_listing' order by changed desc limit 0,5";
+	$pending_order_query = db_query($pending_order_sql , array(':current_user' => $user->uid));
+	$get_pending_nid = $pending_order_query->fetchAll();
+	// Sql for getting nid based on "completed" orders
+	$complete_order_sql = "select n.nid from node n 
+	inner join field_data_field_mc_status_ref fmc on n.nid = fmc.entity_id
+	inner join taxonomy_term_data td on td.tid = fmc.field_mc_status_ref_tid 
+	where n.uid = :current_user and td.name = 'Completed' and n.type = 'lms_listing' order by changed desc limit 0,5";
+	$complete_order_query = db_query($complete_order_sql , array(':current_user' => $user->uid));
+	$get_complete_nid = $complete_order_query->fetchAll();
+
+	
+	$variables = array(
+		'listing_title' => 'Demo Title',
+		'account'		=> $user,
+		'agents'		=> $agents_results,
+		'get_nid'		=> $get_nid,
+		'get_pending_nid' => $get_pending_nid,
+		'get_complete_nid' => $get_complete_nid,
+		'quiz_results'	=>	$quiz_results,
+		'result_slice'	=> 	$result_slice,
+		'agentlisting_results' => $agentlisting_results,
+		//'basic_results'	=> 	$basic_results,
+		//'arraymerge'	=>	$array_merge,
+	);
+	$output = theme('dashboard', array('var_name' => $variables));
+	return $output;
+}
+
+/*
+function test_dashboard_form_alter(&$form, &$form_state,$form_id) {
+	/*if($form_id == 'user_profile_form') {
+	 //$form['#submit'][]= 'test_dashboard_form_sumit';
+	 $form['actions']['submit']['#submit'][]='udate_profile_picture';
+		//print '<pre>';
+		//print_r($form_state);
+	}	
+}
+
+function udate_profile_picture($form,&$form_state) {
+//print "<pre>";
+//print_r($form_state);
+//exit('hrerer');
+
+
+}
+/**
+ * Callback function listing_active_orders()
+ * to displayed the page of active orders
+ * @return $output
+ *
+function listing_active_orders() {
+	global $user, $base_url;
+	$output='';
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('n.uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->condition('fmc.field_mc_status_ref_tid', 178, '=');
+	$result= $query->execute();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$output.=l('More', 'active-orders');
+	}
+	else{
+		$output.='No record found for active orders';
+	}
+	return $output;
+}
+
+/**
+ * Callback function listing_pending_orders()
+ * to displayed the page of active orders
+ * @return $output
+ *
+function listing_pending_orders() {
+	global $user, $base_url;
+	$output='';
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('n.uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->condition('fmc.field_mc_status_ref_tid', 181, '=');
+	$result= $query->execute();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$output.=l('More', 'pending-orders');
+	}
+	else{
+		$output.='No record found for pending orders';
+	}
+	return $output;
+
+}
+
+/**
+ * Callback function listing_completed_orders()
+ * to displayed the page of active orders
+ * @return $output
+ *
+function listing_completed_orders() {
+	global $user, $base_url;
+	$output='';
+	
+	$query=db_select('node', 'n')->distinct();
+	$query->innerJoin('field_data_field_lms_listing_reference', 'lr', 'n.nid = lr.field_lms_listing_reference_nid');
+	$query->innerJoin('field_data_field_mc_status_ref', 'fmc', 'n.nid = fmc.entity_id');
+	$query->fields('n', array('nid', 'title'));
+	$query->condition('n.uid', $user->uid, '=');
+	$query->condition('n.type', 'lms_listing', '=');
+	$query->condition('lr.entity_type', 'commerce_order', 'LIKE');
+	$query->condition('fmc.field_mc_status_ref_tid', 180, '=');
+	$result= $query->execute();
+	if(!empty($result)){
+	$output.='<ul>';
+		foreach($result as $value){
+		$links= $base_url.'/manage-listing/'.$value->nid;
+			$output.='<li>'.l($value->title, $links).'</li>';
+		}
+		$output.='</ul>';
+		$output.=l('More', 'completed-orders');
+	}
+	else{
+		$output.='No record found for completed orders';
+	}
+	return $output;
+}
+
+function my_agents() {
+	global $user, $base_url;
+	$output='';
+	$office_nid = '';
+	$roles = array("Office Assistant", "Manager", "Marketing Coordinator", "Administrator");
+	$roles_result = array_intersect($user->roles, $roles);	
+	if(in_array("Marketing Coordinator", $roles_result) || in_array("Administrator", $roles_result)) {
+		//print "Welcome to Marketing Coordinator";
+		if(arg(3) !='') {
+			$office_nid = arg(3);	
+		}
+	}
+	if(in_array("Office Assistant", $roles_result) || in_array("Manager", $roles_result) || in_array("Administrator", $roles_result)) {
+		//print "Welcome to Office Assistant or Manager";
+		if(arg(2) != '') {
+			$office_nid = arg(2);
+		}
+	}
+	if($office_nid != '' && isset($office_nid)) {
+		
+		//Sql for My Agents Section
+		
+		$agentlisting_sql = "select u.uid from users u, og_membership g, users_roles ur, role r 
+							where u.uid= ur.uid and ur.rid = r.rid and r.name='Agent' and u.uid = g.etid and g.gid = :get_gid";
+		$agentlisting_query = db_query($agentlisting_sql, array(':get_gid' => $office_nid));
+		$agentlisting_results = $agentlisting_query->fetchAll();
+		//print '<pre>';
+		//print_r($agentlisting_results);
+		//print '</pre>';
+		//exit;
+	}
+	if($office_nid == '') {
+		// Sql for getting nid of office group
+		//$get_onid_sql =  "select g.gid from users u,  og_membership g where g.etid= u.uid  And u.uid = :current_user";
+		$get_onid_sql = "select foi.entity_id from field_data_field_office_id as foi 
+					inner join field_data_field_member_office as fmo on foi.field_office_id_value = fmo.field_member_office_value where fmo.entity_id = :current_user";
+		$onid_query = db_query($get_onid_sql, array(':current_user' => $user->uid));
+		$get_gid = $onid_query->fetchField();
+		
+		//Sql for My Agents Section
+		
+		$agentlisting_sql = "select u.uid from users u, og_membership g, users_roles ur, role r 
+							where u.uid= ur.uid and ur.rid = r.rid and r.name='Agent' and u.uid = g.etid and g.gid = :get_gid";
+		$agentlisting_query = db_query($agentlisting_sql, array(':get_gid' => $get_gid));
+		$agentlisting_results = $agentlisting_query->fetchAll();
+		
+		//print '<pre>';
+		//print_r($agentlisting_results);
+		//print '</pre>';
+		//exit;
+	}
+	
+	if(!empty($agentlisting_results)) {
+		
+		foreach($agentlisting_results as $results) {
+					
+			$user_load = user_load($results->uid);
+		
+			//print '<pre>';
+			//print_r($user_load);
+			//print '</pre>';
+			//exit;
+			//$user_pic 	= $user_load->picture;
+			if (!empty($user_load->picture)) {
+					if (is_numeric($user_load->picture)) {
+						$user_load->picture = file_load($user_load->picture);
+					}
+					if (!empty($user_load->picture->uri)) {
+						$filepath = $user_load->picture->uri;
+					}
+				}
+				elseif (variable_get('user_picture_default', '')) {
+					$filepath = variable_get('user_picture_default', '');
+				}
+				$build = array(
+							'#theme' => 'user_picture',
+							'#account' => $user_load,
+						);
+			$picture = drupal_render($build);
+			$output .= $picture;
+			$output .= isset($user_load->field_preferred_name['und'][0]['value']) ? $user_load->field_preferred_name['und'][0]['value'] : '';
+			$output .= isset($user_load->field_phone_direct['und'][0]['value']) ? $user_load->field_phone_direct['und'][0]['value'] : '';
+			$output .= isset($user_load->field_person_email['und'][0]['value']) ? $user_load->field_person_email['und'][0]['value'] : '';
+			$output .= "<br/>";
+				
+		}
+	}
+	else {
+		$output .= "Not result found";
+	}
+	return $output;
+}
+
+*/
+
+
+function modal_popup() {
+	//return "You are here!";
+	global $user;
+	
+	$current_user = $user->uid;
+	$current_user_load = user_load($current_user);
+	$office = $current_user_load->field_member_office['und'][0]['value'];
+	//print "<pre>";
+	//print_r($current_user_load);
+	//print "<pre>";
+	
+	$path = drupal_get_path_alias();
+	$pattern = 'modal-popup';
+
+	if (drupal_match_path($path, $pattern)) {
+	/*
+	drupal_add_css('.big-link { display:block; margin-top: 100px; text-align: center; font-size: 70px; color: #06f; }'
+, array('group' => CSS_THEME, 'type' => 'inline'));
+	//Attach our CSS
+		drupal_add_css(drupal_get_path('module', 'test_dashboard') . '/reveal/reveal.css');
+	// Attach our js
+		drupal_add_js(drupal_get_path('module', 'test_dashboard') . '/reveal/jquery.reveal.js');
+
+drupal_add_css('
+            .graph {
+                width: 500px; 
+                height: 30px;
+                border: 1px solid #888; 
+                background: rgb(168,168,168);
+                background: -moz-linear-gradient(top, rgba(168,168,168,1) 0%, rgba(204,204,204,1) 23%);
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(168,168,168,1)), color-stop(23%,rgba(204,204,204,1)));
+                background: -webkit-linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                background: -o-linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                background: -ms-linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=#a8a8a8, endColorstr=#cccccc,GradientType=0 );
+                background: linear-gradient(top, rgba(168,168,168,1) 0%,rgba(204,204,204,1) 23%);
+                position: relative;
+            }
+            #bar {
+                height: 29px; /* Not 30px because the 1px top-border brings it up to 30px to match #graph 
+                background: rgb(255,197,120); 
+                background: -moz-linear-gradient(top, rgba(255,197,120,1) 0%, rgba(244,128,38,1) 100%); 
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,197,120,1)), color-stop(100%,rgba(244,128,38,1))); 
+                background: -webkit-linear-gradient(top, rgba(255,197,120,1) 0%,rgba(244,128,38,1) 100%); 
+                background: -o-linear-gradient(top, rgba(255,197,120,1) 0%,rgba(244,128,38,1) 100%); 
+                background: -ms-linear-gradient(top, rgba(255,197,120,1) 0%,rgba(244,128,38,1) 100%); 
+                background: linear-gradient(top, rgba(255,197,120,1) 0%,rgba(244,128,38,1) 100%); 
+                border-top: 1px solid #fceabb;
+            }
+            #bar p { position: absolute; text-align: center; width: 100%; margin: 0; line-height: 30px; }
+            .error {
+              
+                background-color: #fceabb;
+                padding: 1em;
+                font-weight: bold;
+                color: red;
+                border: 1px solid red;
+            }'
+, array('group' => CSS_THEME, 'type' => 'inline'));
+
+return '<div id="progress" class="graph"><div id="bar" style="width:50%"><p>50% complete</p></div></div>';
+*/
+module_load_include('inc', 'percent_complete_meter', 'includes/user_percent_tracking');
+	$var =  user_percent_meter(68);
+	//$var =  'gggl';
+	//print $var;
+	//exit;
+	}
+}

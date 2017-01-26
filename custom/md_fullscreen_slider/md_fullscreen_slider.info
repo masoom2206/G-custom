@@ -1,0 +1,11 @@
+name = MD FullScreen Slider
+description = Create slider with full-screen slides
+core = 7.x
+package = MegaDrupal
+version = 7.x-0.1
+
+dependencies[] = media
+project status url = http://updates.megadrupal.com/release-history
+version = "7.x-2.0"
+core = "7.x"
+project = "md_fullscreen_slider"

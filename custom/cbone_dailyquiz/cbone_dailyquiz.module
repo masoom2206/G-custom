@@ -1,0 +1,705 @@
+<?php
+/**
+* Implementation of hook_menu
+*/
+function cbone_dailyquiz_menu() {
+  $items = array();
+  //Menu for testing percent meter.
+  $items['daily-quiz-test'] = array(
+    'title' => 'Testing CB|ONE Daily Quiz',
+    'description' => 'Testing CB|ONE Daily Quiz',
+	'page callback' => 'daily_quiz_test',
+    'access callback' => TRUE,
+  );
+  $items['cbone-quiz'] = array(
+    'title' => 'CB|ONE Daily Quiz',
+    'description' => 'CB|ONE Daily Quiz',
+    'page callback'		=> 'cbone_daily_quiz',
+    'access callback' => 'user_is_logged_in',
+  );
+  $items['daily-quiz'] = array(
+    'title' => 'CB|ONE Daily Quiz',
+    'description' => 'CB|ONE Daily Quiz',
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('user_daily_quiz_form'),
+    'access callback' => 'user_is_logged_in',
+  );
+  $items['daily-quiz-yes'] = array(
+    'title' => 'CB|ONE Daily Quiz',
+    'description' => 'CB|ONE Daily Quiz correct answer',
+    'page callback'		=> 'daily_quiz_correct_answer',
+    'access callback' => 'user_is_logged_in',
+  );
+  $items['daily-quiz-no'] = array(
+    'title' => 'CB|ONE Daily Quiz',
+    'description' => 'CB|ONE Daily Quiz wrong answer',
+    'page callback'		=> 'daily_quiz_wrong_answer',
+    'access callback' => 'user_is_logged_in',
+  );
+  $items['user-autocomplete'] = array(
+    'title' => 'CB|ONE Daily Quiz',
+    'description' => 'CB|ONE Daily Quiz user autocomplete',
+    'page callback'		=> 'daily_quiz_user_autocomplete',
+    'access callback' => 'user_is_logged_in',
+  );
+  //Menu for admin to Update subscription mail template
+  $items['admin/config/daily-quiz'] = array(
+    'title'				=> 'CB|ONE Daily Quiz',
+    'description'		=> 'CB|ONE Daily Quiz systems.',
+    'page callback'		=> 'system_admin_menu_block_page',
+    'access arguments'	=> array('cbone administration pages'),
+    'file'				=> 'system.admin.inc',
+    'file path'			=> drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/daily-quiz/user-list'] = array(
+    'title'				=> 'Daily Quiz User List',
+    'description'		=> 'CB|ONE Daily Quiz User level List.',
+    'page callback'		=> 'daily_quiz_user_list',
+	'weight'			=> 1,
+	'access arguments'	=> array('cbone administration pages'),
+    'file'				=> 'includes/daily_quiz_questions.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/daily-quiz/delete/%'] = array(
+    'title'				=> 'Delete User Daily Quiz',
+    'description'		=> 'Delete user answers from Daily Quiz',
+	'weight'			=> 2,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('delete_user_daily_quiz_form', 4),
+	'access arguments'	=> array('cbone administration pages'),
+    'file'				=> 'includes/daily_quiz_questions.inc',
+    'type'				=> MENU_CALLBACK,
+  );
+ return $items;
+}
+/**
+ * Implements hook_init()
+ */
+function cbone_dailyquiz_init(){
+	drupal_add_css(drupal_get_path('module', 'cbone_dailyquiz') . '/css/cbone_dailyquiz.css');
+	//drupal_add_js(drupal_get_path('module', 'percent_complete_meter') . '/js/percent_meter.js');
+}
+/**
+ * Callback function daily_quiz_test()
+ * To test Daily Quiz
+ * // daily-quiz-test
+ **/
+function daily_quiz_test(){
+	//return 'CB|ONE Daily Quiz';
+
+	$ip     = $_SERVER['REMOTE_ADDR']; // means we got user's IP address 
+	print $ip;
+	$json   = file_get_contents( 'http://smart-ip.net/geoip-json/' . $ip); // this one service we gonna use to obtain timezone by IP
+	// maybe it's good to add some checks (if/else you've got an answer and if json could be decoded, etc.)
+	$ipData = json_decode( $json, true);
+//print "<pre>";print_r($ipData);exit;
+	if ($ipData['timezone']) {
+		$tz = new DateTimeZone( $ipData['timezone']);
+		$now = new DateTime( 'now', $tz); // DateTime object corellated to user's timezone
+	} else {
+	   // we can't determine a timezone - do something else...
+	}
+}
+/**
+ * Implements hook_form_alter()
+ */
+function cbone_dailyquiz_form_alter(&$form, &$form_state, $form_id) {
+	if($form_id == 'daily_quiz_node_form') {
+		$form['actions']['submit']['#value'] = 'Save Question';
+		$form['actions']['addanother']['#value'] = 'Save and add another Question';
+		$form['#validate'][] = 'daily_quiz_node_form_validate';
+	}
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function cbone_dailyquiz_block_info() {
+	$blocks = array();
+	$blocks['daily_quiz_level'] = array(
+		'info' => t('User Daily Quiz Level'),
+	);
+	$blocks['daily_quiz_level_completed'] = array(
+		'info' => t('User Daily Quiz Level Completed'),
+	);
+	$blocks['user_daily_quiz_link'] = array(
+		'info' => t('User Daily Quiz Link'),
+	);
+	return $blocks;
+}
+/**
+ * Implements hook_block_view()
+ */
+function cbone_dailyquiz_block_view($delta='') {
+	$block = array();
+	switch($delta) {
+		case 'daily_quiz_level' :
+			$block['content'] = user_daily_quiz_level();
+		break;
+		case 'daily_quiz_level_completed' :
+			$block['content'] = user_daily_quiz_level_completed();
+		break;
+		case 'user_daily_quiz_link' :
+			$block['content'] = user_daily_quiz_link();
+		break;
+	}
+
+	return $block;
+}
+/**
+ * Implements hook_permission()
+ */
+function cbone_dailyquiz_permission() {
+	$permissions = array(
+		'cbone daily quiz' => array(
+			'title' => t('CB|One Daily Quiz Permission'),
+			'description' => t('Permission to access all "CB|One Daily Quiz" questions at any time.'),
+		),
+		'cbone administration pages' => array(
+			'title' => t('CB|One Administration Page permission'),
+			'description' => t('Permission to access the administration pages of "CB|One".'),
+		),
+	);
+	return $permissions;
+}
+/**
+ * Drupal form API
+ * validate add Question form
+ */
+function daily_quiz_node_form_validate($form, &$form_state){
+	$answer = $form_state['values']['field_correct_answer']['und']['0']['value'];
+	$fourth  = $form_state['values']['field_fourth_option']['und']['0']['value'];
+	$third = $form_state['values']['field_third_option']['und']['0']['value'];
+	if($fourth != '' && $third == '') {
+		form_set_error('field_third_option][und][0][value', t('Kindly enter third option!'));
+	}
+	if (trim($form_state['values']['field_'.$answer.'_option']['und']['0']['value']) == '') {
+		form_set_error('field_correct_answer][und', t('Kindly choose correct answer option!'));
+	}
+}
+/**
+ * Callback function cbone_daily_quiz()
+ * to show the completed level by user
+ * @return $output
+ **/
+function cbone_daily_quiz(){
+	$output = 'qqq';
+	/*$block = module_invoke('cbone_dailyquiz', 'block_view', 'daily_quiz_level');
+	$output .= render($block['content']);
+	$block = module_invoke('cbone_dailyquiz', 'block_view', 'daily_quiz_level_completed');
+	$output .= render($block['content']);*/
+	return $output;
+}
+/**
+ * Callback function user_daily_quiz_level()
+ * to show the completed level by user
+ * @return $output
+ **/
+function user_daily_quiz_level(){
+	global $user;
+	$output = '<div class="cbone-quiz-level">';
+	$badge_icon_output = '';
+	$level_detail = '';
+	$quiz_terms = taxonomy_get_tree(9);
+	$x = 1;
+	$completed = 0;
+	$percent = 0;
+	$percent_width = 3;
+	$width = 100;
+	
+	$query_answeer = db_select("dailyquiz_answer", "qa");
+	$query_answeer->fields("qa");
+	$query_answeer->condition("qa.uid", $user->uid, '=');
+	$query_answeer->condition("qa.answer_status", '0', '<>');
+	$result_answeer = $query_answeer->execute();
+	$answeer_count = $result_answeer->rowCount();
+	$data_answeer = $result_answeer->fetchObject();
+	
+	if($answeer_count == 0) {
+		$quiz_node = node_load(511);
+		$badge_icon_output .= '<div class="daily-quiz-text">'.$quiz_node->body['und']['0']['value'].'</div>';		
+	}
+	else {
+		$query = db_select("dailyquiz_user_last", "la");
+		$query->fields("la");
+		$query->condition("la.uid", $user->uid, '=');
+		$result = $query->execute();
+		$data_count = $result->rowCount();
+		$data = $result->fetchObject();
+		if($data->question_count == 5 && $data->answer_status == 1) {
+			$last_level = $data->last_level;
+		}
+		else {
+			$last_level = $data->last_level - 1;
+		}
+		$badge_icon_output .= '<div class="badge-icons">';
+		foreach($quiz_terms as $key => $quiz_term) {
+			if($last_level == $quiz_term->tid) {
+				$status = 'active';
+				$completed = $key + 1;
+				$width = 130;
+			}
+			else if($last_level > $quiz_term->tid) {
+				$status = 'color';
+				$width = 100;
+			}
+			else {
+				$status = 'bw';
+				$width = 100;
+			}
+			$badge_icon = '/sites/default/files/images/quiz/badges/badge-icon-'.$x.'-'.$status.'.png';
+			$badge_icon_output .= '<span class="badge-level-'.$quiz_term->tid.'"><img src="'.$badge_icon.'" width="'.$width.'"></span>';
+			$x++;
+		}
+		$badge_icon_output .= '</div>';		
+	}
+	$output .= '<div class="daily-quiz-title">YOUR DAILY DOSE TO TEST YOUR KNOWLEDGE OF COLDWELL BANKER TRIVIA.</div>';
+	if($answeer_count != 0) {
+		$percent = round($answeer_count/50*100);
+		$percent_width = $percent;
+		$output .= '<div class="percent-meter daily-quiz-meter"><div style="width: '.$percent_width.'% !important">'.$percent.'%</div></div>';
+	}
+	$output .= $badge_icon_output;
+	$output .= '</div>';
+	return $output;
+}
+/**
+ * Callback function user_daily_quiz_level_completed()
+ * to show the last completed level by user
+ * @return $output
+ **/
+function user_daily_quiz_level_completed(){
+	global $user;
+	$output = '';
+
+	$query_answeer = db_select("dailyquiz_answer", "qa");
+	$query_answeer->fields("qa");
+	$query_answeer->condition("qa.uid", $user->uid, '=');
+	$result_answeer = $query_answeer->execute();
+	$answeer_count = $result_answeer->rowCount();
+	$data_answeer = $result_answeer->fetchObject();
+	
+	$query = db_select("dailyquiz_user_last", "la");
+	$query->fields("la");
+	$query->condition("la.uid", $user->uid, '=');
+	$result = $query->execute();
+	$data_count = $result->rowCount();
+	$data = $result->fetchObject();
+	if($answeer_count >= 5) {
+		if($data->question_count == 5 && $data->answer_status == 1) {
+			$last_level = $data->last_level;
+		}
+		else {
+			$last_level = $data->last_level - 1;
+		}
+		$term = taxonomy_term_load($last_level);
+		$completed_level = get_quiz_level_number($last_level);
+		$output = '<div class="user-level-completed" style="background-image:url(/sites/default/files/images/quiz/badges/badge-level-'.$completed_level.'.jpg); background-position:center top; background-size: 100% 100%;">';
+		$output .= '<div class="user-level-completed-text"><div class="level-detail-'.$last_level.'"><img src="/sites/default/files/images/quiz/badges/badge-icon-'.$completed_level.'-active.png" width="150"></div>';
+		$output .= '<h1>'.$term->name.'</h1>';
+		$output .= '<div class="level-detail-text">'.$term->description.'</div>';
+		$output .= '</div></div>';
+	}
+	return $output;
+}
+/**
+ * Callback function user_daily_quiz_link()
+ * to show the user quiz wuestion link
+ * @return $link
+ **/
+function user_daily_quiz_link(){
+	global $user;
+	$link = '';
+	$query_answeer = db_select("dailyquiz_answer", "qa");
+	$query_answeer->fields("qa");
+	$query_answeer->condition("qa.uid", $user->uid, '=');
+	$result_answeer = $query_answeer->execute();
+	$answeer_count = $result_answeer->rowCount();
+	$data_answeer = $result_answeer->fetchObject();
+	$answer_date = isset($data_answeer->timestamp) ? date("y-m-d", $data_answeer->timestamp) : '';
+	$current_date = date("y-m-d", time());
+	if(user_access('cbone daily quiz')) {
+		if($answeer_count == 0 || ($answeer_count == 1 && $data_answeer->answer_status == 0)) {
+			$link = '<div class="new-question-link"><a href="/daily-quiz?slide=top" rel="modal-node-popup"><img src="/sites/default/files/support-icons_3.png" width="60"></a>'.l(t('Start Now'), 'daily-quiz', array('attributes' => array('rel' => 'modal-node-popup'), 'query' => array('slide' => 'top'))).'</div>';
+		}
+		else {
+			$link = '<div class="new-question-link"><a href="/daily-quiz?slide=top" rel="modal-node-popup"><img src="/sites/default/files/support-icons_3.png" width="60"></a>'.l(t('Take Next Question'), 'daily-quiz', array('attributes' => array('rel' => 'modal-node-popup'), 'query' => array('slide' => 'top'))).'</div>';
+		}
+	}
+	else if($answeer_count == 0 || ($answeer_count == 1 && $data_answeer->answer_status == 0 && ($answer_date != $current_date))) {
+		$link = '<div class="new-question-link"><a href="/daily-quiz?slide=top" rel="modal-node-popup"><img src="/sites/default/files/support-icons_3.png" width="60"></a>'.l(t('Start Now'), 'daily-quiz', array('attributes' => array('rel' => 'modal-node-popup'), 'query' => array('slide' => 'top'))).'</div>';
+	}
+	else {
+		$query = db_select("dailyquiz_user_last", "la");
+		$query->fields("la");
+		$query->condition("la.uid", $user->uid, '=');
+		$result = $query->execute()->fetchObject();
+		$answer_date = isset($result->timestamp) ? date("y-m-d", $result->timestamp) : '';
+		$current_date = date("y-m-d", time());
+		/*print date_default_timezone_get().'<br/>';
+		print date("y-m-d h:i:s A", time());
+		print "answer_date = $answer_date <br/> current_date = $current_date";
+		session_start();
+		$timezone = $_SESSION['time'];
+		print "<br/>User = $timezone";*/
+		if($answer_date == $current_date) {
+			$link = '<div class="new-question-link"><img src="/sites/default/files/support-icons_3.png" width="60"><br/><a>Try again tomorrow</a></div>';
+		}
+		else {
+			$link = '<div class="new-question-link"><a href="/daily-quiz?slide=top" rel="modal-node-popup"><img src="/sites/default/files/support-icons_3.png" width="60"></a>'.l(t('Take Next Question'), 'daily-quiz', array('attributes' => array('rel' => 'modal-node-popup'), 'query' => array('slide' => 'top'))).'</div>';
+		}
+	}
+	return $link;
+}
+/**
+ * Drupal form API
+ * for user Daily Quiz
+ **/
+function user_daily_quiz_form($form, &$form_state){
+	global $user;
+	$flag = 0;
+	if(user_access('cbone daily quiz')) {
+		$nid = user_question_nid($user->uid);
+		$node_data = node_load($nid);
+		$flag = 1;
+	}
+	else if(isset($_GET['nid']) && $_GET['nid'] != '' && $user->uid == 1) {
+		$nid = $_GET['nid'];
+		$node_data = node_load($nid);
+		$flag = 1;
+	}
+	else {
+		$query = db_select("dailyquiz_user_last", "la");
+		$query->fields("la");
+		$query->condition("la.uid", $user->uid, '=');
+		$result = $query->execute()->fetchObject();
+		if(is_object($result)) {
+			$answer_date = date("y-m-d", $result->timestamp);
+		}
+		else {
+			$answer_date = "0";
+		}
+		$current_date = date("y-m-d", time());
+		if($answer_date != $current_date) {
+			$nid = user_question_nid($user->uid);
+			$node_data = node_load($nid);
+			$flag = 1;
+		}
+	}
+	//print "<pre>";print_r($node_data);exit;
+	if($flag == 1) {
+		$first = isset($node_data->field_first_option['und']['0']['value']) ? $node_data->field_first_option['und']['0']['value'] : '';
+		$second = isset($node_data->field_second_option['und']['0']['value']) ? $node_data->field_second_option['und']['0']['value'] : '';
+		$third = isset($node_data->field_third_option['und']['0']['value']) ? $node_data->field_third_option['und']['0']['value'] : '';
+		$fourth = isset($node_data->field_fourth_option['und']['0']['value']) ? $node_data->field_fourth_option['und']['0']['value'] : '';
+		$sub_title = $node_data->field_question_sub_title['und']['0']['value'];
+
+		
+		$query = db_select("dailyquiz_user_last", "la");
+		$query->fields("la");
+		$query->condition("la.uid", $user->uid, '=');
+		$result = $query->execute();
+		$data_count = $result->rowCount();
+		$data = $result->fetchObject();
+		if($data_count == 0) {
+			$term = taxonomy_term_load(177);
+			$text = t('This is question number 1 of 5 for '.$term->name);
+		}
+		else if($data->answer_status == 0){
+			$term = taxonomy_term_load($data->last_level);
+			$text = t('This is question number '.$data->question_count.' of 5 for '.$term->name);
+		}
+		else if($data->question_count == 5) {
+			$last_level = $data->last_level + 1;
+			$term = taxonomy_term_load($last_level);
+			$text = t('This is question number 1 of 5 for '.$term->name);
+		}
+		else {
+			$term = taxonomy_term_load($data->last_level);
+			$question_count = ($data->question_count != 5) ? $data->question_count + 1 : 1;
+			$text = t('This is question number '.$question_count.' of 5 for '.$term->name);
+		}
+
+		$form['question_id'] = array(
+			'#type' => 'hidden',
+			'#value' => $node_data->nid,
+		);
+		$form['question_level'] = array(
+			'#type' => 'hidden',
+			'#value' => $node_data->field_question_level['und'][0]['tid'],
+		);
+		$form['quiz_question_number'] = array('#markup' => '<div class="user-question-number">'.$text.'</div>');
+		$form['quiz_question'] = array('#markup' => '<h1>'.$node_data->title.'</h1>');
+		$form['answer']['options'] = array(
+			'#type' => 'checkboxes',
+			'#options' => array('first' => $first, 'second' => $second, 'third' => $third, 'fourth' => $fourth),
+			'#title' => t($sub_title),
+		);
+		$form['#validate'][] = 'user_daily_quiz_form_validate';
+		$form['actions']['submit'] = array(
+			'#type' => 'submit',
+			'#value' => t('Submit'),
+			'#required' => TRUE,
+		);
+	}
+	else {
+		$form['quiz_question'] = array('#markup' => '<div class="user-question-number">You have already attempt today quiz question!<br/>Try again tomorrow</div>');
+	}
+	$form['#prefix'] = '<div class="daily-quiz-question-form">';
+	$form['#suffix'] = '</div>';
+	return $form;
+}
+/**
+ * Drupal form API
+ * validate User submitted answer
+ */
+function user_daily_quiz_form_validate($form, &$form_state){
+	$options = $form_state['values']['options'];
+	$not_check = 0;
+	$checked = 0;
+	foreach($options as $key => $option) {
+		if($option == NULL) {
+			$not_check = $not_check + 1;
+		}
+		else {
+			$checked = $checked + 1;
+		}
+	}
+	if($not_check == 4) {
+		form_set_error('options', t('Please choose atleast one answer!'));
+	}
+	if($checked > 1) {
+		form_set_error('options', t('Please choose only one answer!'));
+	}
+}
+/**
+ * Drupal form API
+ * submit function of user submitted answer
+ */
+function user_daily_quiz_form_submit($form, &$form_state){
+	global $user;
+	$question_id = $form_state['values']['question_id'];
+	$question_detail = node_load($question_id);
+	$correct_answer = $question_detail->field_correct_answer['und']['0']['value'];
+	$answer_status = 0;
+	$question_level = $form_state['values']['question_level'];	
+	$options = $form_state['values']['options'];
+	foreach($options as $key => $option) {
+		if($option != NULL) {
+			$user_answer = $option;
+		}
+	}
+	if($correct_answer == $user_answer) {
+		$answer_status = 1;
+	}
+	db_merge('dailyquiz_answer')
+	  ->key(array('nid' => $question_id, 'uid' => $user->uid, 'question_level' => $question_level))
+	  ->fields(array(
+					'nid' => $question_id,
+					'uid' => $user->uid,
+					'question_level' => $question_level,
+					'answer' => $correct_answer,
+					'answer_status' => $answer_status,
+					'timestamp' => REQUEST_TIME,
+			  ))
+	  ->execute();
+			  
+	$query = db_select("dailyquiz_answer", "qa");
+	$query->fields("qa", array('aid'));
+	$query->condition("qa.uid", $user->uid, '=');
+	$query->condition("qa.question_level", $question_level, '=');
+	$result = $query->execute();
+	$question_count = $result->rowCount();
+
+	db_merge('dailyquiz_user_last')
+	  ->key(array('uid' => $user->uid))
+	  ->fields(array(
+					'uid' => $user->uid,
+					'last_level' => $question_level,
+					'last_question' => $question_id,
+					'question_count' => $question_count,
+					'answer_status' => $answer_status,
+					'timestamp' => REQUEST_TIME,
+			  ))
+	  ->execute();
+
+	if($answer_status == 1) {
+		drupal_goto('daily-quiz-yes');
+	}
+	else {
+		drupal_goto('daily-quiz-no');
+	}
+	//print "<pre>";print_r($fields);exit;
+}
+/**
+ * Callback function user_question_nid()
+ * to check user question
+ * @return $nid
+ **/
+function user_question_nid($uid = NULL) {
+	global $user;
+	$uid = ($uid == NULL) ? $user->uid : $uid;
+
+	$query = db_select("dailyquiz_user_last", "la");
+	$query->fields("la");
+	$query->condition("la.uid", $uid, '=');
+	$result = $query->execute();
+	$data_count = $result->rowCount();
+	$data = $result->fetchObject();
+	if($data_count == 0) {
+		$data_node = cbone_question_nid(177, 0);
+	}
+	else if($data->answer_status == 0) {
+		$data_node = $data->last_question;
+	}
+	else if($data->question_count < 5){
+		$data_node = cbone_question_nid($data->last_level, $data->question_count);
+	}
+	else {
+		$leve = $data->last_level + 1;
+		$limit = 0;
+		$data_node = cbone_question_nid($leve, $limit);
+	}
+	return $data_node;
+}
+
+/**
+ * Callback function cbone_question_nid()
+ * to check user question
+ * @return $nid
+ **/
+function cbone_question_nid($level, $limit) {
+	//print $level.'<br/>'.$limit;
+	$question = db_select("node", "n");
+	$question->join('field_data_field_question_level', 'ql', 'ql.entity_id = n.nid');
+	$question->join('draggableviews_structure', 'ds', 'ds.entity_id = n.nid');
+	$question->fields("n", array('nid'));
+	$question->condition("n.type", 'daily_quiz', '=');
+	$question->condition("ql.field_question_level_tid", $level, '=');
+	$question->condition("ds.view_name", 'daily_quiz', '=');
+	$question->orderBy("ds.weight", "ASC");
+	$question->orderBy("ds.dvid", "ASC");
+	$question->range($limit, 1);
+	$questions = $question->execute();
+	$nid = $questions->fetchField();
+	return $nid;
+}
+/**
+ * Callback function daily_quiz_correct_answer()
+ * to displayed correct answer message to user
+ * @return $output
+ **/
+function daily_quiz_correct_answer(){
+	$output = '';
+	global $user;
+	
+	$first_answeer = db_select("dailyquiz_user_last", "la");
+	$first_answeer->fields("la");
+	$first_answeer->condition("la.uid", $user->uid, '=');
+	$first_answeer->condition("la.last_level", '177', '=');
+	$first_answeer->condition("la.question_count", '1', '=');
+	$first_answeer->condition("la.answer_status", '1', '=');
+	$result_first = $first_answeer->execute();
+	$result_first_count = $result_first->rowCount();
+	if($result_first_count != 0){
+		$output .= '<div class="yes-response-page" style="background-image:url(/sites/default/files/images/quiz/badges/badge-level-0.jpg); background-position:center top; background-size: 100% 100%;">';
+		$output .= '<div class="yes-response-text congratulations"><h1>CONGRATULATIONS!</h1>';
+		$output .= '<div class="congratulations-text">You\'re one step closer to the coveted title of Coldwell Banker Guru!<br/>';
+		$output .= 'Answer 4 more questions correctly to unlock your 1st badge.</div>';
+		$output .= '</div></div>';	
+	}
+	else {
+		$query = db_select("dailyquiz_user_last", "la");
+		$query->fields("la");
+		$query->condition("la.uid", $user->uid, '=');
+		$result = $query->execute()->fetchObject();
+		if($result->last_question){
+			$node_data = node_load($result->last_question);
+			$yes_response = isset($node_data->field_yes_response_text['und']['0']['value']) ? $node_data->field_yes_response_text['und']['0']['value'] : '';
+			$yes_image = isset($node_data->field_yes_background_image['und']['0']['uri']) ? file_create_url($node_data->field_yes_background_image['und']['0']['uri']) : '';
+			$remain_question = 5 - $result->question_count;
+			$number = get_quiz_level_number($result->last_level);
+			if($number == 1) {
+				$level = '1st';
+			}
+			else if ($number == 2) {
+				$level = '2nd';
+			}
+			else if ($number == 3) {
+				$level = '3rd';
+			}
+			else {
+				$level = $number.'th';
+			}
+			if($remain_question == 0) {
+				$text = t('You have successfully unlocked your '.$level.' badge.');
+			}
+			else {
+				$text = t('Answer '.$remain_question.' more questions correctly to unlock your '.$level.' badge.');
+			}
+			$output = '<div class="yes-response-page" style="background-image:url('.$yes_image.'); background-position:center top; background-size: 100% 100%;"><div class="yes-response-text"><div class="user-question-number">'.$text.'</div><h1><img src="/sites/default/files/thumb-yes.jpg" width="70"/>YES!</h1>'.$yes_response.'</div></div>';
+		}
+	}
+	return $output;
+}
+/**
+ * Callback function daily_quiz_wrong_answer()
+ * to displayed wrong answer message to user
+ * @return $output
+ **/
+function daily_quiz_wrong_answer(){
+	$output = '';
+	global $user;
+	$query = db_select("dailyquiz_user_last", "la");
+	$query->fields("la", array('last_question'));
+	$query->condition("la.uid", $user->uid, '=');
+	$nid = $query->execute()->fetchField();
+	if($nid) {
+		$node_data = node_load($nid);
+		$no_response = isset($node_data->field_no_response_text['und']['0']['value']) ? $node_data->field_no_response_text['und']['0']['value'] : '';
+		$no_image = isset($node_data->field_no_background_image['und']['0']['uri']) ? file_create_url($node_data->field_no_background_image['und']['0']['uri']) : '';
+		$output = '<div class="no-response-page" style="background-image:url('.$no_image.'); background-position:center top; background-size: 100% 100%;"><div class="no-response-text"><h1><img src="/sites/default/files/thumb-no.jpg" width="70"/>No</h1>'.$no_response.'</div></div>';
+	}
+	return $output;
+}
+/**
+ * Callback function daily_quiz_user_autocomplete()
+ * to displayed the user name/e-mail
+ * in search form field.
+ * @print $js_list
+ **/
+function daily_quiz_user_autocomplete($string) {
+	$matches = array();
+	$result = db_select('users', 'u')
+		->fields('u')
+		->condition('name', '%' . db_like($string) . '%', 'LIKE')
+		->range(0,10)
+		->execute();
+	$count = $result->rowCount();
+	if($count != 0) {
+		foreach ($result as $user_data) {
+			$matches[$user_data->name] = check_plain(ucwords($user_data->name));
+		}
+	}
+	else {
+		$result = db_select('users', 'u')
+			->fields('u')
+			->condition('mail', '%' . db_like($string) . '%', 'LIKE')
+			->range(0,10)
+			->execute();
+		foreach ($result as $user_data) {
+			$matches[$user_data->mail] = check_plain($user_data->mail);
+		}
+	}
+	return drupal_json_output($matches);
+}
+/**
+ * Callback function get_quiz_level_number()
+ * to get the level number
+ * @return $key
+ **/
+function get_quiz_level_number($term){
+	$level = array(1 => 177, 2 => 178, 3 => 179, 4 => 180, 5 => 181, 6 => 182, 7 => 183, 8 => 184, 9 => 185, 10 => 186);
+	$key = array_search($term, $level);
+	return $key;
+}

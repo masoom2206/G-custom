@@ -1,0 +1,5 @@
+name = CB Firstlook Property Post
+description = Custom module for CB Firstlook Property Post
+core = 7.x
+version = 7.x-1.1
+datestamp = "1458859850"

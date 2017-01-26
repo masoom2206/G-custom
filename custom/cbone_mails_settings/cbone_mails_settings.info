@@ -1,0 +1,13 @@
+name = "CB|ONE Mail Configuration tool"
+description = "CB|ONE Mail Configuration tool"
+core = "7.x"
+package = "CB|ONE"
+configure = "admin/config/cbone-mail/configuration"
+
+;dependencies[] = 
+
+version = "7.x-custom"
+core = "7.x"
+project = ""CB|ONE Mail Configuration tool"
+
+

@@ -1,0 +1,48 @@
+/**
+ * Css File for My Listing Page.
+ **/
+.view-my-listings .view-header {margin-bottom: 50px;}
+.my-listings {width: 100%; padding-top: 5px; padding-bottom: 5px;}
+.my-listings-one {display: inline-block; width: 15%;}
+/*.my-listings-two {display: inline-block; width: 95px; transform: rotate(270deg); transform-origin: 15px 15px; margin-right: -50px;}*/
+.my-listings-three {display: inline-block; width: 45%; vertical-align: top; margin-top: 25px;}
+.my-listings-four {display: inline-block; width: 47% !important; text-align: right; margin-top: 25px;}
+.my-listings-four ul {width: 100%; margin: 0px !important; padding: 0px !important;}
+.my-listings-four ul li {display: inline-block; width: 49%; background: #093250; text-align: center; text-transform: uppercase;}
+.my-listings-four ul li a, .my-listings-four ul li a:hover{color: #fff;}
+.my-listings-part-two {background-color: #dbdcdf; display: inline-block; width: 84%; height: 117px;}
+.my-listings-part-one {vertical-align: top;}
+.premier, .platinum-plus {background-color: #00a5d3; color: #fff; width: 122%; text-align: center; text-transform: uppercase; font-size: 13px; height: 30px;}
+.platinum {background-color: #6d7176; color: #fff; width: 122%; text-align: center; text-transform: uppercase; font-size: 13px; height: 30px;}
+.view-content .content {margin: 0px !important;}
+.view-my-listings.view-display-id-block_1 img{margin-bottom: -5px;}
+.my-listing-title {text-align: center; text-transform: uppercase; font-size: 48px;}
+#new-buyer-title-form #edit-new-buyer-title {width: 99%; height: 40px; background-color: #dbdcdf; color: #9e9fa8; font-size: 17px; padding-left: 4%;}
+#new-buyer-title-form .btn{position: absolute; right: 14px; margin-top: -53px; color: transparent; border: none; background: url("/sites/all/modules/custom/listing_marketing_system/images/listing-form-arrow.jpg") 0px 0px no-repeat; border-radius: 0px !important; padding: 0px !important; height: 38px;}
+#new-buyer-title-form  .form-type-item{position: absolute; margin-top: 30px;}
+#new-buyer-title-form .form-type-textfield label{font-weight: normal; font-size: 15px;}
+.view-id-my_listings .views-exposed-form {display: none;}
+.view-id-my_buyers{  padding-bottom: 5%;}
+
+
+
+
+/******buyer-step-by-step Start******/
+.listing-step-by-step {background: url('../images/41495082.jpg'); min-height: 700px; padding-top: 100px; line-height: normal;}
+.step-by-step-body {background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5); height: 500px;}
+.step-by-step-title .title-one {padding-top: 40px;}
+.step-by-step-title .title-one, .step-by-step-title .title-two {text-align: center; text-transform: uppercase; font-size: 30px; color: #fff;}
+.step-by-step-title .step-body{text-align: center; color: #fff; margin-top: 15px; margin-bottom: 25px;}
+.page-buyer-steps .block.block-views{background: url('../images/41495082.jpg'); min-height: 700px; padding-top: 100px; line-height: normal; margin-top: 150px;}
+.page-buyer-steps .block.block-views .view-content{background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);}
+.page-buyer-steps .block.block-views .field-content{width: 800px; margin-left: auto; margin-right: auto; color: #fff;}
+.page-buyer-steps .block.block-views .field-content a{color: #fff; text-transform: uppercase;}
+.page-buyer-steps .block.block-views .field-content a:hover{color: #fff; text-decoration: none;}
+.page-buyer-steps .block.block-views .title-two{text-transform: uppercase; font-size: 30px; color: #fff;text-align: center;}
+.page-buyer-steps .block.block-views .step-body{text-align: center; color: #fff; margin-top: 15px; margin-bottom: 25px;}
+.page-buyer-steps .fav-completed-white{text-align: right; float: none !important; padding-bottom: 15px;}
+.page-buyer-steps .view-icon-grids .view-content {background: none !important;}
+.view-step-by-step-sub-sections .title-two{font-family: "Raleway"; font-size: 5em !important; line-height: 1em !important;}
+
+
+/******listing-step-by-step END********/

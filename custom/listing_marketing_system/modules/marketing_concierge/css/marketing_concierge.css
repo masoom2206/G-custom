@@ -1,0 +1,347 @@
+.marketing-concierge-title h1 {
+	font-size: 40px;
+	text-transform: uppercase;
+	color: #fff;
+}
+
+.view-marketing-concierge-products tr, tr.even {
+    background: none !important;
+}
+.view-marketing-concierge-products tr td {
+    /*border-right: 1px solid #000000;*/
+	vertical-align: top;
+}
+.view-marketing-concierge-products .marketing-concierge-products{
+  width: 295px;
+  border: 1px solid #b6b9bb;
+  min-height: 670px;
+  padding: 15px;
+}
+.view-marketing-concierge-products .view-content {
+	margin-top: 30px;
+}
+.view-marketing-concierge-products tr td.col-last {
+    border-right: none;
+}
+.view-marketing-concierge-products{
+  margin-bottom: 50px;
+}
+/*.marketing-concierge-products .product-image, .marketing-concierge-products .product-title, .marketing-concierge-products .product-price, .marketing-concierge-products .product-total-value, .marketing-concierge-products .product-add-to-cart, .marketing-concierge-title {
+	text-align: center;
+}*/
+.marketing-concierge-products .product-title {
+	text-transform: uppercase;
+	font-weight: bold;
+}
+.marketing-concierge-products .product-title span{
+	text-transform: capitalize;
+}
+
+.view-marketing-concierge-products .marketing-concierge-title {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    font-family: "Raleway";
+    font-size: 5em;
+    height: 393px;
+    letter-spacing: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 200px;
+    padding-top: 110px;
+    text-align: center;
+	width: 50%;
+}
+.view-marketing-concierge-products .view-header {
+	background-image: url("/sites/all/modules/custom/listing_marketing_system/images/mc-banner.jpg");
+	background-position: center top;
+	background-size: 100%;
+}
+
+.marketing-concierge-title h1 img{float: left; margin-left: 120px; margin-right: -100px;}
+.marketing-concierge-products .product-title-value {margin-left: 5px; vertical-align: top;}
+.product-image, .product-title-value {display: inline-block;}
+.product-image img{width: 50px; vertical-align: bottom !important;}
+.product-description, .product-title-value {color: #76767b;}
+.marketing-concierge-products .product-description ul{padding-left: 20px !important;}
+.marketing-concierge-products .product-add-to-cart {padding-top: 10px; padding-bottom: 10px;}
+.product-add-to-cart .form-submit {
+  background-image: url("/sites/all/modules/custom/listing_marketing_system/images/bell-icon-white-102wide.png");
+  background-position: 5% 50%;
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+  background-color: #acacaf;
+  width: 150px;
+  padding-left: 40px;
+}
+.product-add-to-cart .form-submit:hover {color: #fff !important;}
+.product-add-to-cart .form-submit:hover{background-color: #acacaf;}
+
+/***********19-01-15***********/
+.mc-lms-tool-matrix .status-no {color: red;}
+.mc-lms-tool-matrix .status-yes {color: green;}
+.mc-lms-tool-matrix .status-skip {color: #555;}
+.mc-lms-tool-matrix td {text-align: center;}
+.mc-lms-tool-matrix td:nth-child(3), .mc-lms-tool-matrix td.title-role-name {text-align: left;}
+#add-mc-lms-tool-matrix-form .form-item.form-type-radios{display: inline-block; width: 49%;}
+
+
+/**************CSS for marketing-concierge-order additional page******************/
+.marketing-concierge-order .mc-additional-order-form {width: 75%; margin-left: auto; margin-right: auto;
+margin-top: 3%; border: 1px solid #b9b9b9; padding: 20px;}
+.marketing-concierge-order .cpas{text-transform: uppercase;}
+.marketing-concierge-order .mc-form-heading{font-size: 20px; font-weight: 600;}
+.marketing-concierge-order .mc-form-direct-mail label{text-transform: uppercase;}
+.marketing-concierge-order .form-additional-heading{text-transform: uppercase; font-weight: 600;}
+.marketing-concierge-order .direct-mail-file{padding: 10px 0px 15px 0px;}
+.marketing-concierge-order #direct-mail-upload{padding: 10px 40px 10px 40px; background: #a8abad; color: #fff; text-transform: uppercase;}
+.mc-form-additional .form-item{margin: 0px;}
+.mc-form-additional .form-item label{display: none;}
+.mc-form-additional .additional-label, .mc-form-additional .form-item, .mc-form-additional .additional-total{display: inline-block;}
+.marketing-concierge-order input[type="text"] {padding: 2px 9px; width: 110px; border: 1px solid;}
+.marketing-concierge-order .additional-label{ width: 60%; font-size: 15px;}
+.marketing-concierge-order .mc-form-subtotal { padding-top: 17px; border-top: 1px solid #ccc;}
+
+.marketing-concierge-order .form-item-listed-postcards, .marketing-concierge-order .form-item-sold-postcards, .marketing-concierge-order .form-item-pro-brochures{width: 14%;}
+.additional{padding: 5px 0px 5px 0px;}
+.mc-form-subtotal {margin-top: 2%;}
+.mc-form-subtotal .subtotal {width: 50%; margin-left: auto;}
+.mc-form-subtotal .subtotal-heading{text-align: right; font-size: 18px; font-weight: 600;}
+.mc-form-subtotal .package .title {width: 80%; display: inline-block;}
+.mc-form-subtotal .package .amount {width: 18%; display: inline-block;}
+.mc-form-subtotal .subtotal-border{border: 1px solid; height: 1px; margin: 5px 0px 5px 0px;}
+.mc-form-submit .additional-order-submit {text-align: right;}
+/*.mc-form-submit .additional-order-submit input[type="submit"]{background: #a8abad;}*/
+.mc-form-submit .additional-order-submit input[type="submit"]:hover{color: #fff;}
+.additional-total .listed-total{border: 1px solid; padding: 3px 15px;}
+.mc-form-submit {padding: 10px;}
+.mc-form-submit .additional-order-submit .form-submit {
+  background-image: url("/sites/all/modules/custom/listing_marketing_system/images/bell-icon-white-102wide.png");
+  background-position: 5% 50%;
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+  background-color: #acacaf;
+  width: 150px;
+  padding-left: 40px;
+}
+/*.direct-mail-file{display: none;}*/
+#upload-direct-mail-list-form .plupload_scroll .plupload_filelist {height: 70px;}
+#upload-direct-mail-list-form .plupload_scroll .plupload_filelist li.plupload_droptext {line-height: 70px;}
+
+/*Upload Form CSS*/
+#upload-direct-mail-list-form{color: #858585; letter-spacing: 0.6px;}
+#upload-direct-mail-list-form .upload-page-title{font-size: 24px; font-weight: 600; text-transform: uppercase;}
+.uploaded-files ul{margin-top: 20px !important; margin-bottom: 20px !important;}
+.uploaded-files ul li a, .uploaded-files ul li a:hover{font-size: 18px; color: #858585;}
+#upload-direct-mail-list-form .form-submit{margin-right: 10px;}/*background-color: #acacaf;*/
+.form-item-direct-mail-postcards span a, .form-item-direct-mail-postcards span a:hover {font-size: 15px; text-transform: none; color: #858585; font-weight: 600;}
+.pro-brochures-condition{font-size: 14px;}
+span.star{font-size: 30px; vertical-align: middle;}
+.page-upload-direct-mail-list .region-navigation, .page-upload-direct-mail-list .hidden-lg {display: none !important;}
+.page-upload-direct-mail-list .col-sm-6 {width: 100% !important;}
+.mc-form-direct-mail .mc-form-direct-mail-one {display: inline-block; width: 52%; vertical-align: top;}
+.mc-form-direct-mail .mc-form-direct-mail-two {display: inline-block; width: 47%; vertical-align: top; line-height: 17px; font-size: 14px; font-weight: 500;}
+.mc-form-direct-mail .mc-form-direct-mail-two p{line-height: 17px; font-size: 14px; font-weight: 500;}
+
+/*********************************************************************************/
+/******************************MC Checkout form CSS*******************************/
+.marketing-concierge-checkout .marketing-concierge-title {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    font-family: "Raleway";
+    font-size: 5em;
+    height: 393px;
+    letter-spacing: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 200px;
+    padding-top: 110px;
+    text-align: center;
+	width: 50%;
+}
+/*.marketing-concierge-checkout .header-image {
+	background-image: url("/sites/all/modules/custom/listing_marketing_system/images/mc-banner.jpg");
+	background-position: center top;
+	background-size: 100%;
+}*/
+.marketing-concierge-checkout{color: #858585;}
+.marketing-concierge-checkout .form-type-select label, .marketing-concierge-checkout .form-type-textfield label{display: none;}
+.part-two .form-type-radios label[for="edit-commerce-payment-payment-details-credit-card-type"]{display: none;}
+.marketing-concierge-checkout .mc-checkout-body {width: 95%; margin-left: auto; margin-right: auto; margin-top: 20px;}
+.marketing-concierge-checkout .mc-order-thanks-message{font-weight: 600; padding-left: 10px;}
+.marketing-concierge-checkout .mc-checkout-payment-head{font-size: 22px; font-weight: 600; padding-top: 30px; padding-bottom: 30px;}
+.marketing-concierge-checkout .billing-contact, .marketing-concierge-checkout .payment-method{font-weight: 600;}
+.marketing-concierge-checkout .mc-checkout-part-one{display: inline-block; width: 50%; vertical-align: top;}
+.marketing-concierge-checkout .mc-checkout-part-two{display: inline-block; width: 49%; vertical-align: top;}
+.marketing-concierge-checkout .mc-review-order-shipping{width: 100%;}
+.marketing-concierge-checkout input[type="text"]{border: 1px solid #ddd; border-radius: 10px; height: 35px;}
+.marketing-concierge-checkout .field-name-field-billing-area-code, .marketing-concierge-checkout .field-name-field-billing-phone {display: inline-block; margin-right: 5px;}
+.marketing-concierge-checkout .field-name-field-billing-area-code #edit-customer-profile-billing-field-billing-area-code-und-0-value {width: 180px;}
+.marketing-concierge-checkout .field-name-field-billing-phone #edit-customer-profile-billing-field-billing-phone-und-0-value {width: 315px;}
+.marketing-concierge-checkout #edit-customer-profile-billing-field-billing-email-und-0-value {width: 320px;}
+.marketing-concierge-checkout #edit-customer-profile-billing-commerce-customer-address-und-0-organisation-name, .marketing-concierge-checkout #edit-customer-profile-billing-commerce-customer-address-und-0-thoroughfare, .marketing-concierge-checkout #edit-customer-profile-billing-commerce-customer-address-und-0-premise, .marketing-concierge-checkout #edit-customer-profile-billing-commerce-customer-address-und-0-name-line {width: 505px;}
+.marketing-concierge-checkout #edit-customer-profile-billing-commerce-customer-address-und-0-administrative-area {width: 150px; height: 35px; border-radius: 10px; border: 1px solid #ddd;}
+.marketing-concierge-checkout #edit-customer-profile-billing-commerce-customer-address-und-0-locality{width: 220px;}
+.marketing-concierge-checkout .form-item, .marketing-concierge-checkout .form-actions {margin-top: .5em; margin-bottom: .5em;}
+.marketing-concierge-checkout .field-name-field-mc-order-note-to-mc .form-item {margin-top: 0em; margin-bottom: 0em;}
+.marketing-concierge-checkout .field-name-field-mc-order-note-to-mc label, .marketing-concierge-checkout .field-name-field-mc-order-note-to-mc .description, .marketing-concierge-checkout .field-name-field-mc-order-note-to-mc .form-textarea-wrapper .grippie{display: none;}
+.marketing-concierge-checkout .mc-billing-address{margin-top: 20px;}
+.marketing-concierge-checkout .form-item-customer-profile-billing-commerce-customer-address-und-0-premise{margin-top: 1em;}
+.billing-section .part-two legend, .billing-section .part-two .form-item-commerce-payment-payment-method, .mc-checkout-part-two #edit-commerce-payment-payment-method, .mc-checkout-part-two legend{display: none;}
+.mc-checkout-part-two table tr {line-height: 40px; border-bottom: none;}
+.mc-checkout-part-two .mc-Order-details .view-footer{border-top: 3px solid #ccc;}
+.mc-checkout-part-two table tr.odd {background: none !important;}
+.mc-checkout-part-two table tr th, .mc-checkout-part-two table tr td{padding: 0px 10px;}
+.mc-checkout-part-two .Order-details{background: #858585; color: #fff; padding: 8px 15px; font-weight: 600;}
+.mc-checkout-part-two .mc-Order-details {border: 1px solid;}
+
+
+
+
+#payment-details .form-item-commerce-payment-payment-details-credit-card-number, #payment-details .form-item-commerce-payment-payment-details-credit-card-code{display: inline-block; margin-right: 5px;}
+#payment-details #edit-commerce-payment-payment-details-credit-card-type .form-type-radio{display: inline-block; margin-right: 1em;}
+#payment-details #edit-commerce-payment-payment-details-credit-card-code{width: 100px;}
+#payment-details #edit-commerce-payment-payment-details-credit-card-number{width: 250px;}
+#payment-details .expires .form-type-select {display: inline-block; margin-right: 1em;}
+#payment-details .expires .form-type-select select{width: 70px;}
+#payment-details .expires .commerce-month-year-divider{display: none;}
+#payment-details .expires h1 {font-size: 18px; font-weight: 600; display: inline-block; margin-right: 1em;}
+.promo-code .form-item-commerce-coupon-coupon-code .description, .promo-code legend{display: none;}
+.promo-code .form-item-commerce-coupon-coupon-code, .promo-code #edit-commerce-coupon-coupon-add{display: inline-block;}
+.promo-code input[type="text"]{width: 125px;}
+.mc-promo-code {margin-top: 10%;}
+.mc-promo-code .promo-code{width: 50%; margin-left: auto;}
+.promo-code input[type="submit"]{display: inline-block; padding: 6px 20px 6px 20px; background: #aeadaf; border-radius: 7px; vertical-align: top; margin-top: 10px;}
+.mc-promo-code .order-total-price {margin-top: 20px;}
+.mc-promo-code .order-total-title{display: inline-block; width: 60%;}
+.mc-promo-code .order-total-amount{display: inline-block;}
+.mc-promo-code .line-border{border: 1px solid #ddd; margin-bottom: 10px;}
+.mc-promo-code .total{font-weight: 600; font-size: 17px;}
+
+
+/*********************************************************************************/
+/*****************************Order Review CSS*************************************/
+.mc-checkout-review-body{width: 95%; margin-left: auto; margin-right: auto; margin-top: 10px;}
+.mc-checkout-review-body .mc-review-title{font-size: 24px; text-transform: uppercase; font-weight: 600; padding: 15px 0px;}
+.mc-checkout-review-body .mc-review-description{font-size: 18px; font-weight: 600; padding: 10px 0px 30px 0px;}
+.mc-checkout-review-body .mc-review-order-no{font-size: 24px; font-weight: 600; padding-bottom: 10px;}
+.mc-checkout-review-body .mc-review-property-address{font-size: 24px; font-weight: 600; padding-bottom: 30px;}
+.mc-review-order-shipping{width: 100%;}
+.mc-review-order-shipping .mc-review-order {display: inline-block; width: 52%; border: 1px solid; min-height: 300px;}
+.mc-review-order-shipping .mc-review-order.cbone-mc-free {display: block; width: 100%; border: 1px solid; min-height: 210px;}
+.mc-review-order-shipping .mc-review-shipping {display: inline-block; width: 47%; vertical-align: top; float: right; border: 1px solid; min-height: 300px;}
+.mc-review-order-shipping .title, .mc-review-billing .title{background: #858585; color: #fff; padding: 8px 15px; font-weight: 600;}
+.mc-review-order-shipping ul{padding-left: 15px;}
+.mc-review-order-shipping ul li{list-style: none; line-height: 30px;}
+.mc-review-order-shipping ul li div{display: inline-block;}
+.mc-review-order-shipping .mc-review-shipping ul li div.amount{float: right; width: 60%;}
+.mc-review-order-shipping .mc-review-order ul li div.amount{float: right; width: 20%; text-align: right; padding-right: 10px;}
+.mc-review-order-shipping .line-border{border: 1px solid; margin-left: -15px;}
+.mc-review-billing {border: 1px solid; margin-top: 50px;}
+.billing-section .part-one{width: 50%; display: inline-block; vertical-align: top; border-right: 2px solid;}
+.billing-section .part-two{width: 49%; display: inline-block; vertical-align: top;}
+.billing-section .part-two{padding-left: 15px;}
+.billing-section ul{padding-left: 15px;}
+.billing-section ul li{list-style: none; line-height: 30px;}
+.mc-form-submit .mc-form-message{text-align: right; padding-top: 20px;}
+li.city-state-zip div{display: inline-block; padding-right: 30px;}
+.part-one ul, .part-two ul{padding: 10px 15px;}
+.part-one ul li, .part-two ul li {line-height: 40px;}
+.card-detail li{line-height: 20px !important;}
+.terms-conditions{margin-top: 20px;}
+.terms-conditions .terms-data{color: #000; width: 100%; font-size: 14px; line-height: 20px;}
+.terms-conditions .terms-heading{font-size: 20px; font-weight: 600; padding: 15px 0px; color: #858585;}
+.terms-conditions legend{display: none;}
+.mc-form-submit input[type="submit"]{background-color: #888888; text-transform: uppercase; font-size: 18px; color: #fff; padding: 10px 30px; vertical-align: middle; font-weight: 500;}
+.mc-commerce-cancel{display: inline-block; padding-left: 10px;}
+.mc-commerce-cancel a:hover, .mc-commerce-cancel a{background-color: #888888; text-transform: uppercase; font-size: 18px; color: #fff !important; padding: 12px 30px; vertical-align: middle; font-weight: 500;}
+/*********************************************************************************/
+/****************************mc complete css***************************************/
+.marketing-concierge-checkout.complete .complete-header-image {width: 100%; text-align: center;}
+/*.marketing-concierge-checkout.complete .complete-header-image img{width: 100%;}*/
+.marketing-concierge-checkout.complete .message-body .message{width: 80%; margin-left: auto; margin-right: auto; margin-top: 1%; font-weight: 500; font-size: 18px; margin-bottom: 5%;}
+/*********************************************************************************/
+/***********12-05-15***********/
+.mc-lms-tool-matrix .child-term {margin-left: 20px;}
+/***********12-05-15***********/
+
+
+.ctools-modal-content .modal-header {
+    background-color: #152d54 !important;
+    padding: 10px !important;
+}
+.manage-listing-back .btn.form-submit.ajax-processed {
+    background-image: url("/sites/all/modules/custom/listing_marketing_system/images/back-curved-arrow.png");
+    background-repeat: no-repeat;
+    background-color: transparent;
+    font-size: 0px;
+    width: 70px;
+    height: 100px;
+}
+
+.form-item.form-type-textfield.form-item-direct-mail-postcards-qty-9, .form-item.form-type-textfield.form-item-direct-mail-postcards-qty-10 {
+    width: 57%;
+}
+.form-item.form-type-textfield.form-item-direct-mail-postcards-qty-9 > label, .form-item.form-type-textfield.form-item-direct-mail-postcards-qty-10 > label {
+    float: right;
+}
+
+.ctools-sample-modal-content .popups-close, .ctools-sample-modal-content .popups-close a {
+    color: #000 !important;
+    display: block;
+    float: none !important;
+    font-size: 10px !important;
+    opacity: 1;
+    visibility: visible;
+    width: 78px;
+}
+
+.direct-mail-upload {
+    background: #a8abad none repeat scroll 0 0;
+    color: #fff!important;
+    padding: 10px 40px;
+    text-transform: uppercase;
+}
+
+div.ctools-sample-modal-content div.popups-title {
+  border:none;
+}
+
+.marketing-concierge-order .package.subtotal-total {
+    border-top: 1px solid;
+    display: block;
+    margin: 10px 0;
+    padding: 10px 0;
+}
+
+.mc-review-order-shipping .item-list ul li {
+  margin:0px;
+}
+.mc-review-order-shipping .views-field.views-field-line-item-title {
+    width: 83%;
+}
+.mc-review-order-shipping .commerce-price-formatted-components tr {
+    background: rgba(0, 0, 0, 0) none repeat scroll 0 0 !important;
+    border: medium none;
+}    
+.mc-review-order-shipping .component-type-base-price.odd, .component-type-commerce-price-formatted-amount.odd {
+    border-top: 2px solid #bbb;
+}
+.mc-review-order-shipping .component-type-base-price.odd .component-title {
+   text-transform: uppercase;
+}
+.mc-review-order-shipping .commerce-price-formatted-components .component-total {
+    float: right;
+    padding-right: 12px;
+}
+
+.marketing-concierge-checkout .views-table.cols-4, .marketing-concierge-checkout .view-footer {
+    font-size: 14px;
+}
+.marketing-concierge-order .form-item.form-type-select.form-item-paper-preference {
+    display: inline-block;
+    width: 18%;
+}
+.marketing-concierge-order .form-item.form-type-select.form-item-brochure-size {
+    display: inline-block;
+    width: 20%;
+}

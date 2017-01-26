@@ -1,0 +1,947 @@
+/* Reset Drupal CSS
+--------------------------------------------------------------------------------*/
+#page {margin: 0 !important; padding: 0 !important}
+#mdf-tabs {border: none; padding: 0}
+.ui-widget,
+.ui-widget-content .ui-icon,
+.ui-widget-header .ui-icon,
+.ui-state-default .ui-icon,
+.ui-state-hover .ui-icon,
+.ui-state-focus .ui-icon,
+.ui-state-active .ui-icon,
+.ui-state-highlight .ui-icon,
+.ui-state-error .ui-icon,
+.ui-state-error-text .ui-icon,
+.ui-widget p .ui-icon,
+.ui-icon {
+    background: none
+}
+.ui-dialog {
+	background: #fff;
+}
+.ui-tabs .ui-tabs-nav li {
+    border: 1px solid #3B92FE !important;
+}
+.ui-tabs .ui-tabs-nav li.ui-state-active {
+    border: 1px solid #FFF !important;
+}
+.ui-tabs .ui-tabs-nav li a {
+    float: none;
+    padding: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+.ui-tabs .ui-tabs-nav {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+#mdf-fullscreen-slider-edit-form .form-submit,
+#mdf-fullscreen-slider-edit-form .form-item-save-data,
+#generate-fullscreen-slider-edit-form .form-submit,
+#generate-fullscreen-slider-edit-form .form-item-save-data, {display: none}
+
+/* Common CSS
+--------------------------------------------------------------------------------*/
+.mdf-wrap {
+    width: 100%;
+    margin: 0 auto;
+    background-color: #333;
+    font-family: Arial;
+    font-weight: normal;
+    color: #A9A9A9;
+    font-size: 12px;
+    position: relative;
+}
+.mdf-wrap ul,
+.mdf-wrap ol {margin: 0 !important}
+.mdf-wrap ul,
+.mdf-wrap li {list-style: none; }
+.mdf-wrap a {text-decoration: none;}
+.mdf-wrap a:hover {outline: none;}
+.mdf-wrap a:focus {outline: none;}
+.mdi-name,.mdtl-head-left,#mdf-toolbar h3, input[type="text"], .style-select {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.mdt-icon {position: relative;}
+.mdf-button {width: 36px; height: 32px; display: inline-block; position: relative; margin-right: 3px;}
+.input-35  {width: 35px;}
+.input-50  {width: 50px;}
+.input-60  {width: 60px;}
+.input-87  {width: 87px;}
+.input-140 {width: 140px;}
+.input-150 {width: 150px;}
+.input-180 {width: 180px;}
+.box-section {border-bottom: 1px solid #313237; padding-bottom: 10px;}
+.box-section.last {border: 0;}
+.style-select select {
+    background-color: transparent !important;
+    color: #A9A9A9;
+    cursor: pointer;
+    width: 120%;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1;
+    border: 0;
+    border-radius: 0;
+    height: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.style-select {
+    border: 1px solid #313237;
+    display: inline-block;
+    height: 24px;
+    overflow: hidden;
+    background: url('../images/dropdown-select.png') no-repeat 94% center #131416;
+    cursor: pointer;
+}
+.mdf-wrap .lb-color     {margin-left: 5px;}
+.mdf-wrap .status       {background-color: #3A3B40; padding: 2px 5px; text-transform: uppercase; color: #AAA; font-size: 11px; margin-left: 5px;}
+.mdf-wrap .status.on    {background-color: #157AF3; color: #FFF;}
+.mdt-control  {position: relative; height: 2px; background-color: #777; width: 100px; display: inline-block; margin: 0 0 3px 0 ;}
+.mdf-wrap .ui-slider-handle {height: 12px; width: 7px; background-color:#FFF; position: absolute; top: -5px; left: 82px; cursor: pointer;}
+.mdf-wrap .section-label {margin-bottom: 10px; display: block;}
+.mdf-wrap input[type="checkbox"] {display: none;}
+.mdf-wrap label.lb-tick {
+    background-image: url('../images/on-off.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    padding-left: 40px;
+    line-height: 18px;
+    cursor: pointer;
+}
+.mdf-wrap input[type="checkbox"]:checked + label.lb-tick {background-position: 0 -18px;}
+#mdf-toolbar .lb-tick {background-position: 80px 0; padding-left: 0;}
+#mdf-toolbar .border .lb-tick {background-position: 50px 0;}
+#mdf-toolbar .border input[type="checkbox"]:checked + label.lb-tick {background-position: 50px -18px;}
+#mdf-toolbar input[type="checkbox"]:checked + label.lb-tick {background-position: 80px -18px;}
+
+/* Icon sprite
+--------------------------------------------------------------------------------*/
+    .panel-settings-link,.addtab-icon,.preview-icon,.exit-icon,.save-icon,
+    .mdt-text,.mdt-image,.mdt-video,
+    .mdt-edit,.mdt-copy,.mdt-delete,.show,.hide,
+    .mdt-align-left,.mdt-align-center,.mdt-align-right,.mdt-align-top,.mdt-align-vcenter,.mdt-align-bottom,.mdt-spacev,.mdt-spaceh,
+    .button-style span, .button-align span,
+    .btn-viewlayer, .btn-locklayer, .btn-deletelayer, .btn-clonelayer,.mdt-proportions,
+    /*.bp-all span,.bg-top span,.bp-right span,.bp-bottom span,.bp-left span*/
+    [class^="bp-"] span,.icon-clone,.icon-image,.del-img,.del-thumb,.icon-remove {background-image: url('../images/sprite.png'); background-repeat: no-repeat; position: absolute; cursor: pointer;}
+
+    
+    .show,.hide {width: 13px; height: 6px; top: 13px; right: 10px;}
+    .show {background-position: -18px 0; }
+    .hide {background-position: -18px -6px; display: none;}
+    .mdt-proportions          {background-position: 0 0; width: 9px; height: 30px; top: 26px; left: 10px;}
+    .mdt-proportions.active {background-position: -9px 0;}
+
+    .panel-settings-link,.addtab-icon,.preview-icon,.exit-icon,.save-icon {width: 16px; height: 16px;top: 9px; left: 11px;}
+    .panel-settings-link  {background-position: 0    -30px; top: 8px; right: 10px; left: auto; display: none;}
+    .addtab-icon   {background-position:-16px -30px;}
+    .preview-icon  {background-position:-32px -30px;}
+    .save-icon     {background-position:-48px -30px;}
+    .exit-icon     {background-position:-64px -30px;}
+
+    .mdt-text,.mdt-image,.mdt-video,.mdt-edit,.mdt-copy,.mdt-delete {width: 22px; height: 22px; top: 6px; left: 7px;}
+    .mdt-text    {background-position:  0    -46px;}
+    .mdt-image   {background-position: -22px -46px;}
+    .mdt-video   {background-position: -44px -46px;}
+    .mdt-edit    {background-position:  0    -68px;}
+    .mdt-copy    {background-position: -22px -68px;}
+    .mdt-delete  {background-position: -44px -68px;}
+
+    [class^="mdt-align-"],.mdt-spacev,.mdt-spaceh {width: 24px; height: 24px; position: static; display: inline-block;} /* .mdt-align-left,.mdt-align-center,.mdt-align-right,.mdt-align-top,.mdt-align-vcenter,.mdt-align-bottom */
+    .mdt-align-left     {background-position:  0     -90px;}
+    .mdt-align-center   {background-position: -24px  -90px;}
+    .mdt-align-right    {background-position: -48px  -90px; margin-right: 20px;}
+    .mdt-align-top      {background-position: -72px  -90px;}
+    .mdt-align-vcenter  {background-position: -94px  -90px;}
+    .mdt-align-bottom   {background-position: -118px -90px;}
+    .mdt-spacev         {background-position: -142px -90px;}
+    .mdt-spaceh         {background-position: -166px -90px;}
+
+    .mdt-align-left:hover, .mdt-align-left.selected         {background-position:  0     -112px;}
+    .mdt-align-center:hover, .mdt-align-center.selected     {background-position: -24px  -112px;}
+    .mdt-align-right:hover, .mdt-align-right.selected       {background-position: -48px  -112px;}
+    .mdt-align-top:hover, .mdt-align-top.selected           {background-position: -72px  -112px;}
+    .mdt-align-vcenter:hover, .mdt-align-vcenter.selected   {background-position: -94px  -112px;}
+    .mdt-align-bottom:hover, .mdt-align-bottom.selected     {background-position: -118px -112px;}
+    .mdt-spacev:hover, .mdt-spacev.selected                 {background-position: -142px -112px;}
+    .mdt-spaceh:hover, .mdt-spaceh.selected                 {background-position: -166px -112px;}
+
+    [class^="bp-"] span {width: 16px; height: 16px; top: 1px; left: 1px;} /* .bp-all,.bg-top,.bp-right,.bp-bottom,.bp-left */
+    .bp-all span        {background-position:  0    -138px;}
+    .bp-top span        {background-position: -16px -138px;}
+    .bp-right span      {background-position: -32px -138px;}
+    .bp-bottom span     {background-position: -48px -138px;}
+    .bp-left span       {background-position: -64px -138px;}
+
+    .button-style span, .button-align span, .mdf-item [class^="btn-"],.icon-remove {width: 20px; height: 20px;} 
+    .button-style span, .button-align span {top: 2px; left: 2px;}
+     /* .mdt-font-bold, .mdt-font-italic, .mdt-font-underline, .mdt-font-allcaps,
+     .mdt-left-alignment, .mdt-center-alignment, .mdt-right-alignment, .mdt-justified-alignment,
+     .btn-viewlayer, .btn-locklayer, .btn-deletelayer, .btn-clonelayer
+      */
+    .mdt-font-bold span         {background-position:  0    -154px;}
+    .mdt-font-italic span       {background-position: -20px -154px;}
+    .mdt-font-underline span    {background-position: -40px -154px;}
+    .mdt-font-allcaps span      {background-position: -60px -154px;}
+
+    .mdt-left-alignment span        {background-position:  0    -174px;}
+    .mdt-center-alignment span      {background-position: -20px -174px;}
+    .mdt-right-alignment span       {background-position: -40px -174px;}
+    .mdt-justified-alignment span   {background-position: -60px -174px;}
+
+    .btn-viewlayer        {background-position:  0    -194px; top: 5px; left:  7px;}
+    .btn-locklayer        {background-position: -20px -194px; top: 5px; left:  8px;}
+    .btn-clonelayer       {background-position: -40px -194px; top: 5px; right: 28px;}
+    .btn-viewlayer.active {background-position:  0    -214px}
+    .btn-locklayer.active {background-position: -20px -214px}
+    .btn-deletelayer      {background-position: -40px -214px; top: 5px; right: 5px;}
+
+    .icon-clone,.icon-image,.del-img,.del-thumb {width: 18px; height: 18px;}
+    .icon-clone     {background-position: -18px -234px; top: 2px; left: 2px;}
+    .icon-image     {background-position: -18px -252px; top: 2px; left: 3px;}
+    .del-img,.del-thumb  {background-position: -36px -252px; top: 0;   right: 0; background-color: rgba(0,0,0,0.5);}
+    .icon-remove    {background-position: -40px -234px; top: 3px; left: 7px;}
+    
+
+/* Tabs
+--------------------------------------------------------------------------------*/
+#mdf-tabs {
+    margin-right: 220px
+}
+.mdf-tabs-tool {
+    background-color: #1E76EF;
+    height: 48px;
+    position: relative;
+    z-index: 999;
+    margin-right: -220px
+}
+.tabs-panel {
+    height: 660px;
+    overflow: hidden;
+    position: relative;
+    width: 1220px;
+    margin: 10px auto;
+}
+.content-top,.content-right,.content-bottom,.content-left {
+    position: absolute; 
+    background-color: #FFF; 
+    color: #EDEDED; 
+    font-size: 26px; 
+    text-transform: uppercase; 
+    font-family: Lato; 
+    font-weight: normal;
+}
+.content-top,.content-bottom {right: 0; left: 0; height: 100px;}
+.content-left,.content-right {top: 0; bottom: 0; width: 100px;}
+.content-top     {top: 0; }
+.content-right   {right: 0;}
+.content-bottom  {bottom: 0;}
+.content-left    {left: 0;}
+.mdf-tabs-head {padding-top: 7px; float: left; margin-right: 7px;}
+#add_tab {display: inline-block; margin: 7px 0 0 7px; position: relative;}
+
+.tab-item {
+    width: 120px; 
+    height: 32px;
+    float: left;
+    margin: 7px 0 0 7px !important;
+    padding: 0;
+    background-color: #0175E7;
+    border: 1px solid #3B92FE !important;
+    position: relative;
+}
+
+.tab-link {display: block;}
+.tab-item.ui-state-active .panel-settings-link {display: block;}
+.tab-item.ui-state-active {border-color:#FFF;}
+.tab-item a span {
+    font-family: Open sans;
+    font-weight: normal;
+    font-size: 14px;
+    color: #FFF; 
+    line-height: 32px;
+    padding-left: 10px;
+}
+.mdf-tool-group {position: absolute; top: 7px; right: 10px;}
+.mdf-tabs-tool .mdf-button {
+    background-color: #0175E7;
+    border: 1px solid #3B92FE;
+}
+/******************* Setting Dropdown *******************/
+
+/* Setting Aside */
+.mdf-setting {
+    position: absolute;
+    width: 100%; 
+    background-color: #242528; 
+    top: 48px;
+    z-index: 100;
+    overflow: hidden;
+}
+.mdf-setting .row {margin: 20px 0;}
+.mdf-setting .row label {margin-top: 8px; display: inline-block;}
+.mdf-setting .mdf-button {    
+    background-color: #1C1D1F;
+    border: 1px solid #313237;
+    width: 24px;
+    height: 24px;
+}
+.panel-settings-link.active:after {
+    bottom: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(136, 183, 213, 0);
+    border-bottom-color: #242528;
+    border-width: 8px;
+    top: 16px;
+}
+.mdf-setting-aside {float: left; width: 245px; border-right: 1px solid #313237; padding-left: 20px;}
+.row-inner  {
+    margin-top: 16px;
+    margin-left: 12px;
+    border-left: 2px solid #313237;
+    padding-left: 28px;
+}
+.img-current {width: 80px; height: 45px; position: relative;}
+.img-current img {width: 100%; height: 100%;}
+.mds-head .status {margin-left: 0; margin-right: 15px;}
+.lb-milli {margin-left: 10px;}
+.btn-choose {color:#A5A5A5; font-size: 12px; display: inline-block; line-height: 27px;}
+
+.mdf-setting-footer {border-top: 1px solid #313237; padding: 20px; clear: left;}
+.btn-footer  {color: #FFF; font-size: 13px; font-family: Open Sans; font-weight: normal; line-height: 120%; display: inline-block;}
+.button-apply {background-color: #0175E7; border: 1px solid #3B92FE; padding: 8px 16px; margin-right: 10px;}
+
+
+/* Setting Transition */
+.mdf-setting-transition {float: left; padding-top: 28px; padding-left: 22px;}
+.mdf-setting-transition h3{font-size: 13px; font-weight: normal;}
+.random-transition {color: #3795FF;}
+.mdf-setting-transition p {color: #999; font-size: 11px; margin: 10px 0 20px;}
+.mdf-setting-transition ul li { margin-bottom: 10px;}
+.megaslider-3columns  ul {float:left; margin-right: 30px !important;}
+.mdf-setting-transition input[type="checkbox"] {display: none;}
+.mdf-setting-transition label {
+    background-image: url('../images/checkbox.png');
+    background-repeat: no-repeat;
+    background-position: 0 1px;
+    height: 14px;
+    /*width: 13px;*/
+    padding-left: 20px;
+    cursor: pointer;
+}
+.mdf-setting-transition input[type="checkbox"]:checked + label {
+    background-position: 0 -13px;
+    /*width: 14px;*/
+}
+
+#mdf-setting-dlg .row-image .img-current, #mdf-setting-dlg .row-thumbnail .img-current {display: none;}
+#mdf-setting-dlg .row-image.active .img-current, #mdf-setting-dlg .row-thumbnail.active .img-current {display: block;}
+
+/* Toolbar
+--------------------------------------------------------------------------------*/
+
+#mdf-toolbar {
+    background-color: #242528;
+    position: absolute;
+    right: 0;
+    top: 48px;
+    width: 220px;
+    height: 680px;
+    overflow: hidden;
+    z-index: 10;
+    -webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+-o-user-select: none;
+user-select: none;
+}
+
+#mdf-toolbar label {display: inline-block !important;}
+
+input[type="text"] {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: #131416;
+    border: 1px solid #313237;
+    color: #A9A9A9;
+    padding: 5px;
+    height: 24px;
+}
+#mdf-toolbar textarea {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: #131416;
+    border: 1px solid #313237;
+    color: #A9A9A9;
+    padding: 5px;
+}
+#mdf-toolbar select option {padding: 3px 0;}
+.box-toolbar .mdf-button {
+    background-color: #1C1D1F;
+    border: 1px solid #313237;
+}
+.box-toolbar .mdf-button:hover {border-color: #666;}
+.box-toolbar .mdf-button.active {border-color: #3795FF;}
+
+#mdf-toolbar h3 {
+    background-color: #131416; 
+    height: 30px; 
+    position: relative; 
+    cursor: pointer;
+    color: #A9A9A9; 
+    font-size: 12px; 
+    font-weight: normal; 
+    line-height: 120%; 
+    padding-left: 12px; 
+    padding-top: 9px;
+    margin: 0
+}
+.box-content {background-color:#242528; padding: 15px 10px; position: relative;}
+
+
+/* Object Image */
+.alt-image {margin-top: 12px;}
+.mdt-alt-image {margin-left: 15px;}
+
+/* Align & Space */
+.size-position .box-content {padding-left: 25px;}
+.size-position .row {margin-bottom: 3px;}
+.size-position .lb-width {margin-right: 10px;}
+.size-position .lb-height {margin-right: 5px;}
+.size-position .lb-left,.size-position .lb-top {margin-right: 5px; margin-left: 15px;}
+.size-position .lb-top {margin-right: 6px;}
+
+/* Animation */ 
+.animation .row {margin-bottom: 3px;}
+.animation label {vertical-align: 7px}
+.animation .style-select {margin-left: 14px;}
+
+/* Adjustments */
+.adj-color .row {margin-bottom: 10px;}
+
+
+/* Opacity */ 
+.opacity {padding: 20px 0;}
+.lb-opacity {margin-right: 15px;}
+
+/* Padding (px) */ 
+.padding {padding: 15px 0;}
+.padding .row {padding-left: 10px; margin-bottom: 5px;}
+.padding [class^="lb-"] {padding-right: 8px}
+.padding .lb-top    {margin-left: 9px;}
+.padding .lb-left   {margin-left: 34px;}
+.padding .lb-bottom {margin-left: 15px;}
+
+/* Border */ 
+.border {padding: 10px 0;}
+.border .col {height: 80px; float: left;}
+.border .col:nth-child(1) {width: 75px;}
+.border .col:nth-child(2) {width: 120px;}
+.border-position {width: 64px; height: 64px; position: relative;}
+.border-position a {display: inline-block; position: absolute; width: 18px; height: 18px; border: 1px solid #494A52; background-color: #131416;}
+.border-position a:hover {border-color: #666;}
+.border-position a.selected {border: 1px solid #FFF;}
+.border-position a.active {background-color: #157AF3; border-color: #157AF3;}
+
+.bp-all     {top: 22px; left:  22px;}
+.bp-top     {top: 0;    left:  22px;}
+.bp-right   {top: 22px; right: 0;}
+.bp-bottom  {left:22px; bottom:0;}
+.bp-left    {top: 22px; left:  0;}
+.border-style-wrap {background-color: #2E3034; padding: 7px 8px;}
+.border-style-wrap .row {margin-bottom: 5px;}
+.border-style-wrap .style-select select {width: 140%;}
+.border-style-wrap input,.border-style-wrap .style-select {border-color: #494A52 !important; }
+.border-style-wrap .style-select {background-position: 87% center;}
+.border-style-wrap .sp-replacer {vertical-align: 0;}
+.pane-color   {background-color: #1C1D1F; border-color: #494A52;}
+
+/* Border Radius */ 
+.border-radius {clear: left; padding-top: 20px;}
+.border-radius .row {margin-bottom: 3px; padding-left: 30px;}
+.lb-tl,.lb-tr {margin-right: 12px;}
+.lb-bl,.lb-br {margin-right: 11px;}
+.lb-tr,.lb-br {margin-left: 30px;}
+
+/* Drop Shadow */ 
+.drop-shadow  {padding-top: 20px;}
+.drop-shadow .row {margin-bottom: 20px;}
+.drop-shadow .row:last-child {margin-bottom: 5px;}
+.lb-offset {margin-right: 50px;}
+.lb-blur {margin-right: 60px;}
+#shadow-content .lb-angle {margin-right: 50px; vertical-align: 30px;}
+
+/* Character */
+.character .row {margin-bottom: 10px;}
+.character .row.clearfix {margin-top: 15px;}
+.character .style-select select {width: 114%;}
+.character .col {float: left; margin-right: 5px;}
+.character .col label {display: block; margin-bottom: 5px;}
+.button-style, .button-align  {width: 24px; height: 24px; background-color: #131416; border: 1px solid #313237; display: inline-block; margin-right: 3px; position: relative;}
+
+/* Object Link */
+.object-link .row {margin-bottom: 10px;}
+.object-link .col {float: left; margin-right: 10px;}
+.object-link label {display: inline-block;}
+.lb-link {margin-right: 15px;}
+.lb-linkhover {margin: 15px 0;}
+
+
+/* Timeline
+--------------------------------------------------------------------------------*/
+.mdf-timeline {background-color: #242528; height: 344px; bottom: 0; left: 0; right: 220px;}
+
+#mdf-toolbar .viewport,
+#mdf-timeline .viewport {overflow: hidden; height: 100%;}
+#mdf-timeline .overview,
+#mdf-toolbar .overview {list-style: none; position: absolute; left: 0; top: 0; padding: 0; margin: 0; width: 100%}
+#mdf-timeline .scrollbar,
+#mdf-toolbar .scrollbar{background-color: #000; position: absolute; background-position: 0 0; width: 5px; top: 0; right: 0; bottom: 0;}
+#mdf-timeline .track,
+#mdf-toolbar .track {background-color: #000; height: 100%; width:5px; position: relative; }
+#mdf-timeline .thumb,
+#mdf-toolbar .thumb {background-color: #5B5B5B; height: 20px; width: 5px; cursor: pointer; overflow: hidden; position: absolute; top: 0;}
+#mdf-timeline .scrollbar.disable,
+#mdf-toolbar .scrollbar.disable {display: none}
+
+.timeline-wrap {height: 309px; overflow: hidden; position: relative;}
+.mdtl-head {border-bottom: 1px solid #313237;}
+    .mdtl-head-left {
+        float: left; 
+        width: 216px; 
+        color: #A5A5A5; 
+        font-size: 11px; 
+        text-transform: uppercase;
+        border-right: 1px solid #313237;
+        height: 30px;
+        line-height: 30px;
+        padding-left: 10px;
+        padding-top: 3px;
+    }
+    .mdtl-head-right {margin-left: 216px; position: relative;}
+.mdtl-ruler {height: 35px; overflow: hidden;}
+    .mdtl-ruler div {
+        background-image: url('../images/ruler.png');
+        background-repeat: no-repeat;
+        background-position: 0 25px;
+        float: left; 
+        width: 7px; 
+        height: 35px;
+    }
+    .mdtl-ruler div.number {background-position: 0 13px; position: relative;}
+    .mdtl-ruler div.number span {position: absolute; left: 4px; top: 6px; font-size: 10px; line-height: 120%;}
+#slideshow-time {
+    cursor: col-resize;
+    height: 309px;
+    left: 400px;
+    position: absolute;
+    top: 35px;
+    width: 8px;
+    z-index: 999;
+}
+#slideshow-time div {
+    background: none repeat scroll 0 0 #00FFFF;
+    height: 309px;
+    position: absolute;
+    width: 1px;
+}
+.mdf-item {
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 1px solid #313237;
+    color: #FFF;
+}
+.ui-resizable-e {
+    cursor: e-resize;
+    height: 100%;
+    right: -5px;
+    top: 0;
+    width: 7px;
+}
+.ui-resizable-handle {
+    display: block;
+    font-size: 0.1px;
+    position: absolute;
+    z-index: 99999;
+}
+.ui-resizable-w {
+    cursor: w-resize;
+    height: 100%;
+    left: -5px;
+    top: 0;
+    width: 7px;
+}
+.mdi-view,.mdi-lock,.mdi-name{
+    float: left;
+    width: 35px;
+    height: 30px;
+    border-right: 1px solid #313237;
+    position: relative;
+}
+.mdi-name {width: 180px; float: left; padding: 0 48px 0 10px; font-size: 11px; color: #FFF; overflow:hidden}
+.active .mdi-name, .active .mdi-frame {background-color: #157AF3;}
+.mdi-frame {background-color: rgba(255,255,255,0.5);}
+.mdtl-times {
+    margin-left: 216px;
+    position: relative;
+    height: 30px;
+}
+.mdi-frame {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 240px;
+    left: 50px;
+    height: 30px;
+}
+
+
+.form-item-save-data,
+#edit-save{display: none;}
+
+#dlg-video {background: #fff}
+.sl-video-play {position: absolute; left: 3px; bottom:3px; width:19px; height:14px; background: url(../images/play.png) no-repeat 0 0}
+
+/* Clearfix
+--------------------------------------------------------*/
+* html .clearfix,
+* html .ui-helper-clearfix {
+    height: 1%; /* IE5-6 */
+}
+
+.clearfix,
+.ui-helper-clearfix {
+    display: inline-block; /* IE7xhtml*/
+}
+
+html .clearfix,
+html .ui-helper-clearfix {
+    display: block; /* O */
+}
+
+.clearfix:after,
+.ui-helper-clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+    line-height: 0;
+    font-size: 1px;
+    overflow: hidden;
+}
+
+/* item */
+.ui-resizable-e {
+    right: 0
+}
+.ui-resizable-w {
+    left: 0
+}
+.slider-item {
+    padding: 0;
+    float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    border: none;
+    border-color: #000;
+    background: none;
+    cursor: default;
+}
+.mdf-slidewrap .ui-selecting {
+    background: #FECA40
+}
+.sl-tl,
+.sl-tr,
+.sl-bl,
+.sl-br {
+    width: 5px;
+    height: 5px;
+    background: #00A8FF;
+    position: absolute;
+    display: none;
+}
+.sl-tl {
+    left: -2px;
+    top: -2px;
+}
+.sl-tr {
+    right: -2px;
+    top: -2px;
+}
+.sl-bl {
+    left: -2px;
+    bottom: -2px;
+}
+.sl-br {
+    right: -2px;
+    bottom: -2px;
+}
+.sl-top,
+.sl-right,
+.sl-bottom,
+.sl-left {
+    background: #00A8FF;
+    position: absolute;
+    display: none;
+}
+.sl-top {
+    height: 1px;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+.sl-right {
+    width: 1px;
+    bottom: 0;
+    top: 0;
+    right: 0;
+}
+.sl-bottom {
+    height: 1px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+.sl-left {
+    width: 1px;
+    bottom: 0;
+    top: 0;
+    left: 0;
+}
+.ui-resizable-se {
+    display: none !important
+}
+.ui-resizable-e,
+.ui-resizable-s {
+    z-index: 999
+}
+.slider-item:hover .sl-tl,
+.slider-item:hover .sl-tr,
+.slider-item:hover .sl-bl,
+.slider-item:hover .sl-br {
+    display: block;
+    background: #CC3333;
+}
+.ui-selected .sl-tl,
+.ui-selected .sl-tr,
+.ui-selected .sl-bl,
+.ui-selected .sl-br {
+    display: block;
+    background: #00A8FF !important;
+}
+.ui-selected .sl-top,
+.ui-selected .sl-right,
+.ui-selected .sl-bottom,
+.ui-selected .sl-left,
+.ui-selected .ui-resizable-se {
+    display: block !important
+}
+
+/* slide admin content
+--------------------------------------------------------------------------*/
+.mdf-slidewrap,
+.mdf-objects {
+    position: relative;
+    overflow: hidden;
+}
+.mdf-slidewrap {
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+}
+.mdf-slide-image {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.mdf-fullwidth .mdf-objects {
+    margin: 0 auto;
+}
+.mdf-fullwidth .mdf-slide-image {
+    right: 0;
+    text-align: center;
+    bottom: 0;
+}
+.mdf-fullwidth .mdf-slide-image img {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.mdf-objects .slider-item {
+    position: absolute !important;
+}
+
+/* jQuery Resizable
+--------------------------------------------------------------------------*/
+.ui-resizable {
+    position: absolute;
+}
+.ui-resizable-handle {
+    position: absolute;
+    font-size: 0.1px;
+    z-index: 99999;
+    display: block;
+}
+.ui-resizable-disabled .ui-resizable-handle,
+.ui-resizable-autohide .ui-resizable-handle {
+    display: none
+}
+.ui-resizable-n {
+    cursor: n-resize;
+    height: 7px;
+    width: 100%;
+    top: -5px;
+    left: 0;
+}
+.ui-resizable-s {
+    cursor: s-resize;
+    height: 7px;
+    width: 100%;
+    bottom: -5px;
+    left: 0;
+}
+.ui-resizable-e {
+    cursor: e-resize;
+    width: 7px;
+    right: -5px;
+    top: 0;
+    height: 100%;
+}
+.ui-resizable-w {
+    cursor: w-resize;
+    width: 7px;
+    left: -5px;
+    top: 0;
+    height: 100%;
+}
+.ui-resizable-se {
+    cursor: se-resize;
+    width: 12px;
+    height: 12px;
+    right: 1px;
+    bottom: 1px;
+}
+.ui-resizable-sw {
+    cursor: sw-resize;
+    width: 9px;
+    height: 9px;
+    left: -5px;
+    bottom: -5px;
+}
+.ui-resizable-nw {
+    cursor: nw-resize;
+    width: 9px;
+    height: 9px;
+    left: -5px;
+    top: -5px;
+}
+.ui-resizable-ne {
+    cursor: ne-resize;
+    width: 9px;
+    height: 9px;
+    right: -5px;
+    top: -5px;
+}
+.ui-icon-gripsmall-diagonal-se {
+    background: url('../images/sprite2.png') no-repeat -16px -58px;
+}
+
+/*!
+ * jQuery UI Slider 1.10.3
+ * http://jqueryui.com
+ *
+ * Copyright 2013 jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Slider#theming
+ */
+.ui-slider {
+    position: relative;
+    text-align: left;
+}
+/*.ui-slider .ui-slider-handle {
+    position: absolute;
+    z-index: 2;
+    width: 1.2em;
+    height: 1.2em;
+    cursor: default;
+}*/
+.ui-slider .ui-slider-range {
+    position: absolute;
+    z-index: 1;
+    font-size: .7em;
+    display: block;
+    border: 0;
+    background-position: 0 0;
+}
+
+/* For IE8 - See #6727 */
+.ui-slider.ui-state-disabled .ui-slider-handle,
+.ui-slider.ui-state-disabled .ui-slider-range {
+    filter: inherit;
+}
+
+/*.ui-slider-horizontal {
+    height: .8em;
+}
+.ui-slider-horizontal .ui-slider-handle {
+    top: -.3em;
+    margin-left: -.6em;
+}*/
+.ui-slider-horizontal .ui-slider-range {
+    top: 0;
+    height: 100%;
+}
+.ui-slider-horizontal .ui-slider-range-min {
+    left: 0;
+}
+.ui-slider-horizontal .ui-slider-range-max {
+    right: 0;
+}
+
+.ui-slider-vertical {
+    width: .8em;
+    height: 100px;
+}
+.ui-slider-vertical .ui-slider-handle {
+    left: -.3em;
+    margin-left: 0;
+    margin-bottom: -.6em;
+}
+.ui-slider-vertical .ui-slider-range {
+    left: 0;
+    width: 100%;
+}
+.ui-slider-vertical .ui-slider-range-min {
+    bottom: 0;
+}
+.ui-slider-vertical .ui-slider-range-max {
+    top: 0;
+}
+#mdf-transition-preview {
+    position: absolute;
+}
+

@@ -1,0 +1,28 @@
+.page-company-info- #section-header{display:none;}
+.company-directory { padding: 296px 0; color: #fff; font-size: 5em; text-align:center; width:100%;}
+#block-block-30, #block-block-31{background-repeat:no-repeat;}
+.company-directory-user { text-align: center; font-size: 13px; color: #94949C; font-weight: 600;}
+.company-directory-user .company_user_picture { padding: 15px;}
+.company-directory-user .company_user_picture img { border-radius:50%;}
+.company-directory-user .company_user_social { padding: 10px;}
+.company-directory-user .company_user_name {font-size: 15px; }
+.company-directory-user  .social_icon a{padding:0 5px;}
+#edit-search-options > option, #edit-sort > option { background-color: #ffffff;  border-bottom: 1px solid #666666; color: #666666; padding: 5px 10px;}
+#views-exposed-form-company-directory-page select { background-color: #6f7175 !important;  color: #fff;}
+#edit-search-options > option:first-child, #edit-sort > option:first-child { display:none; }
+/* company directory list page css */
+#company-directory-form table  tr.odd{  background-color: #E2E2E3; }
+#company-directory-form table  tr.even{  background-color: #EBECEC !important; }
+#company-directory-form table tr td{  padding:10px 2px; }
+#company-directory-form table tr td:first-child{  padding:10px 0 10px 20px; }
+#company-directory-form table tr td:last-child{  padding:10px 20px 10px 0; }
+#company-directory-form  select { -webkit-appearance: none; -moz-appearance: none; appearance: none; padding: 5px; border: none; background:#6F7175 !important; color: #fff !important;}
+#company-directory-form  .select_arrow{background: transparent url("social_icon/arrow_down.png") no-repeat left center !important; height:36px; width:50px; float:left;}
+.form-item-search-options, .form-item-sort{float:left;}
+#company-directory-form  select, #company-directory-form  input[type="text"]{height: 36px; outline: none; font-size: 14px; color: #848688;  margin: 0; max-width: 100%; display: block;  background: #f8fafc; border-radius: 0px;width:auto}
+#company-directory-form  .views-exposed-widget{ display: inline-block; float:left; margin:20px 0; min-height: 100px;}
+#company-directory-form  .form-type-select, #company-directory-form .form-type-textfield{ margin: 0;}
+#company-directory-form  .form-submit{ margin: 0 20px 0 0; color: transparent; background: transparent url("social_icon/arrow_right.png") no-repeat left center !important;     height: 36px; width: 50px; padding: 0;}
+#company-directory-form  .company-picture img{ border-radius:50%; height:85px; width:85px;}
+#company-directory-form  .item-list{ padding:20px;}
+#company-directory-form  .social-icons .social_icon {margin: 5px;}

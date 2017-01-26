@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Listing Terms feature.
+ */
+
+include_once 'listing_terms.features.inc';

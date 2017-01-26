@@ -1,0 +1,22 @@
+name = "Percent complete meter"
+description = "Percent complete meter module to display the completed section in percent."
+core = "7.x"
+dependencies[] = flag
+;dependencies[] = charts
+;dependencies[] = features
+dependencies[] = rules
+dependencies[] = views
+dependencies[] = entity
+files[] = percent_complete_meter.module
+files[] = includes/views/percent_meter_handler_field_likeflag.inc
+files[] = includes/views/percent_meter_handler_field_tracking_status.inc
+files[] = includes/views/percent_meter_handler_details_page_like.inc
+files[] = includes/views/complete_not_complete_img_handler.inc
+package = "Percent complete meter"
+configure = "admin/config/pcm"
+
+version = "7.x-1.0"
+core = "7.x"
+project = "PCM"
+datestamp = ""
+

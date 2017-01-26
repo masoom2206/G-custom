@@ -1,0 +1,53 @@
+<?php
+/**
+ * @file Rules - Installation file.
+ */
+/**
+ * Implements hook_schema().
+ */
+function cbone_mails_settings_schema() {
+  $schema['cbone_mails_settings_mail'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+		    'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Mail serial id',
+      ),
+      'title' => array(
+        'description' => 'Mail title',
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => TRUE,
+      ),
+      'subject' => array(
+        'description' => 'Mail Subject',
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => TRUE,
+      ),
+      'header_image' => array(
+        'description' => 'Mail Header Image',
+        'type'        => 'int',
+        'not null'    => FALSE,
+      ),
+      'body' => array(
+        'description' => 'Mail Body',
+        'type'        => 'text',
+		    'size' 			  => 'big',
+        'not null'    => FALSE,
+      ),
+      'active_key' => array(
+        'description'   => 'Active mail key',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'id' => array('id'),
+    ),
+  );
+  return $schema;
+}

@@ -1,0 +1,16 @@
+name = "CB|ONE Network Feature"
+description = "CB|ONE Network Feature"
+core = "7.x"
+package = "CB|ONE Network"
+
+
+files[] = cbone_network.module
+files[] = includes/views/network_handler_field_post_like.inc
+files[] = includes/views/network_handler_field_user_office.inc
+
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE Network"
+datestamp = ""
+

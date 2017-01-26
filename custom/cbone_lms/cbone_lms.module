@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the CBone LMS feature.
+ */
+
+include_once 'cbone_lms.features.inc';

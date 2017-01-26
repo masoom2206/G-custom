@@ -1,0 +1,57 @@
+<?php
+define('TITLE_LENGTH_CHARS', 255);
+
+/**
+ * Implements hook_schema_alter().
+ */
+function comment_subject_length_schema_alter(&$schema) {
+  if (isset($schema['comment'])) {
+    $schema['comment']['fields']['subject']['length'] = TITLE_LENGTH_CHARS;
+  }
+}
+
+/**
+ * Implements hook_install().
+ */
+function comment_subject_length_install() {
+  $schema = drupal_get_schema();
+  if (empty($schema['comment']['fields']['subject'])) {
+    // Is it possible?
+    throw new Exception('Comment module is not installed.');
+  }
+  $node_title_field_definition = $schema['comment']['fields']['subject'];
+  $node_title_field_definition['length'] = TITLE_LENGTH_CHARS;
+  db_change_field('comment', 'subject', 'subject', $node_title_field_definition);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function comment_subject_length_uninstall() {
+  $schema = drupal_get_schema();
+  if (empty($schema['comment']['fields']['subject'])) {
+    // Is it possible?
+    return;
+  }
+
+  $length_function = 'char_length';
+
+  switch (Database::getConnection()->databaseType()) {
+    case 'sqlite':
+      $length_function = 'length';
+      break;
+
+    case 'sqlsrv':
+      $length_function = 'len';
+      break;
+  }
+
+  $long_title_count = db_query("SELECT COUNT(*) FROM {comment} WHERE {$length_function}(subject) > 64")->fetchField();
+
+  if ($long_title_count > 0) {
+    throw new Exception('Comment exist with long subject. Module cannot be deleted.');
+  }
+  $node_title_field_definition = $schema['comment']['fields']['subject'];
+  $node_title_field_definition['length'] = 64;
+  db_change_field('comment', 'subject', 'subject', $node_title_field_definition);
+}

@@ -1,0 +1,248 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function listing_marketing_system_schema() {  
+  //Saved website listing setting
+  $schema['cbone_website_settings'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Website setting serial id',
+      ),
+      'nid' => array(
+        'description'   => 'The listing nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'uid' => array(
+        'description'   => 'User ID',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'web_page_active' => array(
+        'description'   => 'Web Page Active or not',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'web_page_url' => array(
+        'description'   => 'Web Page URL',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'pdf_brochure' => array(
+        'description'   => 'Web Page Download PDF Brochure',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'display_documents' => array(
+        'description'   => 'Web Page Document Display',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'background_music' => array(
+        'description'   => 'Web Page background music',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'design' => array(
+        'description'   => 'Web Page design ID',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'timestamp' => array(
+        'description'   => 'Time when the setting saved',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  //Table to save download document information
+  $schema['document_request'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Document request serial id',
+      ),
+      'lms_nid' => array(
+        'description'   => 'The listing nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'lms_agent_id' => array(
+        'description'   => 'The listing agent uid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'name' => array(
+        'description'   => 'User name',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'email' => array(
+        'description'   => 'User email',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'phone' => array(
+        'description'   => 'User phone',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'agent_status' => array(
+        'description'   => 'Agent status',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'agent_name' => array(
+        'description'   => 'User agent name',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'agent_broker' => array(
+        'description'   => 'User agent broker',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'token' => array(
+        'description'   => 'Document token',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+      'timestamp' => array(
+        'description'   => 'Time when the request has submitted',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  //Table to save download document information
+  $schema['document_request_fids'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Document request fids serial id',
+      ),
+      'dr_id' => array(
+        'description'   => 'The dr_id refer to document_request table',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'fids' => array(
+        'description'   => 'The fids of documnts',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  //Saved website listing setting
+  $schema['cbone_document_history'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Serial id',
+      ),
+      'lms_nid' => array(
+        'description'   => 'The listing nid',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'fid' => array(
+        'description'   => 'Document file ID',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'uid' => array(
+        'description'   => 'The User Id',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'user_ip' => array(
+        'description'   => 'The User IP address',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),
+      'token' => array(
+        'description'   => 'Document token',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => FALSE,
+      ),	  
+      'view_time' => array(
+        'description'   => 'Time when the file has viewed',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+      'download_time' => array(
+        'description'   => 'Time when the file has download',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+    ),
+  );
+  //Saved LMS Email Unsubscribe setting
+  $schema['do_not_email'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Serial id',
+      ),
+      'email' => array(
+        'description'   => 'The email address',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'unsubscribe' => array(
+        'description'   => 'Unsubscribe Yes = 1, No = 0',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'datestamp' => array(
+        'description'   => 'Time when the email has Unsubscribe',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+       'id' => array('id'),
+	   'email' => array('email'),
+    ),
+  );
+  return $schema;
+}

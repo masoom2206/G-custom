@@ -1,0 +1,35 @@
+.percent-meter {
+    border: 1px solid #DDDDDD;
+    border-radius: 10px;
+    width: 100%;
+	background: none repeat scroll 0 0 #A0A0A0;
+}
+
+.percent-meter > div {
+    background-color: #0000FF;
+    border-radius: 10px;
+    color: #FFFFFF;
+    padding-right: 10px;
+    text-align: right;
+}
+
+.user-percent-meter-table td {
+    vertical-align: top;
+}
+.show-hide-meter {
+    color: #0000FF;
+    cursor: pointer;
+    text-decoration: underline;
+}
+#block-system-main .tracking-link > span {
+    font-size: 17px;
+    font-weight: bold;
+    padding: 5px;
+}
+.tracking-link {
+    margin-bottom: 15px;
+}
+
+.tracking-link span a.active{
+	text-decoration: underline;
+}

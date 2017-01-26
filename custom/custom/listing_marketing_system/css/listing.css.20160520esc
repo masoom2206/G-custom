@@ -1,0 +1,875 @@
+/**
+ * Css File for My Listing Page.
+ **/
+.view-my-listings .view-header {margin-bottom: 50px;}
+.my-listings {width: 100%; padding-top: 5px; padding-bottom: 5px; float: left;}
+.my-listings-one {display: block; float:left; width: 15% !important; padding-top: 1px !important;}
+/*.my-listings-two {display: block; float:left; width: 95px !important; transform: rotate(270deg); transform-origin: 13px 13px !important; margin-right: -50px !important;}*/
+/*.my-listings-part-two .my-listings-two {float: none; margin-left: -1px;}*/
+/*.view-my-listings.view-display-id-page .my-listings-two{transform-origin: 14px 13px !important;}*/
+/*.view-my-listings.view-display-id-page_1 .my-listings-one {width: 15% !important;}*/
+.my-listings-three {display: inline-block; width: 30% !important; vertical-align: top; margin-top: 25px !important; margin-left: 40px; position: absolute; z-index: 9;}
+.my-listings-four {display: inline-block; width: 40% !important; text-align: right; margin-top: 25px !important; left: 50%; position: absolute;}
+.my-listings-four ul {width: 100%; margin: 0px !important; padding: 0px !important;}
+.my-listings-four ul li {display: inline-block; width: 49% !important; background: #093250; text-align: center; text-transform: uppercase; font-size: 12px !important;}
+.my-listings-four ul li:first-child {margin-right: 5px;}
+.my-listings-four .view-my-listings {padding-bottom: 0px !important;  padding-top: 0px !important;}
+body.page-my-listings{font-size: 14px !important;}
+.view-my-listings {width: 96% !important;}
+.my-listings-four ul li a, .my-listings-four ul li a:hover{color: #fff;}
+.my-listings-four ul li span.mobile{display: none;}
+.my-listings-four ul li span.desktop{display: block;}
+.my-listings-part-two {background-color: #dbdcdf;  display: block !important;  float: left;  height: 118px !important; margin-right: -11px !important;  margin: 6px 0 !important;  width: 84% !important;}
+.my-listings-part-one {vertical-align: top;}
+/*.premier, .platinum-plus {background-color: #00a5d3; color: #fff; width: 122%; text-align: center; text-transform: uppercase; font-size: 13px; height: 30px;}
+.platinum {background-color: #6d7176; color: #fff; width: 122%; text-align: center; text-transform: uppercase; font-size: 13px; height: 30px;}*/
+.premier, .platinum-plus {background-color: #00a5d3; color: #fff; width: 114%; text-align: center; text-transform: uppercase; font-size: 13px; height: 30px;}
+.platinum {background-color: #00a5d3; color: #fff; width: 114%; text-align: center; text-transform: uppercase; font-size: 13px; height: 30px;}/*#6d7176*/
+.view-content .content {margin: 0px !important;}
+.view-my-listings.view-display-id-block_1 img{margin-bottom: 0px; height: 118px;}
+.my-listing-title {text-align: center; text-transform: uppercase; font-size: 48px;}
+.dashboad-my-network h3.block-title, .dashboard-wrapper .block-title > h3, .dashboard-wrapper .block-title > h3 a, .my-listing-title, .my-buyers-wrapper .my-listing-title{line-height:normal; letter-spacing:5px;}
+#new-listing-title-form #edit-new-listing-title {width: 99%; height: 40px; background-color: #dbdcdf; color: #9e9fa8; font-size: 17px; padding-left: 4%;}
+#new-listing-title-form #edit-submit{position: absolute; right: -70px; margin-top: -55px; color: transparent; border: none; background: url("/sites/all/modules/custom/listing_marketing_system/images/listing-form-arrow.jpg") 0px 0px no-repeat; border-radius: 0px !important; padding: 0px !important; height: 38px;}
+#new-listing-title-form #edit-from {position: absolute; margin-top: 30px;}
+#new-listing-title-form .form-type-textfield label{font-weight: normal; font-size: 15px;}
+.view-id-my_listings .views-exposed-form {display: none;}
+.listing-merge {right: 75px; position: absolute; margin-top: 5px; display: block !important;}
+/*.view-my-listings.view-display-id-page_1 .listing-merge{text-align: right; margin-right: 180px; margin-top: 50px; margin-bottom: -30px; position: inherit;}*/
+.listing-merge span {padding: 4px 10px; background: #093250; text-align: center; text-transform: uppercase;}
+.listing-merge span a {color: #fff; text-decoration: none; font-size: 12px;}
+.listing-merge span a:hover {color: #fff; text-decoration: none;}
+
+
+.filter-my-list ul li {display: inline-block; cursor: pointer; padding-left: 15px; border: 1px solid #ddd; padding-right: 15px; color: #fff;}
+.filter-my-list ul li.active{background-color: #002c54;}
+.filter-my-list ul li.inactive{background-color: #6d7176;}
+.filter-my-list {position: relative; right: 0px; text-align:right;}
+.marketing-concierge-link.order-page a{color: #006400; font-size: 15px; font-weight: 600;}
+.marketing-concierge-link.product-page a{color: #555555; font-size: 15px; font-weight: 600;}
+.marketing-concierge-link a:hover{text-decoration: none;}
+/*.marketing-concierge-link img{vertical-align: middle;}*/
+/*Its will chnage after actual data render*/
+.listing-pc-meter {margin-top: 14px; line-height: normal;}
+.width-100{width: 99%; background-color: #fff; border-radius: 5px; border: 1px solid #777777; display: inline-block; height: 15px;}
+.width-34{width: 34%; background-color: #5abdda; border-radius: 5px; height: 15px;}
+.width-34 span.meter-point {float: right; background-color: #515556; border-radius: 100px; height: 14px; width: 15px; margin-right: -5px;}
+.width-54{width: 54%; background-color: #00468c; border-radius: 5px; height: 15px;}
+.my-listings-four .meter {float: left; width: 35%; text-align: left;}
+.page-manage-listing #page-title {display: none;}
+.listing-tools-header {border-bottom: 1px solid #000; float: left; width: 100%; padding-bottom: 1px;}
+/*.listing-tools-body {margin-left: 65px; padding-top: 35px;}*/
+.manage-listing-tool-body {float: left; width: 92%;}
+.manage-listing-back {margin-top: 20px;}
+.width-100-number .number-100 {width: 34%; height: 25px;}
+.width-100-number .meter-number {background-color: #515556; color: #fff; margin-right: -10px; padding: 2px;}
+
+
+.manage-listing-logo {float: left; margin-top: 15px;}
+.listing-tools-title {float: right; right: 2px; text-transform: uppercase; font-size: 15px; padding-top: 30px;}
+.manage-listing-tools ul {margin: 0px !important;padding: 0px !important;width: 650px;}
+.manage-listing-tools li {display: inline-block;padding: 4px;width: 115px;}
+.listing-tools-body .listing-completed-notcompleted {position: absolute; bottom: 30px; right: 150px;}
+.tools-title {margin-bottom: 20px; display: inline-block; width: 69%; line-height: normal; vertical-align: top; margin-top: 10px;}
+.purchase-product-logo {float: right; width: 30%; text-align: right; line-height: 16px;}
+.purchase-product-logo img{margin-bottom: -5px; width: 45px;}
+.purchase-product-logo .order-status{text-transform: uppercase; color: #58c6bd; font-size: 12px;}
+.purchase-product-logo .order-name{text-transform: uppercase; font-size: 14px;}
+.purchase-product-logo .order-concierge img{width: 70px; margin-bottom: -5px;}
+.manage-listing-tools li div {text-align: center;}
+.no-listing-product{width: 60%; margin-top: 35px; margin-bottom: 20px;}
+.no-listing-product .mc-static-text{line-height: 17px; margin-bottom: 20px;}
+.no-listing-product .mc-static-text span{font-weight: bold;}
+.no-listing-product .mc-title{line-height: normal;}
+/*Marketing coordinator box*/
+.listing-tool{float: left; width: 65% !important; }
+.marketing-coordinator{width: 200px; text-align: center; color: #666666; display: inline-block; min-height: 290px; line-height: normal; font-size: 13px; right: 15px;}
+.marketing-coordinator-box{border: 1px solid #e2e1e6; border-radius: 10px; background: #fff; margin-top: 80px; position: absolute;}
+.marketing-coordinator-photo {width: 100%; display: inline-block; padding-top: 4px;}/* text-align: right;*/
+.marketing-coordinator-photo img{width: 100px; border-radius: 100%;}
+.marketing-coordinator-name{width: 60%; display: inline-block; text-align: left; vertical-align: middle; margin-top: 6px; margin-left: 10px;}
+.marketing-coordinator-status span{color: #be2828;}
+.marketing-coordinator-name .coordinator-name {text-align: center;}
+.coordinator-contact{text-align: center; width: 110px; background-color: #444444; border: 1px solid #444; border-radius: 5px; margin-left: auto; margin-right: auto; margin-bottom: 10px;}/*padding-top: 2px; padding-bottom: 2px;*/
+.coordinator-contact a{color: #fff !important; text-decoration: none !important;}
+.coordinator-contact a:hover{text-decoration: none; color: #fff;}
+.marketing-coordinator-title {margin-top: 10px; text-transform: uppercase; margin-bottom: 5px;}
+.coordinator-name{text-transform: uppercase; font-size: 16px; font-weight: 500;}
+.coordinator-phone-email {margin-top: 20px; margin-bottom: 20px; text-align: left; margin-left: 10px; line-height: 20px;}
+.coordinator-email{line-height: normal;}
+.coordinator-email img, .coordinator-phone img{display: inline-block; vertical-align: middle;}
+.coordinator-email a, .coordinator-phone span{display: inline-block; width: 80%; vertical-align: middle; margin-left: 10px;}
+/***********Listing Photos***********/
+.page-listing-photos #page-title {display: none;}
+.manage-listing-photos a:hover{text-decoration: none;}
+.photos-title {font-size: 24px;}
+.photos-address {font-size: 15px; margin-bottom: 50px;}
+.photos-address.photos-upload {font-size: 15px; margin-bottom: 20px;}
+.listing-photos-count{font-size: 15px; margin-bottom: 20px;}
+.listing-photos-count num{font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
+.operation-photo {padding-top: 10px;}
+.operation-photo ul{margin: 0px !important; padding: 0px !important; width: 95%;}
+.operation-photo ul li {display: inline-block; width: 31%; text-align: right;}
+#listing-photos-table tr{background: none !important;}
+#listing-photos-table tr td {padding: 5px 3px !important;}
+.photos-data {background: rgba(0, 0, 0, 0.063); padding: 5px 5px 30px 5px;}
+.listing-photo{text-align: center; width: 160px; height: 110px;}
+.manage-listing-back {float: left; width: 7%;}
+.manage-listing-photos {float: left; width: 92%;}
+.page-node-edit .manage-listing-back {display: inline-block; width: 7%;}
+.page-node-edit .manage-listing-photos {display: inline-block; width: 92%; float: none;}
+.listing-photos-count span {right: 0px; position: absolute; background: #142f54; padding: 5px 10px 5px 5px;}
+.listing-photos-count span a {color: #fff; text-transform: uppercase;}
+.listing-photos-count span a:hover{color: #fff; text-decoration: none;}
+.listing-photos-count span img {vertical-align: bottom; padding-right: 5px;}
+#listing-photos-draggable {list-style-type: none; margin: 0; padding: 0; width: 110%; }
+#listing-photos-draggable li.photos-draggable {margin: 3px 3px 3px 0; padding: 1px; float: left; cursor: all-scroll;}
+.update-listing-order{float: left; width: 100%; margin-top: 20px;}
+#update-listing-photos-order, #update-listing-document-order {background: #142f54; padding: 10px; color: #fff; text-transform: uppercase;}
+#update-listing-document-order a, #update-listing-photos-order a{text-decoration: none;}
+.page-field-collection .tabs.primary, .page-field-collection #page-title {display: none !important;}
+/***********Listing Document***********/
+.page-listing-document #page-title {display: none;}
+#listing-document {list-style-type: none; margin: 0; padding: 0; width: 110%; }
+#listing-document li.document-draggable {margin: 0px 11px 11px 0; padding: 1px; float: left; cursor: all-scroll;}
+.operation-document {padding-top: 10px; text-align: right;}
+.operation-document ul{margin: 0px !important; padding: 0px !important;}
+.operation-document ul li {display: inline-block; width: 10%; padding-right: 10px;}
+.document-data {background: rgba(0, 0, 0, 0.063); padding: 5px 5px 30px 5px;}
+#field-collection-item-form .field-name-field-document-update, #field-collection-item-form .field-name-field-document-thumbnail {display: none;}
+.listing-document img{height: 294px; width: 230px;}
+.upload-document {text-align: right;}
+.upload-document span {position: inherit !important; padding: 8px 10px 8px 7px; margin-left: 10px;}
+.document-address {font-size: 15px; margin-bottom: 30px;}
+.document-count {margin-bottom: 20px;}
+
+/*Video CSS*/
+#listing-vide-frame {list-style-type: none; margin: 0; padding: 0; width: 110%; }
+#listing-vide-frame li.photos-frame{margin: 5px 0px 5px 0; float: left; cursor: all-scroll;}
+.photos-data-frame {background: rgba(0, 0, 0, 0.063);}
+.photos-data-frame .listing-photo{padding: 10px;}
+
+.manage-listing-photos {color: #9f9588;}
+.frame-arrangment{width: 100%; float: left;}
+.listing-pdf {  float: left;  width: 100%;}
+.listing-photo-gallery {   float: left;   width: 38%;}
+.listing-video-body .listing-photo-gallery {   float: none;   width: auto;}
+.image-frame-arrangment {   float: left;   width: 62%;}
+.image-frame-arrangment #sortable1 { background: none repeat scroll 0 0 #fff;  margin: 0;   border: 5px solid #eee;}
+.submit_sequence {  float: left; width: 97%;background-color: #eee;}
+.submit_sequence .mcpdf_create_message { float: left;  padding: 10px 5px;}
+.submit_sequence > input.enable {  background-color: #608BB5; color:#fff; float: right;}
+.submit_sequence > input.disable {  background-color: #ccc; color:#fff; float: right;}
+.listing-photo-gallery  #sortable2  .photos-data, .listing-photo-gallery  #sortable2-disable .photos-data{padding:0;}
+.listing-photo-gallery  #sortable2 .listing-photo, .listing-photo-gallery  #sortable2-disable .listing-photo{width: 89px; height: auto;}
+.box_title {   float: left;   width: 97%;    background: #eee; padding: 5px;}
+.dragable_images {   float: left;   width: 100%;   padding-top: 5%;}
+/*.slide-first, .slide-second {float: left; width: 19%;}*/
+#sortable1{width: 97%; min-height: 110px; list-style-type: none; background: #e5e0ea; float: left; margin: 0px 0px 25px 0px; padding: 4px 0px 1px 4px;}
+.listing-frame-arrangment, .listing-photo-gallery, .youtube-settings-title, .listing-video-title{font-size: 16px; padding: 10px 0 10px 0; color: #9f9588;}
+#sortable2 , #sortable2-disable{width: 100%; list-style-type: none; margin: 0; padding: 0px; min-height: 110px;}
+#sortable1 li, #sortable2 li, #sortable2-disable li{padding: 2px; display: inline-block; line-height: 1px;}
+.youtube-settings, .listing-video-link{margin-bottom: 25px;}
+.youtube-video-url{margin-bottom: 10px;}
+.frame-arrangment{margin-bottom: 50px;}
+.youtube-video-url-first, .video-download-link-first {display: inline-block; width: 30%;}
+.youtube-video-url-second, .video-download-link-second {display: inline-block;}
+.youtube-video-url, .video-download-link, .youtube-settings-checkbox, .youtube-settings #background_music, .youtube-settings #zoom_effect{margin-left: 10px;}
+.create-video {text-align: right;}
+.create-video-link, .create-video-help {display: inline-block;}
+.create-video-link a, .create-video-help a{background: #142f54; padding: 10px; color: #fff; text-transform: uppercase;}
+.create-video-link a:hover, .create-video-help a:hover{color: #fff; text-decoration: none;}
+#video-slide-help-list {background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #DDDDDD; border-radius: 5px; padding: 10px;}
+#video-slide-help-list .button.b-close{background: #000; color: #fff; position: absolute; border-radius: 5px; padding: 3px 7px 3px 7px; right: -10px; top: -20px; cursor: pointer;}
+
+
+/*Listing Website Page CSS*/
+.listing-website-body {font-size: 16px;}
+.listing-single-property {margin-bottom: 25px;}
+.listing-single-property span, .listing-website-settings-title span, .listing-website-settings span{font-size: 22px; margin-right: 10px;}
+.page-listing-website .photos-address{margin-bottom: 25px;}
+.listing-website-body dl {margin-left: 10px;}
+.listing-website-body dl dt {float: left; width: 25%; font-weight: 600;}
+.listing-website-body dl dd {padding-bottom: 15px; }
+.action-webpage-url{display: none;}
+.listing-website-settings{margin: 10px 0px 20px 10px !important; padding: 0px !important; list-style: none;}
+.web-page-design{margin: 0px !important; padding: 0px !important; list-style: none;}
+.web-page-design li{display: inline-block; background: #e3e3e3; padding: 10px; border-radius: 5px; width: 170px; margin-left: 3px;}
+.design-thumb {text-align: center;}
+.design-name{font-size: 14px; word-wrap: break-word;}
+.update-listing-website-settings {margin-top: 50px;}
+.update-listing-website-settings a{background: #142f54; padding: 10px; color: #fff; text-transform: uppercase;}
+.update-listing-website-settings a:hover{color: #fff; text-decoration: none;}
+.edit-web-page-url{cursor: pointer; margin-left: 20px;}
+#web-page-url {height: 12px;}
+.update-web-page-url{background: #142f54; padding: 3px; color: #fff; text-transform: uppercase; margin-left: 5px; cursor: pointer;}
+.design-name input{margin-right: 5px;}
+.view-listing-analytics .views-field-nid {font-size: 24px; font-weight: bold;}
+.view-listing-analytics .views-field-daycount {font-size: 18px; margin-top: 20px; margin-left: 40px;}
+.view-listing-analytics .views-field-weekcount, .view-listing-analytics .views-field-monthcount, .view-listing-analytics .views-field-yearcount {font-size: 18px; margin-top: 10px; margin-left: 40px;}
+/******listing-step-by-step Start******/
+.listing-step-by-step {background: url('../images/step-by-step-top-banner.jpg'); min-height: 700px; padding-top: 100px; line-height: normal;}
+/* .step-by-step-body {background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5); height: 500px;}
+.step-by-step-title .title-one {padding-top: 40px;}
+.step-by-step-title .title-one, .step-by-step-title .title-two {text-align: center; text-transform: uppercase; font-size: 30px; color: #fff;}
+.step-by-step-title .step-body{text-align: center; color: #fff; margin-top: 15px; margin-bottom: 25px;}*/
+/*.node-type-lms-step-by-step-guide .block.block-views{background: url('../images/41495082.jpg'); min-height: 700px; padding-top: 100px; line-height: normal; margin-top: 150px; background-repeat: repeat !important;}*/
+.node-type-lms-step-by-step-guide .block.block-views .view-content{background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);}
+/*.node-type-lms-step-by-step-guide .block.block-views .field-content{width: 800px; margin-left: auto; margin-right: auto; color: #fff;}*/
+.node-type-lms-step-by-step-guide .block.block-views .field-content a{color: #fff; text-transform: uppercase;}
+.node-type-lms-step-by-step-guide .block.block-views .field-content a:hover{color: #fff; text-decoration: none;}
+.node-type-lms-step-by-step-guide .block.block-views .title-two{text-transform: uppercase; font-size: 30px; color: #fff;}
+.node-type-lms-step-by-step-guide .block.block-views .step-body{text-align: center; color: #fff; margin-top: 15px; margin-bottom: 25px;}
+.node-type-lms-step-by-step-guide .fav-completed-white{text-align: right; float: none !important; padding-bottom: 15px;}
+.node-type-lms-step-by-step-guide .view-icon-grids .view-content {background: none !important;}
+.view-step-by-step-sub-sections .title-two{font-family: "Raleway"; font-size: 5em !important; line-height: 1em !important;}
+.section-previewsinternational-title, .section-preparepropertytomarket-title, .section-forms-title, .section-listingpresentation-title, .section-communication-title, .section-openhouse-title, .section-escrow-title, .section-postclosemarketing-title {color: #fff; font-size: 5.0em; font-family: "Raleway"; line-height: 1em; padding-top: 100px; padding-bottom: 30px; text-align: center;}
+.view-id-step_by_step_sub_sections .fav-completed-white {background-color: transparent !important;}
+.section-prelistingprep-title{text-align: center;}
+/******listing-step-by-step END********/
+
+
+/*---------------Brochure css goes here--------------*/
+
+#block-system-main .content .view-brochure-test .view-content .views-row .views-field-title{
+text-align:center;
+text-align: center;
+font-size: 24px;
+font-family: sans-serif;
+}
+
+
+#block-system-main .content .view-brochure-test .view-content .views-row .views-field-field-brochure-image{
+display:inline-block;
+}
+
+
+#block-system-main .content .view-brochure-test .view-content .views-row .views-field-field-brochure-description{
+display: inline-block;
+width: 56%;
+vertical-align: top;
+}
+
+
+
+#block-system-main .content .view .view-content .views-row .views-field-field-lms-listing-photos{
+display:block;
+}
+
+#block-system-main .content .view .view-content .views-row .views-field-field-lms-listing-photos-1{
+display:inline-block;
+}
+
+#block-system-main .content .view .view-content .views-row .views-field-field-lms-listing-photos-3{
+display:inline-block;
+}
+
+#block-system-main .content .view .view-content .views-row .views-field-field-lms-listing-photos-4{
+display:inline-block;
+}
+
+#block-system-main .content .view .view-content .views-row .views-field-field-lms-listing-photos-2 .field-content .entity .content .field .field-items .field-item img{
+background-color:#F00;
+}
+.product_group {
+    width: 100%;
+    float: left;
+}
+.pro_gp {
+    font-size: 20px;
+    text-transform: uppercase;
+}
+.brochure_wrapper{
+width: 28%;
+background-color:#fff;
+padding:4px;
+float: left;
+margin-right: 4%;
+margin-bottom: 10px;
+margin-top: 20px;
+min-height: 460px;
+max-height: 460px;
+color: #666;
+border-bottom: 1px solid #9f9588;
+}
+.brochure_image{
+width: 100%;
+float: left;
+}
+.node_details {
+    float: left;
+    width: 100%;
+	line-height: 20px;
+}
+.brochure_image img{
+height:auto;
+max-height: 300px;
+}
+.update-listing-brochures {
+    float: left;
+    margin-top: 10px;
+}
+
+.brochure_wrapper .node-title {
+display: block;
+width: 100%;
+margin-top: 4px;
+}
+
+.design{
+display:block;
+width:100%;
+}
+
+.brochure_options{
+display:inline-block;
+min-width: 9%;
+}
+
+.download_brochure{
+margin-left:15px;
+}
+
+.delete_brochure{
+margin-left:15px;
+}
+.online_marketing{
+display:block;
+float:left;
+width:85%;
+margin-top: 4px;
+font-size: 14px !important;
+}
+
+.magnify{
+display:inline-block;
+width:10%;
+margin-left: 12px;
+}
+
+.magnify img {
+width:12px;
+height:auto;
+margin-left: 1px;
+}
+
+.magnify-image{
+display:none;
+position:fixed;
+left:32.5%;
+background-color:#F0F0F0;
+top:202px;
+padding:10px;
+margin:auto;
+box-shadow: 0px 0px 34px 10px #666;
+}
+
+.exit-magnify-image{
+width:100%;
+display:block;
+background-color:#F0F0F0;
+position:realative;
+text-align:right;
+}
+
+
+.pdf-thumbnail{
+display:inline-block;
+position:relative;
+float:left;
+background-color:#ccc;
+padding:10px;
+}
+.pdf-form-wrapper{
+display:inline-block;
+position:relative;
+width:39%;
+float:right;
+}
+
+.pdf-form{
+background-color:#ccc;
+padding:10px;
+}
+.node-pdf_download {
+    float: left;
+	padding: 10px 5px;
+	width: 70%;
+}
+.node-sides-photos {
+    float: right;
+    padding: 10px 5px;
+    text-align: right;
+    width: 22%;
+}
+.pdf_design_thumbnail_image .magnify{
+display:inline-block;
+width:auto;
+margin-left: 0px;
+}
+
+.pdf_design_thumbnail_image .magnify img {
+width:auto;
+height:auto;
+margin-left: 0px;
+}
+.send-for-approval input[type="checkbox"]{margin-right: 4px;}
+/************************************ pdf form field css *******************************/
+
+.pdf-form .mc_listingaddress {
+	width:100%;
+}
+.pdf-form .mc_price {
+	width:100%;
+}
+.pdf-form .mc_listingaddress #add_label {
+	margin-right: 44px;
+}
+.pdf-form .mc_price #price_label {
+	margin-right: 65px;
+}
+
+/*********  Share section css  *******/
+.share_wrapper {
+    margin: 4% 1%;
+	border: 1px #ccc solid;
+	padding:1%;
+}
+.share_wrapper .form-submit {
+    margin: 20px 0 0;
+}
+.share_wrapper table {
+    width: 100%;
+}
+.fieldset-wrapper #add-more-items, .fieldset-wrapper #remove-more-items {
+    float: left;
+    margin: 10px 10px 10px 0;
+}
+.view-shared-listings {
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    width: 80%;
+}
+
+.my-shared-listings-part-one {
+    width: 40%;
+    float: left;
+	padding: 0 10px;
+}
+.my-shared-listings-part-two {
+    float: left;
+    width: 60%;
+	padding: 0 10px;
+}
+#block-views-shared-listings-block-3, #block-views-my-buyers-block-2{width: 100%;  float: left;  margin-bottom: 10px;}
+.view-shared-listings .my-listings-part-two{height:auto;}
+.view-shared-listings .user_profiles {
+    background-color: #fff;
+    font-size: 10px;
+    text-align: left;
+    word-wrap: break-word;
+	line-height: normal;
+}
+.view-shared-listings .user_pics {
+    float:left;
+}
+.view-shared-listings .user_pics > img {
+    border-radius: 50%;
+    height: 70px;
+    width: 70px;
+	  border: 1px solid #ccc;
+}
+.view-shared-listings .user_profiles .email{font-size: 18px;}
+.view-shared-listings  .user_profiles .user_caption{  font-size: 14px;}
+.view-shared-listings  .user_profiles .name{ font-size: 16px;}
+.view-shared-listings .shared_user_info {float: left;}
+.view-shared-listings .shared_user_info_data {float: left; padding: 20px 10px;}
+.view-shared-listings .my-listings-four {
+  display: inline-block;
+   margin-top: 0px !important; 
+   text-align: right; 
+  width: 20% !important; 
+    background-color: #fff;
+	float:right;
+	height: 100%;
+}
+.view-shared-listings .my-listings-three {
+  width: 73% !important;
+  float:left;
+}
+.view-shared-listings .my-listing-title{line-height:normal;}
+
+.pdf-form .dragable_images{
+width:100%;
+}
+
+.pdf-form .dragable_images .pdf_edit_form_img {
+display:inline-block;
+width:97px;
+padding:1px;
+}
+
+
+.pdf-form #update-pdf-photos-order {
+  background-color: #5F8CB4;
+  color: #ffffff;
+  margin-top:3px;
+  display:block;
+}
+
+.pdf-form .submit_sequence {
+width:100%;
+float:left;
+}
+
+.pdf-form .dragable_images .listing-photo{
+text-align:none;
+width:auto;
+height:auto;
+}
+
+.pdf-form .dragable_images #listing-photos-draggable .photos-draggable .photos-data{
+padding:0px !important;
+}
+
+.pdf-form .dragable_images .listing-photo img{
+width: 90px;
+}
+
+.pdf-form .dragable_images .listing-photos-draggable{	
+width:100%;
+}
+
+.send-pdf{
+  display: block;
+  width: 32px;
+  float: right;
+  margin-right:13px;
+  vertical-align: top;
+}
+
+.page-generate-pdf .manage-listing-photos{
+  width: 89%;
+}
+
+.page-listing-brochures  .manage-listing-photos{
+  width: 89%;
+}
+
+.page-print-and-go .manage-listing-photos{
+  width: 89%;
+}
+
+.page-postcard .manage-listing-photos{
+  width: 89%;
+}
+
+.page-listing-analytics .hidden-lg, .node-type-lms-client-report .hidden-lg {display: none !important;}
+.node-type-details .cbone-flag-div{float: right; border-top: 1px solid #ccc; width: 100%; text-align: right; padding-top: 10px;}
+/*.node-type-lms-client-report*/
+
+
+#listing-marketing-system-form .form-item .form-textarea-wrapper  #edit-online-copy{
+display: none;
+}
+
+#edit-details-format{
+display: none;
+}
+
+#switch_edit-details-value{
+display: none !important;
+}
+
+#listing-marketing-system-form .form-item .form-textarea-wrapper .grippie{
+display: none;
+}
+
+#update-listing-brochures-id {
+    background: none repeat scroll 0 0 #142F54;
+    color: #FFFFFF;
+    padding: 10px;
+    text-transform: uppercase;
+	display:block;
+}
+
+/****************************Client Report CSS Start****************************/
+.page-node-add-lms-client-report .photos-address {margin-bottom: 30px !important;}
+.page-node-add-lms-client-report .seller-name, .page-node-add-lms-client-report .seller-email {margin-left: 10px;}
+#lms-client-report-node-form #edit-actions .form-submit {margin-right: 15px; background: #132f54;}
+#lms-client-report-node-form #edit-actions .form-submit:hover{color: #fff;}
+.node-type-lms-client-report .tabs {display: none;}
+.lms-client-report-node {width: 79%; margin-left: auto; margin-right: auto;}
+.lms-client-report-body {margin-left: 30px; font-size: 17px;}
+.lms-client-report-node div {margin-bottom: 15px;}
+.sender-image, .sender-detail {display: inline-block; vertical-align: top;}
+.sender-image img{width: 130px; height: 160px;}
+.sender-detail {margin-left: 20px; font-size: 16px; line-height: normal;}
+.report-footer div{margin-bottom: 0px;}
+.sender-detail .name{font-size: 22px; margin-bottom: 15px;}
+.report-footer .sincerely{margin-bottom: 25px;}
+.disclaimer-text {margin-top: 25px; font-size: 11px; line-height: normal;}
+.completed-item ul{margin: 0px; padding: 0px 0px 0px 10px;}
+.completed-item ul li{padding-bottom: 5px; list-style: none;}
+#client_report_preview {display: none;}
+/****************************Client Report CSS End******************************/
+/****************************Listing form CSS Start******************************/
+a.tabledrag-handle .handle {height: 25px; width: 25px;}
+#lms-listing-node-form #listing-basic-info-one, #lms-listing-node-form #listing-basic-info-two {float: left; width: 30%;}
+#lms-listing-node-form input[type="text"] {width: 300px; padding: 4px 9px !important;}
+#lms-listing-node-form input[type="text"], #lms-listing-node-form select, #lms-listing-node-form textarea {border: 1px solid !important;}
+#lms-listing-node-form #edit-field-lms-sales-team-und {width: 300px; padding: 9px 7px !important;}
+#lms-listing-node-form label[for="edit-field-lms-hide-listing-address-und"],
+#lms-listing-node-form label[for="edit-field-lms-listing-status-und"],
+#lms-listing-node-form label[for="edit-field-lms-listing-data-und"],
+#lms-listing-node-form label[for="edit-field-lms-property-type-und"],
+#lms-listing-node-form label[for="edit-field-lms-presentation-und"] {display: none !important;}
+#lms-listing-node-form #edit-field-lms-property-type-und, #lms-listing-node-form #edit-field-lms-listing-status-und {height: 34px;}
+#lms-listing-node-form  label.option{font-size: 14px; color: #848688;}
+#lms-listing-node-form #field-lms-listing-expiration-add-more-wrapper legend, #lms-listing-node-form #field-lms-listing-expiration-add-more-wrapper .description {display: none !important;}
+#lms-listing-node-form #field-lms-listing-expiration-add-more-wrapper .container-inline-date .date-padding {padding: 0px !important; float: none !important;}
+#lms-listing-node-form .horizontal-tabs ul.horizontal-tabs-list li a {color: #848688; text-transform: uppercase; font-size: 14px; padding: 1px 8px 1px 8px;}
+#lms-listing-node-form .horizontal-tabs ul.horizontal-tabs-list li a:hover {outline: none !important; background-color: #fff !important;}
+#lms-listing-node-form .horizontal-tabs ul.horizontal-tabs-list li {background: #fff; border-right: none; min-width: 120px; text-align: center;}
+#lms-listing-node-form .horizontal-tabs ul.horizontal-tabs-list {background-color: #fff; padding: 15px;}
+#lms-listing-node-form .horizontal-tabs ul.horizontal-tabs-list li.selected {background: #042E51;}
+#lms-listing-node-form .horizontal-tabs ul.horizontal-tabs-list li.selected a:hover {outline: none !important; background-color: #042E51 !important;}
+#lms-listing-node-form .horizontal-tabs ul.horizontal-tabs-list li.selected strong {color: #fff !important;}
+#lms-listing-node-form #listing-feet-info .field-name-field-lms-square-feet, #lms-listing-node-form #listing-feet-info .field-name-field-lms-lot-square-feet {float: left; width: 50%;}
+#lms-listing-node-form #listing-feet-info .field-name-field-lms-square-feet {margin-right: -10px;}
+#lms-listing-node-form #listing-feet-info{margin-top: -15px;}
+#lms-listing-node-form #edit-field-lms-square-feet-und-0-value, #lms-listing-node-form #edit-field-lms-lot-square-feet-und-0-value{width: 145px !important;}
+#lms-listing-node-form .field-name-field-listing-data-title{margin-bottom: -15px; margin-top: 40px;}
+#lms-listing-node-form .listing-data-title{font-size: 14px; font-weight: bold; color: #848688;}
+.listing-edit-form .listing-banner {margin-bottom: 20px;}
+#lms-listing-node-form #edit-submit, #lms-listing-node-form #edit-preview, #lms-listing-node-form #edit-submit:hover, #lms-listing-node-form #edit-preview:hover, #lms-listing-node-form #edit-delete, #lms-listing-node-form #edit-delete:hover, #lms-listing-node-form #edit-addanother, #lms-listing-node-form #edit-addanother:hover, #node-delete-confirm #edit-submit, #node-delete-confirm #edit-submit:hover, #node-delete-confirm #edit-cancel, #node-delete-confirm #edit-cancel:hover {background: #042E51; color: #fff; margin-right: 12px; padding: 3px 15px 3px 15px; text-transform: uppercase;}
+#lms-listing-node-form legend {font-size: 14px; font-weight: bold; margin-bottom: 0px !important;}
+.geolocation-address .form-type-textfield {float: none !important; display: inline-block !important;}
+#lms-listing-node-form .field-name-field-published-listing {float: left; width: 100%;}
+#lms-listing-node-form .field-name-field-published-listing label[for="edit-field-published-listing-und"]{display: none;}
+/****************************Listing form CSS End********************************/
+/****************************cb-firstlook-property-post form CSS Start******************************/
+a.tabledrag-handle .handle {height: 25px; width: 25px;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form {border: 1px solid;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form .resp-tab-content{border: none;}
+#cb-firstlook-property-post-node-form input[type="text"] {width: 300px; padding: 4px 9px !important;}
+#cb-firstlook-property-post-node-form input[type="text"], #cb-firstlook-property-post-node-form select, #cb-firstlook-property-post-node-form textarea {border: 1px solid !important;}
+#cb-firstlook-property-post-node-form #edit-field-cb-firstlook-category-und, #cb-firstlook-property-post-node-form #edit-field-firstlook-region-und {width: 300px; padding: 7px !important; height: 34px;}
+#cb-firstlook-property-post-node-form label[for="edit-field-firstlook-link-und-0"] {display: none !important;}
+
+#cb-firstlook-property-post-node-form  label.option{font-size: 14px; color: #848688;}
+/*#cb-firstlook-property-post-node-form #field-lms-listing-expiration-add-more-wrapper legend, #cb-firstlook-property-post-node-form #field-lms-listing-expiration-add-more-wrapper .description {display: none !important;}*/
+/*#cb-firstlook-property-post-node-form #field-lms-listing-expiration-add-more-wrapper .container-inline-date .date-padding {padding: 0px !important; float: none !important;}*/
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul{display: inline-block; margin: 0; border: 0; position: relative; list-style: none; list-style-image: none; border-right: 1px solid #dedede; width: 100%; height: auto; clear: both; background-color: #fff;
+padding: 15px;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul li a {color: #848688; text-transform: uppercase; font-size: 14px; padding: 1px 8px 1px 8px;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul li a:hover {outline: none !important; background-color: #fff !important;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul li {background: #fff; border-right: none; min-width: 120px; text-align: center; padding: 2px 20px 2px 20px !important; text-transform: uppercase;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul {background-color: #fff; padding: 15px;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul li.resp-tab-active {background: #042E51; color: #fff;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul li.resp-tab-active a:hover {outline: none !important; background-color: #042E51 !important;}
+#cb-firstlook-property-post-node-form #group-wrapper-node-cb-firstlook-property-post-form ul li.resp-tab-active strong {color: #fff !important;}
+/*#cb-firstlook-property-post-node-form #listing-feet-info .field-name-field-lms-square-feet, #cb-firstlook-property-post-node-form #listing-feet-info .field-name-field-lms-lot-square-feet {float: left; width: 50%;}
+#cb-firstlook-property-post-node-form #listing-feet-info .field-name-field-lms-square-feet {margin-right: -10px;}
+#cb-firstlook-property-post-node-form #listing-feet-info{margin-top: -15px;}
+#cb-firstlook-property-post-node-form #edit-field-lms-square-feet-und-0-value, #cb-firstlook-property-post-node-form #edit-field-lms-lot-square-feet-und-0-value{width: 145px !important;}*/
+#cb-firstlook-property-post-node-form .field-name-field-listing-data-title{margin-bottom: -15px; margin-top: 40px;}
+#cb-firstlook-property-post-node-form .listing-data-title{font-size: 14px; font-weight: bold; color: #848688;}
+.listing-edit-form .listing-banner {margin-bottom: 20px;}
+#cb-firstlook-property-post-node-form #edit-submit, #cb-firstlook-property-post-node-form #edit-preview, #cb-firstlook-property-post-node-form #edit-submit:hover, #cb-firstlook-property-post-node-form #edit-preview:hover, #cb-firstlook-property-post-node-form #edit-delete, #cb-firstlook-property-post-node-form #edit-delete:hover, #cb-firstlook-property-post-node-form #edit-addanother, #cb-firstlook-property-post-node-form #edit-addanother:hover, #node-delete-confirm #edit-submit, #node-delete-confirm #edit-submit:hover, #node-delete-confirm #edit-cancel, #node-delete-confirm #edit-cancel:hover {background: #042E51; color: #fff; margin-right: 12px; padding: 3px 15px 3px 15px; text-transform: uppercase;}
+#cb-firstlook-property-post-node-form legend {font-size: 14px; font-weight: bold; margin-bottom: 0px !important;}
+.geolocation-address .form-type-textfield {float: none !important; display: inline-block !important;}
+#cb-firstlook-property-post-node-form .field-name-field-published-listing {float: left; width: 100%;}
+#cb-firstlook-property-post-node-form .field-name-field-published-listing label[for="edit-field-published-listing-und"]{display: none;}
+#cb-firstlook-property-post-node-form .form-type-textfield label, #cb-firstlook-property-post-node-form .form-type-select label, #cb-firstlook-property-post-node-form .form-type-textarea label, #cb-firstlook-property-post-node-form .form-type-textarea .counter, #cb-firstlook-property-post-node-form .form-type-textarea .description, #cb-firstlook-property-post-node-form .form-type-textarea .grippie, #cb-firstlook-property-post-node-form .form-type-link-field label, #cb-firstlook-property-post-node-form .form-type-link-field .description, #cb-firstlook-property-post-node-form .field-name-field-firstlook-price .field-prefix, #cb-firstlook-property-post-node-form .field-name-field-firstlook-price .description {display: none;}
+#cb-firstlook-property-post-node-form #edit-field-firstlook-comment-und-0-value{width: 60%;}
+#firstlook-requirements-popup{display: none;}
+#firstlook-requirements-popup {background: #fff; padding: 30px; border-radius: 10px; width: 450px}
+a.firstlook-yes-save, a.firstlook-yes-preview, a.firstlook-no-cancel{background: #002f54; padding: 5px 20px; color: #fff !important; text-transform: uppercase; font-weight: 500;}
+.firstlook-requirements > div {margin-bottom: 15px;}
+#cb-firstlook-property-post-node-form .field-name-field-first-look-requirements{position: absolute; width: 250px; left: 45%; color: #fff; background: #acadb1; border-radius: 10px; padding: 20px; top: 15%;}
+#cb-firstlook-property-post-node-form .field-name-field-not-ready-to-show{position: absolute; top: 2%; right: 40%;}
+#cb-firstlook-property-post-node-form .resp-tabs-container{position: relative;}
+#cb-firstlook-property-post-node-form .field-name-field-firstlook-duration-note{display: none;}
+
+/****************************cb-firstlook-property-post form CSS End********************************/
+/****************************User Profile form CSS Start********************************/
+.page-user-edit.member #page-title, .page-user-edit.member .tabs, .page-user-edit.member .form-item-picture-delete {display: none !important;}
+.user-profile-form {color: #8e8e8e}
+.user-profile-form .user-profile-form-banner {text-align: center; width: 100%; height: 250px; font-size: 48px; text-transform: uppercase; color: #fff; background-image: url("/sites/default/files/images/background/user-profile-bg.jpg"); padding-top: 100px;}
+.user-profile-form-part-one, .user-profile-form-part-two {float: left; width: 49%;}
+.basics-info { margin-top: 2%;}
+#instruction-wrapper {float: left; width: 75%; text-align: justify;}
+.user_profile_picture { float: left;   margin-right: 10%;}
+.user-profile-form-part-one {margin-top: 0px;}
+.user-profile-form-part-two {margin-top: 0px;}
+.instruction-title { text-transform: uppercase; margin-bottom: 10px;}
+.instruction-body { font-size: 14px;}
+.instruction-body p {  line-height: normal;}
+div#edit-field-person-about {width: 63%; }
+.user-profile-form label{margin-bottom: 0px !important; font-weight: normal !important;}
+.user-profile-form input[type="text"]{width: 350px; height: 30px; border: 1px solid; border-top: 2px solid;}
+.user-profile-form #edit-picture-upload {display: inline-block; margin-left: 10px;}
+.user-profile-form .user-picture img{border-radius: 0px !important; width: auto !important; height: auto !important;}
+.user-profile-form .field-name-field-date-of-birth .description, .user-profile-form legend{display: none !important;}
+.user-profile-form .container-inline-date .date-padding {padding: 0px !important;}
+.user-profile-form .user-profile-form-submit{width: 100%; float: left;}
+.user-profile-social-media-title{font-weight: bold; margin-top: 40px; margin-bottom: -10px;}
+.user-profile-form-submit #edit-submit{background: #042E51; color: #fff; margin-right: 12px; padding: 3px 15px 3px 15px; text-transform: uppercase;}
+/****************************User Profile form CSS End**********************************/
+
+.listing-website-body .action-webpage-url #web_page_url, .listing-website-body .action-webpage-url  .update-web-page-url {display:inline;}
+.video_upload  .btn{background: none repeat scroll 0 0 #142f54;}
+.video_upload  .btn:hover, .video_upload .btn:focus{  color: #5f8cb4;}
+/**************Shared listing updated mockup css****************/
+.view-shared-listings .view-display-id-block_3 {  width: 100%;}
+.view-shared-listings .my-listings{border: 1px solid #ccc;}
+.view-shared-listings .my-listings-one{/*width: 39% !important;*/}
+.view-shared-listings .my-listings-two{width: 60% !important;}
+.view-shared-listings .my-listings-part-two{width: 60% !important;height: 120px !important;}
+.view-shared-listings .my-listings-three .title{color:#1671B8; font-size: 20px;}
+.view-shared-listings .my-listings-three .link_title {  margin-left: 2px;}
+
+/**************page-listing-analytics css****************/
+.listing-analytics-body ul {padding: 0px !important; margin: 0px !important;}
+.listing-analytics-body ul li{list-style: none; display: inline-block; padding: 30px 40px 30px 40px; border: 1px solid; text-align: center; margin-left: 5px;}
+.listing-analytics-body ul li:first-child{margin-left: 0px !important;}
+.listing-analytics-body ul li span{font-weight: bold;}
+.listing-analytics-body .chart-detail {border: 1px solid; margin-top: 10px;}
+.listing-analytics-body .chart-title {margin: 30px 10px 10px 50px;}
+
+/**************page-listing-merge-selection css****************/
+.find-merge-listing .merge-listing-title {font-size: 30px; padding: 10px 0px 10px 0px;}
+#merge-list-filter-form .form-item-address {float: left; width: 300px;}
+#merge-list-filter-form .merge-list-filter-submit {float: left; width: 100px; margin-top: 50px;}
+.find-merge-listing {float: left; width: 90%}
+#listing-merge-selection-form {float: left; width: 100%;}
+#listing-merge-selection-form .item-list{text-align: center; padding-top: 20px;}
+#listing-merge-selection-form th.select-all input{display: none !important;}
+#listing-merge-selection-form input.form-submit{margin: 20px 0 20px 0;}
+#listing-merge-selection-form td.listing-edit {text-align: center;}
+/*******************/
+.merge-buttons{float: left; width: 100%; padding: 20px 0px 20px 0px;}
+.merge-buttons .merge, .merge-buttons .cancel{display: inline-block; width: 110px;}
+#cbone-listing-merege {width: 100% !important; float: left;}
+#cbone-listing-merege .form-type-checkbox, #cbone-listing-merege .three-arrow {display: inline-block;}
+#cbone-listing-merege .first, #cbone-listing-merege .third{padding-left: 45px;}
+#cbone-listing-merege .first.address, #cbone-listing-merege .third.address {padding-left: 25px;}
+#cbone-listing-merege .head-first, #cbone-listing-merege .head-third{padding-left: 10px;}
+#cbone-listing-merege .second {border-left: 1px solid #ddd; border-right: 1px solid #ddd; text-align: center;}
+#cbone-listing-merege .form-item {margin: 0px !important;}
+#cbone-listing-merege .listing-row{border-bottom: 1px solid #ddd;}
+#cbone-listing-merege .first span{font-size: 13px;}
+#autocomplete ul{
+  overflow: auto;
+  max-height: 200px;
+}
+#autocomplete li{
+  white-space: pre-line;
+}
+.listing-pdf > form#agent-field-form {
+    min-height: 400px;
+}
+.step2{ float: right;  padding: 2px;}
+.step2 a{
+    border: 0 none;
+    border-radius: 2px;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    outline: medium none;
+    padding: 5px 16px;
+    transition: all 0.2s ease-in-out 0s;
+    background: none repeat scroll 0 0 #5f8cb4;
+    color: #fff !important;
+}
+.step_text { font-size: 18px; font-weight: 600; padding: 5px 0;}
+.back_step {float: left; width: 97%; padding: 8px 0;}
+.back_step > a { color: #666 !important;}
+.back_step > a:hover { color: #666 !important;}
+.pdf-thumbnail_sides { float: left; width: 60%;}
+.pdf_design_thumbnail {  float: left; padding: 5px 20px;}
+
+/*****************05-10-15****************/
+.listing-photos-import{border: #ccc solid; border-radius: 6px; padding: 20px;}
+#import-listing-photos {background: #142f54; padding: 10px 30px 10px 30px; color: #fff; text-transform: uppercase;}
+.listing-photos-import {width: 50%; font-size: 15px; margin-bottom: 20px;}
+.listing-photos-import .import-count{font-size: 18px;}
+.listing-photos-import .import-message {font-size: 14px; padding: 5px 0px 5px 5px;}
+.listing-photos-import .import-button {padding-top: 10px;}
+#auto-loop {display: inline; padding: 0;}
+#auto-loop li {display : none;}
+#auto-loop li:first-child {display : block;}
+/*****************05-10-15****************/
+/****************CSS for Byer Form Page/25-11-15****************/
+#client-node-form .form-item {position: relative;}
+#client-node-form .form-item label {position: absolute; top: 45px; text-transform: uppercase; font-weight: normal;}
+#client-node-form .form-item input[type="text"]{margin-bottom: 40px;}
+#client-node-form .resp-tab-item{text-transform: uppercase;}
+#client-node-form .form-item.form-type-managed-file label, #client-node-form .form-item.form-type-checkbox label{position: initial;}
+#client-node-form .form-item.form-type-checkboxes label[for="edit-field-buyer-property-embed-und"]{display: none;}
+#client-node-form .photo-upload-icon {margin-bottom: -15px;}
+#client-node-form .btn.form-submit {margin-right: 10px;}
+/**************************END**********************************/
+/*****************29-12-15*********************/
+.mc-order-status {position: absolute; text-align: center; height: 118px; width: 159px; background: #319ea3; color: #fff; opacity: .7; padding-top: 50px; word-wrap: break-word; text-transform: uppercase; display: none; top: 6px; left: 3px;}
+.mc-status{width: 90%; margin-left: auto; margin-right: auto; font-size: 13px; line-height: normal;}
+.my-listings-part-one.my-listings-one{position: relative; margin-right: -3px;}
+/*****************29-12-15*********************/
+/*****************30-12-15*********************/
+/*.office-listings-and-buyers .view-my-listings{margin-right: -8px;}
+.office-listings-and-buyers .my-listings-part-two{height: 120px !important;}*/
+/*.office-listings-and-buyers .my-listings-two{width: 99px !important; transform-origin: 15px 15px !important;}*/
+/*.my-listings-two {margin-right: -65px !important;}*/
+/*****************30-12-15*********************/
+/*****************04-01-16*********************/
+/*.view-my-listings.view-display-id-page .my-listings-two{width: 96px !important; transform-origin: 14px 15px !important;}*/
+/*	transform: rotate(270deg) translate(-7px, 8px);*/
+.view-my-listings.view-display-id-block_2 .my-listings-two, .view-my-listings.view-display-id-page .my-listings-two, .office-listings-and-buyers .my-listings-two{
+	-webkit-transform: rotate(270deg) translate(-7px, 8px);
+	-moz-transform: rotate(270deg) translate(-51px, -36px);
+	-ms-transform: rotate(270deg) translate(-7px, 8px);
+	-o-transform: rotate(270deg) translate(-7px, 8px);
+	display: inline-table;
+	min-height: 118px;
+	position: absolute;
+	width: 103px;
+}
+.view-my-listings.view-display-id-page .my-listings-part-two .my-listings-two, .view-my-listings.view-display-id-block_2 .my-listings-part-two .my-listings-two, .office-listings-and-buyers .my-listings-two{margin-left: -1px;}
+/*****************04-01-16*********************/
+/*****************23-01-16*********************/
+.accept-and-confirm-order {float: right; margin-right: -13px; margin-top: 5px;}
+.accept-and-confirm-order .confirm-order {background: #152d54; padding: 5px 20px 5px 20px; border-radius: 7px; line-height: normal;}
+.accept-and-confirm-order .confirm-order a, .accept-and-confirm-order .confirm-order a:hover {color: #fff; font-size: 13px;}
+/*****************23-01-16*********************/
+/*****************11-03-16*********************/
+.view-my-listings .view-header .hide-form{display: none;}
+.view-my-listings .view-header .display-form{display: block;}
+/*****************11-03-16*********************/
+/*****************12-04-16*********************/
+.purchase-product-logo {width: 50%;}
+/*****************12-04-16*********************/
+/*****************20-04-16*********************/
+.document-disclaimer{font-weight: bold; margin-top: 20px; color: #000;}
+/*****************20-04-16*********************/
+/*****************16-05-16*********************/
+.view-id-my_buyers .my-listings-part-one .view-my-listings{margin-right: -2px;}
+/*****************16-05-16*********************/
+
+
+@media screen and (max-device-width: 991px) {
+	.my-listings-one{width: 100% !important; text-align: center;}
+	.my-listings-part-two{width: 100% !important;}
+	.my-listings-four ul li span.mobile{display: block;}
+	.my-listings-four ul li span.desktop{display: none;}
+	.my-listings-four ul li{width: 40% !important;}
+	.my-listings-four .listing-pc-meter{width: 90%; margin-left: 10%;}
+	.my-listings-four{width: 30% !important; left: 60%;}
+	#office-manage-wrapper .my-listing-title{padding-top: 40px !important;}
+}
+.youtube-upload-video .btn-group { margin-bottom: 2%;  border: 1px solid; }
+.btn.btn-youtube { background: #ccc none repeat scroll 0 0; box-shadow: none;}
+.btn.btn-youtube.active { background: #fff none repeat scroll 0 0; box-shadow: none;}

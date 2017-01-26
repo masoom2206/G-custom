@@ -1,0 +1,15 @@
+name = Region Filter Module
+description = Custom module for region filter for node view by user.
+package = region_filter
+core = 7.x
+dependencies[] = views
+dependencies[] = entity
+files[] = region_filter.module
+files[] = includes/views/region_handler_filter_node_region.inc
+configure = "admin/config/region_filter"
+
+version = "7.x-1.0"
+core = "7.x"
+project = "region_filter"
+datestamp = "1366871711"
+

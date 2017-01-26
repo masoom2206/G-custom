@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * Implementation of hook_menu
+ */
+function cbone_static_menu() {
+  $items = array();
+   $items['cbone-home'] = array(
+	'title'				=>	'',
+	'description'		=>	'CB|One front page.',
+	'page callback'		=>	'cbone_front_page',
+	'access callback'	=> 	TRUE,
+  );
+   $items['cbone-basics'] = array(
+	'title'				=>	'BASICS',
+	'description'		=>	'CB|One Basics Page.',
+	'page callback'		=>	'cbone_basics_page',
+    'access callback' => 'user_is_logged_in',
+  );  
+ return $items;
+}
+/**
+ * Implements hook_init()
+ */
+function cbone_static_init(){
+	global $base_url, $user;
+	drupal_add_css(drupal_get_path('module', 'cbone_static') . '/css/cbone-static.css');
+}
+/**
+ * Implements hook_theme
+ **/
+function cbone_static_theme($existing, $type, $theme, $path) {
+	return array(
+		'cbone_home' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cbone_home', // do not include .tpl.php
+		),
+		'cbone_basics' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cbone_basics', // do not include .tpl.php
+		),
+	);
+	return $theme;
+}
+/**
+ * Implements hook_user_login()
+ */
+/*function cbone_static_user_login(&$edit, $account) {
+	$edit['redirect'] = '<front>';
+}*/
+/**
+ * Callback function cbone_front_page()
+ * to displayed front page for anonymous user
+ * and authenticate user
+ **/
+function cbone_front_page(){
+	//unset($_SESSION['messages']);
+	/*print "<pre>";print_r($_SESSION);*/
+	global $user;
+	if($user->uid == 0) {
+		$title = 'FRONT PAGE - Anonymous';
+	}
+	else {
+		$title = 'FRONT PAGE - Authenticated User';
+	}
+	drupal_set_title($title);
+	$variables = array(
+		'user' => $user,
+	);
+	$output = theme('cbone_home', array('var_name' => $variables));
+	return $output;
+}
+
+/**
+ * Callback function cbone_basics_page()
+ * to displayed basic page content
+ **/
+function cbone_basics_page(){
+	global $user;
+	$variables = array(
+		'user' => $user,
+	);
+	$output = theme('cbone_basics', array('var_name' => $variables));
+	return $output;
+}

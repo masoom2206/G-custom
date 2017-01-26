@@ -1,0 +1,73 @@
+/* jQuery Resize And Crop (jrac) */
+
+.jrac_container {
+    margin-bottom: 1em;
+}
+
+.jrac_viewport {
+  position: relative;
+  overflow: hidden;
+  border:1px solid #ccc;
+  width:640px;
+  height:480px;
+  /*background-image: url('../images/viewport_background.gif');*/
+  border: 1px dotted #666;
+}
+
+.jrac_loading {
+  background-image: url('../images/loading.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  position: absolute;
+  top:0;left:0;right:0;bottom:0;
+}
+
+.jrac_crop {
+  position: absolute;
+
+}
+
+.jrac_crop_drag_handler {
+  position: absolute;
+  top:0;left:0;right:0;bottom:0;
+  background-color: #807E7C;
+  opacity: .1; /* FX/Opera/Safari/Chrome */
+  -ms-filter: "alpha(opacity=10)"; /* IE8 */
+  filter: alpha(opacity = 10); /* IE6/IE7 */
+}
+
+.jrac_viewport img, .jrac_crop_drag_handler {
+  cursor: pointer;
+   opacity: 0.62;
+}
+
+.jrac_zoom_slider_label {
+    margin-top: .5em;
+}
+	#btnCrop{
+		background: url("../images/tick.png");
+		background-repeat: no-repeat;
+		 height: 25px;
+		width: 33px;
+	}
+	#btnZoomOut{
+		background: url("../images/zoom-in.png");
+		background-repeat: no-repeat;
+		height: 30px;
+		width: 30px;
+		background-size: 27px 25px;
+	}
+	#btnZoomIn{
+		background: url("../images/zoom-out.png");
+		background-repeat: no-repeat;
+		height: 30px;
+		width: 30px;
+		background-size: 27px 25px;
+	}
+	#flip{
+		width: 291px;
+	}
+	.crop-container td input {
+		width: 61px;
+		height: 32px;
+	}

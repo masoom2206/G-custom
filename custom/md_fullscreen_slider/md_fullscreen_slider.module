@@ -1,0 +1,350 @@
+<?php
+/**
+ * @author: MegaDrupal
+ * @file: md_fullscreen_slider.module
+ */
+@include_once(drupal_get_path("module", "md_fullscreen_slider") . "/inc/md_fullscreen_slider.classes.inc");
+@include_once(drupal_get_path("module", "md_fullscreen_slider") . "/inc/md_fullscreen_slider.utils.inc");
+@include_once(drupal_get_path("module", "md_fullscreen_slider") . "/inc/zip.inc");
+
+/**
+ * implements hook_menu()
+ */
+function md_fullscreen_slider_menu() {
+  $items = array();
+  $path = drupal_get_path("module", "md_fullscreen_slider");
+
+  $items["admin/structure/fullscreen-slider"] = array(
+    "page callback" => "md_fullscreen_slider_overview",
+    "access arguments" => array("manage full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => drupal_get_path("module", "md_fullscreen_slider") . "/inc",
+    "type" => MENU_NORMAL_ITEM,
+    "title" => t("MD FullScreen Sliders"),
+    "description" => t("Manage all full-screen sliders on your site."),
+  );
+
+  $items["admin/structure/fullscreen-slider/manage"] = array(
+    "title" => t("Manage"),
+    "type" => MENU_DEFAULT_LOCAL_TASK,
+    "weight" => 1,
+  );
+
+  $items["admin/structure/fullscreen-slider/export-import"] = array(
+    "title" => t("Export & Import"),
+    "type" => MENU_LOCAL_TASK,
+    "weight" => 2,
+    "page callback" => "drupal_get_form",
+    "page arguments" => array("md_fullscreen_slider_export_import_form"),
+    "access arguments" => array("administer full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+  );
+
+  $items["admin/structure/fullscreen-slider/add"] = array(
+    "title" => t("Create new FullScreen Slider"),
+    "page callback" => "drupal_get_form",
+    "page arguments" => array("md_fullscreen_slider_configure_form"),
+    "access arguments" => array("administer full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_LOCAL_ACTION,
+  );
+
+  $items["admin/structure/fullscreen-slider/%"] = array(
+    "page callback" => "drupal_get_form",
+    "page arguments" => array("md_fullscreen_slider_configure_form", 3),
+    "access arguments" => array("manage full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_NORMAL_ITEM,
+    "title" => t("Configure"),
+    "description" => t("Configure for this slider."),
+  );
+  $items["admin/structure/fullscreen-slider/%/configure"] = array(
+    "title" => t("Configure"),
+    "type" => MENU_DEFAULT_LOCAL_TASK,
+    "weight" => 1,
+  );
+
+  $items["admin/structure/fullscreen-slider/%/edit"] = array(
+    "page callback" => "drupal_get_form",
+    "page arguments" => array("md_fullscreen_slider_edit_form", 3),
+    "access arguments" => array("manage full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_LOCAL_TASK,
+    "weight" => 2,
+    "title" => t("Edit"),
+    "description" => t("Add and edit slides for this slider"),
+  );
+
+  $items["admin/structure/fullscreen-slider/%/delete"] = array(
+    "page callback" => "drupal_get_form",
+    "page arguments" => array("md_fullscreen_slider_delete", 3),
+    "access arguments" => array("administer full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_NORMAL_ITEM,
+    "title" => t("Edit"),
+    "description" => t("Delete FullScreen Slider from site"),
+  );
+
+  $items["admin/structure/fullscreen-slider/clone/%"] = array(
+    "page callback" => "md_fullscreen_slider_clone",
+    "page arguments" => array(4),
+    "access arguments" => array("administer full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_CALLBACK,
+  );
+
+  $items["admin/structure/fullscreen-slider/preview"] = array(
+    "page callback" => "md_fullscreen_slider_preview",
+    "access arguments" => array("manage full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_CALLBACK,
+    "description" => t("Add and edit slides for this slider"),
+  );
+
+  $items["admin/structure/fullscreen-slider/export"] = array(
+    "page callback" => "md_fullscreen_slider_export",
+    "access arguments" => array("administer full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_CALLBACK,
+    "description" => t("Add and edit slides for this slider"),
+  );
+
+  $items["admin/structure/fullscreen-slider/delete-slide"] = array(
+    "page callback" => "md_fullscreen_slider_delete_slide",
+    "access arguments" => array("manage full-screen-slider"),
+    "file" => "md_fullscreen_slider.admin.inc",
+    "file path" => "{$path}/inc",
+    "type" => MENU_CALLBACK,
+    "description" => t("Delete slide from database"),
+  );
+
+  return $items;
+}
+
+/**
+ * implements hook_permission()
+ */
+function md_fullscreen_slider_permission() {
+  return array(
+    "manage full-screen-slider" => array(
+      "title" => t("Manage FullScreenSlider"),
+      "description" => t("Allows edit and configure existed FullScreen Sliders")
+    ),
+    "administer full-screen-slider" => array(
+      "title" => t("Administer FullScreenSlider"),
+      "description" => t("Allows all permission with FullScreen Slider module's actions(Ex: Create new, Delete, Clone ...)")
+    ),
+  );
+}
+
+/**
+ * implements hook_theme()
+ */
+function md_fullscreen_slider_theme() {
+  $path = drupal_get_path("module", "md_fullscreen_slider");
+  $themes = array();
+
+  $themes["fullscreen_slider_edit"] = array(
+    "template" => "edit_form",
+    "path" => "{$path}/templates/admin",
+    "file" => "theme.admin.inc",
+    "variables" => array("slider" => NULL)
+  );
+  $themes["admin_fullscreen_slider_item"] = array(
+    "template" => "slide_item",
+    "path" => "{$path}/templates/admin",
+    "file" => "theme.admin.inc",
+    "variables" => array("item" => NULL,)
+  );
+  $themes["fullscreen_slider"] = array(
+    "template" => "fullscreen_slider",
+    "path" => "{$path}/templates/front",
+    "file" => "theme.inc",
+    "variables" => array("slider" => NULL, "slides" => array())
+  );
+  $themes["fullscreen_slide_item"] = array(
+    "template" => "fullscreen_slide_item",
+    "path" => "{$path}/templates/front",
+    "file" => "theme.inc",
+    "variables" => array("item" => NULL, "generate" => FALSE)
+  );
+
+  return $themes;
+}
+
+/**
+ * implement hooK_library_alter()
+ */
+function md_fullscreen_slider_library_alter(&$libraries, $module) {
+  $current_url = current_path();
+  $external = FALSE;
+  if (module_exists("jquery_update") && variable_get("jquery_update_jquery_cdn", "none") != "none")
+    $external = TRUE;
+
+  if ($module == "system" && strpos($current_url, "/fullscreen-slider/") !== FALSE) {
+    // Change jquery to 1.9.1 version on configure and edit fullscreen slider page
+    variable_set("show_preload", _use_slide_preload($libraries["jquery"]["version"]));
+    $libraries["jquery"]["js"]["misc/jquery.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/jquery-1.9.1.js";
+    $libraries["jquery"]["js"]["misc/jquery.js"]["type"] = "file";
+    $libraries["jquery"]["version"] = "1.9.1";
+
+    if ($external) {
+      unset($libraries["jquery"]["js"][0]);
+      foreach ($libraries["ui"]["js"] as $name => $lib) {
+        if (strpos($name, "/ajax.") !== FALSE) {
+          $lib["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.core.min.js";
+          $lib["type"] = "file";
+          $lib["group"] = -100;
+          $lib["weight"] = -11;
+          $libraries["ui"]["js"]["fullscreen_slider/js/jquery.ui.js"] = $lib;
+          unset($libraries["ui"]["js"][$name]);
+          unset($libraries["ui"]["js"][0]);
+          break;
+        }
+      }
+
+      $libraries["ui.widget"]["js"]["misc/ui/jquery.ui.widget.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.widget.min.js";
+      $libraries["ui.widget"]["js"]["misc/ui/jquery.ui.widget.min.js"]["type"] = "file";
+      $libraries["ui.widget"]["js"]["misc/ui/jquery.ui.widget.min.js"]["group"] = -100;
+      $libraries["ui.widget"]["js"]["misc/ui/jquery.ui.widget.min.js"]["weight"] = -10;
+    }
+    $libraries["ui"]["js"]["misc/ui/jquery.ui.core.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.core.min.js";
+    $libraries["ui.dialog"]["js"]["misc/ui/jquery.ui.dialog.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.dialog.min.js";
+    $libraries["ui.draggable"]["js"]["misc/ui/jquery.ui.draggable.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.draggable.min.js";
+    $libraries["ui.droppable"]["js"]["misc/ui/jquery.ui.droppable.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.droppable.min.js";
+    $libraries["ui.resizable"]["js"]["misc/ui/jquery.ui.resizable.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.resizable.min.js";
+    $libraries["ui.slider"]["js"]["misc/ui/jquery.ui.slider.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.slider.min.js";
+    $libraries["ui.sortable"]["js"]["misc/ui/jquery.ui.sortable.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.sortable.min.js";
+    $libraries["ui.tabs"]["js"]["misc/ui/jquery.ui.tabs.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.tabs.min.js";
+    $libraries["ui.widget"]["js"]["misc/ui/jquery.ui.widget.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.widget.min.js";
+    $libraries["ui.mouse"]["js"]["misc/ui/jquery.ui.mouse.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.mouse.min.js";
+    $libraries["ui.button"]["js"]["misc/ui/jquery.ui.button.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.button.min.js";
+    $libraries["ui.position"]["js"]["misc/ui/jquery.ui.position.min.js"]["data"] = drupal_get_path("module", "md_fullscreen_slider") . "/js/ui/jquery.ui.position.min.js";
+    }
+}
+
+/**
+ * implements hook_block_info()
+ */
+function md_fullscreen_slider_block_info() {
+  $blocks = array();
+  // Get all slider
+  $sliders = MDFullScreenSlider::get_all();
+  if ($sliders !== FALSE) {
+    foreach ($sliders as $slider) {
+      $blocks["{$slider->id}"] = array(
+        "info" => t("FullScreen Slider: {$slider->title}"),
+        "cache" => DRUPAL_NO_CACHE,
+      );
+    }
+  }
+
+  return $blocks;
+}
+
+/**
+ * implements hook_block_view()
+ */
+function md_fullscreen_slider_block_view($delta = "") {
+  $block = array();
+  $path = drupal_get_path("module", "md_fullscreen_slider");
+
+  // Load data from database
+  if ($delta) {
+    $slides = array();
+    $slider = MDFullScreenSlider::get($delta);
+    if ($slider)
+      $slides = MDFullScreenSlide::get_by_sid($slider->id);
+
+    if ($slides && is_array($slides)) {
+      $block["subject"] = $slider->title;
+      $block["content"] = theme("fullscreen_slider", array("slider" => $slider, "slides" => $slides));
+
+      // Add css files
+      fullscreen_slider_load_css_file($slider->id);
+      drupal_add_css("{$path}/js/front/css/animate.css");
+      drupal_add_css("{$path}/js/front/css/animations.css");
+      drupal_add_css("{$path}/js/front/css/component.css");
+      drupal_add_css("{$path}/js/front/css/jqvideobox.css");
+
+      if (!$slider->settings["generate_css_file"]) {
+        $slider_settings_css = variable_get("fullscreen_slider_{$slider->id}_css", "");
+        drupal_add_css($slider_settings_css, "inline");
+      }
+      else
+        drupal_add_css("public://mdf-fullscreen-slider-{$slider->id}-setting.css");
+
+
+      // Add js files
+      drupal_add_js("{$path}/js/front/jquery.touchwipe.js");
+      drupal_add_js("{$path}/js/front/jquery.easing.js");
+      drupal_add_js("{$path}/js/front/modernizr.custom.js");
+      drupal_add_js("{$path}/js/front/flowtype.js");
+      drupal_add_js("{$path}/js/front/mdf-fullscreen-slider.js");
+      drupal_add_js("{$path}/js/front/mdf-css3-transitions.js");
+      if (variable_get("show_preload", FALSE)) {
+        drupal_add_js("{$path}/js/front/jquery.queryloader2.js");
+        drupal_add_js("{$path}/js/front/fullscreen-loader.js");
+      }
+      drupal_add_js(_fullscreen_generate_control_slider_js($slider), "inline");
+
+      // Load custom font
+      if (!$slider->settings["dont_include_font"] && $slider->settings["use_google_font"] && !empty($slider->settings["google_font"])) {
+        $element = array(
+          "#tag" => "link",
+          "#attributes" => array(
+            "href" => $slider->settings["google_font"],
+            "rel" => "stylesheet",
+            "type" => "text/css",
+          ),
+        );
+        drupal_add_html_head($element, "google_fonts_setting");
+      }
+      if (!$slider->settings["dont_include_font"] && $slider->settings["use_typekit"] && !empty($slider->settings["typekit_id"])) {
+        drupal_add_js("http://use.typekit.net/{$slider->settings["typekit_id"]}.js", "external");
+        drupal_add_js("try{Typekit.load();}catch(e){}", "inline");
+      }
+    }
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_contextual_links_view_alter()
+ */
+function md_fullscreen_slider_contextual_links_view_alter(&$element, &$items) {
+  if (isset($element["#element"]["#block"]) && $element["#element"]["#block"]->module == "md_fullscreen_slider") {
+    $element["#links"]["edit_fullscreen_slider"] = array(
+      "title" => t("Edit FullScreen Slider"),
+      "href" => url("admin/structure/fullscreen-slider/{$element["#element"]["#block"]->delta}/edit", array("absolute" => TRUE)) . "?destination={$_GET["q"]}",
+      "weight" => -100,
+    );
+    $element["#links"]["configure_fullscreen_slider"] = array(
+      "title" => t("Configure FullScreen Slider"),
+      "href" => url("admin/structure/fullscreen-slider/{$element["#element"]["#block"]->delta}/configure", array("absolute" => TRUE)) . "?destination={$_GET["q"]}",
+      "weight" => -100,
+    );
+  }
+}
+
+/**
+ * implements hook_js_alter()
+ */
+function md_fullscreen_slider_js_alter(&$scripts) {
+  if (module_exists("panels") && strpos(current_path(), "/fullscreen-slider/") !== FALSE) {
+    foreach ($scripts as $path => $script)
+      if (strpos($path, "panels.js") !== FALSE) {
+        unset($scripts[$path]);
+        break;
+      }
+  }
+}

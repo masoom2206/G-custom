@@ -1,0 +1,10 @@
+name = "CB|ONE Photographer"
+description = "CB|ONE Photographer service support and web-services "
+core = "7.x"
+package = "CB|ONE LMS"
+files[] = listing_marketing_system.module
+version = "7.custom-1.0"
+core = "7.x"
+project = "CB|ONE Photographer"
+datestamp = ""
+

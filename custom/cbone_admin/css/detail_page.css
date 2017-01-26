@@ -1,0 +1,9 @@
+.node-type-details .cbone-detail-page {text-align: center;}
+.node-type-details .cbone-detail-page ul, .node-type-details .cbone-detail-page ol{text-align: left;}
+.node-type-details .detail-page-title {height: 255px; color: #fff; background-color: rgba(0,0,0,0.5);}
+.node-type-details .detail-page-title h3{height: 255px; color: #fff; font-family: "Raleway"; font-size: 400%; letter-spacing: 5px; padding-top: 8%; text-transform: uppercase;}
+.node-type-details .detail-page-body{padding: 3% 10%;}
+.node-type-details .detail-page-breadcrumbs{padding: .5% 0%; font-size: 14px;}
+.node-type-details #block-system-main{display: none !important;}
+.page-node-delete  #block-system-main{display: block !important;}
+.page-node-edit  #block-system-main{display: block !important;}

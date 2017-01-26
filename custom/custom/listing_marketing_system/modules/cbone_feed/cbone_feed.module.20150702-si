@@ -1,0 +1,970 @@
+<?php
+
+/**
+* Implement hook_menu()
+* For Creating pages with
+* seperate menu links
+**/
+
+function cbone_feed_menu(){
+
+	$menu = array();
+	//Page for LMS listing feeds
+	$menu['feeds/listing-feeds'] = array(
+		'title' => 'Listing Feeds',
+		'description' => 'Listing Feeds.',
+		'page callback' => 'feeds_import',
+		//'access arguments' => array('access content'),
+		'access callback'	=> TRUE,
+	);
+	$menu['admin/config/lms/data-processing'] = array(
+		'title'				=> t('Data Processing Configuration tab'),
+		'description'		=> t('Where the program will retrieve the daily feeds for processing.'),
+		'page callback'		=> 'feeds_data_processing',
+		//'page callback'	=> 'drupal_get_form',
+		//'page arguments' 	=> array('feeds_data_processing'),
+		'access arguments'	=> array('access administration pages'),
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+
+	$menu['admin/config/lms/feed-result'] = array(
+		'title'				=> 'CBOne Feed Result List',
+		'description'		=> 'CBOne feed result list.',
+		'page callback'		=> 'cbone_feed_result_list',
+		'weight'			=> 2,
+		'access arguments'	=> array('access administration pages'),
+		'file'				=> 'includes/cbone_feed_result.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	
+return $menu;
+}
+
+/**
+*  Page Call back function feeds_import() for creating
+*  and updating the listing Nodes.
+**/
+
+function feeds_import() {
+
+	global $base_url, $user;
+	$current_date = date('Ymd');
+	if(isset($_GET['date']) && $_GET['date'] != '') {
+		$date = $_GET['date'];
+	}
+	else {
+		$date = $current_date;
+	}
+	//Load term for file path
+	$lms_feed = taxonomy_get_term_by_name('Listing Feed');
+	$tid = array_shift($lms_feed)->tid;
+	$listing_term = taxonomy_term_load($tid);
+	$path = isset($listing_term->field_local_destination_path['und']['0']['value']) ? $listing_term->field_local_destination_path['und']['0']['value'] : '';
+	$retention = isset($listing_term->field_results_retention['und']['0']['value']) ? $listing_term->field_results_retention['und']['0']['value'] : '';
+	$notification_email = isset($listing_term->field_notification_email['und']['0']['value']) ? $listing_term->field_notification_email['und']['0']['value'] : '';
+	//Delete saved processing results
+	$retention_time = strtotime(date('Y-m-d', strtotime('-'.$retention.' days')));
+	$num_deleted = db_delete('feed_processing_results')
+		->condition('feed_timestamp', $retention_time, '<')
+		->condition('feed_type', 'Listing Feed', '=')
+		->execute();
+
+	if($path !='' && is_dir($path)) { // check file path exists or empty
+		$scanned_directory = array_diff(scandir($path), array('..', '.'));
+		foreach($scanned_directory as $values) {
+			$substr = substr($values, 18, -4);
+			if($substr == $date) {
+				$file_name = $values;
+			}
+		}
+		//$file_name = array_shift($scanned_directory);	
+		@$file_path = $path.'/'.$file_name;
+		if(is_file($file_path)) {	// Check file exists
+			$listing_feeds = array_map('str_getcsv', file($file_path));
+			unset($listing_feeds[0]);
+			$x = 0;
+			foreach($listing_feeds as $key=>$data){
+
+				$agent_id = $data[0];
+				$query = db_query("select entity_id from field_data_field_tridentid where field_tridentid_value = :agent_id", array(":agent_id" => $agent_id));
+				$ref_uid = $query->fetchField();
+				$row_count = $query->rowCount();
+
+				$other_agent_id = $data[1];
+				if(!empty($other_agent_id)) {
+					$o_query = db_query("SELECT ftd.entity_id FROM field_data_field_tridentid ftd LEFT JOIN users u on ftd.entity_id = u.uid WHERE ftd.field_tridentid_value = :other_agent and u.status = :status", array(":other_agent" => $other_agent_id, ':status' => 1));
+					$o_result = $o_query->fetchField();
+				} 
+
+				$mls_id = $data[2];
+				$lms_status = $data[3];
+				$lms_term = taxonomy_get_term_by_name($lms_status,'listing_status');
+				$lms_array = array_keys($lms_term);
+				
+				$nrt_id = $data[4];
+				$update_nid = db_query("SELECT entity_id FROM field_data_field_lms_listing_nrt_id WHERE field_lms_listing_nrt_id_value = :nrt_id", array(":nrt_id" => $nrt_id))->fetchField();
+				
+				$listing_address = check_plain($data[5]);
+				$unit_number = check_plain($data[6]);
+				$listing_city = check_plain($data[7]);
+				$listing_state = check_plain($data[8]);
+				$listing_zip = check_plain($data[9]);
+
+				$property_type = check_plain($data[10]);
+				$sn_query = db_query("SELECT entity_id FROM field_data_field_short_name fsname WHERE field_short_name_value = :short_name", array(":short_name" => $property_type));
+				$sn_result = $sn_query->fetchField();
+				$sn_count = $sn_query->rowCount();
+
+				$hide_listing_address = (check_plain($data[11])) == 'Y' ? 1 : 0;
+				$list_price = check_plain($data[12]);
+				$total_beds = check_plain($data[13]);
+				$total_baths = check_plain($data[14]);
+				$square_feet = check_plain($data[15]);
+				$lot_square_feet = check_plain($data[16]);
+				$mls_desc = $data[17];
+				$metro_id = check_plain($data[18]);
+
+				$office_id = check_plain($data[19]);
+				$office_entityid = db_query("SELECT office.entity_id FROM field_data_field_office_id
+				office LEFT JOIN field_data_field_lms_office_id lms_office ON 
+				office.field_office_id_value = lms_office.field_lms_office_id_value
+				WHERE office.field_office_id_value = :off_value", array(':off_value' => $office_id))->fetchField();
+				
+				$listing_expiration	 = check_plain($data[20]);
+				
+				$con_date = ($listing_expiration != '') ? date("Y-m-d H:i:s" , strtotime($listing_expiration)) : '';
+				
+				$message = '';
+				
+
+				if(empty($nrt_id)) {
+					$nrt_id = null;
+					$message = 'NRT Property ID is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!is_numeric($nrt_id)) {
+					$message = 'NRT Property ID '.$nrt_id.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($agent_id)) {
+					$message = 'No matching Primary Agent ID and Trident ID found. Listing skipped.';
+					$agent_id = null;
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if($row_count == 0) {
+					$message = 'No matching Trident ID for Primary Agent '.$agent_id.' found. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if($sn_count == 0) {
+					$message = 'Listing property type '.$property_type.' is not recognized. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($o_result)) {
+					$message = 'No matching Trident ID for Co-Listing Agent ID '.$other_agent_id.' found. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($mls_id)) {
+					$message = 'MLS ID missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($lms_status)) {
+					$message = 'Listing status is missing in feed.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(count($lms_term) == 0) {
+					$message = 'Listing Status '.$lms_status.' is not recognized. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($listing_address)) {
+					$message = 'Listing address is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($listing_city)) {
+					$message = 'Listing city is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($listing_state)) {
+					$message = 'Listing state is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($listing_zip)) {
+					$message = 'Listing zip is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($list_price)) {
+					$message = 'Listing price is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!is_numeric($list_price)) {
+					$message = 'Listing price format "' .$list_price. '" is incorrect. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!empty($total_beds) && !is_numeric($total_beds)) { 
+					$message = 'Total beds '.$total_beds.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!empty($total_baths) && !is_numeric($total_baths)) { 
+					$message = 'Total baths '.$total_baths.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!empty($square_feet) && !is_numeric($square_feet)) { 
+					$message = 'Square Feet '.$square_feet.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!empty($lot_square_feet) && !is_numeric($lot_square_feet)) { 
+					$message = 'Lot Square Feet '.$lot_square_feet.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!empty($metro_id) && !is_numeric($metro_id)) {
+					$message = 'Metro ID '.$metro_id.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($office_id)) {
+					$message = 'Office ID is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(!is_numeric($office_id)) {
+					$message = 'Office ID '.$office_id.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if ($con_date == '') {
+					$message = 'Listing Expiration '.$listing_expiration.' must be a date. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else if(empty($property_type)) {
+					$message = 'Listing property type is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				else {
+					// For creating the nodes, If NRT Property Id does not exist into the existing Nodes.
+					$node = '';
+					if(empty($update_nid)) {
+						$custom_user = user_load($ref_uid);
+						$user_name = $custom_user->name;
+						
+						$node = new stdClass();
+						$node->type = 'lms_listing';
+						$node->title = check_plain($data[5]).', '.check_plain($data[7]);
+						node_object_prepare($node);
+						$node->language = LANGUAGE_NONE;
+						
+						$node->field_lms_agent_uid['und'][0]['uid'] = $custom_user->uid;
+						$node->field_lms_agent_name['und'][0]['value'] = $user_name;
+						$node->field_lms_agent_id['und'][0]['value'] = $agent_id;
+						if(!empty($o_result)) {
+							$node->field_lms_other_agent['und'][0]['uid'] =	$o_result;
+						}
+						$node->field_lms_mls_id['und'][0]['value'] = $mls_id;
+						$node->field_lms_listing_status['und'][0]['tid'] = $lms_array[0];
+						$node->field_lms_listing_nrt_id['und'][0]['value'] = $nrt_id;
+						$node->field_lms_listing_address['und'][0]['value'] = $listing_address;
+						if(!empty($unit_number) && $unit_number != 'NULL') {
+							$node->field_lms_address_unit['und'][0]['value'] = $unit_number;
+						}
+						$node->field_lms_listing_city['und'][0]['value'] = $listing_city;
+						$node->field_lms_listing_state['und'][0]['value'] = $listing_state;
+						$node->field_lms_listing_zip['und'][0]['value'] = $listing_zip;
+						$node->field_lms_property_type['und'][0]['tid'] = $sn_result;
+						$node->field_lms_hide_listing_address['und'][1] = $hide_listing_address;
+						$node->field_lms_list_price['und'][0]['value'] = $list_price;
+						
+						$node->field_lms_total_bedrooms['und'][0]['value'] = (!empty($total_beds) && is_numeric($total_beds)) ? $total_beds : NULL;
+						$node->field_lms_total_baths['und'][0]['value'] = (!empty($total_baths) && is_numeric($total_baths)) ? $total_baths : NULL;
+						$node->field_lms_square_feet['und'][0]['value'] = (!empty($square_feet) && is_numeric($square_feet)) ? $square_feet : NULL;
+						$node->field_lms_lot_square_feet['und'][0]['value'] = (!empty($lot_square_feet) && is_numeric($lot_square_feet)) ? $lot_square_feet : NULL;
+						$node->field_lms_mls_description['und'][0]['value'] = check_plain($mls_desc);
+						$node->field_lms_listing_expiration['und'][0]['value'] = ($listing_expiration == '') ? null : $con_date;
+						$node->field_lms_metro_id['und'][0]['value'] = !empty($metro_id) ? $metro_id : NULL;
+						$node->field_lms_office_id['und'][0]['value'] = $office_id;
+						if($office_entityid !='') {
+							$node->field_office_ref['und'][0]['nid'] = $office_entityid;
+						}
+
+						node_save($node);
+						sleep(1);
+						if($node->nid) {						
+							feed_processing_result($file_name,$data[4],$data[0],$node->nid);
+						}
+					}
+					// For updating the nodes, If NRT Property Id already exists into the existing Nodes.
+					else if(is_numeric($update_nid)) {
+						$node = node_load($update_nid);
+						$node->title = check_plain($data[5]).', '.check_plain($data[7]);
+						if(!empty($o_result)) {
+							$node->field_lms_other_agent['und'][0]['uid'] = $o_result;
+						}
+						$node->field_lms_mls_id['und'][0]['value'] = $mls_id;
+						$node->field_lms_listing_status['und'][0]['tid'] = $lms_array[0];
+						$node->field_lms_listing_address['und'][0]['value'] = $listing_address;
+						$node->field_lms_address_unit['und'][0]['value'] = $unit_number;
+						$node->field_lms_listing_city['und'][0]['value'] = $listing_city;
+						$node->field_lms_listing_state['und'][0]['value'] = $listing_state;
+						$node->field_lms_listing_zip['und'][0]['value'] = $listing_zip;
+						$node->field_lms_property_type['und'][0]['tid'] = $sn_result;
+						$node->field_lms_hide_listing_address['und'][0]['value'] = $hide_listing_address;
+						$node->field_lms_list_price['und'][0]['value'] = $list_price;
+						
+						$node->field_lms_total_bedrooms['und'][0]['value'] = (!empty($total_beds) && is_numeric($total_beds)) ? $total_beds : NULL;
+						$node->field_lms_total_baths['und'][0]['value'] = (!empty($total_baths) && is_numeric($total_baths)) ? $total_baths : NULL;
+						$node->field_lms_square_feet['und'][0]['value'] = (!empty($square_feet) && is_numeric($square_feet)) ? $square_feet : NULL;
+						$node->field_lms_lot_square_feet['und'][0]['value'] = (!empty($lot_square_feet) && is_numeric($lot_square_feet)) ? $lot_square_feet : NULL;
+						$node->field_lms_mls_description['und'][0]['value'] = check_plain($mls_desc);
+						$node->field_lms_listing_expiration['und'][0]['value'] = ($listing_expiration == '') ? null : $con_date;
+						if($office_entityid !='') {
+							$node->field_office_ref['und'][0]['nid'] = $office_entityid;
+						}
+						$node->field_lms_metro_id['und'][0]['value'] = !empty($metro_id) ? $metro_id : NULL;
+						
+						$node->field_lms_office_id['und'][0]['value'] = $office_id;
+
+						node_save($node);
+						sleep(1);
+					}
+					//print "<pre>";print_r($node);exit;
+				}
+				//print $message;
+				$x++;
+			}
+			print "$x feeds executed";
+			return drupal_set_message(t("Successfully, nodes are created and updated."), 'status');
+		}
+		else {
+			$message = "Listing feed's file is missing. Listing processing skipped.";
+			feed_processing_result_error($file_path,null,null,$message);
+		}
+	}
+	else if($path == '' || !is_dir($path)) {
+		$message = 'Listing path is missing or invalid. Listing processing skipped.';
+		feed_processing_result_error($path,null,null,$message);
+	}
+
+	/*global $base_url;
+	$current_date = date('Ymd');
+	if(isset($_GET['date']) && $_GET['date'] != '') {
+		$date = $_GET['date'];
+	}
+	else {
+		$date = $current_date;
+	}
+	//Load term for file path
+	$lms_feed = taxonomy_get_term_by_name('Listing Feed');
+	$tid = array_shift($lms_feed)->tid;
+	$listing_term = taxonomy_term_load($tid);
+	$path = isset($listing_term->field_local_destination_path['und']['0']['value']) ? $listing_term->field_local_destination_path['und']['0']['value'] : '';
+	$retention = isset($listing_term->field_results_retention['und']['0']['value']) ? $listing_term->field_results_retention['und']['0']['value'] : '';
+	$notification_email = isset($listing_term->field_notification_email['und']['0']['value']) ? $listing_term->field_notification_email['und']['0']['value'] : '';
+	//Delete saved processing results
+	$retention_time = strtotime(date('Y-m-d', strtotime('-'.$retention.' days')));
+	$num_deleted = db_delete('feed_processing_results')
+	  ->condition('feed_timestamp', $retention_time, '<')
+	  ->condition('feed_type', 'Listing Feed', '=')
+	  ->execute();
+	if($path !='' && is_dir($path)) { // check file path exists or empty
+		$scanned_directory = array_diff(scandir($path), array('..', '.'));
+		foreach($scanned_directory as $values) {
+			$substr = substr($values, 18, -4);
+			if($substr == $date) {
+				$file_name = $values;
+			}
+		}
+		//$file_name = array_shift($scanned_directory);	
+		@$file_path = $path.'/'.$file_name;
+		if(is_file($file_path)) {	// Check file exists
+			$listing_feeds = array_map('str_getcsv', file($file_path));
+			unset($listing_feeds[0]);
+			foreach($listing_feeds as $key=>$data){
+				global $user;
+				$node = new stdClass();
+				$node->type = 'lms_listing';
+				$node->title = check_plain($data[5]).', '.check_plain($data[7]);
+				node_object_prepare($node);
+				$node->language = 'und';
+				$agent_id = $data[0];
+				$other_agent_id = $data[1];
+				$mls_id = $data[2];
+				$lms_status = $data[3];
+				$lms_term = taxonomy_get_term_by_name($lms_status,'listing_status');
+				$lms_array = array_keys($lms_term);
+				$nrt_id = $data[4];
+				$listing_address = check_plain($data[5]);
+				$unit_number = check_plain($data[6]);
+				$listing_city = check_plain($data[7]);
+				$listing_state = check_plain($data[8]);
+				$listing_zip = check_plain($data[9]);
+				$property_type = check_plain($data[10]);
+				$hide_listing_address = check_plain($data[11]);
+				if($hide_listing_address == 'Y') {
+					$hide_listing_address = 1;
+				}
+				else {
+					$hide_listing_address = 0;
+				}
+				$list_price = check_plain($data[12]);
+				$total_beds = check_plain($data[13]);
+				$total_baths = check_plain($data[14]);
+				$square_feet = check_plain($data[15]);
+				$lot_square_feet = check_plain($data[16]);
+				$mls_desc = $data[17];
+				$metro_id = check_plain($data[18]);
+				$office_id = check_plain($data[19]);
+				$listing_expiration	 = check_plain($data[20]);
+				$date = date('m/d/Y' , strtotime($listing_expiration));
+				$check_date = str_replace('/', '-', $date);
+				$con_date = date("Y-m-d H:i:s" , strtotime($date)); 
+				list($mm,$dd,$yyyy) = explode('-',$check_date);
+				
+				$message = '';
+				
+				//Write sql for matching agent id and trident id.
+				$agentsql = "select ftd.entity_id from field_data_field_tridentid as ftd where ftd.field_tridentid_value = :agent_id";
+				$query = db_query($agentsql , array(":agent_id" => $agent_id));
+				$agentresult = $query->fetchObject();
+				$row_count = $query->rowCount();
+				
+				//Write Sql For check property type is existing
+				$sn_sql = "select fsname.entity_id from field_data_field_short_name as fsname where fsname.field_short_name_value = :short_name";
+				$sn_query = db_query($sn_sql , array(":short_name" => $data[10]));
+				$sn_result = $sn_query->fetchField();
+				$sn_count = $sn_query->rowCount();
+				//$term = taxonomy_term_load($sn_result);
+				
+				//Write sql NRT Property Id.
+				$sql = "select * from field_data_field_lms_listing_nrt_id as fnrt where fnrt.field_lms_listing_nrt_id_value = :nrt_id";
+				$query = db_query($sql ,  array(":nrt_id" => $nrt_id));
+				$result = $query->fetchAll();
+				//$nrtcount = count($result);
+				
+				//Write sql for matching Co-listing Id with Trident Id
+				if($other_agent_id != ''  && !empty($other_agent_id)) {
+					$o_sql = "select ftd.entity_id from field_data_field_tridentid as ftd 				left join users as u on ftd.entity_id = u.uid where ftd.field_tridentid_value = :other_agent and u.status =1";
+					$o_query = db_query($o_sql , array(":other_agent" => $other_agent_id));
+					$o_result = $o_query->fetchField();
+					$o_count = $o_query->rowCount();
+				} else {
+					$o_result = '';
+					$o_count = 0;
+				}
+				
+				//Write sql for getting entity ID of table field_data_field_office_id
+				$office_sql = "SELECT office.entity_id FROM {field_data_field_office_id}
+							   as office LEFT JOIN {field_data_field_lms_office_id} as lms_office ON 
+							   office.field_office_id_value = lms_office.field_lms_office_id_value
+							   WHERE office.field_office_id_value = :off_value";
+				$office_entityid = db_query($office_sql, array(':off_value' => $office_id))->fetchField();
+				
+				
+				$insert_error = 0;
+				$update_error = 0;
+					
+				if($nrt_id == '' || $nrt_id == 'NULL' || empty($nrt_id)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$nrt_id = null;
+					$message = 'NRT Property ID is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($agent_id == '' || $agent_id == 'NULL' || empty($agent_id)) {
+					$insert_error = 1;	
+					$update_error = 1;
+					$message = 'No matching Primary Agent ID and Trident ID found. Listing skipped.';
+					$agent_id = null;
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($row_count == 0) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'No matching Trident ID for Primary Agent '.$agent_id.' found. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($sn_count == 0) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing property type '.$property_type.' is not recognized. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($o_count == '' || $o_count == 0 || empty($o_count)) {
+					$update_error = 0;
+					$message = 'No matching Trident ID for Co-Listing Agent ID '.$other_agent_id.' found. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($mls_id == '' || $mls_id == 'NULL' || empty($mls_id)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'MLS ID missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($lms_status == '' || $lms_status == 'NULL' || empty($lms_status)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing status is missing in feed.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(count($lms_term) == 0) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing Status '.$lms_status.' is not recognized. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!is_numeric($nrt_id)) {
+					//gettype(intval($nrt_id));
+					//exit;
+					$insert_error = 1;
+					$update_error = 1;
+					//print gettype(intval($nrt_id));
+					$message = 'NRT Property ID '.$nrt_id.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($listing_address == '' || $listing_address == 'NULL' ||empty($listing_address)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing address is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($listing_city == '' || $listing_city == 'NULL' || empty($listing_city)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing city is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($listing_state == '' || $listing_state == 'NULL' || empty($listing_state)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing state is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($listing_zip == '' || $listing_zip == 'NULL' || empty($listing_zip)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing zip is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($list_price == '' || $list_price == 'NULL' || empty($list_price)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing price is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!is_numeric($list_price)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing price format "' .$list_price. '" is incorrect. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!empty($total_beds) && $total_beds != '' && !is_numeric($total_beds)) { 
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Total beds '.$total_beds.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!empty($total_baths) && $total_baths != '' && !is_numeric($total_baths)) { 
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Total baths '.$total_baths.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!empty($square_feet) && $square_feet != '' && !is_numeric($square_feet)) { 
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Square Feet '.$square_feet.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!empty($lot_square_feet) && $lot_square_feet != '' && !is_numeric($lot_square_feet)) { 
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Lot Square Feet '.$lot_square_feet.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!empty($metro_id) && $metro_id != '' && !is_numeric($metro_id)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Metro ID '.$metro_id.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($office_id == '' || $office_id == 'NULL' || empty($office_id)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Office ID is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if(!is_numeric($office_id) && $office_id !='') {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Office ID '.$office_id.' must be an integer. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if (!checkdate($mm,$dd,$yyyy)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing Expiration '.$listing_expiration.' must be a date. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}
+				if($property_type == '' || $property_type == 'NULL' || empty($property_type)) {
+					$insert_error = 1;
+					$update_error = 1;
+					$message = 'Listing property type is missing in feed. Listing skipped.';
+					feed_processing_result_error($file_name,$nrt_id,$agent_id,$message);
+				}	
+				
+				// For creating the nodes, If NRT Property Id does not exist into the existing Nodes.		
+				if($insert_error == 0 && count($result) == 0 && $row_count > 0) {
+						$ref_uid = $agentresult->entity_id;
+						$custom_user = user_load($ref_uid);
+						$uid = $custom_user->uid;
+						$node->uid = $uid;
+						$user_name = $custom_user->name;
+						$node->field_lms_agent_uid['und'][0]['uid'] = $node->uid;
+						$node->field_lms_agent_name['und'][0]['value'] = $user_name;
+						$node->field_lms_agent_id['und'][0]['value'] = $agent_id;
+						if($o_count !=0) {
+							$node->field_lms_other_agent['und'][0]['uid'] =	$o_result;
+						}
+						$node->field_lms_mls_id['und'][0]['value'] = $mls_id;
+						//$node->field_lms_mls_status['und'][0]['tid'] = $lms_array[0];
+						$node->field_lms_listing_status['und'][0]['tid'] = $lms_array[0];
+						$node->field_lms_listing_nrt_id['und'][0]['value'] = $nrt_id;
+						$node->field_lms_listing_address['und'][0]['value'] = $listing_address;
+						if($unit_number != 'NULL') {
+							$node->field_lms_address_unit['und'][0]['value'] = $unit_number;
+						}
+						$node->field_lms_listing_city['und'][0]['value'] = $listing_city;
+						$node->field_lms_listing_state['und'][0]['value'] = $listing_state;
+						$node->field_lms_listing_zip['und'][0]['value'] = $listing_zip;
+						//$node->field_lms_listing_zip['und'][0]['value'] = preg_replace("/[^0-9]/","",$data[9]);
+						// $sn_result contains tid.
+						$node->field_lms_property_type['und'][0]['tid'] = $sn_result;
+						$node->field_lms_hide_listing_address['und'][1] = $hide_listing_address;
+						$node->field_lms_list_price['und'][0]['value'] = $list_price;
+						if(!empty($total_beds) && is_numeric($total_beds)) {
+							$node->field_lms_total_bedrooms['und'][0]['value'] = $total_beds;
+						}else {
+							$node->field_lms_total_bedrooms['und'][0]['value'] = null;
+						}
+						if(!empty($total_baths) && is_numeric($total_baths)) {
+							$node->field_lms_total_baths['und'][0]['value'] = $total_baths;
+						}else {
+							$node->field_lms_total_baths['und'][0]['value'] = null;
+						}
+						if(!empty($square_feet) && is_numeric($square_feet)) {
+							$node->field_lms_square_feet['und'][0]['value'] = $square_feet;
+						}else {
+							$node->field_lms_square_feet['und'][0]['value'] = null;
+						}
+						if(!empty($lot_square_feet) && is_numeric($lot_square_feet)) {
+							$node->field_lms_lot_square_feet['und'][0]['value'] = $lot_square_feet;
+						}else {
+							$node->field_lms_lot_square_feet['und'][0]['value'] = null;
+						}
+						$node->field_lms_mls_description['und'][0]['value'] = check_plain($data[17]);
+						if($listing_expiration == '') {
+							$node->field_lms_listing_expiration['und'][0]['value'] = null;
+						}else {
+							$node->field_lms_listing_expiration['und'][0]['value'] = $con_date;
+						}
+						if(!empty($metro_id)) {
+							$node->field_lms_metro_id['und'][0]['value'] = $metro_id;
+						}else {
+							$node->field_lms_metro_id['und'][0]['value'] = null;
+						}
+						$node->field_lms_office_id['und'][0]['value'] = $office_id;
+						if($office_entityid !='') {
+							$node->field_office_ref['und'][0]['nid'] = $office_entityid;
+						}
+						//sleep(1);
+						node_save($node);
+						sleep(1);
+						
+						
+						feed_processing_result($file_name,$data[4],$data[0],$node->nid);
+				}
+				
+				// For updating the nodes, If NRT Property Id already exists into the existing Nodes.
+			 
+				if($update_error == 0 && count($result) > 0 && $row_count > 0) {
+					foreach($result as $values) {
+						$ref_nid = $values->entity_id;
+						$node_update = node_load($ref_nid);
+						$node_update->title = check_plain($data[5]).', '.check_plain($data[7]);
+						if($o_count !=0) {
+							$node_update->field_lms_other_agent['und'][0]['uid'] = $o_result;
+						}else {
+							$node_update->field_lms_other_agent['und'][0]['uid'] = null;
+						}
+						//exit($lms_array[0]);
+						$node_update->field_lms_mls_id['und'][0]['value'] = $mls_id;
+						//$node_update->field_lms_mls_status['und'][0]['tid'] = $lms_array[0];
+						$node_update->field_lms_listing_status['und'][0]['tid'] = $lms_array[0];
+						$node_update->field_lms_listing_address['und'][0]['value'] = $listing_address;
+						$node_update->field_lms_address_unit['und'][0]['value'] = $unit_number;
+						$node_update->field_lms_listing_city['und'][0]['value'] = $listing_city;
+						$node_update->field_lms_listing_state['und'][0]['value'] = $listing_state;
+						$node_update->field_lms_listing_zip['und'][0]['value'] = $listing_zip;
+						//$term = taxonomy_term_load($sn_result);
+						$node_update->field_lms_property_type['und'][0]['tid'] = $sn_result;
+						$node_update->field_lms_hide_listing_address['und'][0]['value'] = $hide_listing_address;
+						$node_update->field_lms_list_price['und'][0]['value'] = $list_price;
+						if(!empty($total_beds) && is_numeric($total_beds)) {
+							$node_update->field_lms_total_bedrooms['und'][0]['value'] = $total_beds;
+						}else {
+							$node_update->field_lms_total_bedrooms['und'][0]['value'] = null;
+						}
+						
+						if(!empty($total_baths) && is_numeric($total_baths)) {
+							$node_update->field_lms_total_baths['und'][0]['value'] = $total_baths;
+						}else {
+							$node_update->field_lms_total_baths['und'][0]['value'] = null;
+						}
+						if(!empty($square_feet) && is_numeric($square_feet)) {
+							$node_update->field_lms_square_feet['und'][0]['value'] = $square_feet;
+						}else {
+							$node_update->field_lms_square_feet['und'][0]['value'] = null;
+						}
+						if(!empty($lot_square_feet) && is_numeric($lot_square_feet)) {
+							$node_update->field_lms_lot_square_feet['und'][0]['value'] = $lot_square_feet;
+						}else {
+							$node_update->field_lms_lot_square_feet['und'][0]['value'] = null;
+						}
+						$node_update->field_lms_mls_description['und'][0]['value'] = check_plain($mls_desc);
+						if($listing_expiration == '') {
+							$node_update->field_lms_listing_expiration['und'][0]['value'] = null;
+						}else {
+							$node_update->field_lms_listing_expiration['und'][0]['value'] = $con_date;
+						}
+						if($office_entityid !='') {
+							$node_update->field_office_ref['und'][0]['nid'] = $office_entityid;
+						}
+						if(!empty($metro_id)) {
+							$node_update->field_lms_metro_id['und'][0]['value'] = $metro_id;
+						}else {
+							$node_update->field_lms_metro_id['und'][0]['value'] = null;
+						}
+						$node_update->field_lms_office_id['und'][0]['value'] = $office_id;
+						//sleep(1);
+						node_save($node_update);
+						sleep(1);
+					}
+				} 
+			}
+			if($insert_error == 0 || $update_error == 0) {
+				return drupal_set_message(t("Successfully, nodes are created and updated."), 'status');
+			}	
+		}
+		else {
+			//return drupal_set_message(t('File does not exist'), 'error');
+			$message = "Listing feed's file is missing. Listing processing skipped.";
+			feed_processing_result_error($file_path,null,null,$message);
+		}
+	}
+	if($path == '' || !is_dir($path)) {
+			//return drupal_set_message(t('Please, enter the valid file path'), 'error');
+			$message = 'Listing path is missing or invalid. Listing processing skipped.';
+			feed_processing_result_error($path,null,null,$message);
+	}*/
+}	
+
+/** 
+* Call back function feeds_data_processing()
+* for creating seperate tabs.
+**/
+
+function feeds_data_processing() {
+	
+	global $base_url;
+	$v = taxonomy_vocabulary_machine_name_load('feeds');
+	$terms = taxonomy_get_tree($v->vid);
+	$form = drupal_get_form('feeds_data_processing_settings');
+	$output = '<div class ="tabs"><ul class="tab-links">';
+	foreach ($terms as $term) {
+		$options[$term->tid] = $term->name;
+		$output .= "<li>";
+		$output .= l($term->name, $base_url.'/admin/config/lms/data-processing', array('query' => array('feed_type' => $term->tid)));
+		$output .= "</li>";
+	}
+		$output .= "</ul>";
+		$output .= drupal_render($form);
+		//echo "<pre>";
+		//print_r ($outputt);
+		//echo "</pre>";
+		
+  return $output;	
+}
+
+/**
+* Call back function feeds_data_processing_settings() for
+* set the settings of each taxonomy terms of feeds vocabulary.
+**/
+
+function feeds_data_processing_settings() {
+	
+	$v = taxonomy_vocabulary_machine_name_load('feeds');
+	$terms = taxonomy_get_tree($v->vid);
+	$default_tid = $terms[0]->tid;
+	
+	
+	$feed_type = isset($_GET['feed_type']) ? $_GET['feed_type'] : $default_tid;
+	
+	if($feed_type !='') {
+		$term = taxonomy_term_load($feed_type);
+
+		if(is_array($term->field_local_destination_path) && count($term->field_local_destination_path)) {
+			$local_path = $term->field_local_destination_path['und']['0']['value'];
+		}
+		if(is_array($term->field_run_time) && count($term->field_run_time)) {
+			$run_time = $term->field_run_time['und']['0']['value'];
+		}
+		if(is_array($term->field_results_retention) && count($term->field_results_retention)) {
+			$result_rentention = $term->field_results_retention['und']['0']['value'];
+		}
+	}
+	//$feed_type = $term->name;
+	foreach ($terms as $term) {
+		$options[$term->tid] = $term->name;
+	}
+	// Making Result retention 
+	$retention = array('_none' => '--none--', 7 => '7 days', 14 => '14 days', 30 => '30 days', 60 => '60 days');
+	
+	$form = array();
+	$form['feed_name'] = array(
+		'#title' => t('Feed Name:'),
+		'#type' => 'select',
+		'#options' => $options,
+		//'#required' => TRUE,
+		'#attributes' => array(
+							'disabled' => TRUE,
+						),
+		'#default_value' => isset($_GET['feed_type']) ? $_GET['feed_type'] : '',
+	  );
+	$form['feed_hidden'] = array(
+		'#type' => 'hidden',
+		'#default_value' => isset($_GET['feed_type']) ? $_GET['feed_type'] : $default_tid,
+	);
+	$form['local_path'] = array(
+		'#title' => t('Local destination path:'),
+		'#type' => 'textfield',
+		'#required' => TRUE,
+		'#default_value' => isset($local_path) ? $local_path : '',
+	  );
+	$form['run_time'] = array(
+		'#title' => t('Run Time:'),
+		'#type' => 'textfield',
+		'#required' => TRUE,
+		'#default_value' => isset($run_time) ? $run_time : '',
+	  );
+	$form['result_retention'] = array(
+		'#title' => t('Results Retention:'),
+		'#type' => 'select',
+		'#options' => $retention,
+		'#required' => TRUE,
+		'#default_value' => isset($result_rentention) ? $result_rentention : '',
+	  );
+	$form['#validate'][] = 'feeds_data_processing_settings_validate';
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Submit'),
+	);
+	return $form;
+}
+
+/**
+*  Call back function feeds_data_processing_settings_validate();
+**/
+
+function feeds_data_processing_settings_validate($form, &$form_state) {
+
+	$rentention	= $form_state['values']['result_retention'];
+	if(!is_numeric($rentention)) {
+		form_set_error('form', t('Select Retention day is required.'));
+	}
+}
+
+/**
+* call back function feeds_data_processing_settings_submit(); 
+**/
+
+function feeds_data_processing_settings_submit($form, &$form_state) {
+		
+	//$feedtype = $form_state['values']['feed_name'];
+	$feedtype 	= $form_state['values']['feed_hidden'];
+	$localpath 	= $form_state['values']['local_path'];
+	$runtime 	= $form_state['values']['run_time'];
+	$rentention	= $form_state['values']['result_retention'];
+
+	$terms = taxonomy_term_load($feedtype);
+	$terms->tid = $feedtype;
+	//print "<pre>";//print_r($terms);//print "</pre>";//exit;
+	$terms->field_local_destination_path['und']['0']['value'] = $localpath;
+	$terms->field_run_time['und']['0']['value']	 = $runtime;
+	$terms->field_results_retention['und']['0']['value'] = $rentention;
+	taxonomy_term_save($terms);
+	drupal_set_message("Successfully, taxonomy settings saved");
+}
+
+/**
+* Call back function feed_processing_result();
+* for log the successfully message, while creating
+* the Nodes from feed's file.
+**/
+
+function feed_processing_result($file,$nrtid,$p_agentid,$nid){
+		$result_id = db_insert('feed_processing_results')
+			->fields(array(
+				'feed_file_name' => $file,
+				'feed_type' => 'Listing Feed',
+				'feed_timestamp' => REQUEST_TIME,
+				'feed_nrt_id' => $nrtid,
+				'feed_agent_id' => $p_agentid,
+				'feed_result_status' => 'Success',
+				'feed_result_message' => 'Listing node '.$nid.' created',
+			))
+			->execute();
+}
+
+/**
+* Call back function feed_processing_result_error();
+* for log the errors, while creating or updating the
+* Nodes from feed's file.
+**/
+
+function feed_processing_result_error($file,$nrtid,$p_agentid,$error_msg){
+		$result_id = db_insert('feed_processing_results')
+			->fields(array(
+				'feed_file_name' => $file,
+				'feed_type' => 'Listing Feed',
+				'feed_timestamp' => REQUEST_TIME,
+				'feed_nrt_id' => $nrtid,
+				'feed_agent_id' => $p_agentid,
+				'feed_result_status' => 'Fail',
+				'feed_result_message' => $error_msg,
+			))
+			->execute();
+}
+
+/**
+ * Implements hook_form_alter()
+ */
+ 
+function cbone_feed_form_alter(&$form, &$form_state, $form_id) {
+	
+	global $user;
+	$user_detail = user_load($user->uid);
+	$roles = array_map('strtolower', $user->roles);
+	if($form_id == 'lms_listing_node_form') {
+		if(in_array('agent', $roles)) { 
+			if(isset($user_detail->field_member_office['und'][0]['value']) && $user_detail->field_member_office['und'][0]['value'] != '') {
+				$office_id = $user_detail->field_member_office['und'][0]['value'];
+				//Write sql for getting entity ID of table field_data_field_office_id
+				$office_sql = "SELECT office.entity_id FROM {field_data_field_office_id}
+						   as office LEFT JOIN {field_data_field_lms_office_id} as lms_office ON 
+						   office.field_office_id_value = lms_office.field_lms_office_id_value
+						   WHERE office.field_office_id_value = :off_value";
+				$office_entityid = db_query($office_sql, array(':off_value' => $office_id))->fetchField();
+				
+				$form['field_lms_office_id']['und'][0]['value']['#default_value'] = $office_id;
+				$form['field_lms_office_id']['und'][0]['value']['#disabled'] = TRUE;
+			
+				$form['field_office_ref']['und']['#default_value'] = $office_entityid;
+				$form['field_office_ref']['und']['#disabled'] = TRUE;
+			}
+		} 
+	}
+	
+}

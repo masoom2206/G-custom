@@ -1,0 +1,10 @@
+name = Advance user permission
+description = Custom module for update user/content permission.
+package = Custom
+core = 7.x
+dependencies[] = user
+files[] = advance_user_permission.module
+files[] = includes/advance_user_permission.js
+version = "7.x-1.0"
+core = "7.x"
+project = "advance_user_permission"

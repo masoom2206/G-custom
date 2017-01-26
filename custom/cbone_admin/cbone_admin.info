@@ -1,0 +1,13 @@
+name = CB|ONE Admin setting
+description = Custom module for CB|ONE admin configuration.
+core = 7.x
+package = "CB|ONE"
+configure = "admin/config/cbone"
+
+files[] = cbone_admin.module
+
+version = "7.x-1.0"
+core = "7.x"
+project = "CB|ONE"
+datestamp = "1366871711"
+

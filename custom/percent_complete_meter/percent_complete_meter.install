@@ -1,0 +1,138 @@
+<?php
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function percent_complete_meter_schema() {
+	//Save subscribe user/instructor detail
+  $schema['percent_complete'] = array(
+    'fields' => array(
+      'pcid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Percent Complete ID',
+      ),
+      'parent_tid' => array(
+        'description'   => 'TID of the parent node',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'parent_entity_id' => array(
+        'description'   => 'NID of the parent node',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'child_count' => array(
+        'description'   => 'The number of tracked children nodes confirmed / updated by cron',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+    ),
+    'primary key' => array('pcid'),
+    'indexes' => array(
+       'pcid' => array('pcid'),
+    ),
+  );
+  $schema['percent_complete_child'] = array(
+    'fields' => array(
+      'pccid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Percent Complete child ID',
+      ),
+      'pcid' => array(
+        'description'   => 'The percent_complete.pcid foreign key',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'child_tid' => array(
+        'description'   => 'TID of the child node',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'child_entity_id' => array(
+        'description'   => 'NID of the child node',
+        'type'          => 'int',
+        'not null'      => FALSE,
+      ),
+    ),
+    'primary key' => array('pccid'),
+    'indexes' => array(
+       'pccid' => array('pccid'),
+    ),
+  );
+	//Save subscribe node id
+  $schema['percent_complete_details'] = array(
+    'fields' => array(
+      'pcdid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Percent Complete ID',
+      ),
+      'pcid' => array(
+        'description'   => 'The percent_complete.pcid foreign key',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'parent_entity_id' => array(
+        'description'   => 'NID of the parent node',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'child_entity_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'NID of child node being flagged / unflagged',
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'The uid of the end-user setting the flag',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => '0 = not complete, 1 = complete',
+      ),
+    ),
+	'primary key' => array('pcdid'),
+    'indexes' => array(
+       'serl_no' => array('pcdid'),
+    ),
+  );
+  $schema['percent_tracking'] = array(
+    'fields' => array(
+      'trid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Percent tracking ID',
+      ),
+      'pcid' => array(
+        'description'   => 'The percent_complete.pcid foreign key',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+      'tracking_name' => array(
+        'description'   => 'Percent tracking name',
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'tracking_status' => array(
+        'description'   => '0 = off, 1 = on',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ),
+    ),
+    'primary key' => array('trid'),
+    'indexes' => array(
+       'trid' => array('trid'),
+    ),
+  );
+ 
+  return $schema;
+}

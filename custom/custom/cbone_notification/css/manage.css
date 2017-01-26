@@ -1,0 +1,75 @@
+.page-manage-notifications #section-main-content .container {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+.page-manage-notifications #notification-settings h3 {
+  font-size: 5em;
+}
+
+.page-manage-notifications .section-notifications-title {
+  background-size: 100% 400px !important;
+}
+
+.page-manage-notifications .section-notifications-title h3.block-title {
+  height: 400px;
+  padding-top: 108px;
+}
+.page-manage-notifications .activity-container {
+  margin:auto; 
+  width: 70%;
+}
+.page-manage-notifications div.activitylist {
+  padding: 10px;
+}
+.page-manage-notifications table {
+  border: 1px solid #bbb;
+}
+.page-manage-notifications table tr {
+  background-color: #fff;
+}
+.page-manage-notifications .activitylist .time{
+  display: inline-block;
+  text-align: center;
+}
+.page-manage-notifications .activitymessage {
+    display: inline-block;
+    vertical-align: top;
+    padding: 12px;
+}
+
+.activitylist {
+   font-size: 0.9em;
+}
+
+.section-notifications-title h3.block-title {
+    width: 60%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-family: "Raleway";
+    font-size: 5em;
+    height: 520px;
+    letter-spacing: 8px;
+    margin: auto;
+    padding-bottom: 230px;
+    padding-top: 200px;
+    text-align: center;
+}
+
+.page-manage-notifications .section-notifications-title h3.block-title {
+  height: 400px;
+  padding-top: 108px;
+}
+
+.activity-container .even td {
+  background-color: rgba(0,0,0,0.05);
+}
+@media screen and (max-width: 776px) {
+  .page-manage-notifications .activitylist .time {
+    display: block;
+  }
+
+  .page-manage-notifications .activity-container {
+    width: 98%;
+  }
+}

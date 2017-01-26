@@ -1,0 +1,91 @@
+/**
+ * @file
+ * A JavaScript file for the theme.
+ *
+ * In order for this JavaScript to be loaded on pages, see the instructions in
+ * the README.txt next to this file.
+ */
+
+// JavaScript should be made compatible with libraries other than jQuery by
+// wrapping it with an "anonymous closure". See:
+// - https://drupal.org/node/1446420
+// - http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
+/**
+ * verify mobile popup
+ **/
+(function($) {
+	Drupal.behaviors.modal_node_display = {
+		attach: function(context, settings) {
+			//var link = $('a').attr("modal-node-popup", "yes");
+			var link = $('a[rel="modal-node-popup"]');
+			if(link) {
+				$('body').append('<div><div id="popup-load-img"><img src="/sites/all/modules/custom/modal_node_display/images/dim-loading.gif"/></div><div id="popup"><span class="button b-close"><span></span></span><div class="c_area"></div></div></div>').html();
+			}
+			//$('a.modal-node-popup').click(function(e){
+			link.click(function(e){
+                e.preventDefault();
+				var scroll = $(document).scrollTop();
+				$("#popup-load-img").css("top", scroll+"px");
+				$("#popup").css("height", "");
+				$("#popup").css("width", "");
+				var url = $(this).attr('href');
+				var slide = 'slideBack';
+				//var params = $.urlParams($(this).attr('href'));
+
+				var p = {},
+					e,
+					a = /\+/g,  // Regex for replacing addition symbol with a space
+					r = /([^&=]+)=?([^&]*)/g,
+					d = function (s) { return decodeURIComponent(s.replace(a, ' ')); },
+					q = url.split('?');				
+				while (e = r.exec(q[1])) {
+					e[1] = d(e[1]);
+					e[2] = d(e[2]);
+					if(e[1] != 'slide'){
+						$("#popup").css(e[1], e[2]+"px");
+					}
+					else {
+						if(e[2] == 'top') {
+							slide = 'slideDown';
+						}
+						else if(e[2] == 'bottom') {
+							slide = 'slideUp';
+						}
+						else if(e[2] == 'right') {
+							slide = 'slideBack';
+						}
+						else if(e[2] == 'left') {
+							slide = 'slideIn';
+						}
+					}
+				}
+				q = url.split('/node/');
+				$('.c_area').html('');
+				$('.b-close span').html('');
+				$('#modal-popup').show();
+				$.ajax({
+					type: "POST",
+					url: "/modal_node_popup/"+q[1],
+					data: {url:url},
+					beforeSend: function(){ 
+						$('#popup-load-img').show();
+					},
+					complete: function(){     
+						$('#popup-load-img').hide();
+					},
+					success:function(response){
+						if(response){    
+							$('.c_area').html(response);
+							$('.b-close span').html("X");
+							$('#popup').bPopup({
+								speed: 650,
+								amsl: 0,
+								transition: slide,
+							});
+						}
+					}
+				});
+            });
+		}
+	};
+})(jQuery);

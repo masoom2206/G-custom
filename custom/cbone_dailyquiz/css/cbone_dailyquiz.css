@@ -1,0 +1,127 @@
+#daily-quiz-node-form #edit-group_quiz_basic .group-quiz-answers .field-type-text{
+	width: 49%;
+	display: inline-block;
+}
+#daily-quiz-node-form #edit-group_quiz_basic .group-quiz-answers .field-name-field-first-option, #daily-quiz-node-form #edit-group_quiz_basic .group-quiz-answers .field-name-field-third-option {padding-right: 10px}
+#daily-quiz-node-form #edit-field-correct-answer .form-type-radio{
+	width: 24%;
+	display: inline-block;
+}
+#block-system-main .question-level-link > span {
+    font-size: 17px;
+    font-weight: bold;
+    padding: 5px;
+}
+.question-level-link {
+    margin-bottom: 15px;
+}
+
+.question-level-link span a.active{
+	text-decoration: none;
+}
+.view-daily-quiz-level .item-list li{width: 20%; display: inline-block;}
+#user-daily-quiz-form {
+	text-align: center;
+	background: #fff;
+	position: absolute;
+	width: 940px;
+	margin-top: 150px;
+	padding: 20px;
+}
+#user-daily-quiz-form h1, #user-daily-quiz-form label{color: #484f59;}
+.daily-quiz-question-form {
+	background-image: url(http://www.cbone.me/sites/default/files/dailyquiz-bg_0.jpg);
+	background-position: center top;
+	height: 685px;
+	background-size: 150% 100%;
+	width: 940px;
+	margin-left: -109px;
+}
+#user-daily-quiz-form h1 {
+    font-size: 72px;
+}
+#user-daily-quiz-form .form-checkboxes {
+    margin-left: -15%;
+}
+
+.yes-response-page, .no-response-page {height: 685px; width: 940px; margin-left: -109px;}
+.yes-response-page h1, .no-response-page h1{font-size: 72px; font-weight: 500;}
+.yes-response-text, .no-response-text{
+	background: none repeat scroll 0 0 #FFFFFF;
+    padding: 50px 0 50px 0;
+    position: absolute;
+    text-align: center;
+    top: 150px;
+    width: 940px;
+}
+.yes-response-page h1 {color: #00B800;}
+.no-response-page h1 {color: #CC0000;}
+.cbone-quiz-level {
+    text-align: center;
+}
+.daily-quiz-title {
+    padding-top: 25px;
+	font-size: 18px;
+}
+.daily-quiz-text {
+	width: 70%;
+	display: inline-block;
+	font-size: 18px;
+}
+.new-question-link {
+	padding-top: 50px;
+	text-align: center;
+}
+.new-question-link a{
+	margin-top: 12px;
+	display: block;
+}
+.user-level-completed {text-align: center; height: 850px;}
+.user-level-completed-text {
+	background: none repeat scroll 0 0 #FFFFFF;
+	opacity: 0.7;
+	position: absolute;
+	margin-top: 150px;
+	width: 100%;
+	min-height: 450px;
+}
+.user-level-completed h1{font-size: 60px;}
+.level-detail-text{font-size: 18px;}
+.cbone-quiz-level .percent-meter {
+	width: 82%;
+	display: inline-block;
+	border-radius: 20px;
+}
+.cbone-quiz-level .percent-meter > div {
+	height: 40px;
+	border-radius: 20px;
+	font-size: 24px;
+	padding-top: 6px;
+	background-color: #086fb2;
+}
+.user-quiz-congratulations {text-align: center;}
+.user-quiz-congratulations h1 {font-size: 60px;}
+.user-quiz-congratulations .congratulations-text {font-size: 18px;}
+.yes-response-page .congratulations h1, .yes-response-page .congratulations-text, .user-level-completed h1, .user-level-completed .level-detail-text {color: #484f59;}
+.new-question-link a {color: #888c96 !important;}
+html.js .block-refresh-button {
+	background-position: 100% 5px;
+	margin-right: 20px;
+	color: #086fb2;
+	text-decoration: none;
+}
+html.js .block-refresh-button-throbbing {
+	background-position: 100% -15px;
+}
+#edit-search-user-level .form-item-search-user-level-user {display: inline-block;}
+#block-cbone-dailyquiz-user-daily-quiz-link .block-refresh-button{display: none;}
+.user-question-number{font-size: 18px; color: #484f59; font-weight: 500;}
+
+.page-daily-quiz .hidden-lg, .page-daily-quiz-yes .hidden-lg, .page-daily-quiz-no .hidden-lg {display: none !important;}
+.page-daily-quiz .hidden-md, .page-daily-quiz-yes .hidden-md, .page-daily-quiz-no .hidden-md {display: none !important;}
+.page-daily-quiz .region-user19, .page-daily-quiz-yes .region-user19, .page-daily-no .region-user19{
+    border-bottom: 2px solid #474F59;
+    margin-bottom: 10px;
+}
+a.delete-daily-quiz {background: none repeat scroll 0 0 #B4B6BF; border: 1px solid #DDDDDD; border-radius: 5px; color: #FFFFFF; padding: 0 5px 0 6px;}
+a.delete-daily-quiz:hover{color: #FFFFFF; text-decoration: none;}

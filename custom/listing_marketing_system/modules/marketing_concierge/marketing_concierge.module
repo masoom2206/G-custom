@@ -1,0 +1,1035 @@
+<?php
+/**
+ * Implements hook_init()
+ */
+function marketing_concierge_init(){
+	drupal_add_css(drupal_get_path('module', 'marketing_concierge') . '/css/marketing_concierge.css');
+	drupal_add_js(drupal_get_path('module', 'marketing_concierge') . '/js/marketing_concierge.js');
+}
+
+/**
+* Implementation of hook_menu
+*/
+function marketing_concierge_menu() {
+  $items = array();
+  //Menu for admin to Update subscription mail template
+  $items['admin/config/mc'] = array(
+    'title'				=> 'LMS Tool visibility',
+    'description'		=> 'LMS Tool visibility systems.',
+    'page callback'		=> 'system_admin_menu_block_page',
+    'access arguments'	=> array('access administration pages'),
+    'file'				=> 'system.admin.inc',
+    'file path'			=> drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/mc/add/lms-tool-matrix'] = array(
+    'title'				=> 'Add LMS Tool matrix',
+    'description'		=> 'Add LMS Tool matrix',
+	'weight'			=> 1,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('add_mc_lms_tool_matrix_form'),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/tool_matrix.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );  
+  $items['admin/config/mc/lms-tool-matrix'] = array(
+    'title'				=> 'LMS Tool Grid Buttons per Role / Status',
+    'description'		=> 'LMS Tool Grid Buttons per Role / Status',
+	'weight'			=> 2,
+    'page callback'		=> 'mc_lms_tool_matrix',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/tool_matrix.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/mc/lms-tool-matrix/delete/%'] = array(
+    'title'				=> 'LMS Tool Matrix Delete',
+    'description'		=> 'LMS Tool Matrix Delete.',
+    'page callback'		=> 'drupal_get_form',
+	  'page arguments' 	=> array('mc_lms_tool_matrix_delete_confirm_form', 5),
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/tool_matrix.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+    //marketing concierge settings Menu
+  $items['admin/config/marketing-concierge'] = array(
+    'title'				=> 'Marketing Concierge Settings',
+    'description'		=> 'Marketing Concierge Settings page.',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  //marketing concierge settings Menu
+  $items['admin/config/marketing-concierge/mc-settings'] = array(
+    'title'				=> 'MC Settings',
+    'description'		=> 'MC Settings page.',
+	  'weight'			=> 1,
+    'page callback'		=> 'marketing_concierge_settings',
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-settings.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/marketing-concierge/mc-package-configuration'] = array(
+    'title'				=> 'Package Configuration',
+    'description'		=> 'Package Configuration',
+	  'weight'			=> 10,
+    'page callback'		=> 'mc_package_configuration',
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-package-configuration.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/marketing-concierge/mc-package-configuration/just_listed_and_just_sold_options'] = array(
+    'title'				=> 'Just Listed and Just Sold options',
+    'description'		=> 'Just Listed and Just Sold options',
+	  'weight'			=> 11,
+    'page callback'		=> 'mc_package_just_listed_sold_configuration',
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-package-just-listed-sold-configuration.inc',
+    'type'				=>  MENU_LOCAL_TASK,
+  );
+  $items['admin/config/marketing-concierge/mc-package-configuration/add/package/%ctools_js'] = array(
+    'title'				=> 'Add Package',
+    'description'		=> 'Add Package',
+    'page callback'		=> 'mc_add_package_configuration',
+    'page arguments' => array(6),
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-package-configuration.inc',
+  );
+  $items['admin/config/marketing-concierge/mc-package-configuration/package/%/%/%ctools_js'] = array(
+    'title'				=> arg(6).' Package',
+    'description'		=> arg(6).' Package',
+	  'page callback'		=> 'mc_edit_delete_package_configuration',
+    'page arguments' => array(5, 6, 7),
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-package-configuration.inc',
+  );
+  $items['admin/config/marketing-concierge/mc-package-configuration/package-addon/%/%/%/%ctools_js'] = array(
+    'title'				=> arg(6).' Just Listed and Just Sold options',
+    'description'		=> arg(6).' Just Listed and Just Sold options',
+	  'page callback'		=> 'mc_edit_delete_package_addon_configuration',
+    'page arguments' => array( 5, 6, 7, 8),
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-package-just-listed-sold-configuration.inc',
+  );
+  $items['admin/config/marketing-concierge/mc-package-configuration/add/package-addon/%ctools_js'] = array(
+    'title'				=> 'Add Just Listed and Just Sold options',
+    'description'		=> 'Add Just Listed and Just Sold options',
+    'page callback'		=> 'mc_add_package_addon_configuration',
+    'page arguments' => array(6),
+	  'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-package-just-listed-sold-configuration.inc',
+  );
+
+  $items['admin/config/marketing-concierge/mc-settings/vendor'] = array(
+    'title'				=> 'MC Vendor',
+    'description'		=> 'Select MC Vendor and saved',
+	'weight'			=> 2,
+    'page callback'		=> 'drupal_get_form',
+	'page arguments' 	=> array('marketing_concierge_select_vendor_form'),
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-settings.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  $items['admin/config/marketing-concierge/mc-settings/unitcost'] = array(
+    'title'				=> 'Order Unit Cost',
+    'description'		=> 'Enter Order Unit Cost',
+	'weight'			=> 3,
+    'page callback'		=> 'mc_order_unit_cost',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-settings.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  $items['admin/config/marketing-concierge/mc-settings/terms'] = array(
+    'title'				=> 'Terms',
+    'description'		=> 'MC Terms',
+	'weight'			=> 3,
+    'page callback'		=> 'mc_order_term_condition',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-settings.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  $items['admin/config/marketing-concierge/mc-settings/mail-help'] = array(
+    'title'				=> 'MC Direct Mail',
+    'description'		=> 'MC direct mail help text.',
+	'weight'			=> 3,
+    'page callback'		=> 'mc_direct_mail_help',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-settings.inc',
+    'type'				=> MENU_LOCAL_TASK,
+  );
+  
+  //marketing concierge settings Menu
+  $items['admin/config/marketing-concierge/mc-insertion-settings'] = array(
+    'title'				=> 'Ad Insertion Settings',
+    'description'		=> 'Insertion Order Settings',
+	'weight'			=> 3,
+    'page callback'		=> 'mc_insertion_order_settings',
+	'access arguments'	=> array('access administration pages'),
+    'file'				=> 'includes/mc-settings.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/marketing-concierge/mc-insertion-settings/settings'] = array(
+    'title' => 'Ad Insertion Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  //menu for Marketing Coordinator Dashboard
+  $items['lms-listing/mcc-order-confirm'] = array(
+	'title'				=>	'MCC order confirm',
+	'description'		=>	'LMS Listing MCC order confirm',
+	'page callback'		=>	'mcc_listing_orders_confirm',
+	'access callback'	=> 'user_is_logged_in',
+  );
+  
+  $items['marketing-concierge-order/%'] = array(
+    'title' 			=> 'Marketing Concierge Order',
+    'description' 		=> 'Marketing Concierge Order',
+    'page callback'		=> 'cbone_marketing_concierge_order',
+	'page arguments' 	=> array(1),
+    //'access callback' 	=> 'user_is_logged_in',
+	'access callback' => 'marketing_concierge_access',
+    'file'				=> 'includes/mc-order.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  //callback menu to upload the DIRECT MAIL POSTCARDS list file
+  //at marketing-concierge-order/[order_id] page
+  $items['upload/direct-mail-listed/%/%ctools_js'] = array(
+    'title' 			=> 'Upload Direct Mail List',
+    'description' 		=> 'Upload direct mail list',
+    'page callback'		=> 'upload_direct_mail_list',
+	'page arguments' 	=> array(2,3),
+    //'access callback' 	=> 'user_is_logged_in',
+	'access callback' => 'marketing_concierge_access',
+    'file'				=> 'includes/mc-order.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['upload/direct-mail-sold/%/%ctools_js'] = array(
+    'title' 			=> 'Upload Direct Mail List',
+    'description' 		=> 'Upload direct mail list',
+    'page callback'		=> 'upload_direct_mail_list',
+	'page arguments' 	=> array(2,3),
+    //'access callback' 	=> 'user_is_logged_in',
+	'access callback' => 'marketing_concierge_access',
+    'file'				=> 'includes/mc-order.inc',
+    'type'				=> MENU_NORMAL_ITEM,
+  );
+  $items['mc-commerce/checkout-cancel/%'] = array(
+    'title' 			=> 'MC Commerce checkout cancel',
+    'description' 		=> 'MC commerce checkout cancel',
+    'page callback'		=> 'mc_commerce_checkout_cancel',
+	'page arguments' 	=> array(2),
+    //'access callback' 	=> 'user_is_logged_in',
+	'access callback' => 'marketing_concierge_access',
+  );
+ return $items;
+}
+/**
+ * Implements hook_theme
+ **/
+function marketing_concierge_theme($existing, $type, $theme, $path) {
+	return array(
+		'mc_additional_order' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/mc_additional_order', // do not include .tpl.php
+		),
+		'marketing_concierge_additional_order_form' => array(
+			'render element' => 'form',
+			'template' => 'mc_additional_order_form',
+			'path' => drupal_get_path('module', 'marketing_concierge') . '/template',
+		),
+		'commerce_checkout_form_checkout' => array(
+			'render element' => 'form',
+			'template' => 'mc_checkout_form',
+			'path' => drupal_get_path('module', 'marketing_concierge') . '/template',
+		),
+		'commerce_checkout_form_review' => array(
+			'render element' => 'form',
+			'template' => 'mc_checkout_review',
+			'path' => drupal_get_path('module', 'marketing_concierge') . '/template',
+		),
+		'commerce_checkout_form_complete' => array(
+			'render element' => 'form',
+			'template' => 'mc_checkout_complete',
+			'path' => drupal_get_path('module', 'marketing_concierge') . '/template',
+		),
+	);
+	return $theme;
+}
+/**
+ * Implements hook_form_alter().
+ **/
+function marketing_concierge_form_alter(&$form, &$form_state, $form_id) {
+	global $user;
+	$roles = array("Siteadmin", "Administrator");
+	$roles_result = array_intersect($roles, $user->roles);
+	if($form_id == 'lms_listing_node_form' && $user->uid != 1) {
+		if(empty($roles_result)) {
+			/*if(arg(0) == 'node' && arg(2) == 'edit') {
+				$node_detail = node_load(arg(1));
+				$tid = $node_detail->field_mc_status_ref['und']['0']['tid'];
+				$mcc_status = taxonomy_term_load($tid);
+				if($mcc_status->name != 'Proof Pending') {
+					$form['field_mc_status_ref']['#disabled'] = TRUE;
+				}
+			}
+			else {
+				$form['field_mc_status_ref']['#disabled'] = TRUE;
+			}*/
+			$form['field_mc_status_ref']['#disabled'] = TRUE;
+		}
+	}
+	else if($form_id == 'commerce_checkout_form_checkout') {
+		if($user->uid > 0){
+			$loaded_billing = '';
+			$query = db_select("commerce_customer_profile","p");
+			$query->fields("p",array("profile_id"));
+			$query->condition("uid", $user->uid, '=');
+			$query->condition("type", 'billing', '=');
+			$query->orderBy('profile_id', 'DESC');
+			$profile_id = $query->execute()->fetchField();
+			if(!empty($profile_id)) {
+				$loaded_billing = commerce_customer_profile_load($profile_id);
+			}
+			//print "<pre>";print_r($loaded_billin);exit;
+			if(!empty($loaded_billing)){
+				$form['customer_profile_billing']['field_billing_area_code']['und']['0']['value']['#default_value'] = $loaded_billing->field_billing_area_code['und']['0']['value'];
+				$form['customer_profile_billing']['field_billing_phone']['und']['0']['value']['#default_value'] = $loaded_billing->field_billing_phone['und']['0']['value'];
+				$form['customer_profile_billing']['field_billing_email']['und']['0']['value']['#default_value'] = $loaded_billing->field_billing_email['und']['0']['value'];
+
+				$form['customer_profile_billing']['commerce_customer_address']['und'][0]['#address']  = $loaded_billing->commerce_customer_address['und'][0];
+			}
+		}
+		$form['buttons']['continue']['#validate'][] = 'mc_checkout_form_validate';
+		$listing_reference_nid = $_SESSION['listing_reference_nid'];
+		$form['field_lms_listing_reference']['und']['0']['nid']['#default_value'] = $listing_reference_nid;
+		$form['field_lms_listing_reference']['und']['#disabled'] = TRUE;
+		//print "<pre>";print_r($form['field_lms_listing_reference']);exit;
+		//Chnage state name to code
+		$state_options = $form['customer_profile_billing']['commerce_customer_address']['und']['0']['locality_block']['administrative_area']['#options'];
+		$options = array();
+		//$options[] = t('State');
+		foreach($state_options as $key => $state_option){
+			if(!empty($key) && $key != ' ' && $key != '') {
+				$options[$key] = $key;
+			}
+			else if($state_option == '- None -') {
+				$options[$key] = 'State';
+			}
+			else {
+				$options[$key] = $state_option;
+			}
+		}
+		$state_options = $form['customer_profile_billing']['commerce_customer_address']['und']['0']['locality_block']['administrative_area']['#options'] = $options;
+		
+		$form['commerce_coupon']['coupon_code']['#description'] = '';
+		$form['commerce_coupon']['coupon_code']['#attributes'] = array('placeholder' => t('Promo Code'));
+		$form['commerce_coupon']['coupon_add']['#value'] = t('Apply');
+		$form['buttons']['continue']['#value'] = 'Continue';
+		//print "<pre>";print_r($form['commerce_coupon']['coupon_add']);exit;
+		$mc_shipping = mc_shipping_information($user->uid);
+		$form['customer_profile_shipping']['commerce_customer_address']['und']['0']['name_block']['name_line']['#value'] = $mc_shipping['office_name'];
+		$form['customer_profile_shipping']['commerce_customer_address']['und']['0']['street_block']['thoroughfare']['#value'] = $mc_shipping['address'];
+		$form['customer_profile_shipping']['commerce_customer_address']['und']['0']['locality_block']['locality']['#value'] = $mc_shipping['city'];
+		$form['customer_profile_shipping']['commerce_customer_address']['und']['0']['locality_block']['administrative_area']['#value'] = $mc_shipping['state'];
+		$form['customer_profile_shipping']['commerce_customer_address']['und']['0']['locality_block']['postal_code']['#value'] = $mc_shipping['zip'];
+		$order_id = $form['#entity']->order_id;
+		$order = commerce_order_load($order_id);
+		$line_item_id = $order->commerce_line_items['und']['0']['line_item_id'];
+		$line_item = commerce_line_item_load($line_item_id);
+		$product_id = $line_item->commerce_product['und']['0']['product_id'];
+		$product = commerce_product_load($product_id);
+		if($product->sku == 'LMS-04') {
+			$form['buttons']['continue']['#attributes']['class'][] = 'cbone-mc-free';
+		}		
+	}
+	else if($form_id == 'commerce_checkout_form_review') {
+		//print "<pre>";print_r($form);exit;
+		//Payment section
+		$order_id = $form['#entity']->order_id;
+		$order = commerce_order_load($order_id);
+		$line_item_id = $order->commerce_line_items['und']['0']['line_item_id'];
+		$line_item = commerce_line_item_load($line_item_id);
+		$product_id = $line_item->commerce_product['und']['0']['product_id'];
+		$product = commerce_product_load($product_id);
+		if($product->sku != 'LMS-04') {
+			$form['commerce_payment']['payment_details']['credit_card']['type']['#type'] = 'radios';
+			$form['commerce_payment']['payment_details']['credit_card']['type']['#options'] = array(
+				'visa' => '<img src="/sites/all/modules/custom/listing_marketing_system/modules/marketing_concierge/images/visa-card-logo.jpg">',
+				'mastercard' => '<img src="/sites/all/modules/custom/listing_marketing_system/modules/marketing_concierge/images/master-card-logo.jpg">',
+				'amex' => '<img src="/sites/all/modules/custom/listing_marketing_system/modules/marketing_concierge/images/american-card-logo.jpg">',
+			);
+			$form['commerce_payment']['payment_details']['credit_card']['type']['#weight'] = 1;
+			$form['commerce_payment']['payment_details']['credit_card']['number']['#weight'] = 2;
+			$form['commerce_payment']['payment_details']['credit_card']['code']['#weight'] = 3;
+			$form['commerce_payment']['payment_details']['credit_card']['exp_month']['#prefix'] = '<div class="expires"><h1>Expires</h1>';
+			$form['commerce_payment']['payment_details']['credit_card']['exp_year']['#suffix'] = '</div>';
+			$form['commerce_payment']['payment_details']['credit_card']['exp_month']['#weight'] = 4;
+			$form['commerce_payment']['payment_details']['credit_card']['exp_year']['#weight'] = 5;
+			$form['commerce_payment']['payment_details']['credit_card']['cardonfile_store']['#weight'] = 6;
+			$form['commerce_payment']['payment_details']['credit_card']['owner']['#attributes'] = array('placeholder' => t('Name as it appears on card'));
+			$form['commerce_payment']['payment_details']['credit_card']['number']['#attributes'] = array('placeholder' => t('Card Number'));
+			$form['commerce_payment']['payment_details']['credit_card']['code']['#attributes'] = array('placeholder' => t('CCV'));
+		}
+		$form['terms_conditions']['commerce_agree_terms_pane_field']['#title'] = t('I agree with the terms and conditions');
+		//Cancel Order button
+		$form['buttons']['continue']['#value'] = t('Submit Order');
+		//$order_id = $form['#entity']->order_id;
+		$form['buttons']['cancel'] = array(
+			'#markup' => '<div class="mc-commerce-cancel">'.l(t('Cancel Order'), 'mc-commerce/checkout-cancel/'.$order_id).'</div>',
+			//'#type' => 'button',
+			//'#value' => t('Cancel Order'),
+			//'#executes_submit_callback' => FALSE,
+			//'#submit' => array('mc_commerce_checkout_cancel'),
+			//'#limit_validation_errors' => array(array('title'),),
+		);
+		if(!isset($order->field_lms_listing_reference['und']['0']['nid']) && isset($_SESSION['listing_reference_nid'])) {
+			$order->field_lms_listing_reference['und']['0']['nid'] = $_SESSION['listing_reference_nid'];
+			commerce_order_save($order);
+		}
+		//print "<pre>";print_r($form);exit;
+	}
+	else if($form_id == 'views_form_commerce_cart_form_default') {
+		foreach($form['edit_quantity'] as $key => $edit_quantity) {
+			if(is_numeric($key)) {
+				$form['edit_quantity'][$key]['#disabled'] = TRUE;
+			}
+		}
+	}
+	if(arg(0) == 'marketing-concierge') {
+		if($form_id == 'commerce_cart_add_to_cart_form_7') {
+			$form['submit']['#value'] = t('Order Now');
+		}
+	}
+}
+/**
+ * Implements hook_element_info_alter()
+ **/
+function marketing_concierge_element_info_alter(&$type) {
+	// Decrease the default size of textfields.
+	if (isset($type['plupload'])) {
+		$type['plupload']['#pre_render'][] = 'mc_plupload_element_pre_render';
+	}
+	/* Added by Nitesh */
+	foreach ($type as &$element_type) {
+		if (!empty($element_type['#input'])) {
+			$element_type['#element_validate'][] = 'marketing_concierge_validate_required_form_element';
+			$element_type['#check_empty'] = TRUE;
+		}
+	}
+}
+/**
+ * Implements hook_commerce_checkout_complete()
+ **/
+function marketing_concierge_commerce_checkout_complete($order) {
+	$listing_nid = $order->field_lms_listing_reference['und']['0']['nid'];
+	$node_detail = node_load($listing_nid);
+	$term = taxonomy_get_term_by_name('Pending MC Confirmation');
+	$status_ref_tid = array_shift($term)->tid;
+	$node_detail->field_mc_status_ref['und']['0']['tid'] = $status_ref_tid;
+	node_save($node_detail);
+	mc_status_notifications($listing_nid, 'Order Placed');
+	$line_item = commerce_line_item_load($order->commerce_line_items['und']['0']['line_item_id']);
+	$product = commerce_product_load($line_item->commerce_product['und']['0']['product_id']);
+	if($product->title == 'Platinum Plus') {
+		mc_insertion_order_notifications_mail($listing_nid);
+	}
+}
+/**
+ * Implements hook_commerce_cart_line_item_refresh()
+ * alter the price in cart & order
+ **/
+function marketing_concierge_commerce_cart_line_item_refresh($line_item, $order_wrapper){
+	$order_id = $order_wrapper->order_id->value();
+	$order = commerce_order_load($order_id);
+	//print "<pre>";print_r($order);exit;
+	if(!empty($order) && isset($line_item->commerce_product['und']['0']['product_id'])) {
+		$item_product_id = $line_item->commerce_product['und']['0']['product_id'];
+		$serialize_value = variable_get('mc_order_unit_cost', '0');
+		$unit_cost = unserialize($serialize_value);
+		$product_titles = array("Premier", "Platinum", "Platinum Plus");
+		$unit_cost_element = 'premier';
+		foreach($order->commerce_line_items['und'] as $line_items) {
+			$line_item_id = $line_items['line_item_id'];
+			$order_line_item = commerce_line_item_load($line_item_id);
+			if(isset($order_line_item->commerce_product['und']['0']['product_id'])) {
+				$product_id = $order_line_item->commerce_product['und']['0']['product_id'];
+				$product = commerce_product_load($product_id);
+				if (in_array($product->title, $product_titles)) {
+					$unit_cost_element = str_replace(" ", "_", strtolower($product->title));
+					$title = $product->title;
+				}
+			}
+		}
+		$additional_items_cost_query =  db_select('mc_package_addon_configuration', 'a')
+	    ->fields('a')
+	    ->condition('product_name', $title ,'like')
+	    ->execute()
+	    ->fetchAll();
+     foreach($additional_items_cost_query as $addkey => $addvalue) {
+       $unit_cost[$unit_cost_element][$addvalue->product_addon_sku] = $addvalue->addon_unit_price;
+     }
+		if(isset($order->field_just_listed_postcard['und']['0']['value'])) {
+			$product_id = commerce_product_load_by_sku("addl-just-listed-postcards")->product_id;
+			if($product_id == $item_product_id) {
+				$price = ($unit_cost[$unit_cost_element]['just_listed'] * 100);
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['amount'] = $price;
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['data']['components']['0']['price']['amount'] = $price;
+			}
+		}
+		if(isset($order->field_just_sold_postcard['und']['0']['value'])) {
+			$product_id = commerce_product_load_by_sku("addl-just-sold-postcards")->product_id;
+			if($product_id == $item_product_id) {
+				$price = ($unit_cost[$unit_cost_element]['just_sold'] * 100);
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['amount'] = $price;
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['data']['components']['0']['price']['amount'] = $price;
+			}
+		}
+		if(isset($order->field_just_pro_brochure['und']['0']['value'])) {
+			$product_id = commerce_product_load_by_sku("addl-pro-brochures")->product_id;
+			if($product_id == $item_product_id) {
+				$price = ($unit_cost[$unit_cost_element]['pro_brochures'] * 100);
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['amount'] = $price;
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['data']['components']['0']['price']['amount'] = $price;
+			}
+		}
+		if(isset($order->field_additional_ono_mailed_just['und']['0']['value'])) {
+			$product_id = commerce_product_load_by_sku("addl-just-listed-postcards-non-mailed")->product_id;
+			if($product_id == $item_product_id) {
+				$price = ($unit_cost[$unit_cost_element]['addl-just-listed-postcards-non-mailed'] * 100);
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['amount'] = $price;
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['data']['components']['0']['price']['amount'] = $price;
+			}
+		}
+		if(isset($order->field_additional_non_mailed_just['und']['0']['value'])) {
+			$product_id = commerce_product_load_by_sku("addl-just-sold-postcards-non-mailed")->product_id;
+			if($product_id == $item_product_id) {
+				$price = ($unit_cost[$unit_cost_element]['addl-just-sold-postcards-non-mailed'] * 100);
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['amount'] = $price;
+				$line_item->commerce_unit_price[LANGUAGE_NONE]['0']['data']['components']['0']['price']['amount'] = $price;
+			}
+		}
+	}
+}
+/**
+ * Rules event hook: allows modules to react to the addition of a product to a
+ * shopping cart order.
+ *
+ * @param $order
+ *   The cart order object the product was added to.
+ * @param $product
+ *   The product that was added to the cart.
+ * @param $quantity
+ *   The quantity of the product added to the cart.
+ * @param $line_item
+ *   The new or updated line item representing that product on the given order.
+ ******
+ * Implements hook_commerce_cart_product_add
+ ******
+ */
+function marketing_concierge_commerce_cart_product_add($order, $product, $quantity, $line_item) {
+	/*print "<pre>";
+	print_r($order);
+	print_r($product);
+	print_r($quantity);
+	print_r($line_item);
+	exit;*/
+	$count_product = count($order->commerce_line_items['und']); //  && ($count_product > 1)
+	$product_sku = array('LMS-01', 'LMS-02', 'LMS-03', 'LMS-04');
+	if(in_array($product->sku, $product_sku)){
+		if(isset($order->commerce_line_items['und']['0']['line_item_id'])) {
+			foreach($order->commerce_line_items['und'] as $line_items) {
+				$line_item_id = $line_items['line_item_id'];
+				$order_line_item = commerce_line_item_load($line_item_id);
+				//print "<pre>";print_r($order_line_item);exit;
+				if(isset($order_line_item->commerce_product['und']['0']['product_id'])) {
+					$product_id = $order_line_item->commerce_product['und']['0']['product_id'];
+					$product_load = commerce_product_load($product_id);
+					if (in_array($product_load->sku, $product_sku)) {
+						if($product_load->sku != $product->sku) {
+							$order = commerce_cart_order_product_line_item_delete($order, $line_item_id, TRUE);
+						}
+						else if($order_line_item->quantity != '1.00'){
+							$order_line_item->quantity = '1.00';
+							commerce_line_item_save($order_line_item);
+
+						}
+					}
+				}
+			}
+		}
+	}
+	if($product->sku == 'LMS-04') {
+		// Create the new profile now.
+		$shipping_profile = commerce_customer_profile_new('shipping', $order->uid);
+		// Add the address value.
+		$shipping_profile_wrapper = entity_metadata_wrapper('commerce_customer_profile', $shipping_profile);
+		if(!empty($order)) {
+			$mc_shipping = mc_shipping_information($order->uid);
+			$shipping_profile_wrapper->commerce_customer_address = array(
+				'country' => 'US',
+				'name_line' => $mc_shipping['office_name'],
+				'thoroughfare' => $mc_shipping['address'],
+				'locality' => $mc_shipping['city'],
+				'administrative_area' => $mc_shipping['state'],
+				'postal_code' => $mc_shipping['zip'],
+				'premise' => '',
+			);
+			// Save the profile.
+			$shipping_profile_wrapper->save();
+			$shipping_profile_id = $shipping_profile_wrapper->profile_id->value();
+			$order->commerce_customer_shipping['und']['0']['profile_id'] = $shipping_profile_id;
+			$query = db_select("commerce_customer_profile","p");
+			$query->fields("p",array("profile_id"));
+			$query->condition("uid", $order->uid, '=');
+			$query->condition("type", 'billing', '=');
+			$query->orderBy('profile_id', 'DESC');
+			$billing_profile_id = $query->execute()->fetchField();
+			if(!empty($billing_profile_id)) {
+				$order->commerce_customer_billing['und']['0']['profile_id'] = $billing_profile_id;
+			}
+			else {
+				$order_user_detail = user_load($order->uid);
+				// Create the new profile now.
+				$billing_profile = commerce_customer_profile_new('billing', $order->uid);
+				// Add the address value.
+				$billing_profile_wrapper = entity_metadata_wrapper('commerce_customer_profile', $billing_profile);
+				
+				$billing_profile_wrapper->commerce_customer_address = array(
+					'country' => 'US',
+					'name_line' => $order_user_detail->field_preferred_name['und']['0']['value'],
+					'thoroughfare' => $order_user_detail->field_address['und']['0']['value'],
+					'locality' => $order_user_detail->field_city['und']['0']['value'],
+					'administrative_area' => $order_user_detail->field_state['und']['0']['value'],
+					'postal_code' => $order_user_detail->field_zip['und']['0']['value'],
+					'organisation_name' => 'N/A',
+					'premise' => '',
+				);
+				// Save the profile.
+				$billing_profile_wrapper->save();
+				$billing_profile_id = $billing_profile_wrapper->profile_id->value();
+				$order->commerce_customer_billing['und']['0']['profile_id'] = $billing_profile_id;
+			}
+			commerce_order_save($order);
+		}
+	}
+}
+/**
+ * Form API to validate email at checkout page.
+ **/
+function mc_checkout_form_validate($form, &$form_state){
+	$values = $form_state['values'];
+	$email = $values['customer_profile_billing']['customer_profile']->field_billing_email['und']['0']['value'];
+	if(!empty($email)) {
+		if (!valid_email_address($email)) {
+			form_set_error('customer_profile_billing][customer_profile][field_billing_email][und][0][value', t('Kindly enter valid email address.'));
+		}
+	}
+}
+/**
+ * Callback function mc_status_notifications()
+ * to prepare the mc notification
+ **/
+function mc_status_notifications($nid, $mc_status, $pdf_type = NULL, $pdf_nid = NULL){
+	//MC notification
+	$node_detail = node_load($nid);
+	$agent_uid = isset($node_detail->field_lms_agent_uid['und']['0']['uid']) ? $node_detail->field_lms_agent_uid['und']['0']['uid'] : $node_detail->uid;
+	module_load_include('inc', 'mc_notifications', 'includes/notification_message');
+	$query = db_select('mc_notifications', 'mcn')
+		->fields('mcn')
+		->condition('mc_status', $mc_status, '=');
+	$mc_notifications = $query->execute();
+	$mc_notification_count = $query->execute()->rowCount();
+	if($mc_notification_count > 0) {
+		foreach($mc_notifications as $mc_notifications) {
+			$reply_to = $mc_notifications->mc_reply_to;
+			insert_office_dashboard_notifications($nid, $mc_notifications->title, $mc_notifications->body, $mc_status, $pdf_type, $pdf_nid);
+			if($reply_to == 'no-reply') {
+				$reply = 'no-reply';
+			}
+			else if($reply_to == 'mc') {
+				if(isset($node_detail->field_lms_marketing_coordinator['und']['0']['uid'])) {
+					$coordinator_uid = $node_detail->field_lms_marketing_coordinator['und']['0']['uid'];
+					$coordinator_detail = user_load($coordinator_uid);
+					$coordinator_email = isset($coordinator_detail->field_person_email['und']['0']['value']) ? $coordinator_detail->field_person_email['und']['0']['value'] : $coordinator_detail->mail;
+					$reply = $coordinator_email;
+				}
+				else {
+					$reply = "no-reply";
+				}
+			}
+			else if($reply_to == 'agent') {
+				$agent_detail = user_load($agent_uid);
+				$agent_email = isset($agent_detail->field_person_email['und']['0']['value']) ? $agent_detail->field_person_email['und']['0']['value'] : $agent_detail->mail;
+				$reply = $agent_email;
+			}
+			if($mc_notifications->mc_send_to == 'agent'){
+				$message = mc_notification_message($mc_notifications->id, $nid);
+				if($pdf_type != NULL && $pdf_nid != NULL) {
+					$message = mc_notifications_vendor_token_replace($message, $nid, $pdf_nid, $pdf_type);
+				}
+				$subject = mc_notifications_token_replace($mc_notifications->subject, $nid);
+				mc_status_notifications_mail($agent_uid, $subject, $message, $reply);
+			}
+			else if($mc_notifications->mc_send_to == 'mc'){
+				if(isset($node_detail->field_lms_marketing_coordinator['und']['0']['uid'])) {
+					$coordinator_uid = $node_detail->field_lms_marketing_coordinator['und']['0']['uid'];
+					$message = mc_notification_message($mc_notifications->id, $nid);
+					if($pdf_type != NULL && $pdf_nid != NULL) {
+						$message = mc_notifications_vendor_token_replace($message, $nid, $pdf_nid, $pdf_type);
+					}
+					$subject = mc_notifications_token_replace($mc_notifications->subject, $nid);
+					mc_status_notifications_mail($coordinator_uid, $subject, $message, $reply);
+				}
+				else {
+					$coordinator_uid = listing_marketing_coordinator($nid);
+					if($coordinator_uid != '') {
+						$message = mc_notification_message($mc_notifications->id, $nid);
+						if($pdf_type != NULL && $pdf_nid != NULL) {
+							$message = mc_notifications_vendor_token_replace($message, $nid, $pdf_nid, $pdf_type);
+						}
+						$subject = mc_notifications_token_replace($mc_notifications->subject, $nid);
+						mc_status_notifications_mail($coordinator_uid, $subject, $message, $reply);
+					}
+				}
+			}
+		}
+	}
+}
+/**
+ * Callback function mc_status_notifications_mail()
+ * to send MC status notification
+ **/
+function mc_status_notifications_mail($uid, $subject, $message, $reply){
+	$mailto = '';
+	if(is_array($uid)) {
+		foreach($uid as $user_uid) {
+			$user_detail = user_load($user_uid);
+			$mail = isset($user_detail->field_person_email['und']['0']['value']) ? $user_detail->field_person_email['und']['0']['value'] : $user_detail->mail;
+			$mailto .= $mail.', ';
+		}
+	}
+	else {
+		$user_detail = user_load($uid);
+		$mailto = isset($user_detail->field_person_email['und']['0']['value']) ? $user_detail->field_person_email['und']['0']['value'] : $user_detail->mail;
+	}	
+	//mail header
+	$header = '';
+	//$header = "From: CB|One <support@cbone.me>\r\n";
+	//$header .= "No-Reply: no-reply@cbone.me\r\n";
+	if($reply == 'no-reply') {
+		$header .= 'From: No-reply <no-reply@cbone.me>'."\r\n";
+		$header .= 'Reply-To: no-reply@cbone.me'."\r\n";
+	}
+	else {
+		$header .= 'From: CB|One <support@cbone.me>'."\r\n";
+		$header .= 'Reply-To: '.$reply."\r\n";
+	}
+	$header .= 'MIME-Version: 1.0' . "\r\n";
+	$header .= 'Content-Type: text/html; charset=ISO-8859-1' . "\r\n";
+	mail($mailto, $subject, $message, $header);
+}
+/**
+ * Callback function mc_insertion_order_notifications_mail()
+ * to send MC Ad Insertion notification mail
+ **/
+function mc_insertion_order_notifications_mail($listing_nid){
+	global $base_url;
+	$listing_node = node_load($listing_nid);
+	//Listing information
+	$listing_data .= '<p><strong>Listing information:</strong></p>';
+	$listing_data .= '<ul>';
+	$address = isset($listing_node->field_lms_listing_address['und']['0']['value']) ? $listing_node->field_lms_listing_address['und']['0']['value'] : $listing_node->title;
+	$listing_data .= '<li>Listing Address: '.$address.'</li>';
+	$listing_data .= '<li>LMS Listing Tools: <a href="'.$base_url.'/manage-listing/'.$listing_node->nid.'" target="_blank">'.$base_url.'/manage-listing/'.$listing_node->nid.'</a></li>';
+	$listing_data .= '<li>Listing Information and Marketing Copy: <a href="'.$base_url.'/node/'.$listing_node->nid.'/edit" target="_blank">'.$base_url.'/node/'.$listing_node->nid.'/edit</a></li>';
+	$listing_data .= '<li>Listing Photos: <a href="'.$base_url.'/listing-photos/'.$listing_node->nid.'" target="_blank">'.$base_url.'/listing-photos/'.$listing_node->nid.'</a></li>';
+	$listing_data .= "</ul>";
+	//Agent Information
+	$primary_agent_uid = isset($listing_node->field_lms_agent_uid['und']['0']['uid']) ? $listing_node->field_lms_agent_uid['und']['0']['uid'] : $listing_node->uid;
+	$primary_agent = user_load($primary_agent_uid);
+	$listing_data .= '<p><strong>Agent Information:</strong></p>';
+	$listing_data .= '<ul>';
+	$listing_data .= '<li>Primary Agent Info: <a href="'.$base_url.'/user/'.$primary_agent_uid.'/edit" target="_blank">'.$base_url.'/user/'.$primary_agent_uid.'/edit</a></li>';
+	$primary_agent_photo = isset($primary_agent->picture->fid) ? file_create_url($primary_agent->picture->uri) : file_create_url(variable_get('user_picture_default', ''));
+	$listing_data .= '<li>Primary Agent Photo: <a href="'.$primary_agent_photo.'" target="_blank">'.$primary_agent_photo.'</a></li>';
+	if(isset($listing_node->field_lms_other_agent['und']['0']['uid'])) {
+		$co_agent_uid = $listing_node->field_lms_other_agent['und']['0']['uid'];
+		$co_agent = user_load($co_agent_uid);
+		$listing_data .= '<li>Co-listing Agent Info: <a href="'.$base_url.'/user/'.$co_agent_uid.'/edit" target="_blank">'.$base_url.'/user/'.$co_agent_uid.'/edit</a></li>';
+		$co_agent_photo = isset($co_agent->picture->fid) ? file_create_url($co_agent->picture->uri) : file_create_url(variable_get('user_picture_default', ''));
+		$listing_data .= '<li>Co-listing Agent Photo: <a href="'.$co_agent_photo.'" target="_blank">'.$co_agent_photo.'</a></li>';
+	}
+	$listing_data .= "</ul>";
+	if(isset($listing_node->field_lms_sales_team['und']['0']['nid'])) {
+		$sales_team_nid = $listing_node->field_lms_sales_team['und']['0']['nid'];
+		$sales_team = node_load($sales_team_nid);
+		$listing_data .= '<p><strong>Team Information:</strong></p>';
+		$listing_data .= '<ul>';
+		$listing_data .= '<li>Team Name: '.$sales_team->title.'</li>';
+		$sales_team_photo = isset($sales_team->field_sales_team_photo['und']['0']['uri']) ? file_create_url($sales_team->field_sales_team_photo['und']['0']['uri']) : file_create_url(variable_get('user_picture_default', ''));
+		$listing_data .= '<li>Team Photo: <a href="'.$sales_team_photo.'" target="_blank">'.$sales_team_photo.'</a></li>';
+		$sales_team_email = isset($sales_team->field_team_email['und']['0']['value']) ? $sales_team->field_team_email['und']['0']['value'] : '';
+		$listing_data .= '<li>Team email: <a href="mailto:'.$sales_team_email.'">'.$sales_team_email.'</a></li>';
+		$sales_team_website = isset($sales_team->field_team_website['und']['0']['url']) ? $sales_team->field_team_website['und']['0']['url'] : '';
+		$listing_data .= '<li>Team Website: <a href="mailto:'.$sales_team_website.'">'.$sales_team_website.'</a></li>';
+		$listing_data .= "</ul>";
+	}
+	
+	$mailto = variable_get('mc_insertion_order_recipient_email', '');
+	$subject = variable_get('mc_insertion_order_mail_subject', '');
+	$message = variable_get('mc_insertion_order_mail_body', '');
+	$message = str_replace('<strong>[INSERT DYNAMIC INFO AND LINKS HERE]</strong>', $listing_data, $message);
+	//mail header
+	$header = "From: CB|One <support@cbone.me>\r\n";
+	$header .= "No-Reply: no-reply@cbone.me\r\n";
+	$header .= 'MIME-Version: 1.0' . "\r\n";
+	$header .= 'Content-Type: text/html; charset=ISO-8859-1' . "\r\n";
+	mail($mailto, $subject, $message, $header);
+	return $message;
+}
+/**
+ * Callback function listing_marketing_coordinator()
+ * to get the uid of marketing coordinator for listing.
+ **/
+function listing_marketing_coordinator($nid) {
+	$coordinator_uid = '';
+	$listing_node = node_load($nid);
+	if(isset($listing_node->field_lms_marketing_coordinator['und']['0']['uid'])) {
+		$coordinator_uid = $node_detail->field_lms_marketing_coordinator['und']['0']['uid'];
+	}
+	else if(isset($listing_node->field_lms_office_id['und']['0']['value'])){
+		$office_id = $listing_node->field_lms_office_id['und']['0']['value'];
+		$query = db_select('field_data_field_member_office', 'mo');
+		$query->join('users_roles', 'ur', 'ur.uid = mo.entity_id');
+		$query->join('role', 'r', 'r.rid = ur.rid');
+		$query->fields('mo', array('entity_id'));
+		$query->condition('mo.field_member_office_value', $office_id, '=');
+		$query->condition('r.name', 'Marketing Coordinator', 'LIKE');
+		$result = $query->execute();
+		$count = $query->execute()->rowCount();
+		if($count != 0) {
+			foreach($result as $user_uid) {
+				$coordinator_uid[] = $user_uid->entity_id;
+			}
+			//$coordinator_uid = $query->execute()->fetchField();
+			//$listing_node->field_lms_marketing_coordinator['und']['0']['uid'] = $coordinator_uid;
+			//node_save($listing_node);
+		}
+		else {
+			$query = db_select('field_data_field_member_office', 'mo');
+			$query->join('users_roles', 'ur', 'ur.uid = mo.entity_id');
+			$query->join('role', 'r', 'r.rid = ur.rid');
+			$query->fields('mo', array('entity_id'));
+			$query->condition('mo.field_member_office_value', $office_id, '=');
+			$query->condition('r.name', 'Manager', 'LIKE');
+			$coordinator_uid = $query->execute()->fetchField();
+			//$listing_node->field_lms_marketing_coordinator['und']['0']['uid'] = $coordinator_uid;
+			//node_save($listing_node);
+		}
+	}
+	return $coordinator_uid;
+}
+/**
+ * Callback function mcc_listing_orders_confirm()
+ * to accept the marketing cordinator order request
+ * by marketing cordinator
+ **/
+function mcc_listing_orders_confirm(){
+	global $user;
+	$listing_nid = $_POST['listing_nid'];
+	$product = $_POST['product'];
+	$listing_detail = node_load($listing_nid);
+	$tid = $listing_detail->field_mc_status_ref['und']['0']['tid'];
+	$term = taxonomy_term_load($tid);
+	if($product == 'Prime') {
+		if($term->name == 'Pending MC Confirmation') {
+			$term = taxonomy_get_term_by_name('Prime Order Accepted', 'marketing_concierge_status');
+			$status_ref_tid = array_shift($term)->tid;
+			$return = 'accepted';
+			mc_status_notifications($listing_nid, 'Prime Order Accepted');
+		}
+		else {
+			$term = taxonomy_get_term_by_name('Prime Order Completed', 'marketing_concierge_status');
+			$status_ref_tid = array_shift($term)->tid;
+			$return = 'done';
+			mc_status_notifications($listing_nid, 'Prime Order Completed');
+		}
+	}
+	else {
+		$status_ref_tid = array_shift(taxonomy_get_term_by_name('MC Preparing Order'))->tid;
+		$return = 'accepted';
+		mc_status_notifications($listing_nid, 'MC Accepted Order');
+		mc_status_notifications($listing_nid, 'MC Preparing Order');
+	}
+	$listing_detail->field_mc_status_ref['und']['0']['tid'] = $status_ref_tid;
+	$listing_detail->field_lms_marketing_coordinator['und']['0']['uid'] = $user->uid;
+	node_save($listing_detail);
+	print $return;
+}
+/**
+ * Callback function mc_plupload_element_pre_render()
+ * to pre_render plupload settings by jquery.
+ **/
+function mc_plupload_element_pre_render($element){
+	$element['#description'] = '';
+	$settings = isset($element['#plupload_settings']) ? $element['#plupload_settings'] : array();
+	$field_name = isset($element['#name']) ? $element['#name'] : '';
+	if(isset($settings['singlefile'])) {
+		if($field_name == 'listed_mailing_list') {
+			$settings['init']['FilesAdded'] = 'Drupal.upload_mail_list_plupload.ListfilesAddedCallback';
+			$settings['init']['FilesRemoved'] = 'Drupal.upload_mail_list_plupload.ListFilesRemovedCallback';
+		}
+		else if($field_name == 'sold_mailing_list') {
+			$settings['init']['FilesAdded'] = 'Drupal.upload_mail_list_plupload.SoldfilesAddedCallback';
+			$settings['init']['FilesRemoved'] = 'Drupal.upload_mail_list_plupload.SoldFilesRemovedCallback';
+		}
+	}
+	$element['#attached']['js'][] = array(
+		'type' => 'setting',
+		'data' => array('plupload' => array($element['#id'] => $settings)),
+	);
+
+	return $element;
+}
+/**
+ * Callback function mc_shipping_information()
+ * to display order user office info.
+ **/
+function mc_shipping_information($uid){
+	$user_detail = user_load($uid);
+	$office_id = $user_detail->field_member_office['und']['0']['value'];
+	$office_nid = db_query("SELECT entity_id FROM field_data_field_office_id WHERE field_office_id_value = :office_id", array(':office_id' => $office_id))->fetchField();
+	$office_node = node_load($office_nid);
+	$mc_shipping = array(
+		'office_name' => $office_node->title,
+		'address' => $office_node->field_office_address['und']['0']['value'],
+		'city' => $office_node->field_office_city['und']['0']['value'],
+		'state' => $office_node->field_office_state['und']['0']['value'],
+		'zip' => $office_node->field_office_zip['und']['0']['value'],
+		'phone' => $user_detail->field_phone_direct['und']['0']['value'],
+	);
+	//print "<pre>";print_r($user_detail);exit;
+	return $mc_shipping;
+}
+/**
+ * Callback function mc_commerce_checkout_cancel()
+ * to cancle the order.
+ **/
+function mc_commerce_checkout_cancel($order_id){
+	//print $order_id;exit;
+	commerce_order_delete($order_id);
+	drupal_set_message(t('Order canceled successfuly.'), 'status');
+	if(isset($_SESSION['my_listing_back']) && $_SESSION['my_listing_back'] != '') {
+		$my_listing_back = $_SESSION['my_listing_back'];
+	}
+	else {
+		$my_listing_back = 'node/510';
+	}
+	drupal_goto($my_listing_back);
+}
+/**
+ * Callback function marketing_concierge_access()
+ * to set the access of Marketing Concierge Order System pages
+ * @return TRUE/FALSE
+ **/
+function marketing_concierge_access() {
+	global $user;
+	//New user role "Marketing Concierge"
+	$mc_roles = array("Siteadmin", "Administrator", "Marketing Concierge");
+	$mc_roles_result = array_intersect($mc_roles, $user->roles);
+	if(!empty($mc_roles_result)) {
+		return TRUE;
+	}
+	else {
+		return FALSE;
+	}
+}
+/**
+ * Callback function mc_commerce_checkout_cancel()
+ * to cancle the order.
+ **/
+function mc_commerce_complete_data($order_id){
+	$order = commerce_order_load($order_id);
+	$lnid = $order->field_lms_listing_reference['und']['0']['nid'];
+	$query = db_select('mc_notifications', 'mcn')
+		->fields('mcn', array('id'))
+		->condition('mc_status', 'Order Placed', '=')
+		->condition('mc_send_to', 'agent', '=');
+	$id = $query->execute()->fetchField();
+	module_load_include('inc', 'mc_notifications', 'includes/notification_message');
+	$message = mc_notification_message($id, $lnid);
+	return $message;
+}
+
+
+
+
+
+/**
+ * Implements hook_element_info_alter(). Added by nitesh
+ */
+
+/**
+ * Clears an error against one form element.
+ *
+ * @param string $name
+ *   The name of the form element.
+ */
+function marketing_concierge_unset_form_error($name) {
+  $errors = &drupal_static('form_set_error', array());
+  $removed_messages = array();
+  if (isset($errors[$name])) {
+    $removed_messages[] = $errors[$name];
+    unset($errors[$name]);
+  }
+  $_SESSION['messages']['error'] = array_diff($_SESSION['messages']['error'], $removed_messages);
+}
+
+/**
+ * Validates required fields for entity form.
+ */
+function marketing_concierge_validate_required_form_element(&$element, &$form_state, $form) {
+  // Ignore hidden elements.
+  if (isset($element['#access']) && !$element['#access']) {
+    return;
+  }
+
+  // Ignore elements that don't have check_empty flag on.
+  if (empty($element['#check_empty']) || empty($element['#required_error']) || empty($element['#required'])) {
+    return;
+  }
+
+  // A simple call to empty() will not cut it here as some fields, like
+  // checkboxes, can return a valid value of '0'. Instead, check the
+  // length if it's a string, and the item count if it's an array.
+  // An unchecked checkbox has a #value of integer 0, different than string
+  // '0', which could be a valid value.
+  $is_empty_multiple = (!count($element['#value']));
+  $is_empty_string = (is_string($element['#value']) && drupal_strlen(trim($element['#value'])) == 0);
+  $is_empty_value = ($element['#value'] === 0);
+  if ($is_empty_multiple || $is_empty_string || $is_empty_value) {
+    // Unset any errors set on this field
+    // by core invocation of _field_validate.
+    marketing_concierge_form_unset_error(implode('][', $element['#parents']));
+    // !unique_tag is used to cater for a problem in IFE module.
+    // For error message that are the same,
+    // IFE is dropping some of them while attaching to the in-line field.
+    // Making the messages unique (through an HTML comment), forces IFE
+    // to behave correctly.
+    form_error($element, sprintf('%s %s', '<!-- ' . $element['#title'] . ' -->', $element['#required_error']));
+  }
+
+  $element['#check_empty'] = FALSE;
+}
+
+/**
+ * Clears an error against one form element.
+ *
+ * @param string $name
+ *   The name of the form element.
+ */
+function marketing_concierge_form_unset_error($name) {
+  $errors = &drupal_static('form_set_error', array());
+  $removed_messages = array();
+  if (isset($errors[$name])) {
+    $removed_messages[] = $errors[$name];
+    unset($errors[$name]);
+  }
+  $_SESSION['messages']['error'] = array_diff($_SESSION['messages']['error'], $removed_messages);
+}

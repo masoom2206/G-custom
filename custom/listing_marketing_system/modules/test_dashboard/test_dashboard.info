@@ -1,0 +1,7 @@
+name = "CB|ONE Dashboard Testing purpose"
+description = "CB|ONE LMS Office and Marketing Coordinator Dashboard". This module creates Dashboard functionlity for Manager, Office Assistant and Marketing Coordinator.
+core = "7.x"
+package = "CB|ONE LMS"
+version = "7.x-1.0"
+project = "CB|ONE LMS"
+datestamp = ""

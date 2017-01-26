@@ -1,0 +1,10 @@
+name = Document Management System
+description = document_management_system.
+package = DMS
+core = 7.x
+
+version = "7.x-1.0"
+core = "7.x"
+project = "DMS"
+datestamp = "1366871711"
+

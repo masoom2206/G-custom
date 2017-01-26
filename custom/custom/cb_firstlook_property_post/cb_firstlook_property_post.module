@@ -1,0 +1,19 @@
+<?php
+/*
+* Implements hook_form_alter()
+*/
+function cb_firstlook_property_post_form_alter(&$form, $form_state, $form_id) {
+	switch($form_id) {
+	case 'cb_firstlook_property_post_node_form':
+		global $user;
+		$user_realname = db_query("SELECT realname FROM {realname} WHERE uid = :uid", array(':uid' => $user->uid))->fetchCol();
+		$user_email = db_query("SELECT field_person_email_value FROM {field_data_field_person_email} WHERE entity_type='user' AND entity_id = :uid", array(':uid' => $user->uid))->fetchCol();
+ 		// Set only on nodes that haven't already been saved
+		if (!isset($form['#node']->nid)) {
+			$form['field_firstlook_email']['und'][0]['value']['#default_value'] = $user_email;
+			$form['field_firstlook_sa']['und'][0]['value']['#default_value'] = $user_realname;
+		}
+		break;
+	} //switch
+}
+?>

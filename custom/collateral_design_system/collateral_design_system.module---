@@ -1,0 +1,1132 @@
+<?php
+/**
+ * Implements hook_init()
+ */
+function collateral_design_system_init(){
+	global $base_url, $user;
+	if(arg(0) == 'property-pdf' || arg(0)== 'property-layout' || arg(0)== 'collateral-design-system' || arg(0)== 'pdf-selection-setting') {
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/cds.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/master.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/prism.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/bootstrap.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/kitchensink.css');
+		drupal_add_css(drupal_get_path('module', 'property_pdf') . '/css/property_pdf.css');
+	
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/prism.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/fabric.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/master.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/bootstrap.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/paster.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/angular.min.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/utils.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/app_config.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/controller.js');
+		drupal_add_css('//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css', 'external');
+		drupal_add_css('//fonts.googleapis.com/css?family=Plaster', 'external');
+		drupal_add_css('//fonts.googleapis.com/css?family=Engagement', 'external');
+		drupal_add_js('//fabricjs.com/lib/font_definitions.js', 'external');
+		
+	}
+	if(arg(0) == 'cds' || arg(0)== 'property-ads') {
+		drupal_add_css('//fonts.googleapis.com/css?family=Open+Sans', 'external');
+		drupal_add_css('//fonts.googleapis.com/css?family=Raleway', 'external');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/prism.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/bootstrap.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/kitchensink.css');		
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/cds_design.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/cds_design_template.css');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/css/property-ads-new.css');
+		
+		
+		
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/prism.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/fabric.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/master.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/bootstrap.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/paster.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/angular.min.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/utils.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/app_config.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/cds.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/controller.js');		
+	}
+	if(arg(0) == 'cds' && arg(1)=='design' && arg(2)=='create' ) {
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/cds_setting.js');
+	}
+	if(arg(0)== 'property-layout'){
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/property_layout.css');
+		drupal_add_css(drupal_get_path('module', 'property_pdf') . '/css/property_pdf.css');
+		drupal_add_js(drupal_get_path('module', 'property_pdf') . '/js/property_pdf.js');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/jquery.imgareaselect.js');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/jquery.imgareaselect.pack.js');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/jquery.imgareaselect.min.js');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/imgareaselect-deprecated.css');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/imgareaselect-default.css');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/imgareaselect-animated.css');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/croppie.css');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/croppie.js');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/cropbox.js');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/sh_main.min.js');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/sh_javascript.min.js');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/style.jrac.css');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/jrac.css');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/sh_style.css');
+		drupal_add_css(drupal_get_path('module', 'property_layout') . '/css/jquery-ui.css');
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/jquery.jrac.js');
+	}
+	if(arg(0)== 'property-ads'){
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/cds-property-ads.js');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/js/cds_setting.js');
+		drupal_add_css(drupal_get_path('module', 'collateral_design_system') . '/selectbox/jquery.selectBox.css');
+		drupal_add_js(drupal_get_path('module', 'collateral_design_system') . '/selectbox/jquery.selectBox.js');
+		
+	}
+	if(arg(0)== 'property-layout'){
+		drupal_add_js(drupal_get_path('module', 'property_layout') . '/js/property_layout.js');
+	}
+	if(arg(0)== 'property-pdf'){
+		drupal_add_js(drupal_get_path('module', 'property_pdf') . '/js/property_pdf.js');
+	}
+}
+/**
+* Implementation of hook_menu
+*/
+function collateral_design_system_menu() {
+  $items = array();
+	$items['cds/design'] = array(
+		'title'				=> 'Collateral Design System',
+		'description'		=> 'Collateral Design System',
+		'page callback'		=> 'cds_design',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds/design/%'] = array(
+		'title'				=> 'Collateral Design System',
+		'description'		=> 'Collateral Design System',
+		'page callback'		=> 'cds_design_type',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds/design/%/settings'] = array(
+		'title'				=> 'Collateral Design System',
+		'description'		=> 'Collateral Design System',
+		'page callback'		=> 'cds_design_setting',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds/design/create/%'] = array(
+		'title'				=> 'Property Design template',
+		'description'		=> 'Property Design template',
+		'page callback'		=> 'cds_design_page',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds/design/saved/template/json/%'] = array(
+		'title'				=> 'Property Design template',
+		'description'		=> 'Property Design template',
+		'page callback'		=> 'cds_design_saved_template_json_page',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds/design/saved/template/json/%/delete'] = array(
+		'title'				=> 'Property Design template',
+		'description'		=> 'Property Design template',
+		'page callback'		=> 'cds_design_saved_template_json_delete_page',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds/design/saved/template/json/%/delete/confirm'] = array(
+		'title'				=> 'Property Design template',
+		'description'		=> 'Property Design template',
+		'page callback'		=> 'cds_design_saved_template_json_delete_confirm_page',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['pdf-elements'] = array(
+		'title'				=> 'Property PDF elements',
+		'description'		=> 'Property PDF elements',
+		'page callback'		=> 'property_pdf_elements',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['delete-elements'] = array(
+		'page callback'		=> 'delete_elements',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['property-ads-ajax'] = array(
+		'title'				=> 'Property Ads template',
+		'description'		=> 'Property Ads template',
+		'page callback'		=> 'property_ads_ajax_page',
+		'access callback'	=> 'user_is_logged_in',
+		 'file'    			=> 'includes/cds_design_setting.inc',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['property-preview-ads/%'] = array(
+		'title'				=> 'Property Ads template',
+		'description'		=> 'Property Ads template',
+		'page callback'		=> 'property_preview_ads_page',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds-save-template'] = array(
+		'title'				=> 'Property Ads template',
+		'description'		=> 'Property Ads template',
+		'page callback'		=> 'cds_save_template',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+	$items['cds-save-template-data'] = array(
+		'title'				=> 'Property Ads template',
+		'description'		=> 'Property Ads template',
+		'page callback'		=> 'cds_save_template_data',
+		'access callback'	=> 'user_is_logged_in',
+		'type'				=> MENU_NORMAL_ITEM,
+	);
+ return $items;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function collateral_design_system_block_info() {
+	$blocks = array();
+	$blocks['text_menu'] = array(
+		'info' => t('CDS Text Menu'),
+	);
+	$blocks['image_menu'] = array(
+		'info' => t('CDS Image Menu'),
+	);
+	$blocks['cds_product_type'] = array(
+		'info' => t('CDS template Product Type'),
+	);
+	$blocks['saved_template'] = array(
+		'info' => t('Saved Template'),
+	);
+	$blocks['top_banner_breadcrumbs'] = array(
+		'info' => t('CDS topmost banner breadcrumbs'),
+	);
+	return $blocks;
+}
+/**
+ * Implements hook_block_view().
+ */
+function collateral_design_system_block_view($delta='') {
+	$block = array();
+	switch($delta) {	
+		case 'text_menu' :
+			$block['content'] = cds_text_menu();
+		break;
+		case 'image_menu' :
+			$block['content'] = cds_image_menu();
+		break;
+		case 'cds_product_type' :
+			$block['content'] = cds_pdf_template();
+		break;
+		case 'saved_template' :
+			$block['content'] = cds_saved_template();
+		break;
+		case 'top_banner_breadcrumbs':
+			$block['content'] = top_banner_breadcrumbs_template();
+		break;
+	}
+
+	return $block;
+}
+
+/**
+ * Callback function cds_design()
+ * to set the template for PDF design templates
+ **/
+function cds_design(){
+	global $user;
+	$data = theme('cds_design', array('var_name' => NULL));
+	return $data;
+}
+/**
+ * Callback function cds_design()
+ * to set the template for PDF design templates
+ **/
+function cds_design_type(){
+	global $user;
+	$data = theme('cds_design_type', array('var_name' => NULL));
+	return $data;
+}
+/**
+ * Callback function cds_design_setting()
+ * to set the template for PDF design templates Product selection
+ **/
+function cds_design_setting(){
+	$settings=array();
+	if(isset($_GET['design_id'])){
+		$design_id = $_GET['design_id'];
+		$cds_json_data['design_id'] = $design_id;
+		$result = db_select('custom_save_template_json', 'cst')
+					->fields('cst')
+					->condition('id', $design_id,'=')
+					->execute();
+		foreach($result as $value){
+			$cds_json_data['json_data'] = $value->json_data;
+			$cds_json_data['page_settings'] = $value->page_settings;
+		}
+		$settings = $cds_json_data;
+	}
+	$data = theme('cds_design_setting', array('var_name' => $settings));
+	return $data;
+}
+/**
+ * Callback function cds_design_setting()
+ * to set the template for PDF design templates Product selection
+ **/
+function cds_design_page(){
+	$data = theme('cds_design_page', array('var_name' => NULL));
+	return $data;
+}
+/**
+ * Implements hook_theme
+ **/
+function collateral_design_system_theme($existing, $type, $theme, $path) {
+	$theme = array(
+		'cds_design' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cds-design', // do not include .tpl.php
+		),
+		'cds_design_type' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cds-design-type', // do not include .tpl.php
+		),
+		'cds_design_setting' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cds-design-setting', // do not include .tpl.php
+		),
+		'cds_design_page' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cds-design-page', // do not include .tpl.php
+		),
+		'cds_text_menu' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cds-text-menu', // do not include .tpl.php
+		),
+		'cds_image_menu' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/cds-image-menu', // do not include .tpl.php
+		),
+		'top_banner_breadcrumbs_template' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/top-banner-breadcrumbs-template', // do not include .tpl.php
+		),
+		
+	);
+	return $theme;
+}
+
+function cds_pdf_elements($category = NULL){
+	global $user, $base_url;
+	$result = db_select('custom_images', 'ci')
+				->fields('ci')
+				->condition('category', $category, '=')
+				->execute();
+	$dir_uri = file_stream_wrapper_get_instance_by_uri('modules://');
+	$real_path = $dir_uri->realpath();
+	$real_path_explode = explode('public_html', $real_path);
+	$output = '';
+	foreach($result as $data){
+		$explode = explode('://', $data->path);
+		$canvas_img_path = $real_path_explode[1]."/".$explode[1];
+		$img_name = basename($canvas_img_path);
+		if(!empty($data->path)){
+			if($data->category == 'backgrounds'){
+				$config = array(
+				  "style_name" => "cds_ajax_load_icons",
+				  "path" =>$data->path,
+				  'attributes' => array( 'onclick' => "set_background(jQuery(this).attr('class'))", 'class' => 'Testing'),
+				 );
+				$goatse_picture= theme_image_style($config);
+				$output .= $goatse_picture;
+			}else{
+				$config = array(
+				  "style_name" => "cds_ajax_load_icons",
+				  "path" =>$data->path,
+				  'attributes' => array('onclick' => "select_img(jQuery(this).attr('class'))", 'class' => 'test'),
+				 );
+				$goatse_picture= theme_image_style($config);
+				$output .= $goatse_picture;
+			}
+		}
+	}
+	if(!empty($output)){
+		
+		$retrun_output = $output;
+	}else{
+		$retrun_output = "";
+	}
+	return $retrun_output;
+}
+/**
+ * callback function for cds_text_menu
+ **/
+function cds_text_menu(){
+	$data = theme('cds_text_menu', array('var_name' => NULL));
+	return $data;
+}
+/**
+ * callback function for cds_image_menu
+ **/
+function cds_image_menu(){
+	$data = theme('cds_image_menu', array('var_name' => NULL));
+	return $data;
+}
+
+/**
+ * callback function for top_banner_breadcrumbs_template
+ **/
+ function top_banner_breadcrumbs_template(){
+	$data = theme('top_banner_breadcrumbs_template', array('var_name'=> NULL));
+	return $data;
+ }
+
+function cds_saved_template(){
+	$media_format='';
+	$arg = arg();
+	if( isset( $arg[2] ) ){
+		$media_format = arg(2);
+	}
+	global $base_url;
+	$result = db_select('custom_save_template_json', 'cst')
+				->fields('cst')
+				->execute();
+	$dir_uri = file_stream_wrapper_get_instance_by_uri('modules://');
+	$real_path = $dir_uri;
+	$real_path_explode = explode('public_html', $dir_uri);
+	$output = '<div class="result">';
+	foreach($result as $data){
+		$explode = explode('://', $data->image_path);
+		$canvas_img_path = $real_path_explode[1]."/".$explode[1];
+		$json_data = $data->json_data;
+		$decode_json_data = json_decode($json_data);
+		$image_count = 0;
+		if(is_array($decode_json_data)){
+			$custom_image_count_from_json_data = json_decode($json_data);
+			foreach($custom_image_count_from_json_data as $custom_data){
+				$custom_image_count_from_json_data_child = json_decode($custom_data);
+				foreach($custom_image_count_from_json_data_child->objects as $json_data_value_child){
+					if($json_data_value_child->type == 'image'){
+						$image_count++;
+					}
+				}
+			}
+		}else{
+			foreach($decode_json_data->objects as $json_data_value){
+				if($json_data_value->type == 'image'){
+					$image_count++;
+				}
+			}
+		}
+		foreach($decode_json_data->objects as $json_data_value){
+			if($json_data_value->type == 'image'){
+				$image_count++;
+			}
+		}
+		$page_settings_data = json_decode($data->page_settings);
+		$config = array(
+				  "style_name" => "cds_saved_tempates",
+				  "path" =>$data->image_path,
+				  //'attributes' => array( 'onclick' => "load_cdsjson(jQuery(this).attr('class'))", 'class' => $json_data),
+				);
+		$goatse_picture= theme_image_style($config);
+		$edit_url = url('cds/design/'.$media_format.'/settings', array('query' => array('design_id'=> $data->id)));
+		$output.='<div class="cds-saved-template-image-show-area">
+						<div class = "cds-saved-template-img">
+							'.$goatse_picture.'
+							<div class="node_details"> <!--node_details-- -->
+								<div class="node-title">
+									<span>'.$page_settings_data->template_name.'</span>
+								</div>
+								<div class="node-side_photos">
+									<span>Sides: '.$page_settings_data->sides.'</span>
+									<span> Photos: '.$image_count.' </span>
+								</div>
+								<div class="temp_icons">
+									<span class="edit_brochure">
+										<a href="'.$edit_url.'" alt="Edit" title="Edit">
+											<img src="/sites/all/modules/custom/listing_marketing_system/images/pencil-edit.png">
+										</a>
+									</span>
+									<span class="delete_brochure">
+										<a href="'.$base_url.'/cds/design/saved/template/json/'.$data->id.'/delete/confirm" alt="Delete" title="Delete">
+											<img src="/sites/all/modules/custom/listing_marketing_system/images/trashcan.png">
+										</a>
+									</span>
+									<ul id="auto-loop" class="gallery5">
+										<div class="magnify">
+											<li>
+												<a href="'.$base_url.'/sites/all/modules'.$canvas_img_path.'" rel="lightbox[gallery5][920 - CB Classic Print &amp; Go 3]" alt="Zoom In" title="Zoom In">
+													<img src="/sites/all/modules/custom/listing_marketing_system/images/magnify.png">
+												</a>
+											</li>
+										</div>
+									</ul>
+									</div>
+							</div>
+						</div>
+					</div>';
+	}
+	$output .= '</div>';
+	return $output;
+}
+
+/**
+ * callback function for cds_pdf_template
+ **/
+function cds_pdf_template(){
+	$media_format='';
+	$arg = arg();
+	if( isset( $arg[2] ) ){
+		$media_format = arg(2);
+	}
+	$options = array();
+	$voc = taxonomy_vocabulary_machine_name_load('product_type');
+	$terms = taxonomy_get_tree($voc->vid, 0, 1);
+	$output = '<div class="product-lists"><ul class="product-tabs">';
+    foreach ($terms as $data) {
+		$term = taxonomy_term_load($data->tid);
+		if(isset($term->field_product_media_format['und'][0]['tid'])){
+			$media_term_id = $term->field_product_media_format['und'][0]['tid'];
+			if($media_format == 'pdf' && $media_term_id == 810){
+				$options[] = array('tid'=>$data->tid, 'name'=>$data->name);
+				$list_item = l($data->name, 'cds/design/pdf',  array('query'=>array('type'=>$data->name), 'attributes' => array('id'=>$data->tid,'class' => array('product_type'))));
+				$output .= '<li>'.$list_item.'</li>';
+			}
+		}
+    }
+	$output .= '</ul></div>';
+	if(isset($_GET['type'])){
+		foreach($options as $key=>$value){
+			if( $_GET['type'] == $value['name']){
+				$p_id = $value['tid'];
+			}
+		}
+		$p_name = $_GET['type'];
+	}
+	else{
+		$p_id = $options[0]['tid'];
+		$p_name = $options[0]['name'];
+	}
+	$output .= cds_pdf_template_data($p_id, $p_name);
+	return $output;
+}
+/**
+ * callback function for cds_pdf_template_data
+ **/
+function cds_pdf_template_data($id, $name){
+	$type = arg(2);
+	$link = l('Create New '.$name, 'cds/design/'.$type.'/settings');
+	$output = '<div class="prodcut_item_list">'.$link.'</div>';
+	return $output;
+}
+
+/**
+* callback function for  
+**/
+
+function cds_design_saved_template_json_page(){
+	$json_data_id = arg(5);
+	$cds_json_data = array();
+	if(isset($json_data_id)){
+		$result = db_select('custom_save_template_json', 'cst')
+					->fields('cst')
+					->condition('id', $json_data_id,'=')
+					->execute();
+		foreach($result as $value){
+			$cds_json_data['json_data'] = $value->json_data;
+			$cds_json_data['page_settings'] = $value->page_settings;
+		}
+		$_SESSION['saved_template_json_data'] = $cds_json_data;
+		$url = 'cds/design/create/pdf';
+		drupal_goto($url);
+	}else{
+		echo "Refernce id is not correct. Please try again";
+	}
+}
+/**
+* this function callback for cds_design_saved_template_json_delete_page
+*/
+function cds_design_saved_template_json_delete_page(){
+	global $base_url;
+	$json_data_id = arg(5);
+	$result = db_select('custom_save_template_json', 'cst')
+					->fields('cst')
+					->condition('id', $json_data_id,'=')
+					->execute();
+		foreach($result as $value){
+			$page_settings_json = json_decode($value->page_settings);
+			$template_title = $page_settings_json->title;
+		}
+	$name = $_POST['name'];
+	$folder = $_POST['forlder'];
+
+	$image_query = db_delete('custom_save_template_json')
+	->condition('id', $json_data_id)
+	->execute();
+	drupal_set_message($template_title.' tempalte has been deleted.', 'status');
+	$message = theme('status_messages');
+	$url = 'cds/design/pdf';
+	drupal_goto($url);
+}
+/**
+* this function callback for cds_design_saved_template_json_delete_confirm_page
+*/
+function cds_design_saved_template_json_delete_confirm_page(){
+	global $base_url;
+	$json_data_id = arg(5);
+	$result = db_select('custom_save_template_json', 'cst')
+					->fields('cst')
+					->condition('id', $json_data_id,'=')
+					->execute();
+		foreach($result as $value){
+			$page_settings_json = json_decode($value->page_settings);
+			$template_title = $page_settings_json->title;
+		}
+	$output = '<div style="padding: 25px;"><h3>Are you sure you want to Delete <b>'.$template_title.'</b> ? </h3> <h4>This action cannot be undone.</h4>';
+	$output .= '<a id="edit-cancel" class="cds-delete-saved-template-btn" href="'.$base_url.'/cds/design/saved/template/json/'.$json_data_id.'/delete">Delete</a>';
+	$output .= '<a id="edit-cancel" class="cds-delete-saved-template-btn" href="'.$base_url.'/cds/design/pdf">Cancel</a></div>';
+	return $output;
+}
+/**
+ * Callback function property_pdf()
+ * to set the template for PDF design templates
+ **/
+ 
+function property_pdf_elements(){
+	global $user, $base_url;
+	$category = $_POST['category'];
+	$folder = $_POST['folder'];
+	$result = db_select('custom_images', 'ci')
+				->fields('ci')
+				->condition('category', $category, '=')
+				->condition('folder', $folder, '=')
+				->execute();
+	$dir_uri = file_stream_wrapper_get_instance_by_uri('modules://');
+	$real_path = $dir_uri->realpath();
+	$real_path_explode = explode('public_html', $real_path);
+	$output = '';
+	foreach($result as $data){
+		$explode = explode('://', $data->path);
+		$canvas_img_path = $real_path_explode[1]."/".$explode[1];
+		$img_name = basename($canvas_img_path);
+		$rep_name = str_replace("%20","",$img_name);
+		$action = "images";
+		if(!empty($data->path)){
+			if(strtolower($data->category) == 'background'){
+				$config = array(
+				  "style_name" => "cds_ajax_load_icons",
+				  "path" =>$data->path,
+				  'attributes' => array( 'onclick' => "set_background(jQuery(this).attr('class'))", 'class' => $base_url.$canvas_img_path),
+				 );
+				$goatse_picture= theme_image_style($config);
+				$output .= '<div class="canvas-img-cont"><img onclick="canvas_delete_image(\''.$rep_name.'\',\''.$folder.'\',\''.$category.'\');" style="height:12px !important; width: 12px !important;  position: absolute;  margin-left: 74% !important; cursor:pointer;" class="deleteimage" src="/sites/all/modules/custom/collateral_design_system/images/delete.png"></img>';
+				$output .= $goatse_picture.'</div>';
+			}else{
+				$config = array(
+				  "style_name" => "cds_ajax_load_icons",
+				  "path" =>$data->path,
+				  'attributes' => array('onclick' => "select_img(jQuery(this).attr('class'))", 'class' => $canvas_img_path),
+				 );
+				$goatse_picture= theme_image_style($config);
+				$output .= '<div class="canvas-img-cont"><img onclick="canvas_delete_image(\''.$rep_name.'\',\''.$folder.'\',\''.$category.'\');" style="height:12px !important; width: 12px !important;  position: absolute;  margin-left: 74% !important; cursor:pointer;" class="deleteimage" src="/sites/all/modules/custom/collateral_design_system/images/delete.png"></img>';
+				$output .= $goatse_picture.'</div>';
+			}
+		}
+	}
+	if(!empty($output)){
+		$retrun_output = $output;
+	}else{
+		$retrun_output = "No Image File Found";
+	}
+	return '<div class="result"><div class="cds-uploaded-image-show-area">'.$retrun_output.'</div></div>';
+}
+
+function delete_elements(){
+	$name = $_POST['name'];
+	$folder = $_POST['folder'];
+	$category = $_POST['category'];
+
+	$image_query = db_delete('custom_images')
+	->condition('image', $name)
+	->condition('folder', $folder)
+	->condition('category', $category)
+	->execute();
+		drupal_set_message($name.' image has been deleted from '. $folder . 'folder.', 'status');
+		$message = theme('status_messages');
+		echo $text = $name.' image has been deleted from '. $folder . ' folder.';
+}
+/**
+  * A simple newsletter subscribe form.
+  */
+function property_ads_form($form, &$form_state, $click){
+	//echo $click;
+	$form = array();
+	
+	$category_options = array();
+	$voc = taxonomy_vocabulary_machine_name_load('upload_category');
+	$terms = taxonomy_get_tree($voc->vid, 0, 1);
+    foreach ($terms as $data) {
+        $category_options[$data->tid] = $data->name;
+    }
+  // Check the value of parent select list and populate the value of child select list according to that.
+  $category_value = !empty($form_state['values']['image_category']) ? $form_state['values']['image_category'] : '';
+
+	$extensions = array('jpg jpeg png tif');
+	
+	$submit = t('Save File');
+
+		$title = t('Upload Image');  
+		$form['image_file'] = array(
+		'#type' => 'plupload',
+		'#title' => $title,
+		'#description' => t('Drag photos or select by "Add files".'),
+		'#placeholder' => t('Drag Files here'),
+		'#autoupload' => TRUE,
+		'#autosubmit' => false,
+		'#upload_validators' => array(
+			'file_validate_extensions' => $extensions,
+		),
+		'#prefix' => '<div class="cds-image-upload-field"><h3>Template File Upload</h3>',
+		'#suffix' => '</div>',
+	);
+	
+	$form['image_category'] = array(
+	  '#type' => 'select',
+	  '#title' => t('Category'),
+	  '#options' => $category_options,
+	  //'#default_value' => $category_options[''],
+	  '#required' => TRUE,
+	  '#ajax' => array(
+		  'callback' => 'category_dynamic_list_select_list_ajax_callback',
+		  'wrapper' => 'child-select-list-wrapper',
+		  'event' => 'change',
+		),
+	  '#prefix' => '<div class="cds-image-upload-file-setting"><div class="cds-image-upload-input-fields-header"><h3>File Settings</h3></div>',
+	);
+
+	$form['image_folder'] = array(
+	  '#type' => 'select',
+	  '#title' => t('Folder'),
+	  '#options' => folder_select_list_options($category_value,$click),
+	  '#prefix' => '<div id="child-select-list-wrapper">',
+	   '#suffix' => '</div>',
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => $submit,
+		'#ajax' => array(
+			'callback' => 'property_ads_form_ajax_submit',
+			'wrapper' => 'property-ads-form',
+			'method' => 'replace',
+			'effect' => 'fade',
+		),
+		'#suffix' => '</div>',
+	);
+	$form['#attached']['js'][] = drupal_get_path("module", "collateral_design_system")."/js/form_submit.js" ;
+	return $form;
+}
+
+function property_ads_form_pdf($form, &$form_state, $click){
+	//echo $click;
+	$form = array();
+	
+	//$category_options = array();
+	$voc = taxonomy_vocabulary_machine_name_load('upload_category');
+	$terms = taxonomy_get_tree($voc->vid, 0, 1);
+    foreach ($terms as $data) {
+        if($data->name == "Background"){
+			$category_options[$data->tid] = $data->name;
+		}
+    }
+  // Check the value of parent select list and populate the value of child select list according to that.
+  $category_value = !empty($form_state['values']['image_category']) ? $form_state['values']['image_category'] : '817';
+
+	$extensions = array('pdf');
+	
+	$submit = t('Save File');
+
+	$title = t('Upload Pdf');  
+	$form['image_file2'] = array(
+		'#type' => 'plupload',
+		'#title' => $title,
+		'#description' => t('Drag photos or select by "Add PDF".'),
+		'#placeholder' => t('Drag PDF here'),
+		'#autoupload' => TRUE,
+		'#autosubmit' => false,
+		'#upload_validators' => array(
+			'file_validate_extensions' => $extensions,
+		),
+		'#prefix' => '<div class="cds-image-upload-field"><h3>Template File Upload</h3>',
+		'#suffix' => '</div>',
+	);
+	
+	$form['image_category2'] = array(
+	  '#type' => 'select',
+	  '#title' => t('Category'),
+	  '#options' => $category_options,
+	  '#default_value' => $category_options,
+	  '#required' => TRUE,
+	  '#ajax' => array(
+		  'callback' => 'category_dynamic_list_select_list_ajax_callback2',
+		  'wrapper' => 'child-select-list-wrapper',
+		  'event' => 'change',
+		),
+	  '#prefix' => '<div class="cds-image-upload-file-setting"><div class="cds-image-upload-input-fields-header"><h3>File Settings</h3></div>',
+	);
+
+	$form['image_folder2'] = array(
+	  '#type' => 'select',
+	  '#title' => t('Folder'),
+	  '#options' => folder_select_list_options_pdf($category_value,'PDF'),
+	  '#prefix' => '<div id="child-select-list-wrapper">',
+	   '#suffix' => '</div>',
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => $submit,
+		'#ajax' => array(
+			'callback' => 'property_ads_form_pdf_ajax_submit',
+			'wrapper' => 'property-ads-form-pdf',
+			'method' => 'replace',
+			'effect' => 'fade',
+		),
+		'#suffix' => '</div>',
+	);
+	$form['#attached']['js'][] = drupal_get_path("module", "collateral_design_system")."/js/form_submit.js" ;
+	return $form;
+}
+
+function property_ads_form_pdf_ajax_submit($form, $form_state) {
+	if (isset($form_state)) {
+		$cat_term = taxonomy_term_load($form_state['values']['image_category2']);
+		$category = strtolower($cat_term->name);
+		$folder_term = taxonomy_term_load($form_state['values']['image_folder2']);
+		$folder = strtolower($folder_term->name);
+		$saved_files = array();
+		
+		$cate_path = 'modules://custom/collateral_design_system/upload/'.$category.'/';
+		$folder_path = 'modules://custom/collateral_design_system/upload/'.$category.'/'.$folder.'/';
+		file_prepare_directory($cate_path, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+		file_prepare_directory($folder_path, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+		
+		$scheme = 'modules://custom/collateral_design_system/upload/'.$category.'/'.$folder.'/';
+		if( !empty($form_state['values']['image_file2']) ){
+			foreach ($form_state['values']['image_file2'] as $uploaded_file) {
+				if ($uploaded_file['status'] == 'done') {
+					$uploaded_image_name = $uploaded_file['name'];
+					$explode_image_name = explode('.', $uploaded_image_name);
+					//$field_image_name = $form_state['values']['image_name'];
+					$image_name = $explode_image_name[0].'.'.$explode_image_name[1];
+					$source = $uploaded_file['tmppath'];
+					$destination = $scheme.$image_name;
+					// Rename it to its original name, and put it in its final home.
+					// Note - not using file_move here because if we call file_get_mime
+					// (in file_uri_to_object) while it has a .tmp extension, it horks.
+					$destination = file_unmanaged_move($source, $destination, FILE_EXISTS_RENAME);
+					$file = plupload_file_uri_to_object($destination);
+					file_save($file);
+					$saved_files[] = $file;
+					$saved_image_name = $file->filename;
+					$saved_image_path = $file->uri;
+					
+					$pdf_file_name = drupal_realpath($scheme.$image_name);	
+					
+									
+					$exchnage_pdf_file_name = str_replace(".pdf",".jpg",basename($pdf_file_name));							
+						$final_name = drupal_realpath($scheme.'thumb/'.$exchnage_pdf_file_name);
+						$cmd =  "convert -density 200 $pdf_file_name -quality 100 $final_name";
+						exec($cmd,$op);	
+						
+						$count_pdf_pages = count_pages($pdf_file_name);						
+						for ($x = 0; $x < $count_pdf_pages; $x++) {
+						$replace =  "-".$x.".jpg";
+						$exchnage_pdf_file_name2 = str_replace(".pdf",$replace,basename($pdf_file_name));
+						$image_query = db_insert('custom_images')
+							->fields(array(
+								'image' => $exchnage_pdf_file_name2,
+								'path' => $scheme.'thumb/'.$exchnage_pdf_file_name2,
+								'category' => $category,
+								'folder' => $folder,
+							))
+							->execute();
+						}	
+						drupal_set_message('File has been uploaded.', 'status');
+						$message = theme('status_messages');
+				}else{
+					drupal_set_message('File not uploaded.', 'error');
+					$message = theme('status_messages');
+				}
+			}
+		}
+		else{
+			drupal_set_message('File not uploaded properly.', 'error');
+			$message = theme('status_messages');
+		}
+		$form_state['rebuild'] = TRUE;
+		$commands = array();
+		$commands[] = ajax_command_remove('.alert');
+		$commands[] = ajax_command_prepend(Null, '<div class="message">'.$message.'</div>');
+		$commands[] = array (
+			'command' => 'afterAjaxCallbackExample', // The command in my JS file
+		  );
+		return array('#type' => 'ajax', '#commands' => $commands);
+	}
+	else {
+		$message = theme('status_messages');
+		$form_state['rebuild'] = TRUE;
+		$commands = array();
+		$commands[] = ajax_command_remove('.alert');
+		$commands[] = ajax_command_prepend(Null, '<div class="message">'.$message.'</div>');
+		return array('#type' => 'ajax', '#commands' => $commands);
+	}
+}
+
+function count_pages($pdfname) {
+  $pdftext = file_get_contents($pdfname);
+  $num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
+  return $num;
+}
+/**
+ * Ajax callback function.
+ */
+function property_ads_form_ajax_submit($form, $form_state) {
+	if (isset($form_state)) {
+		$cat_term = taxonomy_term_load($form_state['values']['image_category']);
+		$category = strtolower($cat_term->name);
+		$folder_term = taxonomy_term_load($form_state['values']['image_folder']);
+		$folder = strtolower($folder_term->name);
+		$saved_files = array();
+		
+		$cate_path = 'modules://custom/collateral_design_system/upload/'.$category.'/';
+		$folder_path = 'modules://custom/collateral_design_system/upload/'.$category.'/'.$folder.'/';
+		file_prepare_directory($cate_path, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+		file_prepare_directory($folder_path, FILE_CREATE_DIRECTORY || FILE_MODIFY_PERMISSIONS);
+		
+		$scheme = 'modules://custom/collateral_design_system/upload/'.$category.'/'.$folder.'/';
+		if( !empty($form_state['values']['image_file']) ){
+			foreach ($form_state['values']['image_file'] as $uploaded_file) {
+				if ($uploaded_file['status'] == 'done') {
+					$uploaded_image_name = $uploaded_file['name'];
+					$explode_image_name = explode('.', $uploaded_image_name);
+					//$field_image_name = $form_state['values']['image_name'];
+					$image_name = $explode_image_name[0].'.'.$explode_image_name[1];
+					$source = $uploaded_file['tmppath'];
+					$destination = $scheme.$image_name;
+					// Rename it to its original name, and put it in its final home.
+					// Note - not using file_move here because if we call file_get_mime
+					// (in file_uri_to_object) while it has a .tmp extension, it horks.
+					$destination = file_unmanaged_move($source, $destination, FILE_EXISTS_RENAME);
+					$file = plupload_file_uri_to_object($destination);
+					file_save($file);
+					$saved_files[] = $file;
+					$saved_image_name = $file->filename;
+					$saved_image_path = $file->uri;
+					$image_query = db_insert('custom_images')
+						->fields(array(
+							'image' => $saved_image_name,
+							'path' => $saved_image_path,
+							'category' => $category,
+							'folder' => $folder,
+						))
+						->execute();
+						drupal_set_message('File has been uploaded.', 'status');
+						$message = theme('status_messages');
+				}else{
+					drupal_set_message('File not uploaded.', 'error');
+					$message = theme('status_messages');
+				}
+			}
+		}
+		else{
+			drupal_set_message('File not uploaded properly.', 'error');
+			$message = theme('status_messages');
+		}
+		$form_state['rebuild'] = TRUE;
+		$commands = array();
+		$commands[] = ajax_command_remove('.alert');
+		$commands[] = ajax_command_prepend(Null, '<div class="message">'.$message.'</div>');
+		$commands[] = array (
+			'command' => 'afterAjaxCallbackExample', // The command in my JS file
+		  );
+		return array('#type' => 'ajax', '#commands' => $commands);
+	}
+	else {
+		$message = theme('status_messages');
+		$form_state['rebuild'] = TRUE;
+		$commands = array();
+		$commands[] = ajax_command_remove('.alert');
+		$commands[] = ajax_command_prepend(Null, '<div class="message">'.$message.'</div>');
+		return array('#type' => 'ajax', '#commands' => $commands);
+	}
+}
+
+/**
+ * AJAX callback.
+ */
+function category_dynamic_list_select_list_ajax_callback($form, &$form_state) {
+  return $form['image_folder'];
+}
+function category_dynamic_list_select_list_ajax_callback2($form, &$form_state) {
+  return $form['image_folder2'];
+}
+function folder_select_list_options($key = '',$click) {
+	$folder_options = array();
+	if( is_numeric($key)){
+		$folder = taxonomy_get_children($key);
+		foreach ($folder as $data) {
+			if(!empty($click)){
+				if($data->name == $click){
+					$folder_options[$data->tid] = $data->name;
+				}
+			}
+			else{
+				$folder_options[$data->tid] = $data->name;
+			}
+		}
+		return $folder_options;
+	}
+	
+    else {
+        return $folder_options;
+    }
+}
+function folder_select_list_options_pdf($key = '',$click) {
+	$folder_options = array();
+	if( is_numeric($key)){
+		$folder = taxonomy_get_children($key);
+		foreach ($folder as $data) {
+			if(!empty($click)){
+				if($data->name == $click){
+					$folder_options[$data->tid] = $data->name;
+				}
+			}
+			else{
+				$folder_options[$data->tid] = $data->name;
+			}
+		}
+		return $folder_options;
+	}
+	
+    else {
+        return $folder_options;
+    }
+}
+
+function Hex2RGB($color){
+    $color = str_replace('#', '', $color);
+    if (strlen($color) != 6){ return array(0,0,0); }
+    $rgb = array();
+    for ($x=0;$x<3;$x++){
+        $rgb[$x] = hexdec(substr($color,(2*$x),2));
+    }
+    return $rgb;
+}
+function create_html_through_json_data($json_data){
+	$html = '<html><head></head><body>';
+	$count = count($json_data);
+	$loop_count = $count-1;
+	for($i=0; $i <= $loop_count; $i++){
+		if($json_data[$i]->type == 'image'){
+			$html .= '<div style="margin-top: 500px; margin-left: 390px; background-color: #F00;">
+						<img src="'.$json_data[$i]->src.'" width:"172" height="72" style=" display:block; ">
+					 </div>';
+		}elseif($json_data[$i]->type == 'i-text'){
+			$html .= '<div style="display:block;">
+						<span style=" margin-top: '.$json_data[$i]->top.'px; margin-left: '.$json_data[$i]->left.'px; font-size: '.$json_data[$i]->fontSize.'px; font-family: engagement; font-weight: '.$json_data[$i]->fontWeight.'; font-style: '.$json_data[$i]->fontStyle.';">'.$json_data[$i]->text.'</span>
+					 </div>';
+		}
+	}
+	$html .= '</body></html>';
+	return $html;
+}
+
+function property_preview_ads_page(){
+	$time_stamp = arg(1);
+	$output = '<p>
+				<embed src="//dev.cbone.me/sites/all/modules/custom/collateral_design_system/files/preview'.$time_stamp.'.pdf" width="1300" height="950">
+			  </p>';
+	echo $output;
+}
+/**
+ * Implements hook_stream_wrappers().
+**/
+function collateral_design_system_stream_wrappers() {
+  return array(
+    'modules' => array(
+      'name' => t('Default modules files'),
+      'class' => 'ModuleStreamWrapper',
+      'description' => t('Provides read-only paths to default module files.'),
+      'type' => STREAM_WRAPPERS_ALL,
+    ),
+  );
+}
+
+/**
+ * Default files (foobar://) stream wrapper class.
+ */
+class ModuleStreamWrapper extends DrupalPublicStreamWrapper {
+  public function getDirectoryPath() {
+    return 'sites/all/modules';
+  }
+}
+/**
+ * This function use to save template in json form in database
+*/
+function cds_save_template(){
+	$mydata = $_POST['mydata'];
+	if(isset($mydata)){
+		$page_data = json_decode($_POST['page_data']);
+		$sides = $_POST['sides'];
+		$page_data->sides = $sides;
+		$page_settings_json = json_encode($page_data);
+		$time_stamp = time();
+		$file_name = 'json-img-'.$time_stamp.'.png';
+		$file_path = 'modules://custom/collateral_design_system/json-image/'.$file_name;
+		$file = $_POST['imgdata']; //your data in base64 'data:image/png....';
+		$img = str_replace('data:image/png;base64,', '', $file);
+		$saved_json_img = file_put_contents('/home/devcbone/public_html/sites/all/modules/custom/collateral_design_system/json-image/'.$file_name, base64_decode($img));
+		$json_data = $_POST['mydata'];
+		$encode_json_data = json_encode($json_data);
+		$image_query = db_insert('custom_save_template_json')
+			->fields(array(
+				'image' => $file_name,
+				'image_path' => $file_path,
+				'json_data' => $encode_json_data,
+				'page_settings' => $page_settings_json,
+			))
+			->execute();
+		$message = "Template saved successfully";
+	}else{
+		$message = "Template not saved";
+	}
+	return '<div class="result"><div class="cds-uploaded-image-show-area">'.$message.'</div></div>';
+}
+
+function cds_save_template_data(){
+	global $base_url;
+	$result = db_select('custom_save_template_json', 'cst')
+				->fields('cst')
+				->execute();
+	$dir_uri = file_stream_wrapper_get_instance_by_uri('modules://');
+	$real_path = $dir_uri->realpath();
+	$real_path_explode = explode('public_html', $real_path);
+	$output = '';
+	foreach($result as $data){
+		$explode = explode('://', $data->image_path);
+		$canvas_img_path = $real_path_explode[1]."/".$explode[1];
+		$json_data = $data->json_data;
+		$config = array(
+				  "style_name" => "cds_ajax_load_icons",
+				  "path" =>$data->image_path,
+				  'attributes' => array( 'onclick' => "load_cdsjson(jQuery(this).attr('class'))", 'class' => $json_data),
+				 );
+		$goatse_picture= theme_image_style($config);
+		$output .= $goatse_picture;
+	}
+	return '<div class="result"><div class="cds-uploaded-image-show-area">'.$output.'</div></div>';
+}

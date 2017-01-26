@@ -1,0 +1,380 @@
+<?php
+/**
+ * @file
+ * Contains Document Management System functionality.
+ */
+/*
+* Implementation of hook_menu
+*/
+function document_management_system_menu() {
+	$items = array();
+	$items['document-category'] = array(
+		'title' => 'Document Category',
+		'description' => 'DMS Document Category',
+		'page callback'		=> 'dms_document_category_list',
+		//'access callback' => 'user_is_logged_in',
+		'access callback' => TRUE,
+	);
+	$items['dms/%'] = array(
+		'title' => 'Marketing',
+		'description' => 'DMS marketing document',
+		'page callback'		=> 'dms_marketing_document_list',
+		'page arguments' 	=> array(1),
+		//'access callback' => 'user_is_logged_in',
+		'access callback' => TRUE,
+	);
+	return $items;
+}
+/**
+ * Implements hook_entity_presave().
+ */
+function document_management_system_entity_presave($entity, $type) {
+	if ($type == 'field_collection_item' && $entity->field_name == 'field_documents') {
+		if(isset($entity->field_document['und']['0']['fid'])) {
+			$fid = $entity->field_document['und']['0']['fid'];
+			$file = file_load($fid);
+			$ext = pathinfo($file->filename, PATHINFO_EXTENSION);
+			//$current_date = date("Y-m");
+			$folder_letter = strtolower(substr($entity->field_document_title['und']['0']['value'], 0, 1));
+			$new_uri = 's3://user_files/documents/'.$folder_letter;
+			if(isset($entity->field_document_title['und']['0']['value'])) {
+				$file_name = strtolower(str_replace(" ", "-", trim($entity->field_document_title['und']['0']['value'])));
+				$file_name = preg_replace('/[^A-Za-z0-9\-]/', '', $file_name);
+				$filename = $new_uri.'/'.$file_name.'.'.$ext;
+				$file->filename = $file_name.'.'.$ext;
+			}
+			else {
+				$filename = $new_uri.'/'.$file->filename;
+			}
+			file_prepare_directory($new_uri, FILE_CREATE_DIRECTORY);			
+			$uri_exploade = explode("s3://user_files/documents/", $file->uri);
+			if(count($uri_exploade) == 1) {
+				$moved_file = file_move($file, $filename, FILE_EXISTS_REPLACE);
+				if(!isset($entity->field_document_preview_image['und']['0']['fid'])) {					
+					$thumb = thumbnail_preview_generation($moved_file->fid, $moved_file->uid, $file_name);
+					if($thumb != '') {
+						$entity->field_document_preview_image['und']['0'] = (array)$thumb;
+					}
+				}
+			}
+		}
+  }
+}
+/**
+ * Implements hook_init()
+ */
+function document_management_system_init(){
+	drupal_add_css(drupal_get_path('module', 'document_management_system') . '/css/dms.css');
+}
+/**
+ * Implements hook_theme
+ **/
+function document_management_system_theme($existing, $type, $theme, $path) {
+	return array(
+		'document_list' => array(
+			'variables' => array('var_name' => NULL),
+			'template' => 'template/document_list', // do not include .tpl.php
+		),
+	);
+    return $theme;
+}
+/*
+ * Callaback function thumbnail_preview_generation()
+ * to generate thumbnail preview for PDF and Images document
+ **/
+function thumbnail_preview_generation($fid, $uid, $file_name) {
+	$file = file_load($fid);
+	if((preg_match('/\/pdf/', $file->filemime)) || (preg_match('/image\//', $file->filemime))) {
+		$uri = $file->uri;
+		$pdf_url = file_create_url($uri);
+		$pdf_content = file_get_contents($pdf_url);
+		$pdf_file_name = $file->filename;
+		
+
+		$filepath = 'public://dms/PDF/';
+		file_prepare_directory($filepath, FILE_CREATE_DIRECTORY);
+		$pdf_path = drupal_realpath($filepath).'/'.$pdf_file_name; 
+		file_put_contents($pdf_path, $pdf_content);
+		$pdf_file = drupal_realpath($pdf_path);
+
+		//get PDF file name
+		$pdf_file_name = basename($pdf_file);
+		$pdf_file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $pdf_file_name);
+		$pdf_first_page = drupal_realpath($pdf_path) . '[0]';
+		if (file_exists($pdf_file) && filesize($pdf_file) > 0) {
+		
+			$filepath = 'public://dms/PDF/pdf-thumb/';
+			file_prepare_directory($filepath, FILE_CREATE_DIRECTORY);
+
+			//$name = $pdf_file_name.'.jpg';
+			$name = $file_name.'.jpg';
+			$image_path = drupal_realpath($filepath).'/'.$name;
+			//$cmd =  "convert -density 72 -colorspace sRGB $pdf_first_page -resize 350 -quality 100 $image_path";
+			//exec($cmd,$op);
+			
+			$cmd =  "convert -density 300 -colorspace sRGB $pdf_first_page -quality 100 $image_path";
+			exec($cmd,$op);
+
+			$cmd =  "convert -resize 350 $image_path $image_path";
+			exec($cmd,$op);
+			
+			$filename = $filepath.$name;
+			$file = (object)array(
+				'uid' => $uid,
+				'filename' => $name,
+				'uri' => $filename,
+				'filemime' => file_get_mimetype($filename),
+				'status' => 0,
+				'display' => 1,
+			);
+
+			if ($file = file_move($file, $filename, $replace = FILE_EXISTS_RENAME)) {
+				/*$temp_folder = 'public://dms/PDF/';
+				$realpath = drupal_realpath($temp_folder);
+				$cmd = "rm -R $realpath 2>&1";
+				exec($cmd,$op);*/
+				return $file;
+			}
+		}
+		else {
+			return '';
+		}
+	}
+	else {
+		return '';
+	}
+}
+/**
+ * Callback function dms_document_category_list()
+ * to displayed the DMS Document Category list
+ * @array $output
+ **/
+function dms_document_category_list(){
+	$title = t('Document Category List');
+	$type = 'ul';
+	// The following attributes apply to the list tag (e.g., <ol> or <ul>)
+	$attributes = array(
+		'id' => 'document-category-list',
+		'class' => 'document-category',
+	);
+	$vid = db_query('SELECT vid FROM taxonomy_vocabulary WHERE name like :name', array(':name' => 'Document Category'))->fetchField();
+	$terms = taxonomy_get_tree($vid, $tid = 0, $max_depth = 1);
+	$items = array();
+	foreach ($terms as $term) {
+		$items[] = array(
+			'data' => l($term->name, '/dms/'.$term->tid),
+			'id' => $term->tid,
+		);
+	}
+	$variables = array(
+		'items' => $items,
+		'title' => $title,
+		'type' => $type,
+		'attributes' => $attributes,
+	);
+	$output = theme_item_list($variables);
+	return $output;
+}
+/**
+ * Callback function dms_marketing_document_list()
+ * to displayed the DMS marketing document
+ * @array $output
+ **/
+function dms_marketing_document_list($tid){
+	$rows = '';
+	$output = '';
+	$parents = taxonomy_get_tree($vid, $tid, $max_depth = 1);
+	$term = taxonomy_term_load($tid);
+	drupal_set_title($title = ucfirst($term->name), $output = CHECK_PLAIN);
+	if(empty($parents)) {
+		global $user;
+		$user_detail = user_load($user->uid);
+		$admin = 0;
+		if ($user_detail->uid == 1 || array_key_exists(4, $user_detail->roles)) {
+			$admin = 1;
+		}
+		$output = '';
+		$area_tid = array();
+		$region_count = user_document_category_access($tid);
+		if($region_count) {
+			if($admin == 0) {
+				foreach($user_detail->field_region['und'] as $tids) {
+					$area_tid[] = $tids['tid'];
+				}
+				if(empty($area_tid)){
+					drupal_access_denied();
+					module_invoke_all('exit');
+					drupal_exit();
+				}
+			}
+			$query = db_select('node', 'n');
+			$query->join('field_data_field_document_category', 'dc', 'dc.entity_id = n.nid');
+			$query->leftJoin('field_data_field_sort_order', 'so', 'so.entity_id = n.nid');
+			if($admin == 0) {
+				$query->join('field_data_field_region', 'fa', 'fa.entity_id = n.nid');
+			}
+			$query->fields('n', array('nid'));
+			$query->fields('so', array('field_sort_order_value'));
+			$query->condition('dc.field_document_category_tid', $tid, '=');
+			if($admin == 0) {
+				$query->condition('fa.field_region_tid', $area_tid, 'IN');
+			}
+			$query->orderBy('so.field_sort_order_value', 'ASC');
+
+			//$query = $query->extend('PagerDefault')->limit(18);
+			$nids = $query->execute();
+			$x = 0;
+			$result = array();
+			foreach($nids as $nid) {
+				$node_detail = node_load($nid->nid);
+				$link_to_page = isset($node_detail->field_link_to_page['und']['0']['value']) ? $node_detail->field_link_to_page['und']['0']['value'] : 0;
+				$items = field_get_items('node', $node_detail, 'field_documents');
+				if(!empty($items)) {
+					foreach ($items as $delta => $item) {
+						$documents = field_collection_field_get_entity($item);
+						$result[$x]['preview_image'] = isset($documents->field_document_preview_image['und']['0']['uri']) ? file_create_url($documents->field_document_preview_image['und']['0']['uri']): file_create_url("s3://default_images/default-document-icon_2.jpg");
+						if($link_to_page == 1){
+							$path = drupal_get_path_alias('node/'.$node_detail->nid);
+							$result[$x]['link_url'] = '/'.$path;
+							$result[$x]['target'] = 0;
+						}
+						else {
+							$result[$x]['link_url'] = isset($documents->field_document['und']['0']['uri']) ? file_create_url($documents->field_document['und']['0']['uri']) : 'javascript:void(0)';
+							$result[$x]['target'] = 1;
+						}
+						if(isset($documents->field_document_title['und']['0']['value'])) {
+							$title = $documents->field_document_title['und']['0']['value'];
+							if(strlen($title) > 35){
+								$result[$x]['title'] = substr($documents->field_document_title['und']['0']['value'], 0, 35).'...';
+							}
+							else {
+								$result[$x]['title'] = $documents->field_document_title['und']['0']['value'];
+							}
+						}
+						else {
+							$result[$x]['title'] = '...';
+						}
+						//$result[$x]['sort_order_value'] = $nid->field_sort_order_value;
+						$result[$x]['sort_order_value'] = isset($node_detail->field_sort_order['und']['0']['value']) ? $node_detail->field_sort_order['und']['0']['value'] : 1;
+						$x++;
+					}
+				}
+				else {
+					$items = field_get_items('node', $node_detail, 'field_document_direct_link');
+					if(!empty($items)) {
+						foreach ($items as $delta => $item) {
+							$documents = field_collection_field_get_entity($item);
+							$result[$x]['preview_image'] = isset($documents->field_document_preview_image['und']['0']['uri']) ? file_create_url($documents->field_document_preview_image['und']['0']['uri']) : file_create_url("s3://default_images/default-document-icon_2.jpg");
+							if(!filter_var($documents->field_link_details['und']['0']['url'], FILTER_VALIDATE_URL) === false) {
+								$result[$x]['link_url'] = $documents->field_link_details['und']['0']['url'];
+								$result[$x]['target'] = 1;
+							}
+							else {
+								$link_url_explode = explode("node", str_replace("/", "", $documents->field_link_details['und']['0']['url']));
+								if(empty($link_url_explode[0])) {
+									$path = drupal_get_path_alias('node/'.$link_url_explode[1]);
+									$result[$x]['link_url'] = '/'.$path;
+									$result[$x]['target'] = 0;
+								}
+								else {
+									$link = '/'.$documents->field_link_details['und']['0']['url'];
+									$result[$x]['link_url'] = str_replace("//", "/", $link);
+									$result[$x]['target'] = 0;
+								}
+							}
+							if(isset($documents->field_link_details['und']['0']['title'])) {
+								$title = $documents->field_link_details['und']['0']['title'];
+								if(strlen($title) > 35){
+									$result[$x]['title'] = substr($documents->field_link_details['und']['0']['title'], 0, 35).'...';
+								}
+								else {
+									$result[$x]['title'] = $documents->field_link_details['und']['0']['title'];
+								}
+							}
+							else {
+								$result[$x]['title'] = '...';
+							}
+							//$result[$x]['sort_order_value'] = $nid->field_sort_order_value;
+							$result[$x]['sort_order_value'] = isset($node_detail->field_sort_order['und']['0']['value']) ? $node_detail->field_sort_order['und']['0']['value'] : 1;
+							$x++;
+						}
+					}
+				}
+				$x++;
+			}
+			$result = document_list_orderby($result, 'sort_order_value', SORT_ASC, 'title', SORT_ASC);
+			//print "<pre>";print_r($result);exit;
+			$variables = array(
+				'result' => $result,
+			);
+			$output .= theme('document_list', array('var_name' => $variables));
+			$output .= theme('pager', array('quantity' => 3));
+			return $output;
+		}
+		else {
+			drupal_access_denied();
+			module_invoke_all('exit');
+			drupal_exit();
+		}
+	}
+}
+
+/**
+ * Callback function user_document_category_access()
+ * to check the user access for region
+ * in node associated with $tid
+ **/
+function user_document_category_access($tid){
+	global $user;
+	$user_detail = user_load($user->uid);
+	$roles = array_map('strtolower', $user_detail->roles);
+	$area_tid = array();
+	$region_count = 1;
+	if($user->uid == 0) {
+		$region_count = 0;
+	}
+	else {
+		$vid = db_query('SELECT vid FROM taxonomy_vocabulary WHERE name like :name', array(':name' => 'Document Category'))->fetchField();
+		$parents = taxonomy_get_tree($vid, $tid, $max_depth = 1);
+		$children_term = taxonomy_term_load($tid);
+		if(empty($parents)) {
+			if($user->uid > 1 && !in_array("siteadmin", $roles)) {
+				if(isset($user_detail->field_region['und']['0']['tid'])) {
+					foreach($user_detail->field_region['und'] as $tids) {
+						$area_tid[] = $tids['tid'];
+					}
+				}
+				if(!empty($area_tid)) {
+					$region_count = db_query("SELECT COUNT(*) FROM field_data_field_region fr INNER JOIN field_data_field_document_category dc ON dc.entity_id = fr.entity_id WHERE dc.field_document_category_tid = :category_tid AND field_region_tid IN ( :area_tid )", array(':category_tid' => $tid, ':area_tid' => $area_tid))->fetchField();
+				}
+			}
+		}
+	}
+	return $region_count;
+}
+/**
+ * Callback function document_list_orderby()
+ * to sort the document list array for two value
+ * return array $args;
+ **/
+function document_list_orderby() {
+    $args = func_get_args();
+    $data = array_shift($args);
+    foreach ($args as $n => $field) {
+        if (is_string($field)) {
+            $tmp = array();
+            foreach ($data as $key => $row)
+				if(!is_numeric($row[$field])) {
+					$tmp[$key] = strtoupper($row[$field]);
+				}
+				else {
+					$tmp[$key] = $row[$field];
+				}
+				$args[$n] = $tmp;
+            }
+    }
+    $args[] = &$data;
+    call_user_func_array('array_multisort', $args);
+    return array_pop($args);
+}
+

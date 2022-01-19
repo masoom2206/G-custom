@@ -1,0 +1,41 @@
+<div id="header" class="d-flex justify-content-between">
+	<div class="section menu">
+		<nav class="g-menu-bar">
+			<ul class="g-menu g-menu-root">
+				<li class="g-menu-item"><span class="g-menu-item-caption">File</span>
+					<ul class="g-menu g-menu-bottom">
+            <li data-title="New Design" class="g-menu-item"><span class="g-menu-item-icon"><i class=""></i></span><span data-action="f.new" id="new_design_caption" class="g-menu-item-caption"><a href="/kmds/design">New Design</a></span><span class="g-menu-item-shortcut">Alt+N</span><span class="g-menu-item-tail"></span></li>
+						<li data-title="Save" class="g-menu-item"><span class="g-menu-item-icon"><i class="fa fa-save"></i></span><span data-action="f.save" id="save_caption" class="g-menu-item-caption">Save</span><span class="g-menu-item-shortcut">Ctrl+S</span><span class="g-menu-item-tail"></span></li>
+						<li data-title="Save as" class="g-menu-item"><span class="g-menu-item-icon"><i class=""></i></span><span data-action="f.saveas" id="save_as_caption" class="g-menu-item-caption">Save as</span><span class="g-menu-item-shortcut">Shift+Ctrl+S</span><span class="g-menu-item-tail"></span></li>
+						<!--<li data-title="Show Version History" class="g-menu-item item-divider"><span class="g-menu-item-icon"><i class="fa fa-history"></i></span><span data-action="undefined" id="show_version_history_caption" class="g-menu-item-caption">Show Version History</span><span class="g-menu-item-shortcut"></span><span class="g-menu-item-tail"></span></li>-->
+						<!--<li data-title="Export" class="g-menu-item has-tail"><span class="g-menu-item-icon"><i class="fa fa-sign-out"></i></span><span data-action="undefined" id="export_caption" class="g-menu-item-caption">Export</span><span class="g-menu-item-shortcut"></span><span class="g-menu-item-tail has-tail"><i class="fa fa-caret-right"></i></span></li>-->
+					</ul>
+				</li>
+				<li class="g-menu-item"><span class="g-menu-item-caption"><a href="/node/994" target="_blank">Help</a></span></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="section windows d-flex">
+		<div><input type="text" name="template_name"></div>		
+	</div>
+</div>
+
+<div id="toolbar">
+	<div class="section t-section file-section">
+		<div class="toolbar-button edit-options">
+			<button data-cursor="PSelect" data-action="f.save" id="save" class="tool-act action-button" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Save" ="" data-original-title="" title="">
+				<i class="fa fa-save"></i>
+			</button>
+		</div>
+		<div class="toolbar-button edit-options">
+			<button data-cursor="PSelect" data-action="edit.undo" id="undo" class="tool-act action-button" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Undo" disabled="" data-original-title="" title="">
+				<i class="fas fa-reply"></i>
+			</button>
+		</div>
+		<div class="toolbar-button edit-options">
+			<button data-cursor="PSelect" data-action="edit.redo" id="redo" class="tool-act action-button" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Redo" disabled="" data-original-title="" title="">
+				<i class="fas fa-share"></i>
+			</button>
+		</div>
+	</div>
+</div>

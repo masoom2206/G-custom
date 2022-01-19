@@ -1,0 +1,23 @@
+<div class="col-sm-12 d-flex align-content-start flex-wrap">
+  <div class="col-sm-6 p-5">
+    <div class="col-sm-12">
+      <h1>Your Current Billing:</h1>
+      <div class="col-sm-12">Customer ID:  {{ billing.customer.id }}</div>
+      <div class="col-sm-12">Email Id: {{ billing.customer.email }}</div>
+      <br/>
+      <h3>Current plan:</h3>
+      <div class="col-sm-12"><h2>{{ billing.subscription.items.data.0.plan.nickname }}</h2></div>
+      <div class="col-sm-12"><b>{{ billing.subscription.items.data.0.plan.amount_decimal/100 | number_format(2, '.', ',') }} {{ billing.subscription.items.data.0.plan..currency }} per {{ billing.subscription.items.data.0.plan.interval }}</b></div>
+      <div class="col-sm-12">Current Period Start:  {{ billing.subscription.current_period_start |date("m/d/Y")}}</div>
+      <div class="col-sm-12">Current Period End:  {{ billing.subscription.current_period_end |date("m/d/Y")}}</div>
+      <a class="btn btn-secondary" href="{{ path('stripe_subscription_and_customer.customer_portal_controller_portal', {'cusid': billing.customer.id}) }}">{{ 'Change Subscription'|t }}</a> | <a class="btn btn-danger" href="{{ path('stripe_subscription_and_customer.customer_portal_controller_portal', {'cusid': billing.customer.id}) }}">{{ 'Cancel Subscription'|t }}</a>
+    </div>
+  </div>
+  <div class="col-sm-6 p-5">
+    <div class="col-sm-12">
+      <h1>Payment Method:</h1>
+      <div class="col-sm-12"><a class="btn btn-secondary" href="{{ path('stripe_subscription_and_customer.customer_portal_controller_portal', {'cusid': billing.customer.id}) }}">{{ 'View / Update Payment Method'|t }}</a></div>
+    </div>
+  </div>
+</div>
+

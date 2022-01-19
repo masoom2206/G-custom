@@ -1,0 +1,101 @@
+            {% block app_title_calendar %} 
+            <div class="col-lg-12 calendar-area-content">
+              <div class="row bg-white p-2 calendar-header" style="">
+                <div class="col-lg-8 calendar-header-first-half invisible " >
+                  <div class="row">
+                    <div class="hidden-content d-none">
+                      <div class="appname">{{ appID }} </div>
+                      {% if appID == '166' %}
+                       <div class="page-id">{{data.facebook_kaboodle.selected_fb_page}}</div>
+                      {% endif %}
+                      {% if appID == '168' %}
+                       <div class="insta-account-id">{{data.instagram_kaboodle.selected_account}}</div>
+                      {% endif %}
+                      
+                    </div>
+                    <div class="d-flex rounded">
+                      <div class="socialmedia-title rounded align-items-center">
+                        <img width="29" src="{{ appIconSrc }}" alt="{{ appName }}">
+                        <span>{{ appName}}</span> 
+                         {% if appID == '166' %}
+                        {% for fb_page_id,page_name in data.facebook_kaboodle.fb_pages %}
+                        {% if fb_page_id == data.facebook_kaboodle.selected_fb_page %}
+                        <span class="page-name">{{page_name}}</span> 
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        
+                        {% if appID == '168' %}
+                        {% for account_id,account_details in data.instaAccounts %}
+                        {% if account_id == data.instagram_kaboodle.selected_account %}
+                        <span class="page-name">{{account_details.username}}</span> 
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4 calendar-header-second-half" style="padding-top: 5px;">
+                  <div class="row">
+                    <nav class="custom-nav-layou calendar-nav-layout w-100">
+                      <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist" style="font-size:14px">
+                        <a style="border-right: 2px solid #f2f2f2 !important;border-radius: 0; text-align: left;" class="nav-item nav-link active " id="post-today" data-toggle="tab" href="#tab-post-today" role="tab" aria-controls="#tab-post-today" aria-selected="false" tabindex="-1">TODAY</a>
+                        <a style="border-right: 2px solid #f2f2f2 !important;border-radius: 0;" class="nav-item nav-link" id="post-this-week" data-toggle="tab" href="#tab-post-this-week" role="tab" aria-controls="tab-post-this-week" aria-selected="false" tabindex="-1">THIS WEEK</a>
+                        <a class="nav-item nav-link" id="post-this-month" data-toggle="tab" href="#tab-post-this-month" role="tab" aria-controls="tab-post-this-month" aria-selected="false" tabindex="-1">THIS MONTH</a>
+                        <a id="calendar-settings"><img width="16" src="/modules/custom/social_media/images/weeksetting_icon.png"></a>
+                        <a class="nav-item nav-link d-none" id="post-day" data-toggle="tab" href="#tab-post-day" role="tab" aria-controls="tab-post-day" aria-selected="false" tabindex="-1">Day wise</a>
+                      </div>
+                    </nav>
+                  </div>
+                </div> 
+                {# start calendar settings #}
+                <div class="week-start-on hidden">
+                  <div class="arrow-down">
+                  </div>
+                  <div class="week-start-on-class p-2 ">
+                    <div class="week-start-on-wrap  ">
+                      <p>start week on.. </p>
+                      <input type="radio" id="saturday" name="weekend" value="6">
+                      <label for="saturday">Saturday</label><br>
+                      <input type="radio" id="sunday" name="weekend" value="0" checked>
+                      <label for="sunday">Sunday</label><br>
+                      <input type="radio" id="monday" name="weekend" value="1">
+                      <label for="monday">Monday</label><br>
+                    </div>
+                  </div>
+                </div>
+                {# end calendar settings #}
+              </div>
+            </div> 
+            {% endblock %}
+            <div class="col-lg-12 calendar-tab-wrapper">
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="row bg-white" style="height: 100%; border-left: 2px solid #f2f2f2;border-right: 2px solid #f2f2ff;">
+                    <div class="tab-content w-100">
+                      <!-- today post -->
+                      <div class="tab-pane activate fade show active" id="tab-post-today" role="tabpanel" aria-labelledby="tab-post-today"> 
+                      {% embed '@social_media/calendar-post-list.html.twig' ignore missing %} {% endembed %}
+                      </div>
+                      <!-- week post -->
+                      <div class="tab-pane" id="tab-post-this-week" role="tabpanel" aria-labelledby="tab-post-today">
+                      </div>
+                      <!-- month post -->
+                      <div class="tab-pane fade" id="tab-post-this-month" role="tabpanel" aria-labelledby="tab-post-today">
+                      </div>
+                      <!-- selected day post -->
+                      <div class="tab-pane fade" id="tab-post-day" role="tabpanel" aria-labelledby="tab-post-day">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="row">
+                    <div id="calendar" style="position:relative;border-right: 2px solid #f2f2f2;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>

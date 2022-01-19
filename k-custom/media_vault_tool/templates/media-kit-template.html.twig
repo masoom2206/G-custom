@@ -1,0 +1,178 @@
+<div id="media-kit-wrapper">
+  <!--Transfer Box-->
+  <div id="transfer-box" class="col-lg-12 mx-auto mb-4 p-0 pt-3 pb-3 rounded row">
+  
+    <!--Box Left Part-->
+    <div class="col-md-5">
+      <div class="text-center tb-title"><a href="/tools/media/vault/{{ data.uid }}" id="media_vault_title" class="font-lato">Media Vault</a><button onclick="handleKitClone(this)" id="media_kit_clone" data-toggle="modal" data-target="#create-media-kit-modal" data-title="Clone of {{ default_kit_title }}" data-nid="{{ default_kit }}" data-uid="{{ default_kit_owner }}" class="media-preset ml-2 p-2-10" style="border: none;">&nbsp;</button></div>
+      <!--tabs area - starts-->
+      <div class="col-md-12">
+        <nav class="custom-nav-layout">
+          <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-audio-tab" data-toggle="tab" href="#nav-audio" role="tab" aria-controls="nav-audio" aria-selected="true">Audio</a>
+            <a class="nav-item nav-link" id="nav-photo-tab" data-toggle="tab" href="#nav-photo" role="tab" aria-controls="nav-photo" aria-selected="false">Images</a>
+            <a class="nav-item nav-link" id="nav-text-tab" data-toggle="tab" href="#nav-text" role="tab" aria-controls="nav-text" aria-selected="false">Docs</a>
+            <a class="nav-item nav-link" id="nav-video-tab" data-toggle="tab" href="#nav-video" role="tab" aria-controls="nav-video" aria-selected="false">Videos</a>
+          </div>
+        </nav>
+        <div class="tab-content" id="vault-tabContent">
+          <!-- Audio data secion -->
+          <div class="tab-pane fade show active" id="nav-audio" role="tabpanel" aria-labelledby="nav-audio-tab"> 
+            <div class="tb-tab-content" id="audio-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+          <!-- Photo data secion -->
+          <div class="tab-pane fade" id="nav-photo" role="tabpanel" aria-labelledby="nav-photo-tab">
+            <div class="tb-tab-content" id="photo-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+          <!-- Text data secion -->  
+          <div class="tab-pane fade" id="nav-text" role="tabpanel" aria-labelledby="nav-text-tab">
+            <div class="tb-tab-content" id="text-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+          <!-- Video data secion -->
+          <div class="tab-pane fade" id="nav-video" role="tabpanel" aria-labelledby="nav-video-tab">
+             <div class="tb-tab-content" id="video-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!--Box Center Part-->
+    <div class="col-md-2 tb-middle-part">
+      <button type="button" id="add-selected" class="btn btn-primary mb-2 font-fjalla" disabled>ADD SELECTED &nbsp; <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+      <!-- <button id="add-all" class="btn btn-primary mb-2 font-fjalla" disabled>ADD ALL &nbsp; <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp; <i class="fa fa-arrow-right" aria-hidden="true"></i></button> -->
+      <br><br>
+      <button type="button" id="remove-selected" class="btn btn-primary mb-2 font-fjalla" disabled>REMOVE SELECTED</button>
+      <!-- <button id="remove-all" class="btn btn-primary mb-2 font-fjalla" disabled>REMOVE ALL</button> -->
+    </div >
+    
+    <!--Box Right Part-->
+    <div class="col-md-5 kit-box">
+      <div class="text-center font-weight-bold tb-title d-none p-2-10">
+        <div id="media_kit_title" class="font-lato">{{ data.title }}</div>
+      </div>
+      <!--tabs area - starts-->
+      <div class="col-md-12">
+        <nav class="custom-nav-layout d-none">
+          <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-audio-kit-tab" data-toggle="tab" href="#nav-audio-kit" role="tab" aria-controls="nav-audio-kit" aria-selected="true">Audio</a>
+            <a class="nav-item nav-link" id="nav-photo-kit-tab" data-toggle="tab" href="#nav-photo-kit" role="tab" aria-controls="nav-photo-kit" aria-selected="false">Images</a>
+            <a class="nav-item nav-link" id="nav-text-kit-tab" data-toggle="tab" href="#nav-text-kit" role="tab" aria-controls="nav-text-kit" aria-selected="false">Docs</a>
+            <a class="nav-item nav-link" id="nav-video-kit-tab" data-toggle="tab" href="#nav-video-kit" role="tab" aria-controls="nav-video-kit" aria-selected="false">Videos</a>
+          </div>
+        </nav>
+        <div class="tab-content" id="kit-tabContent">
+          <!-- Audio kit data secion -->
+          <div class="tab-pane fade show active" id="nav-audio-kit" role="tabpanel" aria-labelledby="nav-audio-kit-tab">
+            <div class="tb-tab-content" id="audio-kit-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+          <!-- Photo kit data secion -->
+          <div class="tab-pane fade" id="nav-photo-kit" role="tabpanel" aria-labelledby="nav-photo-kit-tab">
+            <div class="tb-tab-content" id="photo-kit-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+          <!-- Text kit data secion -->  
+          <div class="tab-pane fade" id="nav-text-kit" role="tabpanel" aria-labelledby="nav-text-kit-tab">
+            <div class="tb-tab-content" id="text-kit-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+          <!-- Video kit data secion -->
+          <div class="tab-pane fade" id="nav-video-kit" role="tabpanel" aria-labelledby="nav-video-kit-tab">
+            <div class="tb-tab-content" id="video-kit-content-section">
+              <!--<div class="spinner-border"></div>-->
+              <div class="km-loader"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!--Media Kits table-->
+  <div id="Media-kit-table" class="mb-4 bg-light pt-2 pb-2">
+    <input type="hidden" id="mediakitid" value="{{ data.nid }}">
+    <input type="hidden" id="mediakitTitle" value="{{ data.title }}">
+    <button id="crt-kit-btn" class="btn btn-primary mb-2 font-fjalla" data-toggle="modal" data-target="#create-media-kit-modal" disabled>CREATE NEW MEDIA KIT</button>
+     <div class="position-relative" id="media-kits-data">
+        <!--<div class="spinner-border"></div>-->
+        <div class="km-loader"></div>
+     </div>
+  </div>
+</div>
+
+<!--Processing screen Modal-->
+<div class="modal fade" id="media-kit-modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <!--<div class="spinner-border" role="status">-->
+    <div class="km-loader">
+      <span class="sr-only"></span>
+    </div>
+  </div>
+</div>
+
+<!--CREATE NEW MEDIA KIT Modal-->
+<div class="modal fade" id="create-media-kit-modal" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">CREATE NEW MEDIA KIT</h5>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex p-3">
+          <label class="col-form-label mr-2">Name:</label>
+          <input type="text" oninput="handleKitNamechange(this)" class="form-control" id="new-kit-name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" id="create-fresh-kit" class="btn btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="mod-media-gallery-conf"></div>
+<script>
+
+var kit_name = '';
+function handleKitNamechange(e){
+	kit_name = jQuery(e).val().trim();
+	var uid = jQuery('#media_kit_clone').attr('data-uid');
+	var nid = jQuery('#media_kit_clone').attr('data-nid');
+	var title = jQuery('#media_kit_clone').attr('data-title').trim();
+	if(kit_name) {
+		jQuery('#create-media-kit-modal .modal-footer a').attr('href', '/tools/media/kit/'+uid+'/'+nid+'/clone?title='+kit_name);		
+		jQuery('#create-media-kit-modal .modal-footer a').removeClass('disabled');
+	} else {
+		jQuery("#new-kit-name").focus();
+		jQuery('#create-media-kit-modal .modal-footer a').addClass('disabled');
+	}
+}
+
+function handleKitClone(e){
+	var uid = jQuery(e).attr('data-uid');
+	var nid = jQuery(e).attr('data-nid');
+	var title = jQuery(e).attr('data-title').trim();
+	kit_name = title;
+	jQuery('#create-media-kit-modal .modal-footer .btn.btn-primary').remove();
+	jQuery('#create-media-kit-modal #new-kit-name').val(kit_name);
+	jQuery('#create-media-kit-modal .modal-footer').append('<a href="/tools/media/kit/'+uid+'/'+nid+'/clone?title='+kit_name+'" class="btn btn-primary">CREATE</a>');						
+}
+</script>

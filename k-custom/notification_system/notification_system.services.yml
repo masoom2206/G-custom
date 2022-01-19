@@ -1,0 +1,3 @@
+services:
+  notification_system.notification_controller:
+    class: Drupal\notification_system\Controller\NotificationController

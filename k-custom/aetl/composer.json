@@ -1,0 +1,22 @@
+{
+    "name": "drupal/aetl",
+    "description": "Adds an Amazon Simple Storage Service-based remote file system to Drupal.",
+    "type": "drupal-module",
+    "homepage": "https://www.drupal.org/project/aetl",
+    "authors": [
+        {
+            "name": "Dilip Singh",
+            "email": "dilipsingh111@gmail.com",
+            "homepage": "https://www.drupal.org/u/dilipsingh02"
+        },
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/aetl"
+    },
+    "license": "GPL-2.0+",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0",
+        "aws/aws-sdk-php": "^3.18",
+    }
+}

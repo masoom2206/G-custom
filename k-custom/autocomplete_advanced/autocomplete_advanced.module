@@ -1,0 +1,96 @@
+<?php
+/**
+ * @file
+ * The Autocomplete Advanced module improves autocomplete fields using JQuery UI.
+ */
+ 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Access\AccessResult;
+
+/**
+ * Implements hook_help().
+ *
+ * @inheritdoc
+ */
+function autocomplete_advanced_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.autocomplete_advanced':
+      $text = file_get_contents(dirname(__FILE__) . "/README.txt");
+      if (!\Drupal::moduleHandler()->moduleExists('markdown')) {
+        $output = '<pre>' . $text . '</pre>';
+      }
+      else {
+        // Use the Markdown filter to render the README.
+        $filter_manager = \Drupal::service('plugin.manager.filter');
+        $settings = \Drupal::configFactory()->get('markdown.settings')->getRawData();
+        $config = ['settings' => $settings];
+        $filter = $filter_manager->createInstance('markdown', $config);
+        $output = $filter->process($text, 'en');
+      }
+
+      return $output;
+  }
+}
+
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ *
+ * - This fix, along with forcing the file owner to be the same as the profile owner, actually worked.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @param $operation
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *
+ * @return \Drupal\Core\Access\AccessResultInterface
+ */
+//function autocomplete_advanced_file_access(EntityInterface $entity, $operation, AccountInterface $account) {}
+
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ *
+ * - This fix, along with forcing the file owner to be the same as the profile owner, actually worked.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @param $operation
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *
+ * @return \Drupal\Core\Access\AccessResultInterface
+ */
+//function autocomplete_advanced_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {}
+
+/**
+ * Implements hook_node_access().
+ */
+/*
+function autocomplete_advanced_node_access(\Drupal\node\NodeInterface $node, $op, \Drupal\Core\Session\AccountInterface $account) {
+  if (in_array($op, ['view', 'update', 'delete'])) {
+    return AccessResult::allowed();
+  }
+  return AccessResult::neutral();
+}
+*/
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ *
+ * - Here my theory was that if the profile owner was the file owner, there
+ *   wouldn't be a problem. But this alone didn't fix the problem.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+//function autocomplete_advanced_entity_update(EntityInterface $entity) {}
+
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * - Same as epi_profile_profile_update().
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+//function autocomplete_advanced_media_insert(EntityInterface $entity) {}
+

@@ -1,0 +1,7 @@
+# We want to extend the system.site configuration
+system.site:
+  mapping:
+    # Our field name is 'site_server_name'
+    site_server_name:
+      type: label
+      label: 'Site Server Name'

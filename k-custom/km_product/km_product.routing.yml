@@ -1,0 +1,273 @@
+product.template:
+  path: '/km/product/{node}/{producttype}/template/select'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ProductController::getTemplates'
+    _title: 'Product Template Selector'
+  options:
+    parameters:
+      node:
+        type: entity:node
+      producttype:
+        type: entity:taxonomy_term
+    no_cache: 'TRUE'
+  requirements:
+    _permission: 'My Kaboodles'
+    _custom_access: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::kaboodle_dashboard_access'
+
+product.article.add:
+  path: '/tools/html-article/add'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ArticleController::addArticle'
+    _title: 'HTML Article'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.article.list:
+  path: '/tools/html-article/{user}'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ArticleController::listArticle'
+    _title: 'HTML Article'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\km_product\Controller\ArticleController::htmlArticleAccess'
+
+product.article.edit:
+  path: '/tools/html-article/{article}/edit'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ArticleController::editArticle'
+    _title: 'HTML Article'
+  options:
+    parameters:
+      article:
+        type: entity:node
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\km_product\Controller\ArticleController::htmlArticleNodeAccess'
+    
+product.article.favorite:
+  path: '/tools/html-article/{article}/favorite'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ArticleController::favoriteArticle'
+    _title: 'HTML Article'
+  options:
+    parameters:
+      article:
+        type: entity:node
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+product.article.delete:
+  path: '/tools/html-article/{article}/delete'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ArticleController::deleteArticle'
+    _title: 'HTML Article'
+  options:
+    parameters:
+      article:
+        type: entity:node
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\km_product\Controller\ArticleController::htmlArticleNodeAccess'
+    
+product.edittemplate:
+  path: '/km/product/{node}/{producttype}/template/settings/{template_id}'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\CanvasController::editTemplate'
+    _title: 'Product Template Settings'
+    template_id: 0
+  options:
+    parameters:
+      node:
+        type: entity:node
+      producttype:
+        type: entity:taxonomy_term
+    no_cache: 'TRUE'
+  requirements:
+    _permission: 'My Kaboodles'
+    _custom_access: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::kaboodle_dashboard_access' 
+    
+product.template.delete:
+  path: '/km/product/template/{template_id}/delete'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ProductController::deleteTemplate'
+    #template_id: 0
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'    
+    
+product.kmdstemplates:
+  path: '/kmds/templates/{producttype}'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ProductController::getKMDSTemplates'
+  options:
+    parameters:
+      producttype:
+        type: entity:taxonomy_term
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+product.template.favorite:
+  path: '/km/product/template/favorite'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ProductController::saveFavorite'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.template.detail:
+  path: '/km/product/template/{template_id}/detail'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\ProductController::getTemplateRawDetail'
+    template_id: 0
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.webtemplate.save:
+  path: '/km/product/webtemplate/save'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::saveTemplate'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.media_render:
+  path: '/media-render'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\ProductController::customMediaRender'
+  methods: [POST]  
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+product.km_media_kit:
+  path: '/km-media-kit'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\ProductController::kmMediaKitList'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+web.product.render.save:
+  path: '/web/product/render/save'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::saveRenderWebProduct'
+  methods: [POST]  
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+web.product.render.edit:
+  path: '/web/product/render/edit'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::editRenderWebProduct'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.km_image_crop:
+  path: '/km-image-crop'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\ImageCropController::cropTemplateImage'
+  methods: [POST]  
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+product.webtemplate.preview:
+  path: '/kmds/design/web/product/{tid}/preview'
+  defaults:
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::previewTemplate'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.user_html_articles:
+  path: '/user/html_articles/{user}'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::get_user_html_articles'
+  options:
+    parameters:
+      user:
+        type: entity:user
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.user_km_playlists:
+  path: '/user/km_playlists/{user}'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::get_user_km_playlists'
+  options:
+    parameters:
+      user:
+        type: entity:user
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.user_km_online_gallery:
+  path: '/user/km_online_gallery/{user}'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::get_user_km_online_gallery'
+  options:
+    parameters:
+      user:
+        type: entity:user
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.user_render_html_articles:
+  path: '/user/render_html_articles/{user}'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::get_user_render_html_articles'
+  options:
+    parameters:
+      user:
+        type: entity:user
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.user_html_article_node:
+  path: '/user/html_article_node/{node}'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::get_user_html_article_node'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+product.user_html_article_render:
+  path: '/user/html_article_render/{template_id}'
+  defaults: 
+    _controller: '\Drupal\km_product\Controller\WebTemplateController::get_user_html_article_render'
+  options:
+    no_cache: 'TRUE'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'

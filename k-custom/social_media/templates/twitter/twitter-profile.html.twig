@@ -1,0 +1,42 @@
+<div class="twitter-profile-block bg-f2f2f2">
+  <div class="col-lg-12 col-xs-12 col-sm-12">
+  {% if (data.user_profile.errors is defined or data.user_profile.error is defined)  %}
+    {% if data.user_profile.errors is defined %}
+     <div class="twitter-api-error" style="color:red;">Twitter Error Reported: {{data.user_profile.errors.0.message}}<br> Please try Later...</div>
+    {% elseif data.user_profile.error is defined  %}
+    <div class="twitter-api-error" style="color:red;">Twitter Error Reported: {{data.user_profile.error.message}}<br> Please try Later...</div>
+    {% endif %}
+    
+  {% endif %}
+    <div class="profile-block-wraper">
+      <div class="twitter-profile-banner">
+        <div class="profile-banner"> 
+        {% if data.user_profile.profile_banner_url is defined %}
+        <div class="profile-banner-img" style="background: url({{data.user_profile.profile_banner_url}}); background-position: center;
+                  background-repeat: no-repeat;
+                  background-size: cover;">
+          </div>
+          {% else %}
+          <div class="profile-banner-img">
+          </div> {% endif %} </div>
+        <div class="profile-pic">
+          <img src="{{data.user_profile.profile_image_url_https}}" class="rounded-circle img-responsive " alt="pic">
+        </div>
+      </div>
+      <div class="twitter-profile-content">
+        <div class="user-details">
+          <span class="user-screen-name"><strong>{{data.user_profile.name}}</strong> {% if data.user_profile.verified == 1 %} <img src="https://img.icons8.com/color/48/000000/verified-account.png" style=" height: 20px;"> {% endif %} </span><br>
+          <span class="user-user-name">@{{data.user_profile.screen_name}}</span>
+        </div> {% if data.user_profile.description != '' %} <p class="user-bio">
+          {{ data.user_profile.description }}
+        </p> {% endif %} <div class="user-personal-information"> {% if data.user_profile.location != '' %} <span class="user-location fade-content pr-3"><i class="fa fa-map-marker" aria-hidden="true"></i> {{data.user_profile.location}}</span> {% endif %} <span class="user-website"><a href="{{data.user_profile.url}}" target="_blank"> <i class="fas fa-globe"></i> Website</a></span>
+          <span class="joined-date fade-content pl-3"><i class="fa fa-calendar" aria-hidden="true"></i> Joined {{ data.user_profile.created_at|date('F y') }}</span>
+        </div>
+        <div class="followers-following">
+          <span style="color: #023364" class="count pr-5 twitter-following-list" data-toggle="modal" data-target="#modal-twitter-user-follower-fllowing-list"><strong>{{data.user_profile.friends_count}}</strong> following</span>
+          <span style="color: #023364" class="count twitter-followers-list" data-toggle="modal" data-target="#modal-twitter-user-follower-fllowing-list"><strong>{{data.user_profile.followers_count}}</strong> followers</span>
+        </div> {% embed '@social_media/twitter/twitter-followers-following.html.twig' ignore missing %} {% endembed %}
+      </div>
+    </div>
+  </div>
+</div>

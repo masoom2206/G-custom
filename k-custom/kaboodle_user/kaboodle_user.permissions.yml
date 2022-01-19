@@ -1,0 +1,4 @@
+Branding Preset:
+  description: 'View Branding Preset Node'
+  title: 'View Branding Preset Node'
+  restrict access: TRUE

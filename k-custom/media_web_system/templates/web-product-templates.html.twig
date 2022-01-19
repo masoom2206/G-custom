@@ -1,0 +1,67 @@
+<div class="media-design-wrapper position-relative">
+	<div id="product-library" class="h-100">
+		<div class="row">
+			<div class="col-3 left-side">
+				<!--<div class="active-product-type" id="125"><img src="https://s3.us-west-2.amazonaws.com/kaboodlemedia.dev.test/styles/media_library/s3/2020-02/EmailFlyerButton-E75E00.png?b_TkW38jpb7P_8vZEaD5QPemcD8Nas0D&amp;itok=qh1nry_u" alt="Email Flyer" title="Email Flyer"></div>-->
+				<div class="active-product-type" id="{{variables.termdata.tid}}"><img src="{{variables.termdata.activeicon}}" alt="{{variables.termdata.name}}" title="{{variables.termdata.name}}"></div>
+				<div class="text-white pl-4 mt-70"><img src="/themes/custom/kaboodlemedia/images/leftarrow.png" class="back-arrow"><u><a href="/kmds/design/{{variables.uid}}/{{variables.mtid}}" class="text-white caps-on f-20 font-fjalla">Back To Product Groups</a></u></div>
+			</div>
+			<div class="col-9 d-flex flex-row flex-wrap" id="kmds-template-list">
+				<div class="col-12 search-template-panel d-flex flex-row flex-wrap">
+					<div class="search-form-icon flex-column"><img src="/modules/custom/media_design_system/css/assets/img/search-676767-128px.png" class="search-icon" width="auto" height="15"></div>
+					<div class="search-form flex-column">
+						<input id="search-temp" placeholder="Search File" type="text">
+					</div>
+					<div class="grid-style flex-column"><img src="/modules/custom/media_design_system/css/assets/img/gridviewactive.png" class="grid-view-active d-block" width="auto" height="32"><img src="/modules/custom/media_design_system/css/assets/img/gridviewinactive.png" class="grid-view-inactive d-none" width="auto" height="32"></div>
+					<div class="list-style flex-column"><img src="/modules/custom/media_design_system/css/assets/img/listviewactive.png" class="list-view-active d-none" width="auto" height="32"><img src="/modules/custom/media_design_system/css/assets/img/listviewinactive.png" class="list-view-inactive d-block" width="auto" height="32"></div>
+					<div class="list-order flex-column"><img src="/modules/custom/media_design_system/css/assets/img/az-676767.png" class="az-list d-block" width="auto" height="32"><img src="/modules/custom/media_design_system/css/assets/img/za-676767.png" class="za-list d-none" width="auto" height="32"></div>
+					<div class="admin-temp-filter flex-column"><img src="/modules/custom/media_design_system/css/assets/img/logo-button-active.png" class="admin-filter-active d-block" width="auto" height="32"><img src="/modules/custom/media_design_system/css/assets/img/logo-button-inactive.png" class="admin-filter-inactive d-none" width="auto" height="32"></div>
+					<div class="list-active-inactive flex-column">
+						<div class="list-active-template font-lato">
+							<input id="active-templates" class="template-status" type="radio" name="status" value="active" checked="">
+							<label class="radiob" for="active-templates"><span class="radiob-span"></span></label><span class="label-span"> Active Templates</span></div>
+						<div class="list-inactive-template font-lato">
+							<input id="inactive-templates" class="template-status" type="radio" name="status" value="inactive">
+							<label class="radiob" for="inactive-templates"><span class="radiob-span"></span></label><span class="label-span"> Inactive Templates</span></div>
+					</div>
+					<div class="list-removal flex-column">
+						<div class="list-removal-template font-lato">
+							<input id="removal-templates" class="template-status" type="radio" name="status" value="removal">
+							<label class="radiob" for="removal-templates"><span class="radiob-span"></span></label><span class="label-span"> Flagged for Removal</span></div>
+					</div>
+				</div>
+
+				<div id="template-grid-view-wrapper" class="col-12 d-flex flex-row flex-wrap temp-grid-view">
+          {% for template in variables.templates %}
+					<div class="grid-view item-group inactive-temp flex-column d-block" data-key="65" data-temptitle="New Flyer" data-temptags="New Flyer" data-uid="1">
+						<div class="temp-design">
+							<div class="template-static-image">
+								<a href="/kmds/design/web/{{ template.id }}" class="design-template-link">
+                  <img src="/wptemplates/images/{{ template.preview_image }}" class="lib-image text-center static-image" alt="New Flyer" title="New Flyer" width="auto" height="140" data-style="grid">
+                </a>
+							</div>
+						</div>
+						<div class="temp-content p-3"><a href="/kmds/design/web/{{ template.id }}" class="design-template-link" data-reactid=".0.1.1.1t.1.0"><h5 class="temp-title">{{ template.name }}</h5></a>
+							<div class="temp-modified">
+								<div class="temp-created">Created {{ template.created|date("m/d/y h:i A") }}</div>
+								<div class="temp-updated">Updated {{ template.modified|date("m/d/y h:i A") }}</div>
+							</div>
+						</div>
+						<div class="temp-action d-flex">
+							<div class="temp-edit column flex-row">
+								<a href="/kmds/design/web/{{ template.id }}" class="design-template-link"><img src="/modules/custom/media_design_system/css/assets/img/pencil-512.png" class="temp-edit-icon" alt="Edit" title="Edit" width="auto" height="20"></a>
+							</div>
+							<div class="temp-magnify column flex-row">
+								<a href="javascript:void(0);" class="temp-magnify-link"><img src="/modules/custom/media_design_system/css/assets/img/expand-512-676767.png" class="temp-magnify-icon" alt="View" title="View" width="auto" height="20"></a>
+							</div>
+						</div>
+					</div>
+          {% endfor %}
+				</div>
+				<div class="col-12  d-flex flex-row flex-wrap text-center">
+					<ul class="paginatiion d-flex" id="pagin"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

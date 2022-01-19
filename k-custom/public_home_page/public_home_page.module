@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Contains public_home_page.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function public_home_page_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the public_home_page module.
+    case 'help.page.public_home_page':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Custom Public Home Page') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function public_home_page_theme() {
+  return [
+    'public_home_page' => [
+      'render element' => 'children',
+      // If no template name is defined here, it defaults to the name of the theme hook, ie. module-name-theme-hook.html.twig
+      'template' => 'public-home-page',
+      // Optionally define variables that will be passed to the Twig template and set default values for them.
+      'variables' => [
+        'field_button_path' => '',
+        'field_home_action_disclaimer' => '',
+        'field_home_action_headline' => '',
+        'field_home_action_text' => '',
+        'field_home_button_label' => '',
+        'field_home_headline' => '',
+        'field_home_page_slide' => '',
+        'field_show_media_as' => '',
+      ],
+      '#attached' => [
+        'library' => [
+          'public_home_page/public_home_page'
+        ],
+      ],
+    ],
+  ];
+}

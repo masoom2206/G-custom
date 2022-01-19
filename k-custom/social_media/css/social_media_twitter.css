@@ -1,0 +1,344 @@
+.quated-tweet-wrapper {
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+.main-tweet-region {
+  clear: both;
+}
+
+.tweet-header {
+  align-items: center;
+  display: flex;
+}
+
+.twitter-engaged .fa:hover {
+  color: red !important;
+}
+
+.tweet-retweet-modal1 ul,
+.tweet-send-dm-modal1 ul {
+  padding: 0;
+  list-style: none;
+  margin: 0px;
+  border: 1px solid #ccc;
+  background: #f2f2f2;
+  margin-top: 10px;
+}
+
+.tweet-retweet-modal1 ul li {
+  padding: .75rem;
+}
+
+.tweet-retweet-modal1 ul li:nth-last-child(1) {
+  border-top: 1px solid #ccc;
+}
+
+.km-dialog textarea,
+.km-dialog textarea:focus {
+  border: none;
+  overflow: hidden;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  /*remove the resize handle on the bottom right*/
+}
+
+button.custom-tweet-button {
+  color: #fff;
+}
+
+[aria-describedby*="km-dialog"] .ui-dialog-titlebar-close {
+  display: none !important;
+}
+
+[aria-describedby*="km-dialog"] .ui-dialog-titlebar {
+  text-align: center !important;
+  background: none !important;
+  border: none !important;
+}
+
+[aria-describedby*="km-dialog"] .ui-dialog .ui-dialog-buttonpane {
+  margin-top: 0 !important;
+  border-width: 2px 0 0 0 !important;
+}
+
+[aria-describedby*="km-dialog"] .ui-dialog .km-dialog.ui-dialog-content {
+  /* color: #3b3b3b !important; */
+  font-weight: 400 !important;
+  text-align: left !important;
+}
+
+textarea.comment-field {
+  overflow: hidden;
+}
+
+hr.custom-style {
+  margin: 0;
+  border-top: 2px solid #f2f2f2f;
+  /* height: 2px; */
+  border-top: 2px solid #f2f2f2f2;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.post-operation-block {
+  position: absolute;
+  right: 10px;
+}
+
+.post-operation-content {
+  right: 0px;
+}
+
+.send-tweet-via-dm-modal .search-user {
+  background: #f2f2f2;
+  border-left: none;
+  border-right: none;
+  height: 45px;
+  border-top: 1px solid #f2f2f2;
+  border-bottom: none;
+  width: 94%;
+}
+
+.twitter-engage-hover-effect:hover {
+  background: #F2f2f2 !important;
+  border: 2px solid #f2f2f2 !important;
+  padding: 5px !important;
+  border-radius: 50% !important;
+}
+
+.custom-tweet-box {
+  width: 90%;
+  /* border-radius: 15%; */
+  /* vertical-align: middle; */
+  padding: 5px;
+  box-shadow: -2px 0px 0px 0px #f2f2f2;
+  margin-left: 10px;
+}
+
+.custom-tweet-box:focus {
+  border: none !important;
+  border-left: 2px solid #f2f2f2;
+}
+
+[contenteditable]:focus {
+  outline: 0px solid transparent;
+  border: none !important;
+}
+
+[placeholder]:empty::before {
+  content: attr(placeholder);
+  color: #555;
+  opacity: .7;
+}
+
+[placeholder]:empty:focus::before {
+  content: "";
+}
+
+.send-tweet-via-dm-modal .modal-body,
+.twitter-specific-modal .modal-body {
+  padding: 0;
+}
+
+.send-tweet-via-dm-modal .close-button,
+.twitter-specific-modal .close-button,
+.twitter-profile-block .twitter-followers-list,
+.twitter-profile-block .twitter-following-list {
+  cursor: pointer;
+}
+
+.twitter-specific-modal .send-tweet-header,
+.send-tweet-via-dm-modal .send-tweet-header {
+  font-family: 'Fjalla One', sans-serif;
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+
+.send-tweet-via-dm-modal .send-tweet-footer textarea,
+.send-tweet-via-dm-modal .send-tweet-footer textarea:focus {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid blue;
+  width: 70%;
+  overflow: hidden;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  /*remove the resize handle on the bottom right*/
+}
+
+.send-tweet-via-dm-modal .send-tweet-footer textarea:focus {
+  background: transparent;
+}
+
+.send-tweet-via-dm-modal .send-tweet-footer {
+  justify-content: center !important;
+}
+
+.selected-twitter-users {
+  background: #f2f2f2;
+  display: inline-block;
+  width: 100%;
+}
+
+.selected-twitter-users ul {
+  /*display: inline-flex; */
+}
+
+.selected-twitter-users ul li {
+  background: #fff;
+  padding: 5px;
+  border-radius: 20px;
+  float: left;
+  margin: 10px;
+}
+
+.selected-twitter-users ul li:hover {
+  background: #f2f2f2;
+  border: 2px solid #ffffff;
+}
+
+.selected-twitter-users .user-screen-nanme {
+  padding-left: 5px;
+  padding-right: 10px;
+}
+
+.selected-twitter-users .remove-user {
+  color: blue;
+  font-weight: 800;
+}
+
+.search-twitter-users ul li {
+  border-top: 1px solid #f2f2f2;
+  padding: 10px;
+  text-align: left;
+}
+
+.search-twitter-users ul li:hover {
+  background: #f2f2f2
+}
+
+.search-twitter-users ul li:last-child {
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.search-twitter-users ul li .wrap-items {}
+
+.search-twitter-users {
+  height: 300px;
+  overflow: auto;
+  clear: both;
+}
+
+.search-twitter-users ul {
+  margin-bottom: 0;
+}
+
+img.border-images {
+  border: 1px solid #f2f2f2;
+}
+
+.profile-block-wraper {
+  margin-right: -15px;
+  margin-left: -15px;
+  border: 1px solid #fff;
+}
+
+.twitter-profile-banner {
+  margin-bottom: 50px;
+}
+
+.twitter-profile-content {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.profile-banner .profile-banner-img {
+  border: 1px solid #f2f2f2;
+  height: 200px;
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.profile-block-wraper .profile-pic {
+  position: absolute;
+  bottom: 40%;
+  left: 2%;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+.profile-block-wraper .profile-pic img {
+  height: 120px;
+  border: 2px solid grey;
+  padding: 5px;
+  width: 100%;
+  background: #ffffff;
+}
+
+.twitter-profile-block .user-details {
+  margin-bottom: 1rem;
+}
+
+.fade-content {
+  opacity: .7;
+}
+
+.post-content-second-half .custom-tweet-image {
+
+  border: 2px solid #f2f2f2;
+  padding: 2px;
+  border-radius: 10px;
+}
+
+.post-content-second-half img.custom-tweet-image:hover {
+  opacity: .5;
+}
+
+.twitter-profile-block .user-details .user-screen-name {
+  font-size: 20px;
+}
+
+.user-list-display .user-bio-desc {
+  padding-left: 50px;
+  /* padding: 20px; */
+  padding-right: 10px;
+  line-height: 1;
+  padding-top: 10px;
+  clear: both;
+}
+
+.user-list-display a.follow-unfollow {
+  float: right;
+}
+
+.followers-following span:hover {
+  color: #0d5296;
+  text-decoration: underline;
+}
+
+.twitter-text-form legend {
+  margin-bottom: 0;
+}
+
+@media screen and (min-width: 576px) {
+
+  .send-tweet-via-dm-modal .modal-dialog,
+  .twitter-specific-modal .modal-dialog {
+    max-width: 700px;
+    margin: 1.75rem auto;
+  }
+}

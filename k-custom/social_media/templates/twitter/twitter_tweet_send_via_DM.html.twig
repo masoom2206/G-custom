@@ -1,0 +1,25 @@
+{# tweet send via direct message confirmation modal #} <div class="modal send-tweet-via-dm-modal fade" id="send-tweet-via-dm-{{value.id}}" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header send-tweet-header">
+        <div class="modal-heading">TWITTER DIRECT MESSAGE</div>
+        <div class="btn btn-cancel close-modal float-right" data-dismiss="modal">close</div>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="attchmentUrls-{{value.id}}" name="attchmentUrls" class="w-100 d-none attchmentUrl" value="https://twitter.com/{{value.user.screen_name}}/status/{{value.id}}">
+        <div class="search-user-box bg-f2f2f2">
+          <i class="fas fa-search" style="width: 5%;"></i>
+          <input type="text" id="search-user-{{value.id}}" name="search-user" class="search-user" placeholder="Search people">
+        </div>
+        <div class="selected-twitter-users">
+          <ul class="list-unstyled"> {# selected user lists #} </ul>
+        </div>
+        <div class="search-twitter-users"> {# search user lists #} </div>
+      </div>
+      <div class="modal-footer send-tweet-footer">
+        <textarea class="bg-f2f2f2" rows="1" placeholder="Start a new message" disabled></textarea>
+        <button class="btn btn-primary send-tweet-via-dm disabled " data-dismiss="modal">Send</button>
+      </div>
+    </div>
+  </div>
+</div>

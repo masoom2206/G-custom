@@ -1,0 +1,46 @@
+<?php
+/**
+ * Implements hook_node_view_alter().
+ */
+function blog_node_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display){  
+  if($display->id() == 'node.article.default'){
+    if(!empty($entity->get('field_video_embed')->value)){
+      unset($build['field_image']); 
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function blog_menu_local_tasks_alter(&$data, $route_name) {  
+  $roles = \Drupal::currentUser()->getRoles();
+  // remove tabs for users only
+  if(!in_array('administrator', $roles) && in_array($route_name, array('entity.node.canonical'))){
+    unset($data['tabs'][0]);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function blog_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
+  if($form_id == 'comment_comment_form'){
+    $form['comment_body']['widget']['#after_build'][] = '_allowed_formats_remove_textarea_help';
+  }
+}
+
+/**
+ * remove text format for comment box
+ */
+function _allowed_formats_remove_textarea_help($form_element, \Drupal\Core\Form\FormStateInterface $form_state) {
+  if(isset($form_element[0]['format'])) {
+    // All this stuff is needed to hide the help text.
+    unset($form_element[0]['format']['guidelines']);
+    unset($form_element[0]['format']['help']);
+    unset($form_element[0]['format']['#type']);
+    unset($form_element[0]['format']['#theme_wrappers']);
+    $form_element[0]['format']['#access'] = FALSE;
+  }
+  return $form_element;
+}

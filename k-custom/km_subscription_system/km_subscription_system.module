@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * Contains km_subscription_system.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function km_subscription_system_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the km_subscription_system module.
+    case 'help.page.km_subscription_system':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Kaboodle Media Subscription System') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function km_subscription_system_theme() {
+  return [
+    'km_subscription_system' => [
+      'render element' => 'children',
+    ],
+    'registraion_mail_template' => [
+		  'variables' => [
+		    'mail_body' => NULL,
+		    'mail_logo' => NULL,
+        'mail_year' => NULL,
+		  ],
+	  ]
+  ];
+}
+
+/**
+* Implements hook_mail().
+*/
+function km_subscription_system_mail($key, &$message, $params) {
+ $options = array(
+   'langcode' => $message['langcode'],
+ );
+
+ switch ($key) {
+   case 'verification':
+     $message['from'] = \Drupal::config('system.site')->get('mail');
+     $message['subject'] = $params['subject'];
+     $message['body'][] = $params['message'];
+     break;
+ }
+}

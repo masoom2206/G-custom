@@ -1,0 +1,10 @@
+services:
+  my_groups.route_subscriber:
+    class: Drupal\my_groups\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  my_groups.team.shared_kits:
+    class: Drupal\my_groups\Controller\MyGroupsController
+    
+  my_groups.team.service:
+    class: Drupal\my_groups\TeamService

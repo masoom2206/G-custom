@@ -1,0 +1,68 @@
+<div class="post-calendar-list">
+  <div class="post-calendar-list-wrapper pl-2 pr-2">
+  {% set counter = 0 %} 
+  {% for key,value in data.calendar_list %} 
+  <div class="calendar-post-heading-date" style="font-family: 'Lato bold';">
+      {{key}}
+    </div> 
+    {% for item_index,item_value in value %}
+    {% set counter = counter + 1 %}
+    {% if counter is odd %}
+    {% set bgcolor = '#f2f2f2' %}
+    {% endif %}
+    <div class="post-items d-flex pt-1 pb-1">
+      <div class="post-thumbnail">
+        <div class="wraped-thumbnail">
+        {% if item_value.thumnail_type == 'image' %}
+        <img src="{{item_value.defaultthubnail}}" style="width:100%"> 
+        {% endif %} {% if item_value.thumnail_type == 'video' %}
+        <video id="video-kit-post-list" class="thumb-image" style="width:50px">
+            <source src="{{ item_value.defaultthubnail }}">
+          </video>
+          {% endif %}
+        </div>
+      </div>
+      <div class="cal-post-content pl-2 pr-2" style="width:80%">
+        <span class="post-date-formate" style="font-family: 'Lato bold';">{{item_value.date_format}}</span><br>
+        <span>
+          {{item_value.title}}
+        </span>
+      </div>
+      <div class="cal-post-operation">
+        {% if item_value.status == 'Draft' %}
+         {% set modaltype = 'Draft' %}
+         {% elseif item_value.status == 'Scheduled' %}
+         {% set modaltype = 'Scheduled' %}
+        {% endif %}
+        
+        <ul class="list-unstyled d-flex" style="margin-bottom: 0;">
+        {% if item_value.is_published == 1 %}
+        <li class="disable edit-post"> <a><img src="/modules/custom/social_media/images/pencil-848688_gray.png" alt="edit" width="14" height="14"></a> </li>
+        {% else %}
+        <li class="enable edit-post"> <a id="edit-post" data-networkName = "{{appName}}" data-sid = "{{item_value.sid}}"><img src="/modules/custom/social_media/images/edit-icon.png" alt="edit" width="14" height="14"></a> </li>
+        {% endif %}
+        <li class="enable clone-post"> <a id="clone-post" data-networkName = "{{appName}}" data-sid = "{{item_value.sid}}" ><img src="/modules/custom/social_media/images/clone-icon.png" alt="clone" width="14" height="14"></a> </li>
+        {% if item_value.is_published == 1 %}
+        <li class="disable delete-post"><a><img src="/modules/custom/social_media/images/trash-848688.png" alt="trash" width="14" height="14"></a></li>
+        {% else %}
+        <li class="enable delete-post"><a id="delete-post" data-modalType = "{{modaltype}}" data-networkName = "{{appName}}" data-sid = "{{item_value.sid}}" ><img src="/modules/custom/social_media/images/trash-3b3b3b.png" alt="clone" width="14" height="14"></a> </li>
+        {% endif %}
+        </ul>
+        <ul class="list-unstyled d-flex" style="margin-bottom: 0;">
+        {% if item_value.is_published == 0 %}
+        {% if item_value.status == 'Draft' %}
+        <li><a> <img src="/modules/custom/social_media/images/clock-icon-inactive.png" alt="clock" width="14" height="14"> </a></li>
+        {% elseif item_value.status == 'Scheduled' %}
+        <li><a> <img src="/modules/custom/social_media/images/clock-icon-active.png" alt="clock" width="14" height="14"> </a></li>
+        {% endif %} 
+        {% else %} 
+        <li> <a><img src={{item_value.social_icon}} alt="edit" width="14" height="14"></a> </li>
+          <li><a> <img src="/modules/custom/social_media/images/ad-icon-active.png" alt="ad" width="14" height="14"></a> </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    {% endfor %}
+    {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="dashboard-menu">
+  <div class="user-details">
+    <div class="profile-url"><img src="{{user.profile_url}}" /></div>
+    <div class="user-name">{{user.name}}</div>
+  </div>
+	{% if user.kaboodle_owner_view == true %}
+  {#
+  <div class="products-progress">Site Tools</div>
+  <ul class="kaboodle-dashboard-links-new">
+    {% for tool in nav.links %}
+      <li><a href="{{tool.link}}">{{tool.title}}</a></li>
+    {% endfor %}
+  </ul>
+  #}
+  {% endif %}
+	
+  {#<div class="kaboodle-dashboard active"><a href="/tools/kaboodle/dashboard/{{ node.nid }}">{{ node.title }}</a></div>#}
+  {#
+  <ul class="kaboodle-dashboard-links-new2">
+    {% for tool2 in nav.links2 %}
+      <li><a href="{{tool2.link}}">{{tool2.title}}</a></li>
+    {% endfor %}
+  </ul>
+  #}
+  <div class="kaboodle-dashboard active"><a href="/tools/kaboodle/dashboard/{{ node.nid }}">{{ node.title }}</a></div>
+  {% if nav.products %}
+  <ul>
+  {% if user.kaboodle_owner_view == true %}
+  <li>
+  <a href="{{ nav['links2'][1]['link'] }}"><img src="{{ nav.product_status_icon }}" height="15" width="15"/>&nbsp;{{ nav['links2'][1]['title'] }}</a>
+  {#  <div class="pps-status">{{ pro.pps_status }}</div>  #}
+   </li>
+   {% endif %}
+  {% for pro in nav.products %}
+    <li {% if pro.tid == product.id %} class="active" {% endif %}>
+      <img src="{{ pro.product_status_icon }}" height="15" width="15"/>
+      {% if pro.status == 1 %}
+        {% if (user.professional_user == 1) and (pro.name == 'Email Newsletter' or pro.name == 'Reusable Content Block' or pro.name == 'Video Slides' or pro.name == 'Web Page')  %}
+          <a href="javascript:void(0);" class="professional-user-modal">{{ pro.name }}</a>
+        {% elseif pro.path_override != NULL %}
+          <a href="{{ pro.path_override[0]['value'] }}">{{ pro.name }}</a>
+        {% else %}
+          <a href="{{ pro.url }}">{{ pro.name }}</a>
+        {% endif %}
+      {% else %}
+        {{ pro.name }}
+      {% endif %}
+      {#  <div class="pps-status">{{ pro.pps_status }}</div>  #}
+    </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+</div>

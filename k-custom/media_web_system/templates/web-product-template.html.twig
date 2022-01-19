@@ -1,0 +1,15 @@
+{% include 'header.html.twig' %}
+{% include 'left.html.twig' %}
+<div id="canvas-container" class="wm-page-container" style="height: 100vh; background: #fff;">
+  <div id="left-container" class="left-html" style="background: #FFFFFF; height: calc(100vh - 165px); overflow-y: scroll;">
+    <div id="web-product-template">{{ variables.template.template_html | raw }}</div>
+  </div>
+  <div class="texteditor-dialog" id="texteditor-dialog" title="" style="padding: 0; display:none;">{{ form }}</div>
+  <div class="cropit-dialog" id="cropit-dialog" style="padding: 0; display:none;"></div>
+  <div class="info-dialog" id="info-dialog" style="padding: 0; display:none;"></div>
+  <div id="knowledge-base-modal"></div>
+</div>
+{% include 'right.html.twig' %}
+<div id="web-product-template-code-tokens"></div>
+<input type="hidden" name="template_id" id="template_id" value="{{variables.template.id}}" />
+<div id="footer"></div>

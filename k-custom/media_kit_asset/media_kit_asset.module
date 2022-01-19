@@ -1,0 +1,11 @@
+<?php
+/*
+ * @file
+ * Image Editor 
+*/
+function media_kit_asset_theme($existing, $type, $theme, $path) {  
+  return [
+	'mediakit_asset_editor_download' =>['variables' => ['data' => NULL,] ],
+  ];
+}
+

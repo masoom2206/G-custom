@@ -1,0 +1,11 @@
+<?php
+/*
+ * Implements hook_theme
+*/
+function onboarding_theme($existing, $type, $theme, $path) {
+  return [
+    'onboarding' => [
+      'variables' => ['data' => NULL],
+    ],
+  ];
+}

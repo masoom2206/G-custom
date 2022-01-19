@@ -1,0 +1,3 @@
+services:
+  my_kaboodles.dashboard:
+    class: Drupal\my_kaboodles\Controller\KaboodlesDashboardController

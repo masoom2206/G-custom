@@ -1,0 +1,14 @@
+<?php
+/*
+ * @file
+ * Audio Editor 
+*/
+function audio_asset_editor_theme($existing, $type, $theme, $path) {  
+  return [
+    'audio_asset_editor' =>
+        ['variables' => [
+           'data' => NULL,
+        ]
+    ],
+  ];
+}

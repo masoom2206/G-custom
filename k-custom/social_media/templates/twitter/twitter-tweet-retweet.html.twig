@@ -1,0 +1,32 @@
+{% if data.team_query%}
+  {% set team, muid = '?team=' ~ data.team_query.gid, '&muid=' ~ data.team_query.muid %}
+  {% set team_query = team ~ muid %}
+{% else %}
+  {% set team_query = '' %}
+{% endif %}
+ {% if value.retweeted == 1 %} {% set action, action_text, profile_pic, user_name, screen_name, created_at, full_text  ='unretweet','Undo Retweet', value.retweeted_status.user.profile_image_url_https, value.retweeted_status.user.name, value.retweeted_status.user.screen_name, value.retweeted_status.created_at|date('F d'), value.retweeted_status.full_text %} {% else %} {% set action, action_text, profile_pic, user_name, screen_name, created_at, full_text  ='retweet','Retweet', value.user.profile_image_url_https, value.user.name, value.user.screen_name, value.created_at|date('F d'), value.full_text  %} {% endif %} <div class="tweet-retweet-modal1 d-none text-left" style="width:200px;position:absolute;">
+   <ul>
+     <li><a href="/twitter/{{action}}/{{value.id}}{{team_query}}">{{action_text}}</a></li>
+     <li><a href="/twitter/retweet-with-comment/{{value.id}}{{team_query}}">Retweet with comment</a></li>
+   </ul>
+ </div>
+ <div id="km-dialog-{{value.id}}" class="d-none km-dialog" title="RETWEET WITH COMMENT">
+   <hr class="custom-style">
+   <div id="dialog-content-1" class="text-left">
+     <textarea class="w-100 comment-field" rows="1" placeholder="Add a comment"></textarea>
+     <input type="text" id="attchmentUrl-{{value.id}}" name="attchmentUrl" class="w-100 d-none attchmentUrl" value="https://twitter.com/{{value.user.screen_name}}/status/{{value.id}}">
+     <div class="quated-tweet-wrapper mt-2">
+       <div class="tweet-user-info tweet-header pl-3 pr-3">
+         <img src="{{profile_pic}}" style="width:20px;height:20px;" class="rounded-circle float-left" alt="pic">
+         <div class="twitter-owner-name float-left">
+           <strong>{{user_name}}</strong>
+           <span>@{{screen_name}} .</span>
+           <span>{{ created_at }}</span>
+         </div>
+       </div>
+       <div class="twitter-content-original pl-3 pr-3" style="clear:both">
+         {{full_text|raw}}
+       </div>
+     </div>
+   </div>
+ </div>

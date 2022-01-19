@@ -1,0 +1,150 @@
+<?php
+use Drupal\Core\Database\Database;
+
+/**
+ * @file
+ * Defines install of Affiliate Program.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function affiliate_program_schema() {
+  $schema['affiliate_program'] = [
+    'description' => 'Affiliate program application',
+    'fields' => [
+      'id' => [
+        'description' => "Auto increment id.",
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+	      'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'affiliate_key' => [
+        'description' => "User affiliate key.",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'com_name' => [
+        'description' => "Company Name.",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'com_domain' => [
+        'description' => "Company website.",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'address_1' => [
+        'description' => "Company address 1.",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'address_2' => [
+        'description' => "Company address 2.",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ],
+      'address_city' => [
+        'description' => "Company address city.",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'address_state' => [
+        'description' => "Company address state.",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'address_zip' => [
+        'description' => "Company address zip.",
+        //'type' => 'int',
+        'type' => 'varchar',
+        'length' => 11,
+        'not null' => TRUE,
+      ],
+      'paypal_email' => [
+        'description' => "PayPal Email Address.",
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ],
+      'phone_number' => [
+        'description' => "Phone number.",
+        //'type' => 'int',
+        //'size' => 'big',
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        //'unsigned' => TRUE,
+      ],
+      'emp_count' => [
+        'description' => "Company employ count.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'comp_non_profit' => [
+        'description' => "Company non profit.",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'abusive_content' => [
+        'description' => "Abusive content.",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ],
+      'affiliate_term' => [
+        'description' => "Affiliate term.",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'description'   => 'Time when the setting saved.',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ],
+      'updated' => [
+        'description'   => 'Time when the setting updated.',
+        'type'          => 'int',
+        'not null'      => TRUE,
+      ],
+      'professional_members' => [
+        'description' => "Professional members count.",
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'expert_members' => [
+        'description' => "Expert members count.",
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'admin_approved' => [
+        'description' => "Admin approved or not.",
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+    ],
+	  'primary key' => ['id', 'uid'],
+    'indexes' => [
+       'id' => ['id'],
+       'uid' => ['uid'],
+       'affiliate_key' => ['affiliate_key'],
+    ],
+  ];
+  return $schema;
+}
+ 

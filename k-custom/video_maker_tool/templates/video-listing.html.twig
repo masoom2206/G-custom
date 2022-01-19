@@ -1,0 +1,229 @@
+<!--nav tabs -->
+<div class="kaboodles-mid-block">  
+  <div class="custom-nav-layout">
+    <nav>
+      <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-active-tab" data-toggle="tab" href="#nav-active" role="tab" aria-controls="nav-active" aria-selected="true">Active</a>
+        <a class="nav-item nav-link" id="nav-shared-tab" data-toggle="tab" href="#nav-shared" role="tab" aria-controls="nav-shared" aria-selected="false">Shared</a>      
+      </div>
+      <div class="div-spacer"></div>
+    </nav>
+  </div>
+<!--tab content -->
+<div class="tab-content" id="nav-kaboodleContent">
+   <!--- Active section -->
+   <div class="tab-pane fade show active pt-20" id="nav-active" role="tabpanel" aria-labelledby="nav-active-tab">
+     <div class="col-lg-12 search-video-box row">
+  <div class="col-lg-6">
+    <a href="/tools/video/maker/add" class="btn btn-primary text-uppercase font-fjalla mr-4" data-drupal-link-system-path="tools/video/maker/add" videoCount="{{variables.videoCount}}" userProfessional="{{variables.userProfessional}}">Add Video</a>
+  </div>
+  <div class="col-lg-6">
+    <form class="row float-right" name="video-search" id="video-search" action="/tools/video/{{ variables.user_id }}" method="POST">
+      <div class="d-flex search-video">
+        <div class="search-ico"></div>
+        <div><input type="text" name="keyword" placeholder="Search by Title or Tag" class="form-control" value="{{ variables.keyword }}"/></div>
+		
+		<div class="checkbox favo-icon">
+    {% if variables.favorite == 1 %}
+		 <input type="checkbox" id="favo" name="heart" checked="checked"/>
+    {% else %}
+		 <input type="checkbox" id="favo" name="heart"/>
+    {% endif %}
+		 <label for="favo">hearts</label>
+        </div>
+        <div><input type="submit" name="search" value="Apply" class="btn btn-primary filter-btn font-fjalla"/></div>
+        {# <div><input type="submit" name="search" value="Clear Search" class="btn btn-cancel filter-btn font-fjalla"/></div> #}
+      </div>
+    </form>
+  </div>
+</div>
+     <div class="my-kaboodles kaboodles-dashboard">
+
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw">
+    <div class="col-lg-12">
+      {% if variables.videos is not empty %}
+      <div class="clearfix">
+        {% for video in variables.videos %}
+          <div class="video-grid">
+            <div class="offset-1">
+              <div class="card">
+                <div class="video">
+                  {% if video.render_status == 'Ready' %}
+                    <img style="cursor: pointer;" src="{% if video.uri is empty %} /modules/custom/video_maker_tool/images/default_vdo_thumb.png {% else %} {{file_url(video.uri)}} {% endif %}" width="auto" height="135" onclick="playvideomodal(12, {{video.video_media_id}})"> 
+                  {% else %}
+                    <img src="/modules/custom/video_maker_tool/images/video-icon.png" width="100%" height="135"></img>
+                  {% endif %}
+                </div>
+                <div class="card-body video-grid-body">                 
+                  <div class="grid-title">
+                    {% if ((video.render_status == 'Saved') or (video.render_status == 'Failed')) %}
+                      <a href="{{ path('videomaker.edit', {'video_id': video.video_id}) }}">{{ video.video_name }}</a>
+                    {% else %}
+                      {{ video.video_name }}
+                    {% endif %}
+                  </div>
+                  <div class="status"><em>{{ video.render_status }}</em></div>
+                  <div class="timestamp">{{ video.updated|date("m/d/y h:i A") }}</div>
+                  <div class="grid-action-btns">
+                    <!--Edit-->
+                    {% if ((video.render_status == 'Pending')) %}{# or (video.render_status == 'Ready')#}
+                      <span class="edit-vid"><img src="/modules/custom/video_maker_tool/images/edit-icon-disable.png" height="20"></span>
+                    {% else %}
+                      <span class="edit-vid"><a href="{{ path('videomaker.edit', {'video_id': video.video_id}) }}"><img src="/modules/custom/video_maker_tool/images/edit-icon.png" height="20"></a></span>
+                    {% endif %}
+                    <!--Expand-->
+                    {% if ((video.render_status == 'Pending') or (video.render_status == 'Saved') or (video.render_status == 'Failed')) %}
+                      <span class="preview-vid"><img src="/modules/custom/video_maker_tool/images/expand-disable.png" height="20"></span>
+                    {% else %}
+                      <span class="preview-vid"><a href="javascript:void(0);" onclick="playvideomodal(12, {{video.video_media_id}})"><img src="/modules/custom/video_maker_tool/images/expand.png" height="20"></a></span>
+                    {% endif %}
+                    <!--Heart-->
+                    {% if video.favorite == 1 %}
+                      <span class="favorite ready"><img mid="{{ video.video_media_id }}" class="favorite-video-media active" src="/modules/custom/video_maker_tool/images/heart-active-icon.svg" height="20"></span>
+                    {% else %}
+                      <span class="favorite ready"><img mid="{{ video.video_media_id }}" class="favorite-video-media inactive" src="/modules/custom/video_maker_tool/images/heart-inactive-icon.svg" height="20"></span>
+                    {% endif %}
+                    <!--Clone-->
+                    <span class="clone-vid"><a href="{{ path('videomaker.edit', {'video_id': video.video_id}) }}?clone=yes"><img src="/modules/custom/video_maker_tool/images/clone-icon.png" height="20"></a></span>
+                    <!--Download-->
+                    {% if ((video.render_status == 'Pending') or (video.render_status == 'Saved')) %}
+                      <span class="download-vid"><img src="/modules/custom/video_maker_tool/images/download-disable.png" height="20"></span>
+                    {% else %}
+                      <span class="download-vid"><a href="{{video.media_data.mid_url}}" class="download-link" download><img src="/modules/custom/video_maker_tool/images/download-bottom.png" height="20"></a></span>
+                    {% endif %}
+                    <!--Delete-->
+                    {% if ((video.render_status == 'Pending')) %}
+                      <span class="delete-vid"><img src="/modules/custom/video_maker_tool/images/trash-disable.png" height="20"></span>
+                    {% else %}
+                      <span class="delete-vid"><a href="javascript:void(0);" class="delete-video-media" video-id= "{{video.video_id}}"><img src="/modules/custom/video_maker_tool/images/trash.png" height="20"></a></span>
+                    {% endif %}
+                    {#<span><a href="{{ path('videomaker.delete', {'video_id': video.video_id}) }}"><img src="/modules/custom/video_maker_tool/images/trash.png" height="20"></a></span>#}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div id="vmt-video-player"></div>
+      <div id="vmt-video-delete"></div>
+      <div>{{ variables.pagination.one }}</div>
+      {% else %}
+        <div class="text-center">There are currently no videos.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+   </div>
+    <!--- Shared section -->
+		<div class="tab-pane fade pt-20" id="nav-shared" role="tabpanel" aria-labelledby="nav-shared-tab">
+      {% if variables.team_query %}
+        <div class="member-content">
+          <div class="col-lg-12 member-team-name text-center">{{variables.team_name}}</div>
+          <div class="col-lg-12 search-video-box row">
+            <div class="col-lg-6">
+              <a href="/tools/video/maker/add?team={{variables.team_query.gid}}&uid={{variables.team_query.muid}}" class="btn btn-primary text-uppercase font-fjalla mr-4" data-drupal-link-system-path="tools/video/maker/add" videoCount="{{variables.videoCount}}" userProfessional="{{variables.userProfessional}}">Add Video</a>
+            </div>
+            <div class="col-lg-6">
+              <form class="row float-right" name="video-search" id="video-member-search" action="/tools/video/{{ variables.user_id }}?team={{variables.team_query.gid}}&uid={{variables.team_query.muid}}" method="POST">
+                <div class="d-flex search-video">
+                  <div class="search-ico"></div>
+                  <div><input type="text" name="keyword" placeholder="Search by Title or Tag" class="form-control" value="{{ variables.keyword }}"/></div>
+                  <div class="checkbox favo-icon">
+                  {% if variables.favorite == 1 %}
+                    <input type="checkbox" id="member-favo" name="heart" checked="checked"/>
+                  {% else %}
+                    <input type="checkbox" id="member-favo" name="heart"/> 
+                  {% endif %}
+                    <label for="member-favo">hearts</label>
+                  </div>
+                  <div>
+                    <input type="submit" name="search" value="Apply" class="btn btn-primary filter-btn font-fjalla"/>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="my-kaboodles kaboodles-dashboard">
+            <div class="kaboodles-container main-block d-flex w-100 ff-rw">
+              <div class="col-lg-12">
+                {% if variables.member_video is not empty %}
+                <div class="clearfix">
+                  {% for video in variables.member_video %}
+                  <div class="video-grid">
+                    <div class="offset-1">
+                      <div class="card">
+                        <div class="video">
+                        {% if video.render_status == 'Ready' %}
+                          <img style="cursor: pointer;" src="{% if video.uri is empty %} /modules/custom/video_maker_tool/images/default_vdo_thumb.png {% else %} {{file_url(video.uri)}} {% endif %}" width="auto" height="135" onclick="playvideomodal(12, {{video.video_media_id}})"> 
+                        {% else %}
+                          <img src="/modules/custom/video_maker_tool/images/video-icon.png" width="100%" height="135"></img>
+                        {% endif %}
+                        </div>
+                        <div class="card-body video-grid-body">
+                          <div class="grid-title">
+                          {% if ((video.render_status == 'Saved') or (video.render_status == 'Failed')) %}
+                            <a href="{{ path('videomaker.edit', {'video_id': video.video_id}) }}">{{ video.video_name }}</a>
+                          {% else %}
+                            {{ video.video_name }}
+                          {% endif %}
+                          </div>
+                          <div class="status"><em>{{ video.render_status }}</em></div>
+                          <div class="timestamp">{{ video.updated|date("m/d/y h:i A") }}</div>
+                          <div class="grid-action-btns">
+                          <!--Edit-->
+                          {% if ((video.render_status == 'Pending')) %}{# or (video.render_status == 'Ready')#}
+                            <span class="edit-vid"><img src="/modules/custom/video_maker_tool/images/edit-icon-disable.png" height="20"></span>
+                          {% else %}
+                            <span class="edit-vid"><a href="{{ path('videomaker.edit', {'video_id': video.video_id}) }}?team={{variables.team_query.gid}}&uid={{variables.team_query.muid}}"><img src="/modules/custom/video_maker_tool/images/edit-icon.png" height="20"></a></span>
+                          {% endif %}
+                          <!--Expand-->
+                          {% if ((video.render_status == 'Pending') or (video.render_status == 'Saved') or (video.render_status == 'Failed')) %}
+                            <span class="preview-vid"><img src="/modules/custom/video_maker_tool/images/expand-disable.png" height="20"></span>
+                          {% else %}
+                            <span class="preview-vid"><a href="javascript:void(0);" onclick="playvideomodal(12, {{video.video_media_id}})"><img src="/modules/custom/video_maker_tool/images/expand.png" height="20"></a></span>
+                          {% endif %}
+                          <!--Heart-->
+                          {% if video.favorite == 1 %}
+                            <span class="favorite ready"><img mid="{{ video.video_media_id }}" class="favorite-video-media active" src="/modules/custom/video_maker_tool/images/heart-active-icon.svg" height="20"></span>
+                          {% else %}
+                            <span class="favorite ready"><img mid="{{ video.video_media_id }}" class="favorite-video-media inactive" src="/modules/custom/video_maker_tool/images/heart-inactive-icon.svg" height="20"></span>
+                          {% endif %}
+                          <!--Clone-->
+                            <span class="clone-vid"><a href="{{ path('videomaker.edit', {'video_id': video.video_id}) }}?clone=yes&team={{variables.team_query.gid}}&uid={{variables.team_query.muid}}"><img src="/modules/custom/video_maker_tool/images/clone-icon.png" height="20"></a></span>
+                          <!--Download-->
+                          {% if ((video.render_status == 'Pending') or (video.render_status == 'Saved')) %}
+                            <span class="download-vid"><img src="/modules/custom/video_maker_tool/images/download-disable.png" height="20"></span>
+                          {% else %}
+                            <span class="download-vid"><a href="{{video.media_data.mid_url}}" class="download-link" download><img src="/modules/custom/video_maker_tool/images/download-bottom.png" height="20"></a></span>
+                          {% endif %}
+                          <!--Delete-->
+                          {% if ((video.render_status == 'Pending')) %}
+                            <span class="delete-vid"><img src="/modules/custom/video_maker_tool/images/trash-disable.png" height="20"></span>
+                          {% else %}
+                            <span class="delete-vid"><a href="javascript:void(0);" class="delete-video-media" video-id= "{{video.video_id}}"><img src="/modules/custom/video_maker_tool/images/trash.png" height="20"></a></span>
+                          {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                <div>{{ variables.pagination.two }}</div>
+                {% else %}
+                <div class="text-center">There are currently no videos.</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="member-teams d-none">{{ variables.build_teams }}</div>
+      {% else %}
+        <div class="member-teams">{{ variables.build_teams }}</div>
+      {% endif %}
+    </div>
+</div>
+  <!--tab content end-->
+  </div>
+<!--nav tabs end-->

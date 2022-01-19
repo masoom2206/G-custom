@@ -1,0 +1,57 @@
+generate_pdf.generate_p_d_f_controller_generatepdf:
+  path: '/admin/config/generate/{desing_id}/pdf'
+  defaults:
+    _controller: '\Drupal\generate_pdf\Controller\GeneratePDFController::generatepdf'
+    _title: 'Gnerate PDF'
+  requirements:
+    _permission: 'access content'
+generate_pdf.generate_image_controller_generatepdf:
+  path: '/admin/config/generate/{desing_id}/image'
+  defaults:
+    _controller: '\Drupal\generate_pdf\Controller\GeneratePDFController::generateimage'
+    _title: 'Gnerate Image'
+  requirements:
+    _permission: 'access content'
+generate_pdf.generate_image_product:
+  path: '/product/generate/{product_id}/image'
+  defaults:
+    _controller: '\Drupal\generate_pdf\Controller\GeneratePDFController::generateproductimage'
+    _title: 'Gnerate Image'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_permission: 'access content'
+generate_pdf.generate_pdf_product:
+  path: '/product/generate/{product_id}/pdf'
+  defaults:
+    _controller: '\Drupal\generate_pdf\Controller\GeneratePDFController::generateproductpdf'
+    _title: 'Gnerate PDF'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_permission: 'access content'
+generate_pdf.add_font_controller_addfont:
+  path: '/admin/structure/tcpdf/addfont'
+  defaults:
+    _controller: '\Drupal\generate_pdf\Controller\AddFontController::addfont'
+    _title: 'Add new Font'
+  requirements:
+    _permission: 'administer genp'
+
+generate_pdf.add_font_form:
+  path: '/admin/structure/tcpdf/fonts/addfont'
+  defaults:
+    _form: '\Drupal\generate_pdf\Form\AddFontForm'
+    _title: 'AddFontForm'
+  requirements:
+    _permission: 'administer genp'
+
+generate_pdf.import_fonts_controller_showlist:
+  path: '/admin/structure/tcpdf/fonts/all'
+  defaults:
+    _controller: '\Drupal\generate_pdf\Controller\ImportFontsController::showlist'
+    _title: 'showlist'
+  requirements:
+    _permission: 'administer genp'

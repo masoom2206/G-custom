@@ -1,0 +1,216 @@
+.slider-wrapper .small-image {
+    background-image: url('../img/zoomout-icon.png');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.slider-wrapper .large-image {
+    background-image: url('../img/zoomin-icon.png');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.icon36x24 {
+    width: 36px;
+    height: 24px;
+}
+.icon18x24 {
+    width: 30px;
+    height: 24px;
+}
+.rotate-img span:hover{
+    opacity:0.7;
+}
+.center-line{
+    height:30px;
+    border-right:2px solid #f2f2f2
+}
+.image-editor-header select{
+    background:#f2f2f2;
+    width:100%;
+    
+}
+#colorSelector{
+    background:#000000;
+    color:transparent !important;
+    margin-left:5px!important;
+    width: 30px;
+    border-radius: 6px;
+}
+.controls-wrapper .slider-wrapper {
+    -webkit-transition: opacity 0.25s;
+    -moz-transition: opacity 0.25s;
+    -o-transition: opacity 0.25s;
+    -ms-transition: opacity 0.25s;
+    transition: opacity 0.25s;
+	display: inline-block;
+}
+.cropit-preview {
+/*background-color: #000;*/
+background-size: cover;
+margin: 0px auto;
+border: 1px dashed #f00;
+
+}
+.cropit-preview.cropit-image-loaded .cropit-preview-image-container {
+  cursor: move;
+}
+
+/* Gray out zoom slider when the image cannot be zoomed */
+.cropit-image-zoom-input[disabled] {
+  opacity: .2;
+}
+.fa-exclamation-triangle{
+    color: darkred;
+}
+
+
+/* styles range input */
+ /*chrome*/
+ input[type=range]{
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+   
+    height: 5px;
+    background: #ddd;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #e75e00;;
+    margin-top: -4px;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+/* firefox */
+
+input[type=range]{
+    /* fix for FF unable to apply focus style bug  */
+    border: 1px solid white; 
+
+    /*required for proper track sizing in FF*/
+   
+}
+
+input[type=range]::-moz-range-track {
+   
+    height: 5px;
+    background: #ddd;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-moz-range-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #e75e00;
+}
+
+/*hide the outline behind the border*/
+input[type=range]:-moz-focusring{
+    outline: 1px solid white;
+    outline-offset: -1px;
+}
+
+input[type=range]:focus::-moz-range-track {
+    background: #ccc;
+}
+
+/* IE-10 */
+
+input[type=range]::-ms-track {
+  
+    height: 5px;
+    
+    /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
+    background: transparent;
+    
+    /*leave room for the larger thumb to overflow with a transparent border */
+    border-color: transparent;
+    border-width: 6px 0;
+
+    /*remove default tick marks*/
+    color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+    background: #e75e00;
+    border-radius: 10px;
+}
+input[type=range]::-ms-fill-upper {
+    background: #ddd;
+    border-radius: 10px;
+}
+input[type=range]::-ms-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #e75e00;
+}
+input[type=range]:focus::-ms-fill-lower {
+    background: #888;
+}
+input[type=range]:focus::-ms-fill-upper {
+    background: #ccc;
+}
+input#colorSelector {
+    color: transparent!important;
+}
+
+#overlay{
+    display: block;
+    width: 100%;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+.km-loader {
+    display: inline-block;
+    background-image: url('../img/km-logo.gif');
+    background-size: 100px, 100%;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 47%;
+    left: 47%;
+    width: 100%;
+    height: 100%;
+    color: #fe5b03;
+}
+#custom-size-modal{
+    display:none;
+}
+.img-wrap-box{
+	border: 1px solid #ced4da;
+    padding: 10px;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+

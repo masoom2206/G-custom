@@ -1,0 +1,39 @@
+{# tweeter follower following user list pop-up #} <div class="modal twitter-specific-modal twitter-user-follower-fllowing-list fade" id="modal-twitter-user-follower-fllowing-list" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header twitter-tweet-header">
+        <div class="modal-heading d-flex">
+          <img src="{{data.user_profile.profile_image_url_https}}" class="rounded-circle border-images" alt="pic">
+          <div>
+            <div class="screen-name"><strong>{{data.user_profile.name}}</strong> {% if data.user_profile.verified == 1 %} <img src="https://img.icons8.com/color/48/000000/verified-account.png" style=" height: 20px;"> {% endif %} </div>
+            <div class="user-name">@{{data.user_profile.screen_name}}</div>
+            <div class="user-id d-none">{{data.user_profile.id}}</div>
+          </div>
+        </div>
+        <div class="btn btn-cancel close-modal float-right" data-dismiss="modal">close</div>
+      </div>
+      <div class="modal-body">
+        <nav class="custom-nav-layout">
+          <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-myfollowers-tab" data-toggle="tab" href="#nav-list-followers-view" role="tab" aria-controls="nav-list-followers-view" aria-selected="true">
+              <span style="padding-left:2px">FOLLOWERS</span></a>
+            <a class="nav-item nav-link" id="nav-myfollowing-tab" data-toggle="tab" href="#nav-list-following-view" role="tab" aria-controls="nav-list-following-view" aria-selected="false">
+              <span style="padding-left:2px">FOLLOWING</span></a>
+          </div>
+        </nav>
+        <div class="tab-content">
+          <!-- list view followers -->
+          <div class="tab-pane fade show active" id="nav-list-followers-view" role="tabpanel" aria-labelledby="nav-list-view">
+            <div class="search-twitter-users"> {% embed '@social_media/twitter/twitter-user-list-display.html.twig' ignore missing with {'result': data.followers_list.users} %} {% endembed %} </div>
+          </div>
+          <!-- list view following -->
+          <div class="tab-pane fade show" id="nav-list-following-view" role="tabpanel" aria-labelledby="nav-grid-view">
+            <div class="search-twitter-users"> {% embed '@social_media/twitter/twitter-user-list-display.html.twig' ignore missing with {'result': data.friends_list.users} %} {% endembed %} </div>
+          </div>
+        </div>
+        <div class="modal-footer send-tweet-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

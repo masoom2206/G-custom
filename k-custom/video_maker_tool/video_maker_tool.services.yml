@@ -1,0 +1,13 @@
+services:
+  video.making.process:
+    class: Drupal\video_maker_tool\VideoService
+    
+  video.twig.function.extension:
+    class: Drupal\video_maker_tool\TwigExtension\TwigFunctionExtension
+    tags:
+      - { name: twig.extension }
+      
+  video.twig.filter.extension:
+    class: Drupal\video_maker_tool\TwigExtension\TwigFilterExtension
+    tags:
+      - { name: twig.extension }

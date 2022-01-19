@@ -1,0 +1,150 @@
+my_kaboodles.content:
+  path: '/tools/my-kaboodles/{user}'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesController::content'
+    _title: 'My Kaboodles'
+    kaboodle_archive: 0
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _permission: 'My Kaboodles'
+    _custom_access: '\Drupal\my_kaboodles\Controller\KaboodlesController::kaboodles_access'
+
+my_kaboodles.kaboodle_archive_page:
+  path: '/tools/my-kaboodles/archive/{user}'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesController::content'
+    _title: 'My Kaboodles Archive'
+    kaboodle_archive: 1
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements: 
+    _permission: 'My Kaboodles'
+    _custom_access: '\Drupal\my_kaboodles\Controller\KaboodlesController::kaboodles_access'
+
+my_kaboodles.kaboodle_dashboard_page:
+  path: '/tools/kaboodle/dashboard/{node}'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::content'
+    _title: 'Kaboodle Dashboard'
+    node: 0
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'My Kaboodles'
+    _custom_access: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::kaboodle_dashboard_access'
+
+my_kaboodles.kaboodle_notifications_all:
+  path: '/tools/notifications/{user}'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesNotificationsController::all_notifications'
+    _title: 'Notifications'
+    node: 0
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _permission: 'My Kaboodles'
+    _custom_access: '\Drupal\my_groups\Access\UserAccessCheck::profileAccess'
+
+my_kaboodles.kaboodle_notifications_page:
+  path: '/tools/notifications/{user}/{node}'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesNotificationsController::specific_notification'
+    _title: 'Notifications'
+    user: 0
+    node: 0
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'My Kaboodles'
+
+my_kaboodles.kaboodle_reports_page:
+  path: '/km/reports/{node}'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesReportsController::content'
+    _title: 'Reports'
+    node: 0
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'My Kaboodles'
+
+my_kaboodles.subscription_pricing:
+  path: '/plans'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::subscription_pricing'
+    _title: 'Subscription Plans'
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _permission: 'subscription page'
+
+my_kaboodles.reactivate_subscription_pricing:
+  path: '/reactivate'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::reactivate_subscription_pricing'
+    _title: 'Reactivate Subscription Plans'
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    #_permission: 'subscription page'
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::reactivatePageAccess'
+
+
+my_kaboodles.update_pps:
+  path: '/kaboodle/update/pps'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesDashboardController::update_pps'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _permission: 'My Kaboodles'
+my_kaboodles.notifications_delete:
+  path: '/notification/delete/{user_id}/{not_id}/{on_boarding}/{not_list}'
+  defaults: 
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesNotificationsController::delete_notification'
+    not_list: NULL
+  requirements:
+    _permission: 'My Kaboodles'
+my_kaboodles.kaboodle_products_list:
+  path: '/tools/my-products/{user}'
+  defaults:
+    _controller: '\Drupal\my_kaboodles\Controller\KaboodlesProductsController::all_product'
+    _title: 'Kaboodle Products'
+    node: 0
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _permission: 'My Kaboodles'
+    _custom_access: '\Drupal\my_groups\Access\UserAccessCheck::profileAccess'

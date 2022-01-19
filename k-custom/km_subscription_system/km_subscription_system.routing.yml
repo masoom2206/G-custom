@@ -1,0 +1,85 @@
+km_subscription_system.contentcreator_form:
+  path: 'sub/cc/free'
+  defaults:
+    _form: '\Drupal\km_subscription_system\Form\ContentcreatorForm'
+    _title: 'ContentcreatorForm'
+  requirements:
+    _permission: 'subscription page'
+km_subscription_system.procontentcreator_form:
+  path: '/sub/pro/trial'
+  defaults:
+    _form: '\Drupal\km_subscription_system\Form\ProcontentcreatorForm'
+    _title: 'ProcontentcreatorForm'
+  requirements:
+    _permission: 'subscription page'
+km_subscription_system.enterprise_form:
+  path: '/inquire/enterprise'
+  defaults:
+    _form: '\Drupal\km_subscription_system\Form\EnterpriseForm'
+    _title: 'EnterpriseForm'
+  requirements:
+    _permission: 'subscription page'
+km_subscription_system.emailverification_form:
+  path: '/verify/email'
+  defaults:
+    _form: '\Drupal\km_subscription_system\Form\EmailverificationForm'
+    _title: 'Email verification'
+  requirements:
+    _permission: 'subscription page'
+km_subscription_system.get_start_for_free_form:
+  path: '/get_start_for_free'
+  defaults:
+    _form: '\Drupal\km_subscription_system\Form\GetStartForFreeForm'
+    _title: 'GET STARTED FOR FREE'
+  requirements:
+    _access: 'TRUE'
+
+km_subscription_system.default_controller_userautologin:
+  path: '/km_subscription_system/userautologin'
+  defaults:
+    _controller: '\Drupal\km_subscription_system\Controller\DefaultController::userautologin'
+    _title: 'User Auto Login'
+  requirements:
+    _permission: 'access content'
+
+km_subscription_system.check_email_controller_checkemail:
+  path: '/validation/checkEmail'
+  defaults:
+    _controller: '\Drupal\km_subscription_system\Controller\CheckEmailController::checkemail'
+    _title: 'Check Email'
+  requirements:
+    _permission: 'access content'
+
+km_subscription_system.check_email_controller_checkemailvalid:
+  path: '/validation/checkEmailValid'
+  defaults:
+    _controller: '\Drupal\km_subscription_system\Controller\CheckEmailController::checkemailvalid'
+    _title: 'Check Email'
+  requirements:
+    _permission: 'access content'
+
+
+km_subscription_system.validate_code_controller_validatecode:
+  path: '/api/verify/email'
+  defaults:
+    _controller: '\Drupal\km_subscription_system\Controller\ValidateCodeController::validatecode'
+    _title: 'VERIFICATION ERROR'
+  requirements:
+    _permission: 'access content'
+
+km_subscription_system.verifycode_controller_verifycode:
+  path: '/validation/verification_code'
+  defaults:
+    _controller: '\Drupal\km_subscription_system\Controller\VerifycodeController::verifycode'
+    _title: 'Verify Code'
+  requirements:
+    _permission: 'access content'
+km_subscription_system.mailsetting_form:
+  path: '/admin/config/km_subscription_system/mailsetting'
+  defaults:
+    _form: '\Drupal\km_subscription_system\Form\MailsettingForm'
+    _title: 'MailsettingForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

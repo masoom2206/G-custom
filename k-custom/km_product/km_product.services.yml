@@ -1,0 +1,7 @@
+services:
+  km_product.templates:
+    class: Drupal\km_product\Controller\TemplatesController
+  km_product.event_subscriber:
+    class: Drupal\km_product\EventSubscriber\htmlArticleRedirect
+    tags:
+      - {name: event_subscriber}

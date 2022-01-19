@@ -1,0 +1,4 @@
+subscription page:
+  description: 'subscription page access'
+  title: 'subscription page access'
+  restrict access: TRUE

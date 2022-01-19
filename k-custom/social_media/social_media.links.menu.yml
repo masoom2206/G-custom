@@ -1,0 +1,11 @@
+social_media.all:
+  title: 'Social Media Configuration'
+  route_name: social_media.all
+  parent: system.admin_config
+  weight: 100  
+
+social_media.api_settings:
+  title: 'Social Media API'
+  route_name: social_media.api_settings
+  description: 'Configure Social Media API.'
+  parent: social_media.all

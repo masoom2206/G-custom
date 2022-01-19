@@ -1,0 +1,6 @@
+name: On Boarding
+description:  To provide each new user with a graphical checklist of the recommended items they should complete as a new member of the site
+type: module
+package: Custom
+core: '8.x'
+version: '8.x-1.0'

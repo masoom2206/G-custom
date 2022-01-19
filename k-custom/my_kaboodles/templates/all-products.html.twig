@@ -1,0 +1,23 @@
+
+<div class="my-kaboodles">
+  <div class="kaboodles-top-block">
+    <div class="kaboodles-container-head kaboodles-top-block-container">
+  </div>
+  <div class="kaboodles-mid-block">
+    <div class="kaboodles-container d-flex w-100 ff-rw">
+			<div class="select-box-element pl-3 pr-3" data-reactid=".1.0">
+        <div class="notification-header">
+					<ul class="list-unstyled d-flex justify-content-center align-items-center" data-reactid=".1.0.0.0">
+						<li class="d-none"><label class="checkbox-container"><input type="checkbox" id="selectall-notifications" class="box-check" onclick="selectAll(this)"><span class="checkmark"></span><span class="desc">Select All</span></label><button id="delete-notifications" type="button" class="btn btn-primary height-25 ml-2" data-target="#notification-modal" data-toggle= "modal" uid="{{ uid }}" onclick="deleteAll(this)">Delete Selected</button></li>
+						<!--<li class="search-box border-right-0 d-flex"><span class="search-ico"></span><input type="text" id="filter-text" class="filter pl-1" placeholder="SEARCH BY FEATURE OR MESSAGE"><span class="clear-text d-none">x</span><button id="filter-notifications" type="submit" class="height-25 ml-2 btn btn-primary filter-btn">Apply</button></li>-->
+					</ul>
+        </div>
+      </div>
+			<div class="col-lg-12" id="notifications">
+				{{ table }}
+			</div>
+    </div>
+  </div>
+</div>
+<div class="my-kaboodles-pager">{{pager}}</div>
+<div id="notification-modal" class="modal fade"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h4 class="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"><button id="btn-cancel" data-dismiss="modal" type="button" class="btn btn-primary">Close</button><a href="#" id="confirm-btn" class="btn btn-primary d-none">Confirm</a></div></div></div></div>

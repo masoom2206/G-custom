@@ -1,0 +1,24 @@
+image_asset.editor:
+  js:
+    js/image_asset_editor.js: {}
+  css:
+    theme:
+      css/image_asset_editor.css: {}  
+      
+free_image_asset.editor:
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/camanjs/4.0.0/caman.full.min.js: {}  
+    js/free_image_asset_editor.js: {}
+    js/image_upload.js: {}
+  css:
+    theme:
+      css/image_asset_editor.css: {}
+      css/free_image_asset_editor.css: {}    
+
+free_image_asset_download.editor:
+  js:
+    js/free_image_asset_editor_download.js: {}
+  css:
+    theme:
+      css/image_asset_editor.css: {}
+      css/free_image_asset_editor.css: {}        

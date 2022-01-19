@@ -1,0 +1,178 @@
+.popup-class{
+	z-index: 99;
+    position: absolute;
+    background: #fff;
+    border: 2px solid #f2f2f2;
+	top:20;
+}
+
+.cropit-preview {
+background-color: #000;
+background-size: cover;
+/*border: 1px solid #ccc; */
+/*border-radius: 3px;*/
+
+margin: 0px auto;
+width:700px;
+height: 250px ;
+}
+
+.cropit-preview-image-container {
+cursor: move;
+}
+.slider-wrapper .small-image {
+   background-image: url(../images/zoomout-icon.svg);
+   background-repeat: no-repeat;
+   background-position: center;
+}
+.slider-wrapper .large-image {
+   background-image: url(../images/zoomin-icon.svg);
+   background-repeat: no-repeat;
+   background-position: center;
+}
+
+.icon18x24{
+	width:18px;
+	height:24px;
+}
+.icon36x24{
+	width:36px;
+	height:24px;
+}
+
+.controls-wrapper .slider-wrapper {
+    -webkit-transition: opacity 0.25s;
+    -moz-transition: opacity 0.25s;
+    -o-transition: opacity 0.25s;
+    -ms-transition: opacity 0.25s;
+    transition: opacity 0.25s;
+	display: inline-block;
+}
+.controls-wrapper {
+     text-align: right;
+}
+.cropit-preview.cropit-image-loading .spinner {
+  opacity: 1;
+}	
+input.cropit-image-zoom-input{
+	margin-left:5px;
+	margin-right:5px;
+}
+.image-editor ul li{
+	cursor:pointer;
+}
+ul li.first-child{
+	border-right: 2px solid;
+    padding-right: 10px;
+    line-height: 1;
+}
+ul li.second-child{
+	padding-left: 10px;
+    line-height: 1;
+}
+/* styles range input */
+ /*chrome*/
+ input[type=range]{
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+   
+    height: 5px;
+    background: #ddd;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #e75e00;;
+    margin-top: -4px;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+/* firefox */
+
+input[type=range]{
+    /* fix for FF unable to apply focus style bug  */
+    border: 1px solid white; 
+
+    /*required for proper track sizing in FF*/
+   
+}
+
+input[type=range]::-moz-range-track {
+   
+    height: 5px;
+    background: #ddd;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-moz-range-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #e75e00;
+}
+
+/*hide the outline behind the border*/
+input[type=range]:-moz-focusring{
+    outline: 1px solid white;
+    outline-offset: -1px;
+}
+
+input[type=range]:focus::-moz-range-track {
+    background: #ccc;
+}
+
+/* IE-10 */
+
+input[type=range]::-ms-track {
+  
+    height: 5px;
+    
+    /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
+    background: transparent;
+    
+    /*leave room for the larger thumb to overflow with a transparent border */
+    border-color: transparent;
+    border-width: 6px 0;
+
+    /*remove default tick marks*/
+    color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+    background: #e75e00;
+    border-radius: 10px;
+}
+input[type=range]::-ms-fill-upper {
+    background: #ddd;
+    border-radius: 10px;
+}
+input[type=range]::-ms-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #e75e00;
+}
+input[type=range]:focus::-ms-fill-lower {
+    background: #888;
+}
+input[type=range]:focus::-ms-fill-upper {
+    background: #ccc;
+}
+
+
+
+	
+	  

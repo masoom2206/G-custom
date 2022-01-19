@@ -1,0 +1,9 @@
+public_home_page:
+  js:
+    dist/owl.carousel.js: {}
+    js/script.js: {}
+  css:
+    theme:
+      dist/assets/owl.theme.default.css: {}
+      dist/assets/owl.carousel.css: {}
+      css/style.css: {}  

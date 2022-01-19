@@ -1,0 +1,4 @@
+mediakit_asset.editor:
+  js:
+    js/mediakits_asset_editor.js: {}
+              

@@ -1,0 +1,129 @@
+<div class="custom-media-photo-edit-form" style="border-top:2px solid #f2f2f2">
+   <div class="media-edit-form-wrapper " id="media-edit-form-wrapper" style="margin-top:15px;">
+      <div class="media-edit-form-content">
+         <div class="media-content">
+            <div class="d-flex">
+               <div class="photo-editor-block" style="width:70%; border-right:2px solid #f2f2f2">
+                  <div class="wrap-photo-editor-block" style="margin-right:15px; border-bottom:2px solid #f2f2f2;height:100%">
+                     <div class="image-editor photo-image-editor" id="photo-image-editor">
+                        <div class="image-editor-header" style="margin-bottom: 28px;position: relative; ">
+                           <div class="right-header disabled d-flex justify-content-between align-items-center" style="height:50px;">
+                              <div class="justify-content-start" style="width:45%">
+                                 <ul class="list-unstyled d-flex align-items-center justify-content-en" style="width:100%; margin:0 auto;">
+                                    <li class="" style="width:70%; margin-right:10px">
+                                       <div class="form-group" style="margin-bottom:4px">
+                                          <label for="mediaPreset" style="margin-bottom:0px">Select preset</label>
+                                          <select name="mediaPreset" id="mediaPreset" style=" height: 30px;">
+                                             <!-- <option value="-1">Full Original Image</option> -->
+                                             {% for preset in data.media_preset %} 
+                                             <option value="{{preset.tid}}">{{preset.name}}</option>
+                                             {% endfor %}
+                                          </select>
+                                       </div>
+                                    </li>
+                                 </ul>
+                              </div>
+                              <div class="center-lin"></div>
+                              <div class="justify-content-end" style="position: absolute;right: 0; bottom: 0;">
+                                 <ul class="list-unstyled d-flex align-items-center" style="margin-block-end: 0!important;">
+                                    <li class="align-items-center d-flex " style="padding-right: 10px;">
+                                       <div class="checkbox background-check">
+                                          <label class="checkbox-container" style="">
+                                             <input type="checkbox" class="box-check" style="">
+                                             <!-- <span class="custom-label"> </span> -->
+                                             <span class="checkmark"></span>
+                                          </label>
+                                       </div>
+                                       <div class="bg-wrap disabled">  
+                                          <span class="pr-1">Background </span>
+                                          <input type="text" maxlength="1" size="1" id="colorSelector" style="background:#000000;" />
+                                       </div>
+                                    </li>
+                                    <div class="center-line" style=""></div>
+                                   {# <li class="" style="">
+                                       <div class="d-flex align-items-center">
+                                       </div>
+                                       <div class="rotate-img d-flex text-center align-items-center">
+                                          <span class="ant-clock-rotate" style="cursor:pointer;width: 30px;">
+                                          <i class="fas fa-undo"></i>
+                                          </span>
+                                          <span class="clock-rotate" style="cursor:pointer;width: 30px;">
+                                          <i class="fas fa-redo"></i>
+                                          </span>
+                                       </div>
+                                    </li>
+                                    <div class="center-line"></div> #}
+                                     
+                                    <li class="" style="padding-left: 10px;">
+                                       <div class="d-none">
+                                          <span> Preset Dimensions</span>
+                                          <span class="size"></span>
+                                       </div>
+                                       <div class="controls-wrapper" style="float: right;">
+                                          <div class="slider-wrapper d-flex align-items-center">
+                                             <span class="icon icon-image small-image icon18x24"></span>
+                                             <input type="range" class="cropit-image-zoom-input">
+                                             <span class="icon icon-image large-image icon36x24"></span>
+                                             <button type="button" class="btn invisible" data-toggle="tooltip" data-html="true" title="Some blurring may occur" style="padding:0;padding-left:5px;">
+                                             <i class="fas fa-exclamation-triangle"></i>
+                                             </button>
+                                          </div>
+                                       </div>
+                                    </li>
+                                    
+                                 </ul>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="cropit-preview"">
+                           <div class="loaded-image" data-fid="" data-src=""><img style="width: 50%;" src=""></div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="photo-field-block" style="width:30%">
+                  <form name="image-editor-form" class="d-fle " id="image-editor-form" action="" method="POST">
+				   <div class="" style="padding:5px">
+					  <div class="form-group step1">
+						<label for="">Step 1: </label>
+						<input style="width:80%" type="email" id="email" name="email" placeholder="ENTER YOUR EMAIL ADDRESS">
+					  </div>
+					  <div class="disabled form-main-war">
+					  <div class="form-group step2">
+						<label for="">Step 2: <span style="font-weight:700;font-family: 'Open Sans'" >Upload image here.</span> </label><br>
+						 <div id="upload-file-custom" class="upload-file-custom"></div>
+					  </div>
+					  <div class="form-group step3">
+						<label for="">Step 3: Select a preset from menu on the left.  </label>
+					  </div>
+					  <div class="form-group step4">
+						<label for="">Step 4: Add a background, zoom, or crop, as needed.  </label>
+					  </div>
+					  <div class="form-group step5">
+						<label for="">Step 5: Click "Process and Send Image" button.  </label>
+					  </div>
+             <div class="img-wrap-box">					  
+			  <div class="form-group original-dimensions-field mb-0">
+                <label for="">Loaded image dimensions: <span class="og-dim"></span> <span class="file-sz"> </span></label>
+              </div>
+			  <div class="form-group preset-dim-field  mb-0">
+                <label for="">Preset dimensions: <span class="preset-dim"></span></label>
+              </div>
+		      <div class="form-group preset-type-field  mb-0">
+                <label for="">Format: <span class="preset-type"></span></label>
+              </div>
+			  </div>
+			  </div>
+            <div class="photo-edit-form-footer" style="margin-top:10px;float:right;"> <button class="btn photo-edit-form-cancel font-fjalla btn-cancel" data-dismiss="modal">CANCEL</button>
+             <button class="btn btn-primary photo-edit-form-save-new disabled" data-dismiss="modal">Process and Send Image</button>
+            </div>					  
+                  </form>
+               </div>
+            </div>
+         </div>
+		 <div id="free-image-converter">
+		 
+		 </div>
+      </div>
+   </div>
+</div>

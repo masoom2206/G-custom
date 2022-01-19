@@ -1,0 +1,179 @@
+<?php
+//use Drupal\media\Entity\Media;
+//use Drupal\file\Entity\File;sss
+use Drupal\file\Entity\File;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
+use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\Url;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Symfony\Component\Finder\Iterator;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+function aetl_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+  /*if ($entity->getEntityType()->id() == 'media') {
+    //$config = $this->config();
+    $config = \Drupal::config('aetl.fieldsettings');
+    $ds = $config->get('convert_field');
+    $df = explode(',', $ds);
+    
+    if (isset($df)) { 
+     drupal_set_message("New insert.");
+      $mediadata = $entity->toArray();
+      
+      $mid = $mediadata['mid'][0]['value'];
+      foreach ($df as $key => $value) {
+        if($mediadata[$value][0]['target_id']) {
+          $keyo = rand().'.mp4';
+		  $preset_id = isset($mediadata['field_default_transcoder_preset'][0]['value']) ? $mediadata['field_default_transcoder_preset'][0]['value'] : '1351620000001-000010';
+          $tdata = trascoder_job_queue('media', $mid, $mediadata[$value][0]['target_id'], $keyo, $preset_id);
+ /*         $cloudurl = 'd12p8duhqa5ztj.cloudfront.net/'.$keyo;
+          $entity->set('field_url',  $cloudurl);
+          $item = new \stdClass();
+          $item->fid = $mediadata[$value][0]['target_id'];
+          $item->mnid = $mid;
+
+          $queue_factory = \Drupal::service('queue');
+          $queue = $queue_factory->get('thmubnail_media_generate');
+          $queue->createItem($item);
+           $url = Url::fromRoute('aetl.user_video_controller_getllvideo')->toString();
+           $response = new RedirectResponse($url);
+           $response->send();
+
+           //$entity->save();// --closed here
+        }
+      }
+    }
+  }*/
+}
+
+function aetl_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
+  /*if ($entity->getEntityType()->id() == 'media' &&  $entity->id() != '') {
+    //$config = $this->config();
+    $config = \Drupal::config('aetl.fieldsettings');
+    $ds = $config->get('convert_field');
+    $df = explode(',', $ds);
+    if (isset($df)) {
+      drupal_set_message("New Update."); 
+     $mediadata = $entity->toArray();
+//      print_r($mediadata);exit;
+      $mid = $mediadata['mid'][0]['value'];
+      $db = \Drupal::database();
+      $query = $db->select('transcoding_jobs_data','m');
+      $query->fields('m', ['target_id']);
+      $query->condition('mid', $mid, '=');
+      $fid_main = $query->execute()->fetchCol()[0];
+      foreach ($df as $key => $value) {
+        if($mediadata[$value][0]['target_id'] != $fid_main) {
+          drupal_set_message($mediadata[$value][0]['target_id']."--".$fid_main);
+          $keyo = rand().'.mp4';
+		   $preset_id = isset($mediadata['field_default_transcoder_preset'][0]['value']) ? $mediadata['field_default_transcoder_preset'][0]['value'] : '1351620000001-000010';
+           $tdata = trascoder_job_queue('media', $mid, $mediadata[$value][0]['target_id'], $keyo, $preset_id);
+//          print_r($tdata); exit;
+  /*        $cloudurl = 'd12p8duhqa5ztj.cloudfront.net/'.$keyo;
+          $entity->set('field_url',  $cloudurl);
+
+          $item = new \stdClass();
+          $item->fid = $mediadata[$value][0]['target_id'];
+          $item->mnid = $mid;
+
+          $queue_factory = \Drupal::service('queue');
+          $queue = $queue_factory->get('thmubnail_media_generate');
+          $queue->createItem($item);
+//          $entity->save();
+           $url = Url::fromRoute('aetl.user_video_controller_getllvideo')->toString();
+           $response = new RedirectResponse($url);
+           $response->send();
+          // print_r($url->toString()); exit;
+          //$command = new RedirectCommand($url->toString());
+          //$response->addCommand($command);
+          //return $response;// --closed here
+        }
+      }
+    }
+  }*/
+}
+
+
+function trascoder_job_queue($type = 'media', $id = 0, $traget_id = 0, $keyo, $preset_id) {
+  $sftt = send_file_totransoder($traget_id, $id, $keyo, $preset_id);
+  $cloudurl = 'd12p8duhqa5ztj.cloudfront.net/'.$keyo;
+  $uid = \Drupal::currentUser()->id();
+  db_merge('transcoding_jobs_data')
+   ->key(array('type' => $type, 'mid' => $id))
+   ->fields(array('type' => $type, 'mid' => $id, 'uid' => $uid, 'target_id' => $traget_id, 'preset_id' => $sftt['Job']['Output']['PresetId'], 'status' => $sftt['Job']['Output']['Status'], 'jobs_id' => $sftt['Job']['Id'], 'submittimemillis' => $sftt['Job']['Timing']['SubmitTimeMillis']))
+   ->execute();
+   return $sftt;
+}
+
+
+function send_file_totransoder($fid, $mid, $keyo, $preset_id) {
+  $file = \Drupal\file\Entity\File::load($fid);
+  $url = $file->getFileUri();
+  $uri = str_replace('private://', 's3fs_private/', $url);
+  // print $url; exit;
+  
+  $data = [];
+  $data['pipelineid'] = '1567626010446-2azpus';
+  $data['outputkeyprefix'] = 'output/';
+  $data['inputdetails'] = $uri;
+  $data['output_details'][0]['preset'] = $preset_id;
+  $data['output_details'][0]['key'] = $keyo;
+  $data['output_details'][0]['ThumbnailPattern'] = $mid.'-thumb{count}.jpg';
+  $data['output_details'][1]['preset'] = $preset_id;
+  $data['output_details'][1]['key'] = 'clip_'.$keyo;
+  $data['output_details'][1]['ThumbnailPattern'] = 'clip_'.$mid.'_thumb{count}';
+  //$data['output_details'][1]['Composition']['TimeSpan']['StartTime'] = '0';
+  //$data['output_details'][1]['Composition']['TimeSpan']['Duration'] = '2';
+
+  //$op = $form_state->getValue('op');
+  $etd = \Drupal::service('aetl')->trancodeCreateJob($data);
+
+  // print_r($edt); exit;
+  drupal_set_message("New Job added succesfully.");
+
+  return $etd->toArray();
+}
+
+function aetl_cron() {
+  if ( date('G') >= 20) { // At 22'o clock
+     updatejobsdataoncron();
+  }
+}
+
+function updatejobsdataoncron() {
+	$database = \Drupal::database();
+	$query = $database->select('transcoding_jobs_data','c');
+	$query->fields('c');
+	$query->condition('status', 'Submitted', 'LIKE');
+	$result = $query->execute();
+	foreach($result as $row) {
+	  $config = \Drupal::config('aetl.settings')->get();
+	  $messenger = \Drupal::messenger();
+	  if ($errors = \Drupal::service('aetl')->validate($config)) {
+		foreach ($errors as $error) {
+		  $messenger->addMessage((string)$error, $messenger::TYPE_ERROR);
+		}
+		$messenger->addMessage('Unable to validate your aetl configuration settings. Please configure aetl File System from the admin/config/media/aetl page and try again.', $messenger::TYPE_ERROR);
+		return;
+	  } 
+	  $transcoder_client = \Drupal::service('aetl')->getAmazonETClient($config);
+	  try {
+		$jobdetails = $transcoder_client->readJob(array(
+		  'Id' => $row->jobs_id,
+		))->toArray();
+		 db_merge('transcoding_jobs_data')
+		   ->key(array('mid' => $row->mid, 'jobs_id' => $row->jobs_id))
+		   ->fields(array('mid' => $row->mid, 'jobs_id' => $row->jobs_id, 'status' => $jobdetails['Job']['Output']['Status'], 'starttimemillis' => $jobdetails['Job']['Timing']['StartTimeMillis'], 'finishtimemillis' => $jobdetails['Job']['Timing']['FinishTimeMillis'], 'processtime' => ($jobdetails['Job']['Timing']['FinishTimeMillis'] - $jobdetails['Job']['Timing']['StartTimeMillis']), 'details' => $jobdetails['Job']['Output']['StatusDetail']))
+		   ->execute();
+	  }
+	  catch (AwsException $e) {
+		// output error message if fails
+		//echo $e->getMessage() . "\n";
+	  }  
+	}
+}

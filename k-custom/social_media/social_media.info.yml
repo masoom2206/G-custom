@@ -1,0 +1,9 @@
+name: Social Media API
+description:  Social Media API
+type: module
+package: Custom
+core: '8.x'
+version: '8.x-1.0'
+configure: social_media.api_settings
+
+

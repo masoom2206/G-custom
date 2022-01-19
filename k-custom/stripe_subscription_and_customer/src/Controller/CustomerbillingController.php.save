@@ -1,0 +1,33 @@
+<?php
+
+namespace Drupal\stripe_subscription_and_customer\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+
+/**
+ * Class CustomerbillingController.
+ */
+class CustomerbillingController extends ControllerBase {
+
+  /**
+   * Customerbilling.
+   *
+   * @return string
+   *   Return Hello string.
+   */
+  public function customerbilling($uid) {
+    $user = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
+    print $customer_id = $user->get('stripe_customer_id')->value;
+    $subscription_id = $user->get('stripe_subscription_id')->value;
+    $subscription = \Drupal::service('stripe_subscription_and_customer.stripe_api')->retrieveSubscription($subscription_id);
+    $customer = \Drupal::service('stripe_subscription_and_customer.stripe_api')->retrieveCustomers($subscription_id);
+    
+    
+    print_r($subscription); exit;
+    return [
+      '#type' => 'markup',
+      '#markup' => $this->t('Implement method: customerbilling with parameter(s): $uid'),
+    ];
+  }
+
+}

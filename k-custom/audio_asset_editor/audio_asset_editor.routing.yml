@@ -1,0 +1,12 @@
+audio_asset_editor.audio_editor:
+  path: '/tools/audio_editor/{media}'
+  defaults:
+    _controller: '\Drupal\audio_asset_editor\Controller\AudioAssetEditorController::getAudioAssetEditor'
+    _title: 'audio asset editor'
+  options:
+    parameters:
+      media:
+        type: entity:media
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access' 

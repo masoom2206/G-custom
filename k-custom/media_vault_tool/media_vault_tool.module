@@ -1,0 +1,818 @@
+<?php
+
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\media\Entity\Media;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\node\NodeInterface;
+use Drupal\media_vault_tool\Controller\MediaDetailController;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\media_vault_tool\Controller\PresetController;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Render\Markup;
+
+/*
+ * @file
+ * Media Vault page template
+*/
+function media_vault_tool_theme($existing, $type, $theme, $path) {
+  return [
+    'media_vault_template' => [
+      'variables' => ['uid' => NULL,'media_vault_title' => NULL,'media_archive' => NULL,'doubles' => array(),'cache' => array()],
+    ],
+		'media_vault_upload_template' => [
+      'variables' => ['uid' => NULL,'media_vault_oploader_title' => NULL,'doubles' => array()],
+    ],
+    'media_kit_template' => [
+      'variables' => ['data' => NULL, 'kit_owner' => NULL, 'default_kit' => NULL, 'default_kit_title' => NULL, 'default_kit_owner' => NULL],
+    ],
+    'media_edit_photo_template' => [
+      'variables' => ['data' => NULL],
+    ],
+    'media_edit_video_template' => [
+      'variables' => ['data' => NULL],
+    ],
+  ];
+}
+/*
+ * HOOK_form_alter
+ * Media Vault form alter
+ */
+function media_vault_tool_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $uid = \Drupal::currentUser()->id(); 
+  $path = \Drupal::request()->getpathInfo();
+  $arg  = explode('/',$path);
+	$form['#attached']['library'][] = 'media_vault_tool/media_edit_style';
+  if($form_id == 'media_image_edit_form' || $form_id == 'media_audio_edit_form' || $form_id == 'media_text_edit_form' || $form_id == 'media_video_edit_form'){
+		
+		//dpm(\Drupal::routeMatch()->getRouteName());
+		
+		$form['#attached']['library'][] = 'media_vault_tool/media_edit_js';
+    $form['#attached']['library'][] = 'media_vault_tool/mediabackendlibrary';
+    $media_id = $form_state->getformObject()->getEntity()->id();
+    $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
+		
+		$current_path = \Drupal::service('path.current')->getPath();
+		$args = explode('/',$current_path);
+		//dpm($args);
+		//dpm(\Drupal::routeMatch()->getRouteName());
+    
+    $form['#prefix'] = '<div class="media-edit-forms">';
+    $form['#suffix'] = '</div>';
+    $form['name']['widget'][0]['value']['#title'] = t('Title');
+    
+    $form['field_format']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_format']['widget'][0]['value']['#type'] = 'item';
+    $form['field_format']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_format']['widget'][0]['value']['#default_value'].'</div></div>';
+    
+    $form['field_file_size']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_file_size']['widget'][0]['value']['#type'] = 'item';
+    $form['field_file_size']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_file_size']['widget'][0]['value']['#default_value'].'</div></div>';
+    
+    $form['name']['#prefix'] = '<div class="row"><div class="col-lg-5 form-left">'; 
+    $form['field_favorite']['#prefix'] = '<div class="d-none">';
+    $form['field_favorite']['#suffix'] = '</div>';  
+    $form['field_archived']['#prefix'] = '<div class="item-wrap ht-292">';
+    $form['field_archived']['#suffix'] = '</div></div>';    
+    $form['field_keywords']['#prefix'] = '<div class="col-lg-7 form-right p-0"><div class="user-fld-group-b">';
+    $form['advanced']['#prefix'] = '</div><div class="col-lg-12">';
+    $form['advanced']['#suffix'] = '</div>';
+    $form['actions']['#prefix'] = '<div class="col-lg-12">';
+    $form['actions']['#suffix'] = '</div></div>';
+
+    //disabled cancel button
+    $fragment = '';
+    if($form_id == 'media_image_edit_form'){
+      $type = 'image';
+      $fragment = 'nav-photo';
+    }if($form_id == 'media_audio_edit_form'){
+      $type = 'audio';
+      $fragment = 'nav-audio';
+    }if($form_id == 'media_text_edit_form'){
+      $type = 'text';
+      $fragment = 'nav-text';
+    }if($form_id == 'media_video_edit_form'){
+      $type = 'video';
+      $fragment = 'nav-video';
+    }
+    $form['actions']['submit']['#attributes'] = ['class' => ['font-fjalla', 'text-uppercase', 'mr-2']];
+
+    //revision accsess to admin, VA manager, Enterprise role, and VA
+    $account = \Drupal\user\Entity\User::load($uid);
+    $roles = $account->getRoles();
+    if(in_array('administrator', $roles) || in_array('va_manager', $roles) || in_array('virtual_assistant', $roles) || in_array('enterprise', $roles)){
+      $form['revision']['#access'] = true;
+      $form['revision_log_message']['#access'] = true;
+      $form['revision_information']['#access'] = true;
+    } else {
+      $form['revision']['#access'] = false;
+      $form['revision_log_message']['#access'] = false;
+      $form['revision_information']['#access'] = false;
+    }
+    //change edit page title with Favorite field
+    $md = new MediaDetailController();
+    $form['#title'] = $md->mediaEditTitle(/* $account,  */$media);
+    
+    //List media on "Currently Used in These Media Kits:"
+    $mediaList = $md->getallMediaByfile($media, $type);
+    $kaboodles = '<ul class="m-0">';
+    if(!empty($mediaList)) {
+      foreach($mediaList as $list) {
+        $kaboodles .= '<li><a href="/tools/media/kit/'.$list->uid.'/'.$list->nid.'">'.$list->title.'</a></li>';        
+      }
+    } else {
+      $kaboodles .= '<li>None</li>';
+    }
+    $kaboodles .= '</ul>';
+  }	
+  if($form_id == 'media_image_edit_form'){
+    $form['field_media_image']['widget'][0]['#title'] = t('File Name');
+    $form['field_bit_depth']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_bit_depth']['widget'][0]['value']['#type'] = 'item';
+    $form['field_bit_depth']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_bit_depth']['widget'][0]['value']['#default_value'].'</div></div><div class="item-wrap d-flex f-dp"><div class="item-dp font-weight-bold">Date Posted</div><div class="item-wrap-suf">'.date('m/d/Y, h:i A', $media->created->value).'</div></div>
+    <div class="item-wrap f-dp pt-1 mkits"><div class="item-dp font-weight-bold">Currently Used in These Media Kits:</div><div class="pl-20">'.$kaboodles.'</div></div>';
+    
+    $form['field_pixel_dimentions']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_pixel_dimentions']['widget'][0]['value']['#type'] = 'item';
+    $form['field_pixel_dimentions']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_pixel_dimentions']['widget'][0]['value']['#default_value'].'</div></div>';
+    
+    $form['field_resolution']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_resolution']['widget'][0]['value']['#type'] = 'item';
+    $form['field_resolution']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_resolution']['widget'][0]['value']['#default_value'].'</div></div>';
+        	  
+    $form['field_copyright_number']['#suffix'] = '</div>';
+		$form['actions']['next']['#access'] = false;
+		$form['actions']['back']['#access'] = false;
+    $form['actions']['submit']['#submit'][] = 'media_image_edit_submit';
+  }
+  if($form_id == 'media_audio_edit_form'){
+    $sample_rate = '';
+    if(!empty($media->field_sample_rate->target_id)){
+      $term = Term::load($media->field_sample_rate->target_id);
+      $sample_rate = $term->getName();
+    }
+      
+    $form['field_media_audio_file']['widget'][0]['#title'] = t('File Name');
+    
+    $form['field_bit_depth']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_bit_depth']['widget'][0]['value']['#type'] = 'item';
+    $form['field_bit_depth']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_bit_depth']['widget'][0]['value']['#default_value'].'</div></div>';    
+    
+    $form['field_duration']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_duration']['widget'][0]['value']['#type'] = 'item';
+    $form['field_duration']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_duration']['widget'][0]['value']['#default_value'].'</div></div>';  
+    
+    $form['field_sample_rate']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_sample_rate']['widget']['#type'] = 'item';
+    $form['field_sample_rate']['#suffix'] = '<div class="item-wrap-suf">'.$sample_rate.'</div></div>';
+    
+    $form['field_bit_rate']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_bit_rate']['widget'][0]['value']['#type'] = 'item';
+    $form['field_bit_rate']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_bit_rate']['widget'][0]['value']['#default_value'].'</div></div>
+    <div class="item-wrap d-flex f-dp"><div class="item-dp font-weight-bold">Date Posted</div><div class="item-wrap-suf">'.date('m/d/Y, h:i A', $media->created->value).'</div></div>
+    <div class="item-wrap f-dp pt-1 mkits"><div class="item-dp font-weight-bold">Currently Used in These Media Kits:</div><div class="pl-20">'.$kaboodles.'</div></div>';    
+    	  
+    $form['field_iswc']['#suffix'] = '</div>';   
+    $form['actions']['submit']['#submit'][] = 'media_audio_edit_submit';
+  }
+  if($form_id == 'media_text_edit_form'){
+    $form['field_media_file']['widget'][0]['#title'] = t('File Name');   
+    
+    $form['field_file_size']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_file_size']['widget'][0]['value']['#type'] = 'item';
+    $form['field_file_size']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_file_size']['widget'][0]['value']['#default_value'].'</div></div>    
+    <div class="item-wrap d-flex f-dp"><div class="item-dp font-weight-bold">Date Posted</div><div class="item-wrap-suf">'.date('m/d/Y, h:i A', $media->created->value).'</div></div>
+    <div class="item-wrap f-dp pt-1 mkits"><div class="item-dp font-weight-bold">Currently Used in These Media Kits:</div><div class="pl-20">'.$kaboodles.'</div></div>';
+    
+    $form['field_copyright_number']['#suffix'] = '</div>';
+    $form['actions']['submit']['#submit'][] = 'media_text_edit_submit';
+  }
+  if($form_id == 'media_video_edit_form'){
+    $form['field_media_video_file']['widget'][0]['#title'] = t('File Name');
+    
+    $form['field_duration']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_duration']['widget'][0]['value']['#type'] = 'item';
+    $form['field_duration']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_duration']['widget'][0]['value']['#default_value'].'</div></div>';  
+    
+    $form['field_frames_per_second']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_frames_per_second']['widget'][0]['value']['#type'] = 'item';
+    $form['field_frames_per_second']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_frames_per_second']['widget'][0]['value']['#default_value'].'</div></div>';
+    
+    $form['field_codec']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_codec']['widget'][0]['value']['#type'] = 'item';
+    $form['field_codec']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_codec']['widget'][0]['value']['#default_value'].'</div></div>';
+    
+    $form['field_audio_format']['#prefix'] = '<div class="item-wrap d-flex">';
+    $form['field_audio_format']['widget'][0]['value']['#type'] = 'item';
+    $form['field_audio_format']['#suffix'] = '<div class="item-wrap-suf">'.$form['field_audio_format']['widget'][0]['value']['#default_value'].'</div></div>    
+    <div class="item-wrap d-flex f-dp"><div class="item-dp font-weight-bold">Date Posted</div><div class="item-wrap-suf">'.date('m/d/Y, h:i A', $media->created->value).'</div></div>
+    <div class="item-wrap f-dp pt-1 mkits"><div class="item-dp font-weight-bold">Currently Used in These Media Kits:</div><div class="pl-20">'.$kaboodles.'</div></div>';
+    
+    $form['field_video_thumbnail']['#suffix'] = '</div>';
+    $form['actions']['submit']['#submit'][] = 'media_video_edit_submit';
+  }
+	
+	//media kit edit form
+	if($form_id == 'node_branding_preset_edit_form'){
+		$form['actions']['submit']['#submit'][] = 'branding_preset_edit_submit';
+	}
+		
+	//Kaboodle edit form
+	if($form_id == 'node_kaboodle_form' || $form_id == 'node_kaboodle_edit_form'){
+		$form['title']['#prefix'] = '<div class="col-lg-5 form-left"><div class="user-fld-group-a">';
+		$form['field_archived']['#suffix'] = '</div></div>';
+		$form['field_description']['#prefix'] = '<div class="col-lg-7 form-right">';
+		$form['field_media_kit_ref']['#suffix'] = '</div>';
+		$form['actions']['submit']['#submit'][] = 'my_kaboodles_node_custom_submit';
+	}
+	
+	//media kit edit form
+	if($form_id == 'node_media_kit_edit_form'){
+		$node = $form_state->getFormObject()->getEntity();
+		$nid = $node->Id();
+		$nodeowner = $node->getOwnerId(); 
+		$form['#attached']['library'][] = 'media_vault_tool/media_edit_js';
+		$route_match = \Drupal::routeMatch();
+		$account = \Drupal\user\Entity\User::load($uid);
+		$roles = $account->getRoles();
+		if ($route_match->getRouteName() == 'media_vault_tool.mediakit_edit' && (in_array('administrator', $roles) !== 1) && in_array('va_manager', $roles) !== 1) {
+			$form['revision']['#access'] = false;
+      $form['revision_log_message']['#access'] = false;
+      $form['revision_information']['#access'] = false;
+			$form['field_vault_audio']['#access'] = false;
+			$form['field_favorite']['#access'] = false;
+			$form['field_vault_file']['#access'] = false;
+			$form['field_kaboodle_ref']['#access'] = false;
+			$form['field_vault_photo']['#access'] = false;
+			$form['field_vault_remote_video']['#access'] = false;
+			$form['field_user_ref']['#access'] = false;
+			$form['field_vault_video']['#access'] = false;
+
+			$vurl = Url::fromRoute('media_vault_tool.media_kit', ['user' => $nodeowner, 'node' => $nid]);
+			$form['actions']['cancel'] = [
+				'#type' => 'link',
+				'#title' => t('Cancel'),
+				'#url' => $vurl,
+				'#weight' => 6,
+			];
+			$form['actions']['submit']['#submit'][] = 'media_kit_edit_submit';
+		}
+	}
+	
+	/* if($form_id == 'media_image_preset_mode_form'){
+		$account = \Drupal\user\Entity\User::load($uid);
+		$media_id = $form_state->getformObject()->getEntity()->id();
+		$media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
+		$md = new MediaDetailController();
+		$form['#title'] = $md->mediaPresetEditTitle($account, $media);
+		$form['#prefix'] = '<div class="media-edit-forms">';
+    $form['#suffix'] = '</div>';
+    $form['field_preset_group']['#prefix'] = '<div class="float-left col-6">';
+    $form['field_presets']['#suffix'] = '</div>';
+    $form['name']['#prefix'] = '<div class="float-left col-6">';
+		$form['field_media_image']['#suffix'] = '</div>';
+		$form['field_keywords']['#prefix'] = '<div class="float-right col-6">';
+		$form['field_description_plain_text']['#suffix'] = '</div>';
+    $form['advanced']['#prefix'] = '<div class="float-left col-12">';
+    $form['advanced']['#suffix'] = '</div>';
+    $form['actions']['#prefix'] = '<div class="float-left col-12">';
+    $form['actions']['#suffix'] = '</div>';
+		$fragment = 'nav-photo';
+		$url = Url::fromRoute('media_vault_tool.detail_page', ['user' => $uid], ['fragment' => $fragment]);
+		$form['actions']['#attributes'] = ['class' => ['d-flex']];
+		$form['actions']['submit']['#value'] = t('Continue');
+		$form['actions']['submit']['#submit'][] = 'media_image_edit_submit';
+		$form['actions']['back']['#attributes'] = ['class' => ['btn']];
+		$form['actions']['cancel'] = [
+			'#type' => 'link',
+			'#title' => t('Cancel'),
+			'#url' => $url,
+			'#button_type' => 'primary',
+			'#attributes' => ['class' => ['btn']],
+			'#weight' => 15,
+		];
+		$form['actions']['delete']['#access'] = false;
+		$preset = ucfirst($media->name->value);
+		if(!empty($media->field_presets->target_id)){
+      $term = Term::load($media->field_presets->target_id);
+      $preset = ucfirst($media->name->value) . '-' . ucfirst($term->getName());
+    }
+		$form['name']['widget'][0]['value']['#default_value'] = $preset;
+	} */
+}
+
+function my_kaboodles_node_custom_submit($form, FormStateInterface &$form_state){
+	$node = \Drupal::routeMatch()->getParameter('node');
+	$uid = \Drupal::currentUser()->id();
+	if($node){
+		$kaboodle_owner = user_real_name($node->getOwnerId());	
+	} else {
+		$kaboodle_owner = user_real_name($uid);	
+	}
+	$kaboodle_name = $form_state->getValue('title')[0]['value'];
+	$team_id = $form_state->getValue('field_team')[0]['target_id'];
+	if($team_id){
+		$team_name = getTeam($team_id);
+		//generate notification
+		$real_text = [$team_name, '', '', '', $kaboodle_name, $kaboodle_owner];
+		
+		$all_members = getConfirmedTeamMembers($team_id);
+		foreach($all_members as $member){
+			$notification =\Drupal::service('notification_system.notification_controller')->addNotification('Kaboodle Shared with Team', $real_text, $member->entity_id);	
+		}
+	}
+	$url = Url::fromRoute('my_kaboodles.content', ['user' => $uid]);
+	$form_state->setRedirectUrl($url);
+}
+
+function media_preset_cancle(){
+	$uid = \Drupal::currentUser()->id(); 
+	$fragment = 'nav-photo';
+	$url = Url::fromRoute('media_vault_tool.detail_page', ['user' => $uid], ['fragment' => $fragment]);
+	$form_state->setRedirectUrl($url);
+}
+
+/**
+ * Implements hook_entity_type_build().
+ * it is necessary add form class when display form on any custom view mode
+ */
+function media_vault_tool_entity_type_build(array &$entity_types) {
+	$entity_types['media']->setFormClass('preset_mode', 'Drupal\media\MediaForm');
+}
+
+/*
+ * custom submit function callback for image media
+ */
+function branding_preset_edit_submit($form, FormStateInterface &$form_state){
+	$url = Url::fromRoute('<current>');
+  $form_state->setRedirectUrl($url);
+}
+
+/*
+ * custom submit function callback for image media
+ */
+function media_image_edit_submit($form, FormStateInterface &$form_state){
+	$media = $form_state->getFormObject()->getEntity();
+	$media->name->value = $form_state->getValue('name')[0]['value'];
+  $media->save();
+  $uid = \Drupal::currentUser()->id(); 
+  $url = Url::fromRoute('media_vault_tool.detail_page', ['user' => $uid], ['fragment' => 'nav-photo']);
+	\Drupal::messenger()->deleteByType('status');
+	drupal_set_message(t('Image '.$media->name->value.' has been updated.'));
+  $form_state->setRedirectUrl($url);
+}
+
+/*
+ * custom submit function callback for audio media
+ */
+function media_audio_edit_submit($form, FormStateInterface &$form_state){
+	$media = $form_state->getFormObject()->getEntity();
+	$media->name->value = $form_state->getValue('name')[0]['value'];
+  $media->save();
+  $uid = \Drupal::currentUser()->id();  
+  $url = Url::fromRoute('media_vault_tool.detail_page', ['user' => $uid], ['fragment' => 'nav-audio']);
+	\Drupal::messenger()->deleteByType('status');
+	drupal_set_message(t('Audio '.$media->name->value.' has been updated.'));
+  $form_state->setRedirectUrl($url);
+}
+
+/*
+ * custom submit function callback for media kit edit form
+ */
+function media_kit_edit_submit($form, FormStateInterface &$form_state){
+	$node = $form_state->getFormObject()->getEntity();
+	$nid = $node->Id();
+  $uid = $node->getOwnerId();  
+  $url = Url::fromRoute('media_vault_tool.media_kit', ['user' => $uid, 'node' => $nid]);
+  //$url = Url::fromRoute('media_vault_tool.media_kit', ['user' => $uid]);
+  $form_state->setRedirectUrl($url);
+}
+/*
+ * custom submit function callback for text media
+ */
+function media_text_edit_submit($form, FormStateInterface &$form_state){
+	$media = $form_state->getFormObject()->getEntity();
+	$media->name->value = $form_state->getValue('name')[0]['value'];
+  $media->save();
+  $uid = \Drupal::currentUser()->id(); 
+  $url = Url::fromRoute('media_vault_tool.detail_page', ['user' => $uid], ['fragment' => 'nav-text']);
+	\Drupal::messenger()->deleteByType('status');
+	drupal_set_message(t('Text '.$media->name->value.' has been updated.'));
+  $form_state->setRedirectUrl($url);
+	//\Drupal::service('router.builder')->rebuild();
+}
+/*
+ * custom submit function callback for video media
+ */
+function media_video_edit_submit($form, FormStateInterface &$form_state){
+	//drupal_flush_all_caches();
+	$media = $form_state->getFormObject()->getEntity();
+	$media->name->value = $form_state->getValue('name')[0]['value'];
+  $media->save();
+  $uid = \Drupal::currentUser()->id();
+  $url = Url::fromRoute('media_vault_tool.detail_page', ['user' => $uid], ['fragment' => 'nav-video']);
+	\Drupal::messenger()->deleteByType('status');
+	drupal_set_message(t('Video '.$media->name->value.' has been updated.'));
+  $form_state->setRedirectUrl($url);
+}
+
+// Hide remove button from an image field
+function media_vault_tool_field_widget_form_alter(&$element, &$form_state, $context) {
+  // If this is an image field type
+  if(!empty($element['#field_name']) && ($element['#field_name'] == 'field_media_audio_file')) {
+    $element['#process'][] = 'mvt_media_field_widget_process';
+  }else if(!empty($element['#field_name']) && ($element['#field_name'] == 'field_media_image')) {
+    $element['#process'][] = 'mvt_media_field_widget_process';
+  }else if(!empty($element['#field_name']) && ($element['#field_name'] == 'field_media_file')) {
+    $element['#process'][] = 'mvt_media_field_widget_process';
+  }else if(!empty($element['#field_name']) && ($element['#field_name'] == 'field_media_video_file')) {
+    $element['#process'][] = 'mvt_media_field_widget_process';
+  }
+}
+
+function mvt_media_field_widget_process($element, &$form_state, $form) {
+  $current_user = \Drupal::currentUser();
+  $roles = $current_user->getRoles();
+  if(in_array('administrator', $roles) || in_array('va_manager', $roles)){
+  } else {
+    unset($element['remove_button']);
+  }
+
+  // Return the altered element
+  return $element;
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function media_vault_tool_token_info() : array {
+  $info = [];
+
+  $info['types']['MediaKit'] = [
+    'name' => t('MediaKit Tokens'),
+    'description' => t('Custom tokens for Media Kits.'),
+  ];
+
+  $info['tokens']['MediaKit']['default_media_kit'] = [
+    'name' => 'Default Media kit',
+    'description' => t('This token will return the default media kit of the current user.')
+  ];
+
+  return $info;
+} 
+
+/**
+ * Implements hook_tokens().
+ */
+function media_vault_tool_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) : array {
+  $replacements = [];
+	$default_kit = '';
+  if ($type == 'MediaKit') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'default_media_kit':
+					$default_kit = default_media_kit();
+          $replacements[$original] = $default_kit;
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * function callback for getting default media kit node
+ */
+function default_media_kit(){
+	$uid = \Drupal::currentUser()->id();
+  $media_kit = \Drupal::database()->select('node__field_default_media_kit', 'k');
+	$media_kit->leftJoin('node_field_data', 'n', "k.entity_id = n.nid");
+	$media_kit->condition('n.uid', $uid, '=');
+	$media_kit->condition('k.bundle', 'media_vault', '=');
+	$media_kit->fields('k', ['field_default_media_kit_target_id']);
+	$default_kit = $media_kit->execute()->fetchField();
+	
+	return $default_kit;
+}
+
+/**
+ * function callback for getting default branding preset node
+ */
+function default_branding_preset($uid){
+  $default_branding_preset = \Drupal::database()->select('node_field_data', 'n')
+    ->fields('n', ['nid'])
+    ->condition('n.uid', $uid, '=')
+    ->condition('n.type', 'branding_preset', '=')
+        ->range(0, 1)
+    ->execute()
+    ->fetchField();
+	
+	return $default_branding_preset;
+}
+
+/**
+ * function callback for getting default media kit node for any user
+ */
+function default_media_kit_by_user($uid){
+	$media_kit = \Drupal::database()->select('node__field_default_media_kit', 'k');
+	$media_kit->leftJoin('node_field_data', 'n', "k.entity_id = n.nid");
+	$media_kit->condition('n.uid', $uid, '=');
+	$media_kit->condition('k.bundle', 'media_vault', '=');
+	$media_kit->fields('k', ['field_default_media_kit_target_id']);
+	$default_kit = $media_kit->execute()->fetchField();		
+	
+	return $default_kit;
+}
+
+//get custom media kit count
+function custom_media_kit_of_user($uid, $default_kit){
+	$query = \Drupal::database()->select('node_field_data', 'n');
+	$query->fields('n', ['nid', 'title']);
+	$query->condition('n.uid', $uid, '=');
+	$query->condition('n.nid', $default_kit, '<>');
+	$query->condition('n.type', 'media_kit', '=');
+	$result = $query->execute()->fetchAll();
+	//drupal_flush_all_caches();
+	return $result;
+}
+
+/**
+ * function callback for getting default media vault node for any user
+ */
+function default_media_vault_by_user($uid){
+  $default_media_vault = \Drupal::database()->select('node_field_data', 'n')
+    ->fields('n', ['nid'])
+    ->condition('n.uid', $uid, '=')
+    ->condition('n.type', 'media_vault', '=')
+        ->range(0, 1)
+    ->execute()
+    ->fetchField();
+	
+	return $default_media_vault;
+}
+
+/**
+ * Implements hook_media_access().
+ */
+function media_vault_tool_media_access(\Drupal\media\Entity\Media $media, $op, \Drupal\Core\Session\AccountInterface $account) {
+  $roles = $account->getRoles();
+  if ($op == 'update') {
+    if (!in_array('administrator', $roles)) {
+      $current_path = \Drupal::service('path.current')->getPath();
+      $args = explode('/',$current_path);
+			//dpm($args);
+      if ($args[1] == 'media' && is_numeric($args[2]) && $args[3] == 'edit' && !isset($_GET['_format'])) {
+        return AccessResult::forbidden();
+      }
+    }
+    else {
+      return AccessResult::allowed();      
+		}
+  }
+}
+
+/**			
+ * Implements hook_node_access().
+ */
+function media_vault_tool_node_access(\Drupal\node\NodeInterface $node, $op, \Drupal\Core\Session\AccountInterface $account) {
+  $uid = \Drupal::currentUser()->id();
+  $type = $node->getType();
+	$roles = $account->getRoles();
+  if ($op == 'update' && $type == 'media_kit') {
+    if (!in_array('administrator', $roles)) {
+      $current_path = \Drupal::service('path.current')->getPath();
+      $args = explode('/',$current_path);
+      if ($args[1] == 'node' && is_numeric($args[2]) && $args[3] == 'edit' && !isset($_GET['_format'])) {
+        return AccessResult::forbidden();
+      }
+    }
+    else {
+      return AccessResult::allowed();      
+		}
+	}
+  if ($op == 'view' && $type == 'knowlege_base_article') {
+   return AccessResult::allowed();      
+  }
+}
+/**
+ * Implements hook_node_presave()
+ **
+function media_vault_tool_node_presave(Drupal\node\NodeInterface $node) {
+  $current_uid = \Drupal::currentUser()->id();
+  $nodeOwner = $node->getOwnerId();
+  if ($node->bundle() === 'media_kit'){
+    $audios = $node->field_vault_audio->getValue();
+    if(!empty($audios)){
+      //print "<pre>";print_r($audios);exit;
+      foreach ( $audios as $key=>$audio ) {
+        $media = Media::load( $audio['target_id'] );
+        $mediaOwnerId = $media->getOwnerId();
+        if ($nodeOwner !== $mediaOwnerId){
+          //$node->field_vault_audio->removeItem($key);
+          $index = array_search(current($audio), array_column($audios, key($audio)));
+          $node->get('field_vault_audio')->removeItem($index);
+        }
+      }
+    }
+  }
+}
+/**
+ * Convert bytes to kilobytes.
+ */
+function formatedFileSize($filesize, $unit) {
+	$units = array('KB','MB','GB','TB','PB','EB','ZB','YB');
+	$bytes = $filesize;
+	if($bytes < 0){
+		$bytes = number_format($bytes, 2, '.', '') . ' bytes';
+	}else if($bytes == 0){
+		if($unit){
+			$bytes = number_format($bytes, 2, '.', '') . ' GB';
+		} else {
+			$bytes = number_format($bytes, 2, '.', '');
+		}
+	}else{
+		$bytes = number_format($bytes / 1024, 2, '.', '');
+		for($i = 0; $i < count($units); $i++){
+			if (number_format($bytes, 2, '.', '') >= 1024) {
+				$bytes = number_format($bytes / 1024, 2, '.', '');
+			}
+			else {
+				$bytes = number_format($bytes, 2, '.', '');
+				break;
+			}
+		}
+		$bytes = $bytes .' '. $units[$i];
+	}
+	return $bytes;
+}
+
+/**
+ * Sorting array string values inascending order
+ */
+function array_string_sorting($array){
+	$array_size = sizeof($array);
+	for($x = 0; $x < $array_size; $x++) {
+		for($y = 0; $y < $array_size; $y++) {
+			if(strcasecmp($array[$x]['title'],$array[$y]['title'])<0) {
+				$hold = $array[$x];
+				$array[$x] = $array[$y];
+				$array[$y] = $hold;
+			}
+		}
+	}
+	return $array;
+}
+
+/**
+ * @return $nid for different pages on different servers
+ */
+function knowledge_base_i_pattern($page_name){
+	$result = ['', '', 0];
+	$page_array = [];
+	$site_config = \Drupal::config('system.site');
+	$server_name = strtolower($site_config->get('site_server_name'));
+  
+	$dev = ['Video Maker' => 988, 'Media Vault' => 123, 'Media Vault Upload' => 1123, 'Media Kits Manager' => 124, 'My Kaboodles' => 995, 'Social Media Manager' => 121, 'Notifications' => 386, 'Kaboodles' => 984, 'My Presets' => 623, 'Sales Activity' => 624, 'Video Manager' => 410, 'Video Maker' => 988, 'My Teams' => 989, 'Image Asset Editor' => 990, 'Video Asset Editor' => 1109, 'Kaboodle Products' => 1122];
+	
+	$staging = ['Video Maker' => 443, 'Media Vault' => 123, 'Media Vault Upload' => 475, 'Media Kits Manager' => 124, 'My Kaboodles' => 125, 'Social Media Manager' => 121, 'Notifications' => 302, 'Kaboodles' => 125, 'My Presets' => 122, 'Sales Activity' => 332, 'Video Manager' => 306, 'Video Maker' => 443, 'My Teams' => 442, 'Image Asset Editor' => 434,'Video Asset Editor' =>453, 'Kaboodle Products' => 474];
+	
+	$prod = ['Video Maker' => 444, 'Media Vault' => 123, 'Media Vault Upload' => 479, 'Media Kits Manager' => 124, 'My Kaboodles' => 125, 'Social Media Manager' => 121, 'Notifications' => 302, 'Kaboodles' => 435, 'My Presets' => 122, 'Sales Activity' => 332, 'Video Manager' => 306, 'Video Maker' => 444, 'My Teams' => 443, 'Image Asset Editor' => 434, 'Video Asset Editor' =>459, 'Kaboodle Products' => 469];
+	
+	if($server_name == 'dev'){
+		$page_array = $dev;
+	} else if($server_name == 'staging'){
+		$page_array = $staging;		
+	} else {
+		$page_array = $prod;
+	}
+	
+	$nid = isset($page_array[$page_name]) ? $page_array[$page_name] : 0;
+	$node = \Drupal::service('entity.manager')->getStorage('node')->load($nid);
+	if(!empty($node)){
+		$field_modal_text = $node->get('field_modal_text')->value;
+		$formatted_modal_text = $field_modal_text;
+		if(!empty($field_modal_text)){
+			$format = $node->get('field_modal_text')->format;
+			foreach ($node->field_modal_text as $i => $delta) {   
+				$formatted_modal_text = (string) \Drupal::service('renderer')->render($delta->view(array('type' => $format)));
+			}		
+		}
+		$result = [$node->getTitle(), $formatted_modal_text, $nid];
+	}
+	
+	return $result;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function media_vault_tool_preprocess_page_title(&$variables) {
+  if ($variables['title'] == 'Media Vault Upload') {
+    $knowledge_base_value = knowledge_base_i_pattern('Media Vault Upload');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Media Vault Upload".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'Media Vault') {
+    $knowledge_base_value = knowledge_base_i_pattern('Media Vault');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Media Vault".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'Media Kits Manager') {
+    $knowledge_base_value = knowledge_base_i_pattern('Media Kits Manager');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Media Kits Manager".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'My Teams') {
+    $knowledge_base_value = knowledge_base_i_pattern('My Teams');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "My Teams".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  } 
+  if ($variables['title'] == 'My Kaboodles' || $variables['title'] == 'Create Kaboodle') {
+    $knowledge_base_value = knowledge_base_i_pattern('My Kaboodles');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = $variables['title'].$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'Social Media Manager') {
+    $knowledge_base_value = knowledge_base_i_pattern('Social Media Manager');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Social Media Manager".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+   if ($variables['title'] == 'Notifications') {
+    $knowledge_base_value = knowledge_base_i_pattern('Notifications');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Notifications".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+   if ($variables['title'] == 'Image Asset Editor') {
+    $knowledge_base_value = knowledge_base_i_pattern('Image Asset Editor');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Image Asset Editor".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'Video Maker') {
+    $knowledge_base_value = knowledge_base_i_pattern('Video Maker');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Video Maker".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'Kaboodle Products') {
+    $knowledge_base_value = knowledge_base_i_pattern('Kaboodle Products');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = "Kaboodle Products".$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'HTML Articles' || $variables['title'] == 'HTML Article') {
+    $knowledge_base_value = knowledge_base_i_pattern('HTML Articles');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = $variables['title'].$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  if ($variables['title'] == 'My Account Dashboard') {
+    $knowledge_base_value = knowledge_base_i_pattern('My Account Dashboard');
+    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$knowledge_base_value[2]);
+    $host =  \Drupal::request()->getSchemeAndHttpHost();
+    $updated_url = Markup::create('<div class="info-ico kowledge-base-ico" aria-label ="'.$knowledge_base_value[1].'"  aria-title ="'.$knowledge_base_value[0].'" aria-nid ="'.$host.$alias.'"></div>');
+    $updated_full_url = $variables['title'].$updated_url;
+    $variables['title'] = t($updated_full_url);
+  }
+  $node = \Drupal::request()->attributes->get('node');
+  if ($node && $node->bundle() == 'knowlege_base_article') {
+    $variables['title'] = t('KNOWLEDGE BASE: '.$variables['title']);
+  }
+}

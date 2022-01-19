@@ -1,0 +1,42 @@
+{% if data.team_query%}
+  {% set team, muid = '?team=' ~ data.team_query.gid, '&muid=' ~ data.team_query.muid %}
+  {% set team_query = team ~ muid %}
+{% else %}
+  {% set team_query = '' %}
+{% endif %}
+{# tweeter comment replies pop-up #} <div class="modal twitter-specific-modal twitter-comments-replies fade" id="modal-twitter-comments-replies-{{value.id}}" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header twitter-tweet-header d-block">
+         <div class="btn btn-cancel close-modal float-right" data-dismiss="modal">close</div>
+      </div>
+      <div class="modal-body"> {% if value.retweeted == 1 %} {% set profile_pic, user_name, screen_name, created_at, full_text  = value.retweeted_status.user.profile_image_url_https, value.retweeted_status.user.name, value.retweeted_status.user.screen_name, value.retweeted_status.created_at|date('F d'), value.retweeted_status.full_text %} {% else %} {% set profile_pic, user_name, screen_name, created_at, full_text  = value.user.profile_image_url_https, value.user.name, value.user.screen_name, value.created_at|date('F d'), value.full_text  %} {% endif %} <div class="wrap-tweet-modal">
+          <div class="tweet-user-info tweet-header pl-3 pr-3">
+            <img src="{{profile_pic}}" style="width:40px;height:40px;" class="rounded-circle float-left" alt="pic">
+            <div class="twitter-owner-name float-left">
+              <strong>{{user_name}}</strong>
+              <span>@{{screen_name}}</span>
+              <span>{{ created_at }}</span>
+            </div>
+          </div>
+          <div class="main-tweet-region float-none pl-5 ">
+            <div class="message-block">
+              <div class="post-text text-left">
+                <span class="post-text-next">
+                  {{ full_text|raw }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tweet-comment-block pl-3 pr-3 mt-5 mb-5 d-flex">
+          <img src="{{data.user_profile.profile_image_url_https}}" class="rounded-circle img-responsive" alt="pic" style="width:40px;height:40px;">
+          <div class="custom-tweet-box text-left" placeholder="Add another Tweet" contenteditable="true"></div>
+        </div>
+      </div>
+      <div class="modal-footer send-tweet-footer">
+        <a href="/twitter_comments_replies/{{value.id}}{{team_query}}" class="btn btn-primary send-tweet-via-comments disabled" data-dismiss="modal">tweet</a>
+      </div>
+    </div>
+  </div>
+</div>

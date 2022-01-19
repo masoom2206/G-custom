@@ -1,0 +1,115 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the media_vault_tool module.
+ */
+
+/**
+ * Implements hook_update_N().
+ */
+function aetl_update_8901() {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table_name = 'transcoding_jobs_data';
+  $table_schema = [
+    'description' => 'Transcoding Jobs',
+    'fields' => [
+      'id' => [
+        'description' => "Auto increment id.",
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+		'unsigned' => TRUE,
+      ],
+	  'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'mid' => [
+        'description' => "Media ID",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+	  'target_id' => [
+        'description' => "file ID",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+	  'jobs_id' => [
+        'description' => "Job ID",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'preset_id' => [
+        'description' => "Preset ID",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'type' => [
+        'description' => "Media Type",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'status' => [
+        'description' => "Job Status",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'submittimemillis' => [
+        'description' => "Submit Time Millis",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'starttimemillis' => [
+        'description' => "Start Time Millis",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'finishtimemillis' => [
+        'description' => "Finish Time Millis",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'processtime' => [
+        'description' => "Process Time",
+        'type' => 'varchar_ascii',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+	  'cost' => [
+		  'type' => 'numeric', 
+		  'unsigned' => TRUE, 
+		  'precision' => 8, 
+		  'scale' => 2, 
+		  'not null' => FALSE, 
+		  'description' => 'Field fieldname for table tablename.',
+      ],
+	  'details' => [
+        'description' => 'Details',
+        'type' => 'text',
+-       'not null' => FALSE,
+      ],
+    ],
+	'primary key' => ['id'],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+  
+ }

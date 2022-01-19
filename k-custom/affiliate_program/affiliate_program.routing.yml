@@ -1,0 +1,25 @@
+affiliate_program.affiliate_application_form:
+  path: '/affiliate/application'
+  defaults:
+    _form: '\Drupal\affiliate_program\Form\AffiliateApplicationForm'
+    _title_callback: '\Drupal\affiliate_program\Controller\AffiliateProgramController::getTitle'
+    #_title: 'Affiliate Program Application'
+  requirements:
+    _custom_access: '\Drupal\affiliate_program\Access\AffiliateAccess::access_affiliate_application'
+  options:
+    no_cache: 'TRUE'
+affiliate_program.modal:
+  path: '/tools/kaboodle-modal'
+  defaults:
+    _title: 'Modal'
+    _controller: '\Drupal\affiliate_program\Controller\AffiliateProgramController::modal'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+affiliate_program.join:
+  path: '/affiliate/join'
+  defaults:
+    _title: 'Join'
+    _controller: '\Drupal\affiliate_program\Controller\AffiliateProgramController::affiliateJoin'
+  requirements:
+    _access: 'TRUE'
+    #_user_is_logged_in: 'TRUE'

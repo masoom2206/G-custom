@@ -1,0 +1,23 @@
+autocomplete_advanced.autocomplete:
+  path: '/autocomplete_advanced/{target_type}/{selection_handler}/{selection_settings_key}'
+  defaults:
+    _controller: '\Drupal\autocomplete_advanced\Controller\AutocompleteAdvancedController::handleAutocomplete'
+  requirements:
+    _access: 'TRUE'
+
+autocomplete_advanced.deletetaxonomy:
+  path: '/autocomplete-advanced/delete-taxonomy/{vid}/{term}'
+  defaults:
+    _controller: '\Drupal\autocomplete_advanced\Controller\AutocompleteAdvancedController::deleteTaxonomy'
+  requirements:
+    _access: 'TRUE'
+
+autocomplete_advanced.loadterms:
+  path: '/tags-terms/{type}/{entity_id}'
+  defaults:
+    _controller: '\Drupal\autocomplete_advanced\Controller\AutocompleteAdvancedController::getTagsTerms'
+    entity_id: '[0-9]+'
+    type: ''
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'

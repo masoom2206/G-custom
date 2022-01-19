@@ -1,0 +1,39 @@
+    {% if data.team_query%}
+      {% set team, muid = '?team=' ~ data.team_query.gid, '&muid=' ~ data.team_query.muid %}
+      {% set team_query = team ~ muid %}
+    {% else %}
+      {% set team_query = '' %}
+    {% endif %}
+		{% block facebook_replies %} {% if data.fb_posts.page_id is defined %} {% set page_id = data.fb_posts.page_id %} {% elseif value_comment_data.page_id is defined %} {% set page_id = value_comment_data.page_id %} {% else %} {% set page_id = value_comments.page_id %} {% endif %} {% for key_comment_replies,value_comment_replies in value_comments.data %} <div class="comment-item comment-replies-look">
+		  <div class="comment-content d-flex">
+		    <img style="border: 2px solid #f2f2f2" class="rounded-circle" src="{{value_comment_replies.from.profile_pic.data.url}}" alt="user-pic" width="25" height="25">
+		    <label class="messagecoments bg-f2f2f2"><b>{{ value_comment_replies.from.name}} </b>
+		      <span class="main-message">{{value_comment_replies.message}}<span> {% if value_comment_replies.like_count > 0 %} <sub class="float-right pt-3">
+		            <div class="like-message">
+		              <span class="liked-image">
+		                <img class="action-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-liked-128px.png" alt="icon">
+		              </span>
+		              <span class="liked-comment-count">{{value_comment_replies.like_count}}</span>
+		            </div>
+		          </sub> {% endif %} </label>
+		    <span class="comment-operation-block float-right" style="height:0">
+		      <i class="fas fa-ellipsis-h"></i>
+		      <div class="comment-operation-content" style="display: none;">
+		        <div class="comment-operation-wrapeer p-2">
+		          <ul class="list-unstyled mb-0">
+		            <li>
+		              <a href="/Fb_comments/{{page_id}}/{{value_comment_replies.id}}"> Remove </a>
+		            </li>
+		            <li><a href="/Fb_comments/{{page_id}}/{{value_comment_replies.id}}">Edit </a></li>
+		          </ul>
+		        </div>
+		      </div>
+		    </span>
+		  </div>
+		  <div class="comment-action">
+		    <div class="comment-action-wrap"> {% if value_comment_replies.user_likes == 1 %} {% set userlike = 'liked' %} {% else %} {% set userlike = '' %} {% endif %} <a class="comment-likes {{userlike}}" href="/FB_post_like/{{page_id}}/{{value_comment_replies.id}}{{team_query}}">Like</a>
+		      <a class="comment-replies" href="/Fb_comments/{{page_id}}/{{value_comment_replies.id}}{{team_query}}">Reply</a> {% if value_comment.admin_creator is not empty %} <span class="publisher-post-date" style="font-size:14px">Published by <a href="{{value_comment_replies.admin_creator.link}}">{{value_comment_replies.admin_creator.name}}</a>
+		      </span> {% endif %} <span class="float-right" data-toggle="tooltip" data-placement="top" title={{value_comment_replies.created_time}}>{{value_comment_replies.created_ago}}</span>
+		    </div>
+		  </div>
+		</div> {% endfor %} {% endblock %}

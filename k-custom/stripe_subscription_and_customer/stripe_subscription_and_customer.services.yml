@@ -1,0 +1,12 @@
+services:
+  logger.channel.stripe_subscription_and_customer:
+    parent: logger.channel_base
+    arguments: ['stripe_subscription_and_customer']
+  stripe_subscription_and_customer.stripe_api:
+    class: Drupal\stripe_subscription_and_customer\StripeapiService
+    arguments: ["@config.factory", "@entity_type.manager", "@logger.channel.stripe_subscription_and_customer", "@key.repository"]
+  stripe_subscription_and_customer.default:
+    class: Drupal\stripe_subscription_and_customer\EventSubscriber\StripeWebhookSubscriptionSubscriber
+    arguments: ['@logger.factory', '@plugin.manager.mail']
+    tags:
+      - { name: event_subscriber }

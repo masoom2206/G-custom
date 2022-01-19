@@ -1,0 +1,671 @@
+{% set module_path = _self|split('/templates') %}
+{% set appIconSrc = ''  %}
+{% set appName = '' %}
+{% set appID = '' %}
+{% set default_page = 0 %}
+{% for key,value in data.network_srttings %}
+{% if value.isURL == 1 %}
+   {% set appIconSrc = value.network_icon  %}
+   {% set appName = value.name %}
+   {% set appID = value.tid %}
+
+   {% set default_page = 1 %}
+ {% endif %}
+ {% endfor %}
+ {% if data.error %}
+  {% set default_page = 0 %}
+ {% endif %}
+ 
+<!--nav tabs -->
+<div class="kaboodles-mid-block">
+  <div class="custom-nav-layout">
+    <nav>
+      <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-active-tab" data-toggle="tab" href="#nav-active" role="tab" aria-controls="nav-active" aria-selected="true">Active</a>
+        <a class="nav-item nav-link" id="nav-shared-tab" data-toggle="tab" href="#nav-shared" role="tab" aria-controls="nav-shared" aria-selected="false">Shared</a>      
+      </div>
+      <div class="div-spacer"></div>
+    </nav>
+  </div>
+  
+  <!--tab content -->
+  <div class="tab-content" id="nav-kaboodleContent">
+      <!--- Active section -->
+      <div class="tab-pane fade show active pt-20" id="nav-active" role="tabpanel" aria-labelledby="nav-active-tab">
+        <div id="social-media-wrapper" class="row mt-3">
+          <!--left part-->
+          <div class="col-lg-4 left-sidebar">
+          {% include '@social_media/social-media-left-sidebar.html.twig' %}
+          </div>
+          <!--right part-->
+          
+          <div class="col-lg-8 right-content-area">
+
+             <div class="custom-remove">
+            {% if default_page == 0 %} 
+                  {% if data.error %}
+                  <div class="default_message text-center " style="margin: 20% auto;width: 500px; ">
+                    <span style="font-size:22px">{{data.error.msg}}</span>
+                  </div>
+                  {% else %}
+                  <div class="default_message text-center " style="margin: 20% auto;width: 200px; ">
+                    <span style="font-size:22px">Please select a social network to begin</span>
+                  </div>
+                  {% endif %}
+            {% else %}
+            <nav class="custom-nav-layout smm-custom-nav-layout">
+              {% embed '@social_media/social-media-header.html.twig' ignore missing  %}
+               {% endembed %}
+              <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                {% if data.availabe_feature.myPost == 1 %}
+                 {% if data.availabe_feature.activeTab == 'myPost' %}
+                   {% set active = 'active' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %}
+              {% if appName == 'Twitter' %} 
+               {% set myPost = 'My Tweets' %}
+               {% else %}
+                {% set myPost = 'My Posts' %}
+              {% endif %}
+                <a class="nav-item nav-link {{active}}" id="nav-myposts-tab" data-toggle="tab" href="#nav-myposts" role="tab" aria-controls="nav-myposts" aria-selected="true">{{myPost}}</a>
+                {% endif %}
+                {% if data.availabe_feature.newPost == 1 %}
+                  {% if data.availabe_feature.activeTab == 'newPost' %}
+                   {% set active = 'active' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %}
+              {% if appName == 'Twitter' %} 
+               {% set newPost = 'New Tweet' %}
+               {% else %}
+                {% set newPost = 'New Post' %}
+              {% endif %}
+                <a class="nav-item nav-link {{active}}" id="nav-newpost-tab" data-toggle="tab" href="#nav-newpost" role="tab" aria-controls="nav-newpost" aria-selected="false">{{newPost}}</a>
+                {% endif %}
+                {% if data.availabe_feature.calendar == 1 %}
+                  {% if data.availabe_feature.activeTab == 'calendar' %}
+                   {% set active = 'active' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %}
+                <a class="nav-item nav-link {{active}}" id="nav-calendar-tab" data-toggle="tab" href="#nav-calendar" role="tab" aria-controls="nav-calendar" aria-selected="false">Calendar</a>
+                 {% endif %}
+                {% if data.availabe_feature.engagement == 1 %}
+                  {% if data.availabe_feature.activeTab == 'engagement' %}
+                   {% set active = 'active' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %}
+                <a class="nav-item nav-link {{active}}" id="nav-engagement-tab" data-toggle="tab" href="#nav-engagement" role="tab" aria-controls="nav-engagement" aria-selected="false">Engagement</a>
+                {% endif %}
+                {% if data.availabe_feature.ads == 1 %}
+                  {% if data.availabe_feature.activeTab == 'ads' %}
+                   {% set active = 'active' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %}        
+                <a class="nav-item nav-link {{active}}" id="nav-ads-tab" data-toggle="tab" href="#nav-ads" role="tab" aria-controls="nav-ads" aria-selected="false">Ads</a>
+                {% endif %}
+                {% if data.availabe_feature.reports == 1 %} 
+                  {% if data.availabe_feature.activeTab == 'reports' %}
+                   {% set active = 'active' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %} 
+                <a class="nav-item nav-link {{active}}" id="nav-reports-tab" data-toggle="tab" href="#nav-reports" role="tab" aria-controls="nav-reports" aria-selected="false">Reports</a>
+                 {% endif %}
+                 {% if data.availabe_feature.settings == 1 %}
+                  {% if data.availabe_feature.activeTab == 'settings' %}
+                   {% set active = 'active' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %}
+            <a class="nav-item nav-link {{active}}" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
+                {% endif %}
+              </div>
+            </nav>
+            <div class="bg-f2f2f2">
+              <div class="col-12">
+                <div class="tab-content">
+                {% if data.availabe_feature.myPost == 1 %}
+                  {% if data.availabe_feature.activeTab == 'myPost' %}
+                   {% set active = 'active show' %}
+                   {% else %}
+                    {% set active = '' %}
+                  {% endif %}
+                   <!-- My Posts data secion -->
+                    <div class="tab-pane fade {{active}} row" id="nav-myposts" role="tabpanel" aria-labelledby="nav-myposts-tab">
+                      <div class="col-12" style="border-top: 1px solid gray;">
+                 <div class="row">
+                        <div class="col-3">
+                         <div class="row listing-post">
+                    {% embed '@social_media/post-list.html.twig' ignore missing  %}
+                             {% endembed %}
+                         </div>
+                        </div>
+                        <div class="col-9" >
+                 <div class="instruction-region">
+                  <div class="default_message text-center" style="margin: 20% auto;width: 100%; ">
+                           <span style="font-size:1.5em">To edit a post, click the pencil icon</span><br>
+                   <span style="font-size:1.5em">To clone a post, click the clone icon</span>
+                          </div>
+                 </div>
+                          <div class="post-edit-region d-none">
+                   {% if appName == 'Facebook' %}
+                       {% embed '@social_media/facebook/facebook-post-form.html.twig' ignore missing with {'post': 'mypost'} %}
+                     {% endembed %}
+                     {% endif %}
+                   {% if appName == 'Instagram' %}
+                        {% embed '@social_media/instagram/instagram-post-form.html.twig' ignore missing with {'post': 'mypost'} %}				      
+                    {% endembed %}
+                     {% endif %}
+                   {% if appName == 'Twitter' %}
+                        {% embed '@social_media/twitter/twitter-post-form.html.twig' ignore missing with {'post': 'mypost'} %}				      
+                    {% endembed %}
+                     {% endif %}
+                          </div>
+                        </div>
+                 </div>
+                     </div>
+                      <div class="col-12 post-tab-footer"style="background: #fff;margin-top: 30px;">
+                   <div class="my-kaboodles-pager">{{ pager }}
+                 </div>
+                </div>
+                    </div>
+                    {% endif %}
+              {% if data.availabe_feature.newPost == 1 %}
+                     {% if data.availabe_feature.activeTab == 'newPost' %}
+                        {% set active = 'active show' %}
+                        {% else %}
+                         {% set active = '' %}
+                       {% endif %}
+                    <!-- New Post data secion -->
+                    <div class="tab-pane fade p-5 {{active}} custom-width" id="nav-newpost" role="tabpanel" aria-labelledby="nav-newpost-tab" style="padding-top: 15px!important;">
+                        
+                 {% if appName == 'Facebook' %}
+                   {% embed '@social_media/facebook/facebook-post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+                   {% endembed %}
+                 
+                {% endif %}
+                
+                
+                 {% if appName == 'Instagram' %}
+                   {% embed '@social_media/instagram/instagram-post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+                   {% endembed %}
+                 
+                {% endif %}
+                
+                {% if appName == 'Twitter' %}
+                   {% embed '@social_media/twitter/twitter-post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+                   {% endembed %}
+                 
+                {% endif %}
+                
+                    </div>
+                     {% endif %}
+                    {% if data.availabe_feature.calendar == 1 %}
+                     {% if data.availabe_feature.activeTab == 'calendar' %}
+                      {% set active = 'active show' %}
+                       {% else %}
+                        {% set active = '' %}
+                    {% endif %}
+                    <!-- Calendar data secion -->
+                    <div class="tab-pane fade {{active}} row" id="nav-calendar" role="tabpanel" aria-labelledby="nav-calendar-tab" style="background:#ffffff">
+                     {% include '@social_media/calendar.html.twig' ignore missing %}
+                    </div>
+                    {% endif %}
+                    {% if data.availabe_feature.engagement == 1 %}
+                     {% if data.availabe_feature.activeTab == 'engagement' %}
+                      {% set active = 'active show' %}
+                       {% else %}
+                       {% set active = '' %}
+                     {% endif %}
+                    <!-- Engagement data secion -->
+                    <div class="tab-pane p-5 {{active}} fade" id="nav-engagement" role="tabpanel" aria-labelledby="nav-engagement-tab" style="padding-top: 15px!important;"> 
+                     {% include '@social_media/engagement.html.twig' ignore missing %}
+                    </div>
+                    {% endif %}
+                    {% if data.availabe_feature.ads == 1 %}
+                     {% if data.availabe_feature.activeTab == 'ads' %}
+                      {% set active = 'active show' %}
+                      {% else %}
+                      {% set active = '' %}
+                     {% endif %}
+                    <!-- Ads secion -->
+                    <div class="tab-pane p-5 {{active}} fade" id="nav-ads" role="tabpanel" aria-labelledby="nav-ads-tab" style="min-height: 600px;"> 
+                      {% include '@social_media/ads.html.twig' ignore missing %}
+                    </div>
+                     {% endif %}
+                     {% if data.availabe_feature.reports == 1 %}
+                       {% if data.availabe_feature.activeTab == 'reports' %}
+                        {% set active = 'active show' %}
+                        {% else %}
+                        {% set active = '' %}
+                     {% endif %}
+                    <!-- Reports data secion -->
+                    <div class="tab-pane p-5 {{active}} fade" id="nav-reports" role="tabpanel" aria-labelledby="nav-reports-tab">
+                      {% include '@social_media/report.html.twig' ignore missing %}
+                    </div>
+                    {% endif %}
+                    {% if data.availabe_feature.settings == 1 %}
+                     {% if data.availabe_feature.activeTab == 'settings' %}
+                        {% set active = 'active show' %}
+                        {% else %}
+                         {% set active = '' %}
+                     {% endif %}
+               <!-- Settings data secion -->
+                    <div class="tab-pane bg-white {{active}} fade row" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
+                      {% include '@social_media/settings.html.twig' ignore missing %}
+                    </div>
+                     {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          </div>
+        </div>
+      </div>
+      
+      <!--- Shared section -->
+			<div class="tab-pane fade pt-20" id="nav-shared" role="tabpanel" aria-labelledby="nav-shared-tab">
+        {% if data.team_query %}
+          {% set appIconSrc = ''  %}
+          {% set appName = '' %}
+          {% set appID = '' %}
+          {% set default_page = 0 %}
+          {% for key,value in data.member_network_settings %}
+          {% if value.isURL == 1 %}
+             {% set appIconSrc = value.network_icon  %}
+             {% set appName = value.name %}
+             {% set appID = value.tid %}
+
+             {% set default_page = 1 %}
+           {% endif %}
+           {% endfor %}
+           {% if data.error %}
+            {% set default_page = 0 %}
+           {% endif %}
+          <div class="member-content">
+            <div class="col-lg-12 member-team-name text-center">{{data.team_name}}</div>
+              <div id="social-media-wrapper" class="row mt-3">
+                <!--left part-->
+                <div class="col-lg-4 left-sidebar">
+                {% include '@social_media/social-media-left-sidebar.html.twig' with {'team_name': data.team_name} %}
+                </div>
+                <!--right part-->
+                
+                <div class="col-lg-8 right-content-area">
+
+                   <div class="custom-remove">
+                  {% if default_page == 0 %} 
+                        {% if data.error %}
+                        <div class="default_message text-center " style="margin: 20% auto;width: 500px; ">
+                          <span style="font-size:22px">{{data.error.msg}}</span>
+                        </div>
+                        {% else %}
+                        <div class="default_message text-center " style="margin: 20% auto;width: 200px; ">
+                          <span style="font-size:22px">Please select a social network to begin</span>
+                        </div>
+                        {% endif %}
+                  {% else %}
+                  <nav class="custom-nav-layout smm-custom-nav-layout">
+                    {% embed '@social_media/social-media-header.html.twig' ignore missing %}
+                     {% endembed %}
+                    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                      {% if data.availabe_feature.myPost == 1 %}
+                       {% if data.availabe_feature.activeTab == 'myPost' %}
+                         {% set active = 'active' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %}
+                    {% if appName == 'Twitter' %} 
+                     {% set myPost = 'My Tweets' %}
+                     {% else %}
+                      {% set myPost = 'My Posts' %}
+                    {% endif %}
+                      <a class="nav-item nav-link {{active}}" id="nav-myposts-tab" data-toggle="tab" href="#nav-myposts" role="tab" aria-controls="nav-myposts" aria-selected="true">{{myPost}}</a>
+                      {% endif %}
+                      {% if data.availabe_feature.newPost == 1 %}
+                        {% if data.availabe_feature.activeTab == 'newPost' %}
+                         {% set active = 'active' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %}
+                    {% if appName == 'Twitter' %} 
+                     {% set newPost = 'New Tweet' %}
+                     {% else %}
+                      {% set newPost = 'New Post' %}
+                    {% endif %}
+                      <a class="nav-item nav-link {{active}}" id="nav-newpost-tab" data-toggle="tab" href="#nav-newpost" role="tab" aria-controls="nav-newpost" aria-selected="false">{{newPost}}</a>
+                      {% endif %}
+                      {% if data.availabe_feature.calendar == 1 %}
+                        {% if data.availabe_feature.activeTab == 'calendar' %}
+                         {% set active = 'active' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %}
+                      <a class="nav-item nav-link {{active}}" id="nav-calendar-tab" data-toggle="tab" href="#nav-calendar" role="tab" aria-controls="nav-calendar" aria-selected="false">Calendar</a>
+                       {% endif %}
+                      {% if data.availabe_feature.engagement == 1 %}
+                        {% if data.availabe_feature.activeTab == 'engagement' %}
+                         {% set active = 'active' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %}
+                      <a class="nav-item nav-link {{active}}" id="nav-engagement-tab" data-toggle="tab" href="#nav-engagement" role="tab" aria-controls="nav-engagement" aria-selected="false">Engagement</a>
+                      {% endif %}
+                      {% if data.availabe_feature.ads == 1 %}
+                        {% if data.availabe_feature.activeTab == 'ads' %}
+                         {% set active = 'active' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %}        
+                      <a class="nav-item nav-link {{active}}" id="nav-ads-tab" data-toggle="tab" href="#nav-ads" role="tab" aria-controls="nav-ads" aria-selected="false">Ads</a>
+                      {% endif %}
+                      {% if data.availabe_feature.reports == 1 %} 
+                        {% if data.availabe_feature.activeTab == 'reports' %}
+                         {% set active = 'active' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %} 
+                      <a class="nav-item nav-link {{active}}" id="nav-reports-tab" data-toggle="tab" href="#nav-reports" role="tab" aria-controls="nav-reports" aria-selected="false">Reports</a>
+                       {% endif %}
+                       {% if data.availabe_feature.settings == 1 %}
+                        {% if data.availabe_feature.activeTab == 'settings' %}
+                         {% set active = 'active' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %}
+                  <a class="nav-item nav-link {{active}}" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
+                      {% endif %}
+                    </div>
+                  </nav>
+                  <div class="bg-f2f2f2">
+                    <div class="col-12">
+                      <div class="tab-content">
+                      {% if data.availabe_feature.myPost == 1 %}
+                        {% if data.availabe_feature.activeTab == 'myPost' %}
+                         {% set active = 'active show' %}
+                         {% else %}
+                          {% set active = '' %}
+                        {% endif %}
+                         <!-- My Posts data secion -->
+                          <div class="tab-pane fade {{active}} row" id="nav-myposts" role="tabpanel" aria-labelledby="nav-myposts-tab">
+                            <div class="col-12" style="border-top: 1px solid gray;">
+                       <div class="row">
+                              <div class="col-3">
+                               <div class="row listing-post">
+                          {% embed '@social_media/post-list.html.twig' ignore missing  %}
+                                   {% endembed %}
+                               </div>
+                              </div>
+                              <div class="col-9" >
+                       <div class="instruction-region">
+                        <div class="default_message text-center" style="margin: 20% auto;width: 100%; ">
+                                 <span style="font-size:1.5em">To edit a post, click the pencil icon</span><br>
+                         <span style="font-size:1.5em">To clone a post, click the clone icon</span>
+                                </div>
+                       </div>
+                                <div class="post-edit-region d-none">
+                         {% if appName == 'Facebook' %}
+                             {% embed '@social_media/facebook/facebook-post-form.html.twig' ignore missing with {'post': 'mypost'} %}
+                           {% endembed %}
+                           {% endif %}
+                         {% if appName == 'Instagram' %}
+                              {% embed '@social_media/instagram/instagram-post-form.html.twig' ignore missing with {'post': 'mypost'} %}				      
+                          {% endembed %}
+                           {% endif %}
+                         {% if appName == 'Twitter' %}
+                              {% embed '@social_media/twitter/twitter-post-form.html.twig' ignore missing with {'post': 'mypost'} %}				      
+                          {% endembed %}
+                           {% endif %}
+                                </div>
+                              </div>
+                       </div>
+                           </div>
+                            <div class="col-12 post-tab-footer"style="background: #fff;margin-top: 30px;">
+                         <div class="my-kaboodles-pager">{{ pager }}
+                       </div>
+                      </div>
+                          </div>
+                          {% endif %}
+                    {% if data.availabe_feature.newPost == 1 %}
+                           {% if data.availabe_feature.activeTab == 'newPost' %}
+                              {% set active = 'active show' %}
+                              {% else %}
+                               {% set active = '' %}
+                             {% endif %}
+                          <!-- New Post data secion -->
+                          <div class="tab-pane fade p-5 {{active}} custom-width" id="nav-newpost" role="tabpanel" aria-labelledby="nav-newpost-tab" style="padding-top: 15px!important;">
+                              
+                       {% if appName == 'Facebook' %}
+                         {% embed '@social_media/facebook/facebook-post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+                         {% endembed %}
+                       
+                      {% endif %}
+                      
+                      
+                       {% if appName == 'Instagram' %}
+                         {% embed '@social_media/instagram/instagram-post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+                         {% endembed %}
+                       
+                      {% endif %}
+                      
+                      {% if appName == 'Twitter' %}
+                         {% embed '@social_media/twitter/twitter-post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+                         {% endembed %}
+                       
+                      {% endif %}
+                      
+                          </div>
+                           {% endif %}
+                          {% if data.availabe_feature.calendar == 1 %}
+                           {% if data.availabe_feature.activeTab == 'calendar' %}
+                            {% set active = 'active show' %}
+                             {% else %}
+                              {% set active = '' %}
+                          {% endif %}
+                          <!-- Calendar data secion -->
+                          <div class="tab-pane fade {{active}} row" id="nav-calendar" role="tabpanel" aria-labelledby="nav-calendar-tab" style="background:#ffffff">
+                           {% include '@social_media/calendar.html.twig' ignore missing %}
+                          </div>
+                          {% endif %}
+                          {% if data.availabe_feature.engagement == 1 %}
+                           {% if data.availabe_feature.activeTab == 'engagement' %}
+                            {% set active = 'active show' %}
+                             {% else %}
+                             {% set active = '' %}
+                           {% endif %}
+                          <!-- Engagement data secion -->
+                          <div class="tab-pane p-5 {{active}} fade" id="nav-engagement" role="tabpanel" aria-labelledby="nav-engagement-tab" style="padding-top: 15px!important;"> 
+                           {% include '@social_media/engagement.html.twig' ignore missing %}
+                          </div>
+                          {% endif %}
+                          {% if data.availabe_feature.ads == 1 %}
+                           {% if data.availabe_feature.activeTab == 'ads' %}
+                            {% set active = 'active show' %}
+                            {% else %}
+                            {% set active = '' %}
+                           {% endif %}
+                          <!-- Ads secion -->
+                          <div class="tab-pane p-5 {{active}} fade" id="nav-ads" role="tabpanel" aria-labelledby="nav-ads-tab" style="min-height: 600px;"> 
+                            {% include '@social_media/ads.html.twig' ignore missing %}
+                          </div>
+                           {% endif %}
+                           {% if data.availabe_feature.reports == 1 %}
+                             {% if data.availabe_feature.activeTab == 'reports' %}
+                              {% set active = 'active show' %}
+                              {% else %}
+                              {% set active = '' %}
+                           {% endif %}
+                          <!-- Reports data secion -->
+                          <div class="tab-pane p-5 {{active}} fade" id="nav-reports" role="tabpanel" aria-labelledby="nav-reports-tab">
+                            {% include '@social_media/report.html.twig' ignore missing %}
+                          </div>
+                          {% endif %}
+                          {% if data.availabe_feature.settings == 1 %}
+                           {% if data.availabe_feature.activeTab == 'settings' %}
+                              {% set active = 'active show' %}
+                              {% else %}
+                               {% set active = '' %}
+                           {% endif %}
+                     <!-- Settings data secion -->
+                          <div class="tab-pane bg-white {{active}} fade row" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
+                            {% include '@social_media/settings.html.twig' ignore missing %}
+                          </div>
+                           {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+                </div>
+              </div>
+          </div>
+          <div class="member-teams d-none">{{ data.build_teams }}</div>
+        {% else %}
+          <div class="member-teams">{{ data.build_teams }}</div>
+        {% endif %}
+      </div>
+  </div>
+  <!--tab content end-->
+</div>
+<!--nav tabs end-->
+
+     <div class="newpost-schedular">
+       {% embed '@social_media/schedule-form.html.twig' ignore missing with {'post': 'newpost'} %}
+       {% endembed %}
+     </div>
+	  <div class="mypost-schedulat">
+		  {% embed '@social_media/schedule-form.html.twig' ignore missing with {'post': 'mypost'} %}
+		  {% endembed %}
+    </div>
+     
+     
+    </div>
+  </div>
+</div>
+
+<!--Auto Schedule settings Modal-->
+
+<script>
+
+function selectionClicknewpost(e){
+  
+  var radio = e.id;
+  if(radio == 'manual_check_newpost'){ 
+    jQuery('.newpost-shedule-form .manual_check .selection-settings').css("pointer-events", "auto");
+    jQuery('.newpost-shedule-form .auto_check .selection-settings').css("pointer-events", "none"); 
+    var dated = jQuery('#datetimepicker-newpost').val();
+      if(dated.length > 0){
+        jQuery('.newpost-shedule-form #auto-schedule-submit').removeClass('disabled');
+      }
+      else{
+        jQuery('.newpost-shedule-form #auto-schedule-submit').addClass('disabled');
+      } 
+  } 
+  else if(radio == 'auto_check'){
+    jQuery('.newpost-shedule-form .manual_check .selection-settings').css("pointer-events", "none");
+    jQuery('.newpost-shedule-form .auto_check .selection-settings').css("pointer-events", "auto"); 
+  var time2 =jQuery('.newpost-shedule-form #schedule_time').val();
+    if(time2.length > 0){
+      jQuery('.newpost-shedule-form #auto-schedule-submit').removeClass('disabled');
+    }
+    else{
+      jQuery('.newpost-shedule-form #auto-schedule-submit').addClass('disabled');   
+      } 
+  }
+  }
+  
+function selectionClickmypost(e){
+  
+  var radio = e.id;
+  if(radio == 'manual_check_mypost'){ 
+    jQuery(".mypost-shedule-form .custom-control-input").prop("checked", true);
+    jQuery('.mypost-shedule-form .manual_check .selection-settings').css("pointer-events", "auto");
+    jQuery('.mypost-shedule-form .auto_check .selection-settings').css("pointer-events", "none"); 
+    var dated = jQuery('#datetimepicker-mypost').val();
+      if(dated.length > 0){
+        jQuery('.mypost-shedule-form #auto-schedule-submit').removeClass('disabled');
+      }
+      else{
+        jQuery('.mypost-shedule-form #auto-schedule-submit').addClass('disabled');
+      } 
+  } 
+  else if(radio == 'auto_check'){
+    jQuery('.mypost-shedule-form .manual_check .selection-settings').css("pointer-events", "none");
+    jQuery('.mypost-shedule-form .auto_check .selection-settings').css("pointer-events", "auto"); 
+  var time2 =jQuery('.mypost-shedule-form #schedule_time').val();
+    if(time2.length > 0){
+      jQuery('.mypost-shedule-form #auto-schedule-submit').removeClass('disabled');
+    }
+    else{
+      jQuery('.mypost-shedule-form #auto-schedule-submit').addClass('disabled');   
+      } 
+  }
+  }  
+function selectionPrefrencesnewpost(e){
+  //console.log(e.id);
+  var radio = e.id;
+  /*var date = jQuery("#datetimepicker").val();
+  var time = jQuery("#schedule_time").val();
+  if(date == '' && time == ''){
+    jQuery('#auto-schedule-submit').addClass('disabled');
+  } else if ((date != '' && time == '') || (date == '' && time != '')) {
+    jQuery('#auto-schedule-submit').removeClass('disabled');
+  }*/
+  if(radio == 'manual_check_newpost'){
+    //reset auto check
+    jQuery('.newpost-shedule-form #auto_check_select').prop('selectedIndex',0);
+    jQuery('.newpost-shedule-form #weekdays .xdsoft_time').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');     
+    });
+    jQuery(".newpost-shedule-form #schedule_time").val('');
+    jQuery('.newpost-shedule-form .auto_check .xdsoft_time_variant .xdsoft_time').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');
+    });
+  } else if(radio == 'auto_check'){
+    //reset manual check
+    jQuery('.newpost-shedule-form .xdsoft_calendar .xdsoft_date').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');
+    });
+    jQuery("#datetimepicker-newpost").val('');
+    jQuery('.newpost-shedule-form .manual_check .xdsoft_time_variant .xdsoft_time').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');
+    });
+  }
+}
+function selectionPrefrencesmypost(e){
+  //console.log(e.id);
+  var radio = e.id;
+  /*var date = jQuery("#datetimepicker").val();
+  var time = jQuery("#schedule_time").val();
+  if(date == '' && time == ''){
+    jQuery('#auto-schedule-submit').addClass('disabled');
+  } else if ((date != '' && time == '') || (date == '' && time != '')) {
+    jQuery('#auto-schedule-submit').removeClass('disabled');
+  }*/
+  if(radio == 'manual_check'){
+    //reset auto check
+    jQuery('.mypost-shedule-form #auto_check_select').prop('selectedIndex',0);
+    jQuery('.mypost-shedule-form #weekdays .xdsoft_time').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');     
+    });
+    jQuery(".mypost-shedule-form #schedule_time").val('');
+    jQuery('.mypost-shedule-form .auto_check .xdsoft_time_variant .xdsoft_time').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');
+    });
+  } else if(radio == 'auto_check'){
+    //reset manual check
+    jQuery('.mypost-shedule-form .xdsoft_calendar .xdsoft_date').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');
+    });
+    jQuery("#datetimepicker-mypost").val('');
+    jQuery('.mypost-shedule-form .manual_check .xdsoft_time_variant .xdsoft_time').each(function(event) {
+      jQuery(this).removeClass('xdsoft_current');
+    });
+  }
+}
+</script>

@@ -1,0 +1,11 @@
+affiliate.application:
+  version: 1.x
+  css:
+    theme:
+      css/affiliate_application_form.css: {}
+  js:
+    js/affiliate_program.js: {}
+  dependencies:
+    - core/jquery #Just to be safe
+    - core/drupal.dialog.ajax #Required for dialogs
+    - core/jquery.form #If you also want to use Ajax for form operations

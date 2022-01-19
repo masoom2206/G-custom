@@ -1,0 +1,54 @@
+vmt:
+  css:
+    theme:
+      css/video_maker_tool.css: {}
+      css/custom_video_control.css: {}
+      css/video_maker_render.css: {}
+  js:
+    js/wavesurfer.js: {}
+    js/global_video.js: {}
+    js/video_maker_tool.js: {}
+    js/play_video.js: {}
+    js/edit_video.js: {}
+    js/edit_photo.js: {}
+    js/photo_clip.js: {}
+    js/video_clip.js: {}
+    js/soundtrack.js: {}
+    
+  dependencies:
+    - core/jquery
+    - core/drupalSettings 
+
+vmt.listing:
+  css:
+    theme:
+      css/video_maker_tool.css: {}
+      /modules/custom/media_kit_selector/css/media_kit_selector.css: {}
+  js:
+    js/video_listing.js: {}
+    js/play_video.js: {}
+    
+vmt.cropit:
+  js:
+    /libraries/cropit/jquery.cropit.js: {}
+
+vmt.tagit:
+  css:
+    theme:
+      /libraries/tagit/css/jquery.tagit.css: {}
+      /libraries/tagit/css/tagit.ui-zendesk.css: {}
+  js:
+    /libraries/tagit/tag-it.min.js: {}
+
+vmt.tagsinput:
+  css:
+    theme:
+      /libraries/tagsinput/jquery.tagsinput-revisited.css: {}
+  js:
+    /libraries/tagsinput/jquery.tagsinput-revisited.js: {}
+
+vmt.debug:
+  css:
+    theme:
+      css/video_maker_tool.css: {}
+      

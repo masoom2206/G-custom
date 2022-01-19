@@ -1,0 +1,18 @@
+stripe_subscription_and_customer.all:
+  title: 'Stripe'
+  description: 'Stripe Pages'
+  parent: system.admin_config
+  route_name: stripe_subscription_and_customer.all
+  weight: 99
+stripe_subscription_and_customer.admin_configuration_form:  
+  title: 'Strip Configuration'
+  route_name: stripe_subscription_and_customer.admin_configuration_form
+  description: 'Strip Configuration and Message term ID setting'
+  parent: stripe_subscription_and_customer.all
+  weight: 99
+stripe_subscription_and_customer.add_upgrades_controller_upgrades:  
+  title: 'All Upgrads details'
+  route_name: stripe_subscription_and_customer.add_upgrades_controller_upgrades
+  description: 'All Upgrads details'
+  parent: stripe_subscription_and_customer.all
+  weight: 99

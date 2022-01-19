@@ -1,0 +1,5 @@
+name: 'Generate Pdf'
+type: module
+description: 'This module use for gnerate pdf form fabricjs json'
+core: 8.x
+package: 'Custom'

@@ -1,0 +1,230 @@
+{% set module_path = _self|split('/templates') %}
+<div id="onboarding-dashboard-wrapper">
+	<!--<button id="virtual-assistant" class="btn btn-primary text-uppercase font-fjalla position-absolute">Request a Virtual Assistant</button>-->
+	
+	<!--Progress Bar area-->
+	<div class="row">
+		<div class="col-md-2">
+		</div>
+		<div class="col-md-8 pt-3">
+			<!--<div class="progress">
+				<div class="progress-bar bg-success" style="width:{{ data.percent }}">{{ data.percent }}</div>
+			</div>-->
+		</div>
+	</div>
+	
+	<!--Grid area-->
+	<div class="row border-top">
+		<div class="acc-grid">
+			<div id="onboarding-grids" class="d-flex pt-3 pb-3">
+				<div class="flex-12 onboarding-item">
+					<a href="/tools/media/vault/{{ data.uid }}">
+						<img class="img-fluid blue" src="{{ data.imagepath }}/MediaVaultSettingsButton.png">
+						<img class="img-fluid hover d-none" src="{{ data.imagepath }}/MediaVaultSettingsButton-E75E00.png">
+					</a>
+				</div>
+				<div class="flex-12 onboarding-item">
+					<a href="/tools/media/kit/{{ data.uid }}/{{ data.kitid }}">
+						<img class="img-fluid blue" src="{{ data.imagepath }}/MediaKitSettingsButton.png">
+						<img class="img-fluid hover d-none" src="{{ data.imagepath }}/MediaKitSettingsButton-E75E00.png">
+					</a>
+				</div>
+				<div class="flex-12 onboarding-item">
+					<a href="/tools/my-kaboodles/{{ data.uid }}">
+						<img class="img-fluid blue" src="{{ data.imagepath }}/mykaboodles-023364.png">
+						<img class="img-fluid hover d-none" src="{{ data.imagepath }}/mykaboodles-e75e00.png">
+					</a>
+				</div>
+				<div class="flex-12 onboarding-item">
+					<a href="/tools/social/media/{{ data.uid }}">
+						<img class="img-fluid blue" src="{{ data.imagepath }}/socialmediamanagerbutton-023364.png">
+						<img class="img-fluid hover d-none" src="{{ data.imagepath }}/social-media-manager-button-e75e00.png">
+					</a>
+				</div>
+				<!-- <div class="flex-12 onboarding-item">
+					<a href="/tools/my-account/{{ data.uid }}/120">
+						<img class="img-fluid" src="{{ data.imagepath }}/BrandingSettingsButton.png">
+					</a>
+					<div class="item-status text-center font-weight-bold">{{ data.status.120 }}</div>
+				</div>
+				<div class="flex-12 onboarding-item">
+					<a href="/tools/my-account/{{ data.uid }}/122">
+						<img class="img-fluid" src="{{ data.imagepath }}/MetadataSettingsButton.png">
+					</a>
+					<div class="item-status text-center font-weight-bold">{{ data.status.122 }}</div>
+				</div> -->
+				<div class="flex-12 onboarding-item">
+					<div class="moreinfo d-none">/knowledgebase/getting-started/video-manager</div>
+					<div class="thumb-msg d-none">Quickly and easily make videos for Social Media, YouTube, Vimeo, downloads, or streaming with the Kaboodle Media Video Maker.<br><br>Upgrade to an Expert account today to get this feature and more. Click the upgrade button to get started today.</div>
+					{# {% if data.video_manager == false  %}
+						<a href="#" data-toggle="modal" onclick="upgradeMessage(this)" data-target="#functional-modal">
+							<img class="img-fluid blue" src="{{ data.imagepath }}/video-maker-blue.png">
+							<img class="img-fluid hover d-none" src="{{ data.imagepath }}/video-manager-orange.png">
+						</a>
+					{% else %} #}
+						<a href="/tools/video/{{ data.uid }}">
+							<img class="img-fluid blue" src="{{ data.imagepath }}/video-maker-blue.png">
+							<img class="img-fluid hover d-none" src="{{ data.imagepath }}/video-manager-orange.png">
+						</a>
+					{# {% endif %} #}
+				</div>
+				 <!--<div class="flex-12 onboarding-item">
+					<div class="moreinfo d-none">/knowledgebase/getting-started/monetization</div>
+					<div class="thumb-msg d-none">From selling stock music, photography, and video (even to other members), to offering your services as a Virtual Assistant, to in-app sales via your own Kaboodle Media Mobile Web App there are many ways to generate revenue with Kaboodle Media.<br><br>
+
+Upgrade to an Expert or Designer account today to get this feature and more. Click the upgrade button to get started today.<br><br>
+NOTE:  Upgrades are not available during beta.</div>
+					{# {% if data.make_money == false  %} #}
+						<a href="#" data-toggle="modal" data-target="#functional-modal" onclick="upgradeMessage(this)">
+							<img class="img-fluid gray" src="{{ data.imagepath }}/marketplace-comingsoon.png">
+						</a>
+					{# {% else %}
+						<a href="/marketplace/{{ data.uid }}">
+							<img class="img-fluid blue" src="{{ data.imagepath }}/MakeMoneySettingsButton.png">
+							<img class="img-fluid hover d-none" src="{{ data.imagepath }}/MakeMoneySettingsButton-E75E00.png">
+						</a>
+					{% endif %} #}
+				</div> -->
+        <div class="flex-12 onboarding-item">
+					<div class="moreinfo d-none">/knowledgebase/getting-started/monetization</div>
+					<div class="thumb-msg d-none">From selling stock music, photography, and video (even to other members), to offering your services as a Virtual Assistant, to in-app sales via your own Kaboodle Media Mobile Web App there are many ways to generate revenue with Kaboodle Media.<br><br>
+
+Upgrade to an Expert or Designer account today to get this feature and more. Click the upgrade button to get started today.<br><br>
+NOTE:  Upgrades are not available during beta.</div>
+          {% if data.professional_user == 1 %}
+						<a href="javascript:void(0);" class="professional-user-modal">
+							<img class="img-fluid blue" src="{{ data.imagepath }}/htmlarticlebutton2.png">
+							<img class="img-fluid hover d-none" src="{{ data.imagepath }}/htmlarticlebutton1.png">
+						</a>
+					{% else %}
+						<a href="/tools/html-article/{{ data.uid }}">
+							<img class="img-fluid blue" src="{{ data.imagepath }}/htmlarticlebutton2.png">
+							<img class="img-fluid hover d-none" src="{{ data.imagepath }}/htmlarticlebutton1.png">
+						</a>
+					{% endif %}
+				</div>
+        <div class="flex-12 onboarding-item">
+					<div class="moreinfo d-none">/knowledgebase/getting-started/template-designer</div>
+					<div class="thumb-msg d-none">The Kaboodle Media Template Designer gives you the power to make your own designs for Social Media images, brochures, postcards, and lots more.<br><br>
+
+Upgrade to a Designer account today to get this feature and more. Click the upgrade button to get started today.<br><br>
+NOTE:  Upgrades are not available during beta.</div>
+					{% if data.notification == false %}
+						<a href="#" data-toggle="modal" data-target="#functional-modal" onclick="upgradeMessage(this)">
+							<img class="img-fluid gray" src="{{ data.imagepath }}/notifications-023364.png">
+						</a>
+					{% else %}
+						<a href="/tools/notifications/{{ data.uid }}">
+							<img class="img-fluid blue" src="{{ data.imagepath }}/notifications-023364.png">
+							<img class="img-fluid hover d-none" src="{{ data.imagepath }}/notifications-e75e00.png">
+						</a>
+					{% endif %}
+				</div>
+				<div class="flex-12 onboarding-item">
+					<a href="/tools/profile/{{ data.uid }}">
+						<img class="img-fluid blue" src="{{ data.imagepath }}/ProfileSettingsButton.png">
+						<img class="img-fluid hover d-none" src="{{ data.imagepath }}/ProfileSettingsButton-E75E00.png">
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!--Welcome area-->
+	<div class="welcom-layer d-flex justify-content-between">
+		<div class="welcom-text">
+			Welcome {{ data.realname }}
+		</div>
+		<!-- <div class="subscription-text">
+			Your free trial has N days remaining. <a class="subscribe-link" href="/plans">Click here to subscribe</a>
+		</div> -->
+	</div>
+	
+	<!-- Media vault and notification area -->
+	<div class="mid-layer d-flex">
+		<div class="div-62">
+			<div class="d-flex justify-content-between">
+				<h4 class="d-flex">Media Vault&nbsp;{{data.media_vault_kbi}}</h4>
+				<a href="/tools/media/vault/{{ data.uid }}">Manage Now</a>
+			</div>
+			<div id="mv-table">
+				{{  data.media_vault_table }}
+			</div>
+		</div>
+		
+		<div class="div-10"></div>
+		<div class="div-34">
+			<div class="d-flex justify-content-between">
+				<h4 class="d-flex">Recent Notifications&nbsp;{{data.notifications_kbi}}</h4>
+				<a href="/tools/notifications/{{ data.uid }}">View All</a>
+			</div>
+			<div id="notification-table">
+				{{  data.notification_table }}
+			</div>
+		</div>
+	</div>
+	
+	<!-- Media kit and kaboodles area -->
+	<div class="mid-layer d-flex">
+		<div class="div-62">
+			<div class="d-flex justify-content-between">
+				<h4 class="d-flex">Media Kits&nbsp;{{data.media_kits_kbi}}</h4>
+				<a href="/tools/media/kit/{{ data.uid }}/{{ data.kitid }}">View All</a>
+			</div>
+			<div id="mk-table">
+				{{  data.media_kit_table }}
+			</div>
+		</div>
+		
+		<div class="div-10"></div>
+		<div class="div-34">
+			<div class="d-flex justify-content-between">
+				<h4 class="d-flex">Kaboodles&nbsp;{{data.kaboodles_kbi}}</h4>
+				<a href="/tools/my-kaboodles/{{ data.uid }}">View All</a>
+			</div>
+			<div id="kaboodles-table">
+				{{  data.kaboodles_table }}
+			</div>
+		</div>
+	</div>
+	
+	<!-- My Preset and Activity area -->
+	<div class="mid-layer d-flex">
+		<div class="div-62">
+			<div class="d-flex justify-content-between">
+				<h4 class="d-flex">My Presets&nbsp;{{data.my_presets_kbi}}</h4>
+				{# <a href="#" class="no-text-decoration" data-toggle="modal" data-target="#functional-modal" onclick="newPreset(this)">New Preset</a> #}
+			</div>
+			<div id="preset-table">
+				{{  data.preset_table }}
+			</div>
+		</div>
+		
+		<div class="div-10"></div>
+    {#
+		<div class="div-34">
+			<div class="d-flex justify-content-between">
+				<h4 class="d-flex">Sales Activity&nbsp;{{data.sales_activity_kbi}}</h4>
+			</div>
+			<div id="activity-table">
+				{{  data.activity_table }}
+			</div>
+		</div>
+    #}
+    <div class="div-34">
+			<div class="d-flex justify-content-between">
+				<h4 class="d-flex">Kaboodle Products&nbsp;{{data.kaboodle_products_kbi}}</h4>
+        {% if data.product_empty == 'false' %}
+        <a href="/tools/my-products/{{ data.uid }}">View All</a>
+        {% else %}
+        <div class="vall">View All</div>
+        {% endif %}
+			</div>
+			<div id="activity-table">
+				{{  data.product_table }}
+			</div>
+		</div>
+	</div>
+
+</div>
+<div id="notification-modal" class="modal fade"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h4 class="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"><button id="btn-cancel" data-dismiss="modal" type="button" class="btn btn-primary">Close</button><a href="#" id="confirm-btn" class="btn btn-primary d-none">Confirm</a></div></div></div></div>

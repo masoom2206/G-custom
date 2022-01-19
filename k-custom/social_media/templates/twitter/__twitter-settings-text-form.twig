@@ -1,0 +1,45 @@
+<div class="{{appName}}-text-form w-100">
+   {% for fieldName,fieldValue in data.settings_field %}
+	{% if (fieldValue.enabled == '1') and (fieldValue.type == 'text')  %}
+  <div class="{{fieldName}}-field w-100 custom-fields">
+		<div class="d-flex align-items-center justify-content-between">
+			<legend>{{fieldName}}</legend>
+			<img src="{{appIconSrc}}" alt="Twitter" width="20" height="20">
+			<div class=" pl-1 d-flex">
+			<span class="textcount"></span>
+			<span class="textcount-separator">/</span>
+			<span class="textcount-limit">{{fieldValue.char_limit}}</span>
+			</div>
+		</div>
+		<textarea class="w-100" rows="1"></textarea>
+		<span class="text-area-desc fade-content">{{fieldValue.specifications | raw}}</span>
+	</div>
+	{% endif %}
+	{% endfor%}
+
+	<div class="newpost-button" style="position:absolute; bottom:10px">
+                <button id="save-profile" class="btn btn-primary mr-2  social-media-save-profile disabled">submit to {{appName}} </button>
+                <button id="cancel" class="btn btn-primary" data-toggle="modal" data-target="#cancel-profile-save">CANCEL</button>
+    </div>
+	{# cancel profile modal #}
+	   
+						  <div class="modal fade" id="cancel-profile-save" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+									  <div class="modal-body">
+									   Are you sure to cancel this action.
+									  </div>
+									  <div class="modal-footer">
+										<button type="button" class="btn btn-cancel" data-dismiss="modal">Cancel</button>
+										
+										<button class="btn btn-primary" data-dismiss="modal" >Okay</button>
+									  </div>
+									</div>
+					            </div>
+				            </div>
+	
+	 {# cancel profile modal #}
+	
+
+
+</div>

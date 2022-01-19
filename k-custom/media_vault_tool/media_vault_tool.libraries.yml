@@ -1,0 +1,126 @@
+media_edit_js:
+  js:
+    js/media_edit.js: {}
+media_edit_style:
+  css:
+    theme:
+      css/media-edit-style.css: {}
+mvt_plupload:
+  js:
+    /libraries/plupload/js/plupload.full.min.js: {}
+    /libraries/plupload/js/jquery.plupload.queue/jquery.plupload.queue.min.js: {}
+    /libraries/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js: {}
+  css:
+    theme:
+      /libraries/plupload/js/jquery.ui.plupload/css/jquery.ui.plupload.css: {}
+
+react.min:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react.min.js: {}
+
+react:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react.js: {}
+
+react.dom.min:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react-dom.min.js: {}
+
+axios:
+  js:
+    /libraries/reactjs/build/axios.min.js: {}
+
+media_pagination:
+  js:
+    js/paginator.js: {}
+
+global:
+  version: VERSION
+  js:
+    js/lightgallery-all.min.js: {}
+    js/media_vault_tool.js: {}
+    /libraries/jquery-migrate/jquery-migrate-3.0.0.min.js: {}
+  css:
+    theme:
+      css/lightgallery.css: {}
+      css/media_vault_tool.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+mv_uploader_tool:
+  version: VERSION
+  js:
+    js/media_vault_uploader.js: {}
+  css:
+    theme:
+      css/media_vault_tool.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+mv_tool:
+  css:
+    theme:
+      css/media_vault_tool.css: {}
+      
+km_global:
+  version: VERSION
+  js:
+    js/lightgallery-all.min.js: {}
+    /libraries/jquery-migrate/jquery-migrate-3.0.0.min.js: {}
+  css:
+    theme:
+      css/lightgallery.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings    
+    
+media_kit:
+  js:
+    js/media_kit.js: {}
+    js/lightgallery-all.min.js: {}
+  css:
+    theme:
+      css/lightgallery.css: {}
+      css/media_vault_tool.css: {}
+      css/media_kit.css: {}
+      css/media_kit_vault.css: {}
+
+media.vault:
+  css:
+    theme:
+      css/media_kit_vault.css: {}
+
+mediabackendlibrary:
+  css:
+    theme:
+      css/bootstrap.min.css: {}
+      
+custom_image_editor:
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/camanjs/4.0.0/caman.full.min.js: {}
+    /core/assets/vendor/underscore/underscore-min.js: {}
+    js/camanFilter.js: {}
+    js/custom_image_editor.js: {}
+  css:
+    theme:
+      css/custom_image_editor.css: {}
+      
+custom_video_editor:
+  js:
+    js/custom_video_editor.js: {}
+  css:
+    theme:
+      css/custom_image_editor.css: {} 
+      css/custom_video_editor.css: {} 
+
+media_vault_tool_css:
+  css:
+    theme:
+      css/media_vault_tool.css: {}
+
+          

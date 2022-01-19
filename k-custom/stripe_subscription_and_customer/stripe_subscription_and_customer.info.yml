@@ -1,0 +1,5 @@
+name: 'Stripe Subscription and Customer'
+type: module
+description: 'Stripe Subscription and Customer Portal'
+core: 8.x
+package: 'Subscription'

@@ -1,0 +1,59 @@
+<div class="my-kaboodles kaboodles-dashboard">
+  <div class="kaboodles-container d-flex w-100 ff-rw">
+    <div class="col-lg-12" id="debug-video-maker">
+      <ul class="nav nav-tabs" id="video-debug-tab">
+        <li {% if variables.status == 'Saved' %} class="active" {% endif %}><a href="{{ path('debug.video.maker.listing', {'status': 'Saved'}) }}">Saved Videos</a></li>
+        <li {% if variables.status == 'Pending' %} class="active" {% endif %}><a href="{{ path('debug.video.maker.listing', {'status': 'Pending'}) }}">Pending Videos</a></li>
+        <li {% if variables.status == 'Failed' %} class="active" {% endif %}><a href="{{ path('debug.video.maker.listing', {'status': 'Failed'}) }}">Failed Videos</a></li>
+        <li {% if variables.status == 'Ready' %} class="active" {% endif %}><a href="{{ path('debug.video.maker.listing', {'status': 'Ready'}) }}">Ready Videos</a></li>
+      </ul>
+      <table class="table debug-video-maker">
+        <thead>
+          <tr>
+            <th scope="col" width="6%">Video ID</th>
+            <th scope="col" width="6%">User ID</th>
+            <th scope="col">Title</th>
+            <th scope="col" width="9%">Render Status</th>
+            <th scope="col" width="10%">Processing Phase</th>
+            <th scope="col" width="10%">Created Date</th>
+            {% if variables.status != 'Saved' %}
+            <th scope="col" width="10%">Render Date</th>
+            {% endif %}
+            {% if ((variables.status == 'Ready') or (variables.status == 'Failed')) %}
+            <th scope="col" width="10%">Processed Date</th>
+            {% endif %}
+            <th scope="col" width="6%" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if variables.video is empty %}
+            <tr>
+              <td colspan="8" class="text-center">There are currently no videos.</td>
+            </tr>
+          {% else %}
+            {% for video in variables.video %}
+            <tr>
+              <td>{{ video.video_id }}</td>
+              <td>{{ video.user_id }}</td>
+              <td>{{ video.video_name }}</td>
+              <td>{{ video.render_status }}</td>
+              <td>{{ video.processing_phase }}</td>
+              <td>{{ video.created|date("d/m/Y H:i:s") }}</td>
+              {% if video.render_status != 'Saved' %}
+              <td>{{ video.render_date|date("d/m/Y H:i:s") }}</td>
+              {% endif %}
+              {% if ((video.render_status == 'Ready') or (video.render_status == 'Failed')) %}
+              <td>{{ video.processed_date|date("d/m/Y H:i:s") }}</td>
+              {% endif %}
+              <td class="text-center"><a href="{{ path('debug.video.maker.processing', {'video_id': video.video_id}) }}"><img src="/modules/custom/video_maker_tool/images/processing.png" height="20"></a></td>
+            </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+      <div>{{ variables.pagination }}</div>
+    </div>
+    
+  </div>
+</div>
+

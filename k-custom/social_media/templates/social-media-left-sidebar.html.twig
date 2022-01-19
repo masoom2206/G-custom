@@ -1,0 +1,138 @@
+{% if team_name %}
+  <div id="active-connections" class="pl-3">
+    <div class="connection-title">Active Connections</div>
+    <div class="pl-2">
+      <p>Click an arrow to connect.</p>
+      <div class="connections-list col-10">
+        {% set displayClass = '' %}
+        {% for key,value in data.member_network_settings %}
+          {% if value.network_status.status == 0 %}
+            {% set style = 'display:none' %}
+          {% else %}
+            {% set style = '' %}
+            {% set displayClass = 'd-none' %}
+          {% endif %}
+          <div class="row border border-secondary align-items-center rounded custom-{{ value.name|replace({' ': ''}) }} ml-0 mr-0 mb-3 pt-2 pb-2 justify-content-between social-items" data-networkId = "{{ value.tid}}" data-networkName = "{{ value.name}}" style={{ style }}>
+            <div class="connection-list-first-left justify-content-start">
+            <div class="col-2-">
+              <img class="img-fluid" style="min-width:16px;max-width:20px" src="{{ value.network_icon }}">
+            </div>
+            <div class="col-4- pl-2">{{ value.name}}</div>
+            </div>
+            <div class="connection-list-second-right justify-content-end align-items-baseline">
+            <div class="col-2- pr-2 network-info" style="cursor: pointer;">
+             <img class="img-fluid" style="min-width:14px;max-width:14px" src="/themes/custom/kaboodlemedia/images/info-icon.png">
+            </div>
+            <div class="col-2- pr-2 network-setting">
+              <div class="get-term-id" style="display:none">{{ value.tid}}</div>
+              <div class="active-net network-settings-icon active-network" data-networkName ="{{value.name}}"  data-networkId = "{{ value.tid}}" ></div>
+            </div>
+            <div class="col-2- pr-2 text-right" style="">
+              <a href="/tools/social/media/{{data.uid}}/{{ value.tid}}?team={{data.team_query.gid}}&muid={{data.team_query.muid}}#nav-shared"><button class="btn btn-primary {{ value.name}}-class"><i class="fa fa-arrow-right"></i></button>
+              </a>
+            </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="no-connection {{ displayClass }}">
+      <p>You currently have no connections.</p>
+    </div>
+  </div>
+  <div id="available-connections" class="mt-5 pl-3">
+    <div class="connection-title">Inactive Connections</div>
+    <div class="pl-2">
+      <p>Click an arrow to add a network to your Active Connections.</p>
+      <div class="connections-list col-10">
+        {% for key,value in data.member_network_settings %}
+          {% if value.network_status.status == 1 %}
+            {% set style1 = 'display:none' %}
+          {% else %}
+            {% set style1 = '' %}
+          {% endif %}
+          <div class="row border border-secondary align-items-center rounded custom-{{ value.name|replace({' ': ''}) }} ml-0 mr-0 mb-3 pt-2 pb-2 justify-content-between social-items" data-networkId = "{{ value.tid}}" data-networkName = "{{ value.name}}" style="{{ style1 }}">
+            <div class="connection-list-first-left justify-content-start">
+            <div class="col-2-  social-network-icon">
+              <img class="img-fluid" style="min-width:16px;max-width:20px" src="{{ value.network_icon }}" style="width:20px">
+            </div>
+            <div class="col-4- pl-2">{{ value.name}}</div>
+            </div>
+            <div class="connection-list-second-right justify-content-end align-items-baseline">
+              <div class="col-2- pr-2 network-info" style="cursor: pointer;">
+               <img class="img-fluid" style="min-width:14px;max-width:14px" src="/themes/custom/kaboodlemedia/images/info-icon.png">
+              </div>
+              <div class="col-2- pr-2 network-setting">
+                <div class="get-term-id" style="display:none">{{ value.tid}}</div>
+                <div class="available-net network-settings-icon available-network access-token class-{{ value.name}}"></div>
+              </div>
+              <div class="col-2- pr-2 " style="">
+                <button class="btn btn-secondary" style="pointer-events:none"><i class="fa fa-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div id="active-connections" class="pl-3">
+    <div class="connection-title">Active Connections</div>
+    <div class="pl-2">
+      <p>Click an arrow to connect.</p>
+      <div class="connections-list col-10"> {% set displayClass = '' %} {% for key,value in data.network_srttings %} {% if value.network_status.status == 0 %} {% set style = 'display:none' %} {% else %} {% set style = '' %} {% set displayClass = 'd-none' %} {% endif %} <div class="row border border-secondary align-items-center rounded custom-{{ value.name|replace({' ': ''}) }} ml-0 mr-0 mb-3 pt-2 pb-2 justify-content-between social-items" data-networkId = "{{ value.tid}}" data-networkName = "{{ value.name}}" style={{ style }}>
+          <div class="connection-list-first-left justify-content-start">
+          <div class="col-2-">
+            <img class="img-fluid" style="min-width:16px;max-width:20px" src="{{ value.network_icon }}">
+          </div>
+          <div class="col-4- pl-2">{{ value.name}}</div>
+          </div>
+          <div class="connection-list-second-right justify-content-end align-items-baseline">
+          <div class="col-2- pr-2 network-info" style="cursor: pointer;">
+           <img class="img-fluid" style="min-width:14px;max-width:14px" src="/themes/custom/kaboodlemedia/images/info-icon.png">
+          </div>
+          <div class="col-2- pr-2 network-setting">
+            <div class="get-term-id" style="display:none">{{ value.tid}}</div>
+            <div class="active-net network-settings-icon active-network" data-networkName ="{{value.name}}"  data-networkId = "{{ value.tid}}" ></div>
+          </div>
+          <div class="col-2- pr-2 text-right" style="">
+            <a href="/tools/social/media/{{data.uid}}/{{ value.tid}}"><button class="btn btn-primary {{ value.name}}-class"><i class="fa fa-arrow-right"></i></button>
+            </a>
+          </div>
+          </div>
+        </div> {% endfor %} </div>
+    </div>
+    <div class="no-connection {{ displayClass }}">
+      <p>You currently have no connections.</p>
+    </div>
+  </div>
+  <div id="available-connections" class="mt-5 pl-3">
+    <div class="connection-title">Inactive Connections</div>
+    <div class="pl-2">
+      <p>Click an arrow to add a network to your Active Connections.</p>
+      <div class="connections-list col-10"> {% for key,value in data.network_srttings %} {% if value.network_status.status == 1 %} {% set style1 = 'display:none' %} {% else %} {% set style1 = '' %} {% endif %} <div class="row border border-secondary align-items-center rounded custom-{{ value.name|replace({' ': ''}) }} ml-0 mr-0 mb-3 pt-2 pb-2 justify-content-between social-items" data-networkId = "{{ value.tid}}" data-networkName = "{{ value.name}}" style="{{ style1 }}">
+          <div class="connection-list-first-left justify-content-start">
+          <div class="col-2-  social-network-icon">
+            <img class="img-fluid" style="min-width:16px;max-width:20px" src="{{ value.network_icon }}" style="width:20px">
+          </div>
+          <div class="col-4- pl-2">{{ value.name}}</div>
+          </div>
+           <div class="connection-list-second-right justify-content-end align-items-baseline">
+          <div class="col-2- pr-2 network-info" style="cursor: pointer;">
+           <img class="img-fluid" style="min-width:14px;max-width:14px" src="/themes/custom/kaboodlemedia/images/info-icon.png">
+          </div>
+          <div class="col-2- pr-2 network-setting">
+            <div class="get-term-id" style="display:none">{{ value.tid}}</div>
+            <div class="available-net network-settings-icon available-network access-token class-{{ value.name}}"></div>
+          </div>
+          <div class="col-2- pr-2 " style="">
+            <button class="btn btn-secondary" style="pointer-events:none"><i class="fa fa-arrow-right"></i></button>
+          </div>
+        </div></div> {% endfor %} </div>
+    </div>
+  </div>
+<div class="network-info-modal" id="network-info-modal" title="social network">
+</div>
+<div class="Smp-general-modal" id="Smp-general-modal" title=""></div>
+<div class="Smp-general-modal2" id="Smp-general-modal2" title=""></div>
+{% endif %}

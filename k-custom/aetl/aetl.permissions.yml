@@ -1,0 +1,4 @@
+administer aetl:
+  description: 'Administer aetl System.'
+  title: 'Administer aetl System'
+  restrict access: TRUE

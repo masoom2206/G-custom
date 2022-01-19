@@ -1,0 +1,113 @@
+#transfer-box{
+  -webkit-box-shadow: 2px 3px 5px 2px #8c8989;
+  -moz-box-shadow: 2px 3px 5px 2px #8c8989;
+  box-shadow: 2px 3px 5px 2px #8c8989;
+  font-size: 14px;
+}
+.tb-title{
+  color: #023364;
+  font-size: 18px;
+}
+#media-kit-box{
+  background: #f8f8f8;
+}
+#transfer-box button.btn {
+  font-size: 14px;
+  width: 100%;
+}
+#transfer-box .custom-nav-layout .nav-link {
+  margin: 0;
+  padding: 0;
+  color: #848688;
+}
+.tb-middle-part{
+  margin-top: 150px;
+}
+#transfer-box  table{
+  margin-top: 0;
+}
+.audio-box, .media-box {
+  height: 50px;
+  width: 50px;
+}
+.media-file-name {
+  height: 45px !important;
+}
+.playing:hover .vol-box {
+  width: 100% !important;
+  top: 11px !important;
+  left: -12px !important;
+  height: 28px !important;
+}
+td.audio-data, td.media-data {
+  min-width: 25px !important;
+	padding: 10px 0px 10px 5px;
+}
+span.move-icon {
+  top: 12px !important;
+}
+.tb-tab-content{
+  position: relative;
+	border: 1px solid #d9d9d9;
+  overflow-y: scroll;
+  height: 382px;
+  display: block;
+}
+.overlay:hover .preview-icon {
+  background-size: 100% !important;
+}
+#transfer-box .preview-icon {
+  width: 60%;
+}
+#Media-kit-table{
+  border-top: 2px solid #d9d9d9;
+}
+#transfer-box  button[disabled] {
+  cursor: not-allowed;
+}
+.audio-play-button {
+  width: 35px;
+  height: 45px;
+}
+#remote-content-section, #remote-kit-content-section{
+  border: 1px solid #d9d9d9;
+}
+.kit-actions{
+	width: 65%!important;
+}
+#transfer-box table thead th{
+	background: #212121;
+	z-index: 1;
+	position: sticky;
+	top: 0;
+}
+#transfer-box tr.audio-row, #transfer-box tr.media-row {
+	font-size: 12px!important;
+}
+#transfer-box table tbody tr {
+	font-size: 12px !important;
+}
+.text-read-button {
+	width: 35px;
+	background-size: 90%;
+	left: 30%;
+}
+#transfer-box table thead th:nth-child(3) {
+	width: 45%;
+}
+.media-box video {
+	height: 50px;
+	width: 50px;
+}	
+ #overlay, .modal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    cursor: pointer;
+}	

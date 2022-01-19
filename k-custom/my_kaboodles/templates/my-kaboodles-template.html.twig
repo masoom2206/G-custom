@@ -1,0 +1,85 @@
+<div class="my-kaboodles">
+  <div class="kaboodles-top-block">
+    <div class="kaboodles-container-head kaboodles-top-block-container">
+      <!--Start new kaboodle button-->
+      <div class="start-new-kaboodles">
+				<a href="/tools/kaboodle/add?destination=/tools/my-kaboodles/{{ uid }}"><button type="button" class="btn btn-outline-primary btn-large">START A NEW KABOODLE</button></a>
+      </div>
+    </div>
+  </div>
+	
+  <!--kaboodles nav tabs-->
+  <div class="kaboodles-mid-block">
+    <div class="custom-nav-layout">
+			<nav>
+				<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+					<a class="nav-item nav-link active" id="nav-active-tab" data-toggle="tab" href="#nav-active" role="tab" aria-controls="nav-active" aria-selected="true">Active</a>
+          <a class="nav-item nav-link" id="nav-shared-tab" data-toggle="tab" href="#nav-shared" role="tab" aria-controls="nav-shared" aria-selected="false">Shared</a>
+          <a class="nav-item nav-link" id="nav-archive-tab" data-toggle="tab" href="#nav-archive" role="tab" aria-controls="nav-archive" aria-selected="false">Archived</a>
+				</div>
+				<div class="div-spacer"></div>
+			</nav>
+    </div>
+		
+    <!--kaboodles list -->
+		<div class="tab-content" id="nav-kaboodleContent">
+			<!--- Audio section -->
+			<div class="tab-pane fade show active pt-20" id="nav-active" role="tabpanel" aria-labelledby="nav-active-tab">
+				{% if data %}
+					<div class="kaboodles-container d-flex w-100 ff-rw">
+					{% for node in data %}
+						<div class="kaboodle">
+							<div class="card">
+								<div class="card">
+									<a href="/tools/kaboodle/dashboard/{{ node.nid }}"><img class="cover-image" width="100%" src="{{ node.img }}" /></a>
+								</div>
+								<div class="card-body text-center kaboodle-title"><a class="text-decoration-none" href="/tools/kaboodle/dashboard/{{ node.nid }}">{{ node.title }}</a></div>
+							</div>
+						</div>
+					{% endfor %}
+					</div>
+					<div class="my-kaboodles-pager">{{pager}}</div>
+				{% else %}
+					<div class="col-lg-12">
+						<div class="default_message d-flex ai-center text-center">
+							<span>You currently have no Kaboodles. Click the "Start A New Kaboodle" button above to begin.</span>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+			
+			<!--- Archive section -->
+			<div class="tab-pane fade pt-20" id="nav-archive" role="tabpanel" aria-labelledby="nav-archive-tab">
+				{% if archived_data %}
+					<div class="kaboodles-container d-flex w-100 ff-rw">
+					{% for node in archived_data %}
+						<div class="kaboodle">
+							<div class="card">
+								<div class="card">
+									<a href="/tools/kaboodle/dashboard/{{ node.nid }}"><img class="cover-image" width="100%" src="{{ node.img }}" /></a>
+								</div>
+								<div class="card-body text-center kaboodle-title"><a class="text-decoration-none" href="/tools/kaboodle/dashboard/{{ node.nid }}">{{ node.title }}</a></div>
+							</div>
+						</div>
+					{% endfor %}
+					</div>
+					<div class="my-kaboodles-pager">{{pager}}</div>
+				{% else %}
+					<div class="col-lg-12">
+						<div class="default_message d-flex ai-center text-center">
+							<span>You currently have no archived Kaboodles.</span>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+			
+			<!--- Shared section -->
+			<div class="tab-pane fade pt-20" id="nav-shared" role="tabpanel" aria-labelledby="nav-shared-tab">
+			<!-- if there are shared items -->
+				{% if archive == 0 %}
+					<div class="custom-shared-block">{{shared_block}}</div>
+				{% endif %}
+			</div>
+    </div>
+  </div>
+</div>

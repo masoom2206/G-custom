@@ -1,0 +1,69 @@
+<?php
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\social_media\Controller\SocialMediaController;
+use Drupal\social_media\Controller\FacebookHelperFunction;
+
+
+
+/*
+ * Implements hook_theme
+*/
+function social_media_theme($existing, $type, $theme, $path) {
+	
+  return [
+	'social_media' => [
+      'variables' => [
+	  'data' => NULL,
+	  'pager' => array(),
+	  
+	  ],
+	  
+    ],
+	
+	'social_media_test_pager' => [
+      'variables' => [
+	  'data' => NULL,
+	  'pager' => array(),
+	  
+	  ],
+	  
+    ],
+  ];
+}
+
+
+function social_media_cron() {
+	//\Drupal::logger('social_media')->warning('cron schedular ultimate');
+	$UTCTimeStamps =[];
+    $date = new DrupalDateTime('now', new \DateTimeZone('utc'));
+    $UTCTimeStamps[] = strtotime($date->format('Y-m-d H:i:s A'));
+
+    $date = new DrupalDateTime('+15 min', new \DateTimeZone('utc'));
+	$UTCTimeStamps[] = strtotime($date->format('Y-m-d H:i:s A'));
+
+	// Get queue.
+	//$queue = \Drupal::queue('publish_post_queue');
+	  $query  = \Drupal::database()->select('social_media', 'sm');
+      $result = $query->fields('sm', array('id'))
+	            ->condition('sm.status', 'Scheduled', '=')
+				->condition('sm.is_published', 0, '=')
+				->condition('sm.scheduled_timestamp', $UTCTimeStamps, 'BETWEEN')
+                ->orderBy('scheduled_timestamp', 'DESC')
+               ->execute()->fetchAll();
+		if($result){
+		 foreach($result as $object_row){
+		  $items = (object) ['post_id' => $object_row->id];
+		  //$queue->createItem($items);
+
+		 }
+		}
+		
+		
+	 
+  
+  
+}
+
+
+

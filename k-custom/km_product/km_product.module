@@ -1,0 +1,392 @@
+<?php
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\user\Entity\User;
+use Drupal\media\Entity\Media;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\s3fs\S3fsService;
+use Drupal\paragraphs\Entity\Paragraph;
+
+/*
+ * @file
+ * Kaboodle product templates
+*/
+function km_product_theme($existing, $type, $theme, $path) {
+  $variables = [
+    'foo' => NULL, 
+    'data' => NULL,
+    'node' => NULL,
+    'user' => NULL,
+    'product' => NULL,
+    'templates' => NULL,
+    'user_templates' => NULL,
+    'time_zone' => NULL,
+    'nav' => NULL,
+    'pager' => NULL,
+    'attached' => NULL,
+    'view_style' => NULL,
+    'default_kit' => NULL,
+    'professional_user' => NULL,
+  ];
+  
+  return [
+    'product'               => ['variables' => $variables, ],
+    'brochure'              => ['variables' => $variables, ],
+    'email-flyer'           => ['variables' => $variables, ],
+    'flyer'                 => ['variables' => $variables, ],
+    'mobile-web-app'        => ['variables' => $variables, ],
+    'online-gallery'        => ['variables' => $variables, ],
+    'photo-book'            => ['variables' => $variables, ],
+    'playlist'              => ['variables' => $variables, ],
+    'postcard-greetingcard' => ['variables' => $variables, ],
+    'social-media-banner'   => ['variables' => $variables, ],
+    'social-media-image'    => ['variables' => $variables, ],
+    'video'                 => ['variables' => $variables, ],
+    'article'               => ['variables' => $variables, ],
+    'newsletter'            => ['variables' => $variables, ],
+    'webpage'               => ['variables' => $variables, ],
+    'reusablecontentblock'  => ['variables' => $variables, ],
+    'web-landing-page'      => ['variables' => $variables, ],
+    'other-product'         => ['variables' => $variables, ],
+    'template-settings' => [
+      'variables' => [
+        'foo' => NULL, 
+        'data' => NULL,
+        'node' => NULL,
+        'user' => NULL,
+        'product' => NULL,
+        'nav' => NULL,
+        'pager' => NULL,
+        'attached' => NULL,
+      ],
+    ],
+    'web-template-edit' => [
+      'variables' => [
+        'foo' => NULL, 
+        'data' => NULL,
+        'node' => NULL,
+        'user' => NULL,
+        'product' => NULL,
+        'nav' => NULL,
+        'ckeform' => NULL,
+        'pager' => NULL,
+        'attached' => NULL,
+      ],
+    ],
+    'article-form' => [
+      'variables' => [
+        'foo' => NULL, 
+        'data' => NULL,
+        'article_form' => NULL,
+        'pager' => NULL,
+        'attached' => NULL,
+        'paragraph_items' => NULL,
+      ],
+    ],
+    'breadcrumbs' => [
+      'variables' => [
+        'node' => NULL,
+        'user' => NULL,
+      ],
+    ],
+    'leftnav' => [
+      'variables' => [
+        'node' => NULL,
+        'user' => NULL,
+        'nav' => NULL,
+      ],
+    ],
+    'topnav' => [
+      'variables' => [
+        'node' => NULL,
+        'user' => NULL,
+        'nav' => NULL,
+        'data' => NULL,
+      ],
+    ],
+    'wpleftnav' => [
+      'variables' => [
+        'node' => NULL,
+        'user' => NULL,
+        'nav' => NULL,
+      ],
+    ],
+    'wptopnav' => [
+      'variables' => [
+        'node' => NULL,
+        'user' => NULL,
+        'nav' => NULL,
+        'data' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function km_product_preprocess_page_title(&$variables) {
+  if(\Drupal::routeMatch()->getRouteName() == 'product.article.list'){
+    $variables['title'] = 'HTML Articles';
+  }
+}
+
+/*
+ * HOOK_form_alter
+ * HTML article form alter
+ */
+function km_product_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $uid = \Drupal::currentUser()->id();
+  if($form_id == 'node_html_article_form') {
+    $form['field_html_article_images_ref']['#prefix'] = '<div class="d-none">';
+    $form['field_html_article_images_ref']['#suffix'] = '</div>';
+    $form['actions']['submit']['#submit'][] = '_html_article_form_submit';
+  }
+}
+
+function _html_article_form_submit(&$form, FormStateInterface $form_state) {
+  
+  $custom_imagesection = \Drupal::request()->get('custom_imagesection');
+  $entity_id = $form_state->getValue('nid');
+  $uid = \Drupal::currentUser()->id();
+  if(isset($_SESSION['team'])){
+    $puid = $_SESSION['team']['uid'];
+  }
+  else {
+    $puid = $uid;
+  }
+  
+  //save image section data in custom table
+  if(!empty($custom_imagesection)){
+    /** @var \Drupal\Core\Database\Connection $connection */
+    $connection = \Drupal::service('database');
+    foreach($custom_imagesection as $ikey=>$ivalue){
+      if(!empty($ivalue['caption']) || !empty($ivalue['imageurl'])){
+        $connection->merge('html_article')
+        ->key('entity_id', $entity_id)->key('image_delta', $ikey)
+        ->fields([
+            'user_id' => $puid,
+            'image_url' => $ivalue['imageurl'],
+            'image_delta' => $ikey,
+            'image_fid' => !empty($ivalue['imagemedia'])?$ivalue['imagemedia']:0,
+            'image_caption' => $ivalue['caption'],
+        ])
+        ->execute();
+      }      
+    }    
+  }
+  if(isset($_SESSION['team'])){
+    $gid = $_SESSION['team']['gid'];
+    $muid = $_SESSION['team']['uid'];
+    $url = Url::fromRoute('product.article.list', ['user' => $uid]);
+    $args = ['team' => $gid, 'uid' => $muid];
+    $url->setOptions(array('query' => $args, 'fragment' => 'nav-shared'));
+    $form_state->setRedirectUrl($url);
+  }
+  else {
+    $form_state->setRedirect('product.article.list', ['user' => $uid]);
+  }
+}
+/**
+ * Implements hook_node_presave()
+ **/
+function km_product_node_presave(Drupal\node\NodeInterface $node) {
+  if ($node->bundle() === 'html_article'){
+    $custom_imagesection = \Drupal::request()->get('custom_imagesection');
+    if(!empty($custom_imagesection)){
+      $paras = $node->field_html_article_images_ref->getValue();
+      foreach ( $paras as $key=>$element ) {
+        $p = Paragraph::load( $element['target_id'] );
+        if ($p instanceof ParagraphInterface) {
+          $p->delete();
+        }
+      }
+      //print "<pre>";print_r($custom_imagesection);exit;
+      $paragraph_items = array();
+      foreach($custom_imagesection as $key=>$value){
+        // Create the Paragraph with fields.
+        $caption = trim($value['caption']);
+        $paragraph = Paragraph::create(['type' => 'paragraph_html_article_image',]);
+        $paragraph->set('field_html_article_image_ref', $value['imagemedia']);
+        $paragraph->set('field_image_caption', $caption);
+        $paragraph->isNew();
+        $paragraph->save();
+        // Then attach a new Paragraph to the Config page entity.
+        $paragraph_items[] = [
+          'target_id' => $paragraph->id(),
+          'target_revision_id' => $paragraph->getRevisionId(),
+        ];
+      }
+      $node->set('field_html_article_images_ref', $paragraph_items);
+    }
+    //print "<pre>";print_r($custom_imagesection);exit;
+    if ($node->isNew()) {
+      if(isset($_SESSION['team'])){
+        $muid = $_SESSION['team']['uid'];
+        $node->setOwnerId($muid);
+      }
+    }
+  }
+}
+/**
+ * @return array
+ *   A simple renderable array.
+ */
+function changeTagsFavoriteTemplates($templates, $nid) {
+  $uid = \Drupal::currentUser()->id();
+  // favorite templates
+  $favorite_templates = \Drupal::database()->select('templates_favorite', 'tf')
+  ->fields('tf', ['template_id', 'is_favorite'])
+  ->condition('tf.node_id', $nid, '=')
+  ->condition('tf.user_id', $uid, '=')
+  ->condition('tf.is_favorite', 1, '=')
+  ->execute()
+  ->fetchAllKeyed(0, 1);
+  
+  $product_templates = new stdClass;
+  foreach($templates->data as $template){
+    if(array_key_exists($template->_id, $favorite_templates)){
+      $template->favorite  = 1;
+    }else{
+      $template->favorite  = 0;
+    }
+
+    // tags
+    if(!empty($template->template_tags) && is_array($template->template_tags)) {
+      $template->tags = implode(', ', $template->template_tags);
+    }else{
+      $template->tags = empty($template->template_tags) ? '' : $template->template_tags;
+    }
+    // change template data
+    $product_templates->data[] = $template;
+  }
+  return $product_templates;
+}
+
+/**
+ * @return array
+ *   A simple renderable array.
+ */
+function changeTagsTemplates($templates) {  
+  $product_templates = new stdClass;
+  foreach($templates->data as $template){
+    // tags
+    if(!empty($template->template_tags) && is_array($template->template_tags)) {
+      $template->tags = implode(', ', $template->template_tags);
+    }else{
+      $template->tags = empty($template->template_tags) ? '' : $template->template_tags;
+    }
+    // change template data
+    $product_templates->data[] = $template;
+  }
+  return $product_templates;
+}
+
+function getTagsByTermId($tags, $owner){
+  // check if tags already exist, else create tag first then get tid
+  $query = \Drupal::database()->select('taxonomy_term_field_data', 'td');
+  $query->leftJoin('user_term', 'ut', 'td.tid = ut.tid');
+  $query->leftJoin('users_field_data', 'u', 'ut.uid = u.uid');
+  $query->fields('td', ['tid', 'name']);
+  $query->condition('ut.uid', $owner, '=');
+  $query->condition('td.vid', 'keywords', '=');
+  $query->condition('td.name', $tags , '=');
+  
+  $keywords = $query->execute()->fetchAll();
+  if(empty($keywords)){
+    $create_term = Term::create([
+      'name' => $tags, 
+      'vid' => 'keywords',
+    ]);
+    $create_term->save();
+    $tid = $create_term->id();
+    $count = \Drupal::database()->select('user_term', 'user_term')
+      ->condition('tid', $tid)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    if ($count > 0) {
+      \Drupal::database()->update('user_term')->fields(['uid'=>$owner])->condition('tid', $tid, '=')->execute();
+    }              
+    return $tid;           
+  } 
+  else{
+    foreach($keywords as $tag){
+      return $tag->tid;
+    }
+  }      
+}
+
+/**
+* Convert bytes to kilobytes.
+*/
+function getFormatedFileSize($filesize) {
+  $units = array('KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+  $bytes = $filesize;
+  if ($bytes <= 0) {
+    $bytes = number_format($bytes, 2, '.', '') . " bytes";
+  }
+  else {
+    $bytes = number_format($bytes / 1024, 2, '.', '');
+    for ($i = 0;$i < count($units);$i++) {
+      if (number_format($bytes, 2, '.', '') >= 1024) {
+        $bytes = number_format($bytes / 1024, 2, '.', '');
+      }
+      else {
+        $bytes = number_format($bytes, 2, '.', '');
+        break;
+      }
+    }
+    $bytes = $bytes . ' ' . $units[$i];
+  }
+  return $bytes;
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function km_product_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) { 
+  
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+  $field_definition = $context['items']->getFieldDefinition();
+  // Check the field with the field name.  
+  if ($field_definition->getName() === 'field_story') { 
+    // Set only html_mail as allowed format.
+    // $element['#allowed_formats'] = ['html_mail'];
+    // Set only basic_html as allowed format.
+    $element['#allowed_formats'] = ['basic_html'];
+    // Add after build to remove the help wrapper and text.
+    $element['#after_build'][] = '_field_story_after_build';
+  }
+}
+
+
+/**
+ * After build callback for field_story.
+ * 
+ * @param array $element
+ *   Array element.
+ * @param $form_state
+ *   Form state.
+ *
+ * @return array
+ *   New element.
+ */
+function _field_story_after_build(array $element, FormStateInterface $form_state) {
+  if (isset($element['format'])) {
+    // Remove Guidelines and Help text.
+    unset($element['format']['help']);
+    unset($element['format']['guidelines']);
+    unset($element['format']['#type']);
+    unset($element['format']['#theme_wrappers']);
+  }
+  return $element;
+}

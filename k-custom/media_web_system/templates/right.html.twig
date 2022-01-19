@@ -1,0 +1,937 @@
+<div id="right-sidebar">
+   <div id="right-container">
+      <div id="sidebar-container" class="sidebar-container sidebar-inspector d-flex flex-column">
+         <div class="panels flex-grow canvas-page-settings">
+            <div class="toolbarPanel panels d-block settings-tab">
+              <div class="toolbar toolbar-title justify-content-between align-items-center" style=""><label class="text-uppercase">Settings&nbsp;<i class="right-label fas fa-caret-down ml-1"></i></label><button data-action="stroke-settings" data-title="Advanced settings"><i class="fas fa-sliders-h"></i></button>
+              </div>
+              <div class="properties-panel toolbar-body">
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex">
+                      <div class="column d-flex flex-row align-items-center w-60">
+                         <div class="content"><span>Background:</span></div>
+                      </div>
+                      <label class="column d-flex flex-row justify-content-end w-40">
+                         <div class="content"><input id="kmds-dpi" type="text" max="300"></div>
+                      </label>
+                  </div>
+                </div>
+                
+                <div class="settings-data-panel toolbar-body font-Lato">
+                  <div class="text-settings-data-panel">
+                    <div class="setting-title d-flex">Thumbnail</div>
+                    <div class="settings-static-image d-flex">
+                      <div class="static-image-page column flex-row w-45-per">
+                        <div class="image-button">
+                          <a href="javascript:void(0);" class="image-page-button create-thumbnail d-block" onclick="savePageSettings('create-new');">Create</a>
+                          <a href="javascript:void(0);" class="image-page-button remove-thumbnail d-none" onclick="savePageSettings('remove-thumbnail');">Remove</a>
+                        </div>
+                      </div>
+                      <div class="static-image column flex-row w-55-per">
+                        <div class="no-static-image margin-auto">&nbsp;</div>
+                      </div>
+                    </div>
+                    <div class="static-image-upload d-flex">
+                      <div class="image-upload column flex-row w-45-per">
+                        <a href="javascript:void(0);" class="image-page-button custom-thumbnail d-block" onclick="savePageSettings('upload-new');">Upload</a>
+                        <input type="file" id="static-img-upload" style="display:none" accept="image/png, image/jpg, image/jpeg">
+                      </div>
+                      <div class="image-upload-description column flex-row w-55-per margin-auto">Acceptable files: JPEG, JPG or PNG; less than 500KB.</div>
+                    </div>
+                    <div class="settings-others">
+                      <div class="active-page-setting d-flex">
+                        <div class="active-checkbox">
+                          <input type="checkbox" id="active-page" value="1" class="form-checkbox" onclick="savePageSettings('active-page');">
+                          <label class="checkb" for="active-page"></label>
+                          <span class="active-title">Make Template Active</span>
+                        </div>
+                      </div>
+                      <div class="removal-page-setting d-flex">
+                        <div class="active-checkbox">
+                          <input type="checkbox" id="removal-page" value="1" class="form-checkbox" onclick="savePageSettings('removal-page');">
+                          <label class="checkb" for="removal-page"></label>
+                          <span class="removal-title">Flag Template for Removal</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="template-tags">
+                      <div class="template-tags-title">Tags</div>
+                      <div class="template-tags-field">
+                        <div class="container">
+                          <div class="ms-ctn form-control " style="" id="template-tags">
+                            <span class="ms-helper " style="display: none;"></span>
+                            <div class="ms-sel-ctn">
+                              <input type="text" class="" placeholder="Type Tags" style="width: 196px;">
+                              <div style="display: none;"></div>
+                            </div>
+                            <div class="ms-trigger">
+                              <div class="ms-trigger-ico"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr>
+                    </div>
+                    <div class="template-descriptions">
+                      <div class="template-descriptions-title">Description – 82 characters max (<span>including spaces</span>)</div>
+                      <div class="template-tags-field">
+                        <div class="container">
+                          <textarea id="template-descriptions" name="template-descriptions-field" rows="3" cols="35" maxlength="82"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                
+                
+                
+                
+              </div>
+            </div>
+                 
+            <div class="toolbarPanel panels d-block fonts-tab">
+              <div class="toolbar toolbar-title justify-content-between align-items-center" style=""><label class="text-uppercase">Fonts&nbsp;<i class="right-label fas fa-caret-down ml-1"></i></label><button data-action="stroke-settings" data-title="Advanced settings"><i class="fas fa-sliders-h"></i></button></div>
+                <div class="properties-panel toolbar-body">
+                  <div class="g-property-row">
+                   <div class="columns ml-4 d-flex mt-3">
+                      <div class="column d-flex flex-row align-items-center w-40">
+                         <div class="content"><span>Font:</span></div>
+                      </div>
+                      <label class="column d-flex flex-row justify-content-end w-60">
+                        <div class="content">
+                          <select class="w-100 rightProp font-family" id="h-font-family" data-pro="fontFamily" data-right-prop="fontFamily">
+                            <option style="font-family:Abel" value="Abel">Abel</option>
+                            <option style="font-family:Abril Fatface" value="Abril Fatface">Abril Fatface</option>
+                            <option style="font-family:Alegreya" value="Alegreya">Alegreya</option>
+                            <option style="font-family:Alice" value="Alice">Alice</option>
+                            <option style="font-family:Amaranth" value="Amaranth">Amaranth</option>
+                            <option style="font-family:Amatic SC" value="Amatic SC">Amatic SC</option>
+                            <option style="font-family:Baloo" value="Baloo">Baloo</option>
+                            <option style="font-family:Cantarell" value="Cantarell">Cantarell</option>
+                            <option style="font-family:Cherry Cream Soda" value="Cherry Cream Soda">Cherry Cream Soda</option>
+                            <option style="font-family:Corben" value="Corben">Corben</option>
+                            <option style="font-family:Coustard Ultra" value="Coustard Ultra">Coustard Ultra</option>
+                            <option style="font-family:Coustard" value="Coustard">Coustard</option>
+                            <option style="font-family:CQ Mono" value="CQ Mono">CQ Mono</option>
+                            <option style="font-family:Dancing Script" value="Dancing Script">Dancing Script</option>
+                            <option style="font-family:Dosis" value="Dosis">Dosis</option>
+                            <option style="font-family:Droid Serif" value="Droid Serif">Droid Serif</option>
+                            <option style="font-family:EB Garamond" value="EB Garamond">EB Garamond</option>
+                            <option style="font-family:Elsie" value="Elsie">Elsie</option>
+                            <option style="font-family:Exo" value="Exo">Exo</option>
+                            <option style="font-family:Fjalla One" value="Fjalla One">Fjalla One</option>
+                            <option style="font-family:Grand Hotel" value="Grand Hotel">Grand Hotel</option>
+                            <option style="font-family:Josefin Sans" value="Josefin Sans">Josefin Sans</option>
+                            <option style="font-family:Lato" value="Lato">Lato</option>
+                            <option style="font-family:Leckerli One" value="Leckerli One">Leckerli One</option>
+                            <option style="font-family:Libre Baskerville" value="Libre Baskerville">Libre Baskerville</option>
+                            <option style="font-family:Lora" value="Lora">Lora</option>
+                            <option style="font-family:Medula One" value="Medula One">Medula One</option>
+                            <option style="font-family:Merriweather" value="Merriweather">Merriweather</option>
+                            <option style="font-family:Montserrat" value="Montserrat">Montserrat</option>
+                            <option style="font-family:Muli" value="Muli">Muli</option>
+                            <option style="font-family:Nobile" value="Nobile">Nobile</option>
+                            <option style="font-family:Noto Sans" value="Noto Sans">Noto Sans</option>
+                            <option style="font-family:Open Sans" value="Open Sans" selected="">Open Sans</option>
+                            <option style="font-family:Oswald" value="Oswald">Oswald</option>
+                            <option style="font-family:Palanquin Dark Bold" value="Palanquin Dark Bold">Palanquin Dark Bold</option>
+                            <option style="font-family:Philosopher" value="Philosopher">Philosopher</option>
+                            <option style="font-family:Playfair Display" value="Playfair Display">Playfair Display</option>
+                            <option style="font-family:Poppins" value="Poppins">Poppins</option>
+                            <option style="font-family:PT Sans" value="PT Sans">PT Sans</option>
+                            <option style="font-family:Quattrocento Sans" value="Quattrocento Sans">Quattrocento Sans</option>
+                            <option style="font-family:Raleway" value="Raleway">Raleway</option>
+                            <option style="font-family:Roboto" value="Roboto">Roboto</option>
+                            <option style="font-family:Roboto Condensed" value="Roboto Condensed">Roboto Condensed</option>
+                            <option style="font-family:Roboto Slab" value="Roboto Slab">Roboto Slab</option>
+                            <option style="font-family:Sansita" value="Sansita">Sansita</option>
+                            <option style="font-family:Six Caps" value="Six Caps">Six Caps</option>
+                            <option style="font-family:Source Sans Pro" value="Source Sans Pro">Source Sans Pro</option>
+                            <option style="font-family:Space Mono" value="Space Mono">Space Mono</option>
+                            <option style="font-family:Spirax" value="Spirax">Spirax</option>
+                            <option style="font-family:Vollkorn" value="Vollkorn">Vollkorn</option>
+                            <option style="font-family:Wendy One" value="Wendy One">Wendy One</option>
+                          </select> 
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div class="g-property-row">  
+                    <div class="columns alignments ml-0 d-flex">
+                    
+                      <div class="column d-flex flex-row align-items-center w-40">
+                         <div class="content"><span>&nbsp;</span></div>
+                      </div>
+                      <label class="column d-flex flex-row justify-content-end w-60">
+                        <div class="column d-flex flex-row w-23 mr-1">
+                          <div class="content w-100">
+                            <button data-value="left" data-right-prop="textAlign" data-pro="textAlign" value="left" id="h-align-left" class="g-active align apri rightProp w-100" data-property="align-left" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Left" data-original-title="" title=""><span class="fas fa-align-left"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row w-23 mr-1">
+                          <div class="content w-100">
+                            <button data-value="center" data-right-prop="textAlign" data-pro="textAlign" value="center" id="h-align-center" class="w-100 align apri rightProp" data-property="align-center" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Center" data-original-title="" title=""><span class="fas fa-align-center"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row w-23 mr-1">
+                          <div class="content w-100">
+                            <button data-value="right" data-right-prop="textAlign" data-pro="textAlign" value="right" id="h-align-right" class="w-100 align apri rightProp" data-property="align-right" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Right" data-original-title="" title=""><span class="fas fa-align-right"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row w-23">
+                          <div class="content w-100">
+                            <button data-value="justify" data-right-prop="textAlign" data-pro="textAlign" value="justify" id="h-align-justify" class="w-100 align apri rightProp" data-property="align-justify" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Justify" data-original-title="" title=""><span class="fas fa-align-center fa-rotate-270"></span></button>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                           <div class="content"><span>Size</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                          <div class="content">
+                            <div class="dropdown">
+                              <input value="24" id="h-font-size" data-pro="fontSize" data-right-prop="fontSize" onclick="textSizeList(this)" class="dropbtn w-100 p-1 fontsizeinput">
+                              <div id="myDropdown" class="dropdown-content">
+                                <div class="option-item" datavalue="6">6 px</div>
+                                <div class="option-item" datavalue="7">7 px</div>
+                                <div class="option-item" datavalue="8">8 px</div>
+                                <div class="option-item" datavalue="9">9 px</div>
+                                <div class="option-item" datavalue="10">10 px</div>
+                                <div class="option-item" datavalue="11">11 px</div>
+                                <div class="option-item" datavalue="12">12 px</div>
+                                <div class="option-item" datavalue="14">14 px</div>
+                                <div class="option-item" datavalue="18">18 px</div>
+                                <div class="option-item" datavalue="21">21 px</div>
+                                <div class="option-item" datavalue="24">24 px</div>
+                                <div class="option-item" datavalue="36">36 px</div>
+                                <div class="option-item" datavalue="48">48 px</div>
+                                <div class="option-item" datavalue="66">60 px</div>
+                                <div class="option-item" datavalue="72">72 px</div>
+                              </div>
+                              <span class="dropdown-content-icon" onclick="textSizeList()"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                          </div>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                          <div class="content"><span>Color:</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                           <div class="content colorfield">
+                              <input type="text" id="h-color-fill" class="kmds-color-section apri jsscolor active" data-right-prop="fill" data-pro="kmdstextcolor" data-value="fill" value="#000000" readonly="">
+                              
+                           </div>
+                        </div>
+                     </div>
+                  </div> 
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                          <div class="content"><span>Weight:</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                           <div class="content">
+                              <select data-property="preset-font-style" onclick="textFontStyle(this)" class="w-100" id="h-fstyle">
+                                <option value="400">Regular</option>
+                                <option value="600">Semibold</option>
+                                <option value="700">Bold</option>
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>                  
+                  
+                  
+                  <!--<div class="g-property-row">
+                   <div class="columns ml-0 d-flex mt-3">
+                      <div class="column d-flex flex-row align-items-center w-40">
+                         <div class="content"><span>Sub-headline font:</span></div>
+                      </div>
+                      <div class="column d-flex flex-row justify-content-end w-60">
+                        <div class="content">
+                          <select class="w-100 rightProp font-family" id="sub-h-font-family" data-pro="fontFamily" data-right-prop="fontFamily">
+                            <option style="font-family:Abel" value="Abel">Abel</option>
+                            <option style="font-family:Abril Fatface" value="Abril Fatface">Abril Fatface</option>
+                            <option style="font-family:Alegreya" value="Alegreya">Alegreya</option>
+                            <option style="font-family:Alice" value="Alice">Alice</option>
+                            <option style="font-family:Amaranth" value="Amaranth">Amaranth</option>
+                            <option style="font-family:Amatic SC" value="Amatic SC">Amatic SC</option>
+                            <option style="font-family:Baloo" value="Baloo">Baloo</option>
+                            <option style="font-family:Cantarell" value="Cantarell">Cantarell</option>
+                            <option style="font-family:Cherry Cream Soda" value="Cherry Cream Soda">Cherry Cream Soda</option>
+                            <option style="font-family:Corben" value="Corben">Corben</option>
+                            <option style="font-family:Coustard Ultra" value="Coustard Ultra">Coustard Ultra</option>
+                            <option style="font-family:Coustard" value="Coustard">Coustard</option>
+                            <option style="font-family:CQ Mono" value="CQ Mono">CQ Mono</option>
+                            <option style="font-family:Dancing Script" value="Dancing Script">Dancing Script</option>
+                            <option style="font-family:Dosis" value="Dosis">Dosis</option>
+                            <option style="font-family:Droid Serif" value="Droid Serif">Droid Serif</option>
+                            <option style="font-family:EB Garamond" value="EB Garamond">EB Garamond</option>
+                            <option style="font-family:Elsie" value="Elsie">Elsie</option>
+                            <option style="font-family:Exo" value="Exo">Exo</option>
+                            <option style="font-family:Fjalla One" value="Fjalla One">Fjalla One</option>
+                            <option style="font-family:Grand Hotel" value="Grand Hotel">Grand Hotel</option>
+                            <option style="font-family:Josefin Sans" value="Josefin Sans">Josefin Sans</option>
+                            <option style="font-family:Lato" value="Lato">Lato</option>
+                            <option style="font-family:Leckerli One" value="Leckerli One">Leckerli One</option>
+                            <option style="font-family:Libre Baskerville" value="Libre Baskerville">Libre Baskerville</option>
+                            <option style="font-family:Lora" value="Lora">Lora</option>
+                            <option style="font-family:Medula One" value="Medula One">Medula One</option>
+                            <option style="font-family:Merriweather" value="Merriweather">Merriweather</option>
+                            <option style="font-family:Montserrat" value="Montserrat">Montserrat</option>
+                            <option style="font-family:Muli" value="Muli">Muli</option>
+                            <option style="font-family:Nobile" value="Nobile">Nobile</option>
+                            <option style="font-family:Noto Sans" value="Noto Sans">Noto Sans</option>
+                            <option style="font-family:Open Sans" value="Open Sans" selected="">Open Sans</option>
+                            <option style="font-family:Oswald" value="Oswald">Oswald</option>
+                            <option style="font-family:Palanquin Dark Bold" value="Palanquin Dark Bold">Palanquin Dark Bold</option>
+                            <option style="font-family:Philosopher" value="Philosopher">Philosopher</option>
+                            <option style="font-family:Playfair Display" value="Playfair Display">Playfair Display</option>
+                            <option style="font-family:Poppins" value="Poppins">Poppins</option>
+                            <option style="font-family:PT Sans" value="PT Sans">PT Sans</option>
+                            <option style="font-family:Quattrocento Sans" value="Quattrocento Sans">Quattrocento Sans</option>
+                            <option style="font-family:Raleway" value="Raleway">Raleway</option>
+                            <option style="font-family:Roboto" value="Roboto">Roboto</option>
+                            <option style="font-family:Roboto Condensed" value="Roboto Condensed">Roboto Condensed</option>
+                            <option style="font-family:Roboto Slab" value="Roboto Slab">Roboto Slab</option>
+                            <option style="font-family:Sansita" value="Sansita">Sansita</option>
+                            <option style="font-family:Six Caps" value="Six Caps">Six Caps</option>
+                            <option style="font-family:Source Sans Pro" value="Source Sans Pro">Source Sans Pro</option>
+                            <option style="font-family:Space Mono" value="Space Mono">Space Mono</option>
+                            <option style="font-family:Spirax" value="Spirax">Spirax</option>
+                            <option style="font-family:Vollkorn" value="Vollkorn">Vollkorn</option>
+                            <option style="font-family:Wendy One" value="Wendy One">Wendy One</option>
+                          </select> 
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="g-property-row">  
+                    <div class="columns alignments ml-0 d-flex">
+                      <div class="column d-flex flex-row align-items-center w-40">
+                         <div class="content"><span>&nbsp;</span></div>
+                      </div>
+                      <label class="column d-flex flex-row justify-content-end w-60">
+                        <div class="column d-flex flex-row w-23 mr-1">
+                          <div class="content w-100">
+                            <button data-value="left" data-right-prop="textAlign" data-pro="textAlign" value="left" id="sub-h-align-left" class="g-active align apri rightProp w-100" data-property="align-left" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Left" data-original-title="" title=""><span class="fas fa-align-left"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row w-23 mr-1">
+                          <div class="content w-100">
+                            <button data-value="center" data-right-prop="textAlign" data-pro="textAlign" value="center" id="sub-h-align-center" class="align apri rightProp w-100" data-property="align-center" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Center" data-original-title="" title=""><span class="fas fa-align-center"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row mr-1 w-23">
+                          <div class="content w-100">
+                            <button data-value="right" data-right-prop="textAlign" data-pro="textAlign" value="right" id="sub-h-align-right" class="align apri rightProp w-100" data-property="align-right" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Right" data-original-title="" title=""><span class="fas fa-align-right"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row w-23">
+                          <div class="content w-100">
+                            <button data-value="justify" data-right-prop="textAlign" data-pro="textAlign" value="justify" id="sub-h-align-justify" class="align apri rightProp w-100" data-property="align-justify" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Justify" data-original-title="" title=""><span class="fas fa-align-center fa-rotate-270"></span></button>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                           <div class="content"><span>Size</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                          <div class="content">
+                            <div class="dropdown">
+                              <input value="24" id="sub-h-font-size" data-pro="fontSize" data-right-prop="fontSize" onclick="textSizeList(this)" class="dropbtn w-100 p-1 fontsizeinput">
+                              <div id="myDropdown" class="dropdown-content">
+                                <div class="option-item" datavalue="6">6 px</div>
+                                <div class="option-item" datavalue="7">7 px</div>
+                                <div class="option-item" datavalue="8">8 px</div>
+                                <div class="option-item" datavalue="9">9 px</div>
+                                <div class="option-item" datavalue="10">10 px</div>
+                                <div class="option-item" datavalue="11">11 px</div>
+                                <div class="option-item" datavalue="12">12 px</div>
+                                <div class="option-item" datavalue="14">14 px</div>
+                                <div class="option-item" datavalue="18">18 px</div>
+                                <div class="option-item" datavalue="21">21 px</div>
+                                <div class="option-item" datavalue="24">24 px</div>
+                                <div class="option-item" datavalue="36">36 px</div>
+                                <div class="option-item" datavalue="48">48 px</div>
+                                <div class="option-item" datavalue="66">60 px</div>
+                                <div class="option-item" datavalue="72">72 px</div>
+                              </div>
+                              <span class="dropdown-content-icon" onclick="textSizeList()"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                          </div>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                          <div class="content"><span>Color:</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                           <div class="content colorfield">
+                              <input type="text" id="sub-h-color-fill" class="kmds-color-section apri jsscolor active" data-right-prop="fill" data-pro="kmdstextcolor" data-value="fill" value="#000000" readonly="">
+                              
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                          <div class="content"><span>Weight:</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                           <div class="content">
+                              <select data-property="preset-font-style" onclick="textFontStyle(this)" class="w-100" id="sub-h-fstyle">
+                                <option value="400">Regular</option>
+                                <option value="600">Semibold</option>
+                                <option value="700">Bold</option>
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="g-property-row">
+                   <div class="columns ml-0 d-flex mt-3">
+                      <div class="column d-flex flex-row align-items-center w-40">
+                         <div class="content"><span>Text font:</span></div>
+                      </div>
+                      <div class="column d-flex flex-row justify-content-end w-60">
+                        <div class="content">
+                          <select class="w-100 rightProp font-family" id="text-font-family" data-pro="fontFamily" data-right-prop="fontFamily">
+                            <option style="font-family:Abel" value="Abel">Abel</option>
+                            <option style="font-family:Abril Fatface" value="Abril Fatface">Abril Fatface</option>
+                            <option style="font-family:Alegreya" value="Alegreya">Alegreya</option>
+                            <option style="font-family:Alice" value="Alice">Alice</option>
+                            <option style="font-family:Amaranth" value="Amaranth">Amaranth</option>
+                            <option style="font-family:Amatic SC" value="Amatic SC">Amatic SC</option>
+                            <option style="font-family:Baloo" value="Baloo">Baloo</option>
+                            <option style="font-family:Cantarell" value="Cantarell">Cantarell</option>
+                            <option style="font-family:Cherry Cream Soda" value="Cherry Cream Soda">Cherry Cream Soda</option>
+                            <option style="font-family:Corben" value="Corben">Corben</option>
+                            <option style="font-family:Coustard Ultra" value="Coustard Ultra">Coustard Ultra</option>
+                            <option style="font-family:Coustard" value="Coustard">Coustard</option>
+                            <option style="font-family:CQ Mono" value="CQ Mono">CQ Mono</option>
+                            <option style="font-family:Dancing Script" value="Dancing Script">Dancing Script</option>
+                            <option style="font-family:Dosis" value="Dosis">Dosis</option>
+                            <option style="font-family:Droid Serif" value="Droid Serif">Droid Serif</option>
+                            <option style="font-family:EB Garamond" value="EB Garamond">EB Garamond</option>
+                            <option style="font-family:Elsie" value="Elsie">Elsie</option>
+                            <option style="font-family:Exo" value="Exo">Exo</option>
+                            <option style="font-family:Fjalla One" value="Fjalla One">Fjalla One</option>
+                            <option style="font-family:Grand Hotel" value="Grand Hotel">Grand Hotel</option>
+                            <option style="font-family:Josefin Sans" value="Josefin Sans">Josefin Sans</option>
+                            <option style="font-family:Lato" value="Lato">Lato</option>
+                            <option style="font-family:Leckerli One" value="Leckerli One">Leckerli One</option>
+                            <option style="font-family:Libre Baskerville" value="Libre Baskerville">Libre Baskerville</option>
+                            <option style="font-family:Lora" value="Lora">Lora</option>
+                            <option style="font-family:Medula One" value="Medula One">Medula One</option>
+                            <option style="font-family:Merriweather" value="Merriweather">Merriweather</option>
+                            <option style="font-family:Montserrat" value="Montserrat">Montserrat</option>
+                            <option style="font-family:Muli" value="Muli">Muli</option>
+                            <option style="font-family:Nobile" value="Nobile">Nobile</option>
+                            <option style="font-family:Noto Sans" value="Noto Sans">Noto Sans</option>
+                            <option style="font-family:Open Sans" value="Open Sans" selected="">Open Sans</option>
+                            <option style="font-family:Oswald" value="Oswald">Oswald</option>
+                            <option style="font-family:Palanquin Dark Bold" value="Palanquin Dark Bold">Palanquin Dark Bold</option>
+                            <option style="font-family:Philosopher" value="Philosopher">Philosopher</option>
+                            <option style="font-family:Playfair Display" value="Playfair Display">Playfair Display</option>
+                            <option style="font-family:Poppins" value="Poppins">Poppins</option>
+                            <option style="font-family:PT Sans" value="PT Sans">PT Sans</option>
+                            <option style="font-family:Quattrocento Sans" value="Quattrocento Sans">Quattrocento Sans</option>
+                            <option style="font-family:Raleway" value="Raleway">Raleway</option>
+                            <option style="font-family:Roboto" value="Roboto">Roboto</option>
+                            <option style="font-family:Roboto Condensed" value="Roboto Condensed">Roboto Condensed</option>
+                            <option style="font-family:Roboto Slab" value="Roboto Slab">Roboto Slab</option>
+                            <option style="font-family:Sansita" value="Sansita">Sansita</option>
+                            <option style="font-family:Six Caps" value="Six Caps">Six Caps</option>
+                            <option style="font-family:Source Sans Pro" value="Source Sans Pro">Source Sans Pro</option>
+                            <option style="font-family:Space Mono" value="Space Mono">Space Mono</option>
+                            <option style="font-family:Spirax" value="Spirax">Spirax</option>
+                            <option style="font-family:Vollkorn" value="Vollkorn">Vollkorn</option>
+                            <option style="font-family:Wendy One" value="Wendy One">Wendy One</option>
+                          </select> 
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="g-property-row">  
+                    <div class="columns alignments ml-0 d-flex">
+                      <div class="column d-flex flex-row align-items-center w-40">
+                         <div class="content"><span>&nbsp;</span></div>
+                      </div>
+                      <label class="column d-flex flex-row justify-content-end w-60">
+                        <div class="column d-flex flex-row mr-1 w-23">
+                          <div class="content w-100">
+                            <button data-value="left" data-right-prop="textAlign" data-pro="textAlign" value="left" id="text-align-left" class="g-active align apri rightProp w-100" data-property="align-left" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Left" data-original-title="" title=""><span class="fas fa-align-left"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row mr-1 w-23">
+                          <div class="content w-100">
+                            <button data-value="center" data-right-prop="textAlign" data-pro="textAlign" value="center" id="text-align-center" class="align apri rightProp w-100" data-property="align-center" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Center" data-original-title="" title=""><span class="fas fa-align-center"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row mr-1 w-23">
+                          <div class="content w-100">
+                            <button data-value="right" data-right-prop="textAlign" data-pro="textAlign" value="right" id="text-align-right" class="align apri rightProp w-100" data-property="align-right" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Right" data-original-title="" title=""><span class="fas fa-align-right"></span></button>
+                          </div>
+                        </div>
+                        <div class="column d-flex flex-row w-23">
+                          <div class="content w-100">
+                            <button data-value="justify" data-right-prop="textAlign" data-pro="textAlign" value="justify" id="text-align-justify" class="align apri rightProp w-100" data-property="align-justify" onmouseover="tooltipfn(this)" data-toggle="tooltip" data-placement="bottom" data-title="Align Justify" data-original-title="" title=""><span class="fas fa-align-center fa-rotate-270"></span></button>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                           <div class="content"><span>Size</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                          <div class="content">
+                            <div class="dropdown">
+                              <input value="24" id="text-font-size" data-pro="fontSize" data-right-prop="fontSize" onclick="textSizeList(this)" class="dropbtn w-100 p-1 fontsizeinput">
+                              <div id="myDropdown" class="dropdown-content">
+                                <div class="option-item" datavalue="6">6 px</div>
+                                <div class="option-item" datavalue="7">7 px</div>
+                                <div class="option-item" datavalue="8">8 px</div>
+                                <div class="option-item" datavalue="9">9 px</div>
+                                <div class="option-item" datavalue="10">10 px</div>
+                                <div class="option-item" datavalue="11">11 px</div>
+                                <div class="option-item" datavalue="12">12 px</div>
+                                <div class="option-item" datavalue="14">14 px</div>
+                                <div class="option-item" datavalue="18">18 px</div>
+                                <div class="option-item" datavalue="21">21 px</div>
+                                <div class="option-item" datavalue="24">24 px</div>
+                                <div class="option-item" datavalue="36">36 px</div>
+                                <div class="option-item" datavalue="48">48 px</div>
+                                <div class="option-item" datavalue="66">60 px</div>
+                                <div class="option-item" datavalue="72">72 px</div>
+                              </div>
+                              <span class="dropdown-content-icon" onclick="textSizeList()"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                          </div>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                          <div class="content"><span>Color:</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                           <div class="content colorfield">
+                              <input type="text" id="kmds-color-fill" class="kmds-color-section apri jsscolor active" data-right-prop="fill" data-pro="kmdstextcolor" data-value="fill" value="#000000" readonly="">
+                              
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <div class="g-property-row">
+                     <div class="columns ml-0 d-flex">
+                        <div class="column d-flex flex-row align-items-center w-53 ml-4">
+                          <div class="content"><span>Weight:</span></div>
+                        </div>
+                        <div class="column d-flex flex-row justify-content-end w-40">
+                           <div class="content">
+                              <select data-property="preset-font-style" onclick="textFontStyle(this)" class="w-100" id="text-fstyle">
+                                <option value="400">Regular</option>
+                                <option value="600">Semibold</option>
+                                <option value="700">Bold</option>
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>-->
+                  
+              </div>
+          </div>
+          
+          <div class="toolbarPanel panels d-block blocks-tab">
+            <div class="toolbar toolbar-title justify-content-between align-items-center" style=""><label class="text-uppercase">Blocks&nbsp;<i class="right-label fas fa-caret-right ml-1"></i></label><button data-action="stroke-settings" data-title="Advanced settings"><i class="fas fa-sliders-h"></i></button></div>
+            <div class="properties-panel toolbar-body" style="display: none;">
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Background:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="block_background" id="block-background">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Margins:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="block_margin" id="block-cell-margin">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Padding:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="block_padding" id="block-padding">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Borders:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="block_border" id="block-border">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Border radius:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="block_border_radius" id="block-border-radius">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Box shadow:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="block_box_shadow" id="block-box-shadow">
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="toolbarPanel panels d-block images-tab">
+            <div class="toolbar toolbar-title justify-content-between align-items-center"><label class="text-uppercase">Images&nbsp;<i class="right-label fas fa-caret-right ml-1"></i></label><button data-action="stroke-settings" data-title="Advanced settings"><i class="fas fa-sliders-h"></i></button></div>
+            <div class="properties-panel toolbar-body" style="display: none;">
+              <div class="appearance-property-panel image-properties-panel mt-3">
+                <div class="g-property-row ml-2">                  
+                  <div class="d-flex ml-0">
+                    <div class="g-property-row column d-flex flex-row" id="image-display-size">
+                      <label class="text-left corner-left w-30"><span class="vertical-align">Image display size:</span></label>
+                      <div class="column d-flex flex-row w-30">
+                        <div>Width</div> 
+                        <div><input type="text" id="image-width" class="w-100 rightProp"></div>
+                        <div>px</div> 
+                      </div>
+                      <div class="column d-flex flex-row w-30">
+                        <div>Height</div>
+                        <div><input type="text" id="image-height" class="w-100 rightProp"></div>
+                        <div>px</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="d-flex ml-0">
+                    <div class="g-property-row column d-flex flex-row" id="image-render-size">
+                      <label class="text-left corner-left w-30"><span class="vertical-align">Image render size:</span></label>
+                      <div class="column d-flex flex-row w-30">
+                        <div>Width</div> 
+                        <div><input type="text" id="image-render-width" class="w-100 rightProp"></div>
+                        <div>px</div> 
+                      </div>
+                      <div class="column d-flex flex-row w-30">
+                        <div>Height</div>
+                        <div><input type="text" id="image-render-height" class="w-100 rightProp"></div>
+                        <div>px</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+                <div class="g-property-row ml-2">                  
+                  <div class="d-flex ml-0">  
+                    <div class="d-flex">
+                      <div class="">
+                        <input type="checkbox"  id="scalcrop-image" value="1" class="form-checkbox" checked>
+                        <label class="checkb" for="scalcrop-image"></label>
+                        <span class="removal-title">Constrain image display settings <!--{{ variables.info_ico }}--></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="g-property-row ml-2">                  
+                  <div class="d-flex ml-0">                    
+                    <div class="g-property-row column d-flex flex-row" id="image-align">
+                      <label class="text-left corner-left"><span class="vertical-align">Align</span></label>
+                      <div class="w-30">
+                        <select class="w-100" id="select-image-align">
+                          <option value="center">Center</option>
+                          <option value="left">Left</option>
+                          <option value="right">Right</option>
+                        </select> 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="g-property-row ml-2" id="corner-block">
+                  <label class="text-left corner-left"><span class="vertical-align">Corner</span></label>
+                  <div class="columns d-flex m-0 justify-content-end corner-right">
+                    <div class="column d-flex align-items-center auto-grow w-75">
+                      <div id="corner-track" class="content">
+                        <input id="dynamic-image-corner-range" class="image-corner-range" role="input-range" type="range" min="0" max="100" step="1" value="0" data-rangeslider="" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0;">
+                        <div class="rangeslider rangeslider--horizontal" id="js-rangeslider-0" style="display:none;">
+                          <div class="rangeslider__fill" style="width: 6.5px;"></div>
+                          <div class="rangeslider__handle" style="left: 0px;"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <label class="column d-flex align-items-center">
+                      <div class="content pl-range">
+                        <input id="corner-input" type="number" class="corner-radius corner-opacity-input" value="0" min="0" max="100">
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                <hr>
+                <div class="dynamic-opacity-branding ml-2">
+                  <div class="g-property-row text-center">
+                    <label class="text-left opacity-left">Opacity</label>
+                    <div class="columns d-flex m-0 justify-content-end opacity-right">
+                      <div class="column d-flex flex-row align-items-center w-75">
+                        <div class="content">
+                          <input id="dynamic-image-opacity-range" class="image-opacity-range" type="range" value="100" step="1" max="100" min="0" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0;">
+                          <div class="rangeslider rangeslider--horizontal" id="js-rangeslider-1" style="display:none;">
+                            <div class="rangeslider__fill" style="width: 0px;"></div>
+                            <div class="rangeslider__handle" style="left: 0px;"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column d-flex flex-row align-items-center">
+                        <div class="content pl-range">
+                          <input id="image-opacity-range" type="number" class="rightProp corner-opacity-input" value="100" min="0" max="100">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="toolbarPanel panels d-block grids-tab">
+            <div class="toolbar toolbar-title justify-content-between align-items-center" style=""><label class="text-uppercase">Grids&nbsp;<i class="right-label fas fa-caret-right ml-1"></i></label><button data-action="stroke-settings" data-title="Advanced settings"><i class="fas fa-sliders-h"></i></button></div>
+            <div class="properties-panel toolbar-body" style="display: none;">
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Background:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="grid_background" id="grid-background">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Margins:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="grid_margin" id="grid-margin">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Padding:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="grid_padding" id="grid-padding">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Borders:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="grid_border" id="grid-border">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Border radius:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="grid_border_radius" id="grid-border-radius">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="g-property-row">
+                <div class="columns ml-0 d-flex">
+                  <div class="column d-flex flex-row align-items-center w-50">
+                    <div class="content"><span>Box shadow:</span></div>
+                  </div>
+                  <div class="column d-flex flex-row justify-content-end w-50">
+                     <div class="content">
+                        <input type="text" name="grid_box_shadow" id="grid-box-shadow">
+                     </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="toolbar toolbar-title justify-content-between align-items-center" id="grids-cells"><label class="text-uppercase">Grids Cells&nbsp;<i class="right-label fas fa-caret-right ml-1"></i></label></div>
+              <div class="properties-panel toolbar-body" id="grids-cells-body">
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex">
+                    <div class="column d-flex flex-row align-items-center w-48">
+                      <div class="content"><span>Width:</span></div>
+                    </div>
+                    <div class="column d-flex flex-row justify-content-end w-53">
+                       <div class="content">
+                          <input type="text" name="grid_cell_width" id="grid-cell-width">
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex mt-3">
+                    <div class="column d-flex flex-row align-items-center w-48">
+                      <div class="content"><span>Background:</span></div>
+                    </div>
+                    <div class="column d-flex flex-row justify-content-end w-53">
+                       <div class="content">
+                          <input type="text" name="grid_cell_background" id="grid-cell-background">
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex">
+                    <div class="column d-flex flex-row align-items-center w-48">
+                      <div class="content"><span>Margins:</span></div>
+                    </div>
+                    <div class="column d-flex flex-row justify-content-end w-53">
+                       <div class="content">
+                          <input type="text" name="grid_cell_margin" id="grid-cell-margin">
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex">
+                    <div class="column d-flex flex-row align-items-center w-48">
+                      <div class="content"><span>Padding:</span></div>
+                    </div>
+                    <div class="column d-flex flex-row justify-content-end w-53">
+                       <div class="content">
+                          <input type="text" name="grid_cell_padding" id="grid-cell-padding">
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex">
+                    <div class="column d-flex flex-row align-items-center w-48">
+                      <div class="content"><span>Borders:</span></div>
+                    </div>
+                    <div class="column d-flex flex-row justify-content-end w-53">
+                       <div class="content">
+                          <input type="text" name="grid_cell_border" id="grid-cell-border">
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex">
+                    <div class="column d-flex flex-row align-items-center w-48">
+                      <div class="content"><span>Border radius:</span></div>
+                    </div>
+                    <div class="column d-flex flex-row justify-content-end w-53">
+                       <div class="content">
+                          <input type="text" name="grid_cell_border_radius" id="grid-cell-border-radius">
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="g-property-row">
+                  <div class="columns ml-0 d-flex">
+                    <div class="column d-flex flex-row align-items-center w-48">
+                      <div class="content"><span>Box shadow:</span></div>
+                    </div>
+                    <div class="column d-flex flex-row justify-content-end w-53">
+                       <div class="content">
+                          <input type="text" name="grid_cell_box_shadow" id="grid-cell-box-shadow">
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  <!--<div class="kmds-stickey-footer"></div>-->
+</div>

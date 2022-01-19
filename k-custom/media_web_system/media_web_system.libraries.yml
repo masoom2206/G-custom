@@ -1,0 +1,34 @@
+mediawebsystem:
+  css:
+    theme:
+      css/media_web_system.css: {}
+  js: 
+    js/media_web_system.js: {}
+    js/scale_crop.js: {}
+       
+kmdswebtool:
+  version: VERSION
+  js:
+    /modules/custom/media_vault_tool/js/jquery-ui.min.js: {}    
+    #//cdn.ckeditor.com/ckeditor5/26.0.0/classic/ckeditor.js: {}   
+    /modules/custom/media_design_system/js/keyword_js/magicsuggest.js: {}
+    /modules/custom/media_design_system/js/rangeslider.min.js: {}
+    #/modules/custom/media_design_system/js/kmds_multipage_toggle.js: {}
+    /modules/custom/social_media/js/jquery.cropit.js: {}
+    /libraries/jquery-migrate/jquery-migrate-3.0.0.min.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+ui_dialoge:
+  version: VERSION
+  js:
+    /themes/custom/kaboodlemedia/js/jquery-ui.min.js: {}
+  css:
+    component:
+      /themes/custom/kaboodlemedia/css/jquery-ui.css: {}
+      /themes/custom/kaboodlemedia/css/global-modal-style.css: {}
+    
+    
+    
+    

@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the onboarding module.
+ */
+
+/**
+ * Implements hook_update_N().
+ */
+function onboarding_update_8701() {
+	$database = \Drupal::database();
+	$schema = $database->schema();
+	$table_name = 'item_tracking';
+	
+  $table_schema = [
+    'description' => 'Each item status of Getting Started Dashboard',
+    'fields' => [
+			'id' => [
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+				'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+				'length' => 10,
+      ],
+      'nid' => [
+        'description' => "Node ID",
+        'type' => 'int',
+        'not null' => TRUE,
+				'length' => 10,
+      ],
+      'status' => [
+        'description' => 'Item Status',
+        'type' => 'int',
+        'not null' => TRUE,
+				'length' => 1,
+      ],
+    ],
+		'primary key' => ['id'],
+    'indexes' => [
+      'id' => ['uid', 'nid'],
+    ],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+}

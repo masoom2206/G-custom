@@ -1,0 +1,510 @@
+media_vault_tool.admin_settings_form:
+  path: '/admin/config/media_vault_tool/adminsettings'
+  defaults:
+    _form: '\Drupal\media_vault_tool\Form\SettingsForm'
+    _title: 'Media Vault Configuration'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+
+media_vault_tool.detail_page:
+  path: '/tools/media/vault/{user}'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::render_media_detail_page'
+    _title: 'Media Vault'
+    media_archive: 0
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'    
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\media_vault_tool\Controller\MediaKitController::media_access'
+
+media_vault_tool.uploader_page:
+  path: '/tools/media/vault/{user}/upload'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::render_media_uploader_page'
+    _title: 'Media Vault Upload'
+    media_archive: 0
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'    
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _permission: 'Media Vault Tool Upload'
+    _custom_access: '\Drupal\media_vault_tool\Controller\MediaKitController::media_access'
+
+media_vault_tool.media_archive_page:
+  path: '/tools/media/archive/{user}'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::render_media_detail_page'
+    _title: 'Media Archive'
+    media_archive: 1
+  options:
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\media_vault_tool\Controller\MediaKitController::media_access'
+
+media_vault_tool.media_vault_sort:
+  path: '/media/vault-sort/{user}/{type}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::getMediasortingByuid'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+media_vault_tool.media_vault_with_kit:
+  path: '/media/mediakit/{mid}/{type}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::getMediaKitBymid'
+  methods: [GET]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+media_vault_tool.mediaupload:
+  path: '/mvt-handle-uploads/{m_type}/{node}/{file_owner}'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\UploadController::handleMediaUploads'
+    _title: 'Handles uploads'
+    m_type: 'none'
+    file_owner: 0
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'Media Vault Tool Upload'
+
+media_vault_tool.media_kit:
+  path: '/tools/media/kit/{user}/{node}'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::render_media_kit_page'
+    _title: 'Media Kits Manager'
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\media_vault_tool\Controller\MediaKitController::media_kit_access'
+
+media_vault_tool.media_kit_api:
+  path: '/user/media_kits/{user}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::get_user_media_kits'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+media_vault_tool.shared_media_kit_api:
+  path: '/user/shared/media_kits/{user}/{node}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::get_combined_shared_media_kits'
+  options:
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+# media_vault_tool.media_kit_sortable:
+  # path: '/media_kits/sortable'
+  # defaults: 
+    # _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::media_kits_sortable'
+  # methods: [POST]
+  # requirements:
+    # _user_is_logged_in: 'TRUE'
+
+media_vault_tool.media_vault_sortable:
+  path: '/media_vault/sortable'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::media_vault_sortable'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
+media_vault_tool.favorite_link:
+  path: '/update-media-favorite'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::update_media_favorite'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+       
+media_vault_tool.media_edit_page:
+  path: '/tools/image-editor/{media}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::mediaImageEditor'
+    _title: 'Image Asset Editor'
+  options:
+    parameters:
+      media:
+        type: entity:media
+    no_cache: 'TRUE'    
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access'
+    
+media_vault_tool.media_edit_audio_page:
+  path: '/tools/audio-editor/{media}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::mediaAudioEditor'
+    _title: 'Audio Asset Editor'
+  options:
+    parameters:
+      media:
+        type: entity:media
+    no_cache: 'TRUE'    
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access' 
+
+media_vault_tool.media_edit_video_page:
+  path: '/tools/video-editor/{media}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::mediaVideoEditor'
+    _title: 'Video Asset Editor'
+  options:
+    parameters:
+      media:
+        type: entity:media
+    no_cache: 'TRUE'    
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access'     
+
+media_vault_tool.media_edit_page_save:
+  path: '/media-update/{media}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::customMediaUpdate'
+  methods: [POST]  
+  options:
+    parameters:
+      media:
+        type: entity:media
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access' 
+
+media_vault_tool.media_video_edit_page_save:
+  path: '/media-video-update/{media}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::updateVideoMedia'
+  methods: [POST]  
+  options:
+    parameters:
+      media:
+        type: entity:media
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access' 
+    
+media_vault_tool.base64_image_save:
+  path: '/bae64ToImageConversion'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::base64ToImageSave'
+  methods: [POST]  
+  requirements:
+    _user_is_logged_in: 'TRUE'     
+
+media_vault_tool.aws_webhook_notifications:
+  path: '/aws-webhook-notifications'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::awsWebhookNotifications'
+  methods: [POST] 
+  requirements: 
+    _permission: 'access content' 
+    
+media_vault_tool.FFMPEG_webhook_notifications:
+  path: '/ffmpeg-webhook-notifications'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::ffmpegWebhookNotifications'
+  methods: [POST] 
+  requirements: 
+    _permission: 'access content'     
+
+media_vault_tool.aws_webhook_notifications_fail:
+  path: '/aws-webhook-notifications-fail'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::awsWebhookNotificationsFail'
+  methods: [POST] 
+  requirements: 
+    _permission: 'access content'    
+    
+media_vault_tool.mediakit_edit:
+  path: '/tools/media/kit/{user}/{node}/settings'
+  defaults:
+    _entity_form: 'node.edit'
+  options:
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+    _node_operation_route: TRUE
+  requirements:
+    _entity_bundles: 'node:media_kit'
+    _custom_access: '\Drupal\media_vault_tool\Access\NodeEditAccessCheck::custom_node_edit_access'
+
+#disabled below path as per task#5933
+#media_vault_tool.node_media_dupe:
+  #path: '/media/{node}/{media}/{m_type}/duplicate/preset'
+  #defaults:
+    #_controller: '\Drupal\media_vault_tool\Controller\PresetController::mediaDupe'
+    #_title_callback: '\Drupal\media_vault_tool\Controller\PresetController::dupeAddPageTitle'
+  #options:
+    #parameters:
+      #m_type: 'none'
+      #node:
+        #type: entity:node
+      #media:
+        #type: entity:media
+  #requirements:
+    #_user_is_logged_in: 'TRUE'
+
+#disabled below path as per task#5933
+#media_vault_tool.media_dupe:
+  #path: '/media/{media}/duplicate/preset'
+  #defaults:
+    #_entity_form: 'media.preset_mode'
+    #_title_callback: '\Drupal\media_vault_tool\Controller\PresetController::dupeAddPageTitle'
+  #options:
+    #parameters:
+      #media:
+        #type: entity:media
+  #requirements:
+    #_user_is_logged_in: 'TRUE'
+    #_custom_access: '\Drupal\media_vault_tool\Controller\PresetController::media_preset_access'
+
+media_vault_tool.media_dupe:
+  path: '/media/{media}/duplicate/preset'
+  defaults:
+    _entity_form: 'media.edit'
+    _title_callback: '\Drupal\media_vault_tool\Controller\NodeCustomizeController::dupeAddPageTitle'
+  options:
+    parameters:
+      media:
+        type: entity:media
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+media_vault_tool.clone_kit:
+  path: '/tools/media/kit/{user}/{node}/clone'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::clone_media_kit'
+  options:
+    query:
+      title: ''
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\media_vault_tool\Controller\MediaKitController::media_access'
+
+media_vault_tool.media_kit_delete:
+  path: '/media_kit/delete'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::delete_media_kit_node'
+  methods: [POST]
+  requirements:
+    _permission: 'Delete Media Kit'
+
+media_vault_tool.kaboodle_delete:
+  path: '/kaboodle/archive/{user}/{node}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::delete_kaboodle_node'
+  options:
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+  requirements:
+    _custom_access: '\Drupal\media_vault_tool\Access\NodeEditAccessCheck::custom_node_edit_access'
+
+media_vault_tool.preset_delete:
+  path: '/preset/delete/{user}/{node}'
+  defaults: 
+    _controller: '\Drupal\onboarding\Controller\OnBoardingController::delete_presets_node'
+  options:
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+  requirements:
+    _custom_access: '\Drupal\media_vault_tool\Access\NodeEditAccessCheck::custom_node_edit_access'
+
+media_vault_tool.kaboodle_remove_reference:
+  path: '/kaboodle/remove/reference'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::remove_kaboodle_reference'
+  methods: [POST]
+  requirements:
+    _permission: 'Remove Kaboodle Reference'
+
+media_vault_tool.vault_delete_file:
+  path: '/media_vault/delete'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::delete_media_vault_file'
+  methods: [POST]
+  requirements:
+    _permission: 'Media Vault File Delete'
+
+media_vault_tool.media_kit_references:
+  path: '/media_kit/references/{kit_id}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::get_media_kit_references'
+    kit_id: '[0-9]+'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+media_vault_tool.media_vault_references:
+  path: '/media_vault/references/{vault_id}/{type}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::get_media_vault_references'
+    kit_id: '[0-9]+'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+media_vault_tool.metadata_preset.edit:
+  path: '/tools/metadata_preset/{node}'
+  defaults:
+    _entity_form: 'node.edit'
+  options:
+    parameters:
+      node:
+        type: entity:node
+    _node_operation_route: TRUE
+  requirements:
+    node: '[0-9]+'
+    _entity_bundles: 'node:metadata_preset'
+    _custom_access: '\Drupal\media_vault_tool\Access\NodeEditAccessCheck::custom_node_edit_access'
+
+media_vault_tool.branding_preset.edit:
+  path: '/tools/branding_preset/{node}'
+  defaults:
+    _entity_form: 'node.edit'
+  options:
+    parameters:
+      node:
+        type: entity:node
+    _node_operation_route: TRUE
+  requirements:
+    node: '[0-9]+'
+    _entity_bundles: 'node:branding_preset'
+    _custom_access: '\Drupal\media_vault_tool\Access\NodeEditAccessCheck::custom_node_edit_access'
+
+media_vault_tool.kaboodle.edit:
+  path: '/tools/kaboodle/{node}'
+  defaults:
+    _entity_form: 'node.edit'
+  options:
+    parameters:
+      node:
+        type: entity:node
+    _node_operation_route: TRUE
+  requirements:
+    node: '[0-9]+'
+    _entity_bundles: 'node:kaboodle'
+    _custom_access: '\Drupal\media_vault_tool\Access\NodeEditAccessCheck::custom_node_edit_access'
+
+media_vault_tool.custom.node.add:
+  path: '/tools/{node_type}/add'
+  defaults:
+    _entity_form: 'node.default'
+    _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      node_type:
+        type: entity:node_type
+        with_config_overrides: TRUE
+  requirements:
+    _custom_access: '\Drupal\media_vault_tool\Access\NodeAddAccessCheck::custom_node_add_access'
+
+media_vault_tool.media_entity.edit:
+  path: '/tools/media/{media}'
+  defaults:
+    _entity_form: 'media.edit'
+    _title_callback: '\Drupal\media_vault_tool\Controller\MediaDetailController::mediaEditTitle'
+  options:
+    parameters:
+      media:
+        type: entity:media
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access'
+    
+media_vault_tool.tags:
+  path: '/getTags/{user}'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::getPrivateTags'
+  options:
+    parameters:
+      user:
+        type: entity:user  
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_tags_access'
+
+media_vault_tool.mediaOriginal.image:
+  path: '/tools/media/image/{mid}'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaDetailController::getOriginalMediaImage'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'    
+    
+media_vault_tool.publicmediaupload:
+  path: '/mvt-handle-uploads-public'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\UploadController::handleMediaUploadsPublic'
+    _title: 'Handles uploads'
+  requirements:
+    _access: 'TRUE'  
+      
+media_vault_tool.article_media_kits_api:
+  path: '/user/article_media_kits/{user}/{node}'
+  defaults: 
+    _controller: '\Drupal\media_vault_tool\Controller\MediaKitController::get_user_article_shared_media_kits'
+  options:
+    parameters:
+      user:
+        type: entity:user
+      node:
+        type: entity:node
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+media_vault_tool.debug.transcode:
+  path: '/debug/video/transcode'
+  defaults:
+    _controller: '\Drupal\media_vault_tool\Controller\MediaEditFormController::debugTranscode'
+    _title: 'Debug Transcode'
+  requirements:
+    _access: 'TRUE'   

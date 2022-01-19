@@ -1,0 +1,102 @@
+team.listing:
+  path: '/my-account/{user}/teams'
+  defaults: 
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::listing_teams'
+    _title: 'My Teams'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'
+
+team.members:
+  path: '/team/{group}/members'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::listing_members'
+    _title: 'Teams Members'
+  options:
+    parameters:
+      group:
+        type: entity:group
+    no_cache: 'TRUE'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::member_access'
+
+team.delete:
+  path: '/my-account/team/{group}/delete'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::deleteTeam'
+    _title: 'Team Delete'
+  options:
+    parameters:
+      group:
+        type: entity:group
+    no_cache: 'TRUE'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'
+
+teammember.delete:
+  path: '/my-account/team/{group}/{user}/delete'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::deleteTeamMember'
+    _title: 'Team Member Delete'
+  options:
+    parameters:
+      group:
+        type: entity:group
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'    
+
+team.accept:
+  path: '/teams/{teamid}/accept'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::acceptTeam'
+    _title: 'Accept'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'
+
+team.decline:
+  path: '/teams/{teamid}/decline'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::declineTeam'
+    _title: 'Decline'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'
+
+team.leave:
+  path: '/teams/{teamid}/leave'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::leaveTeam'
+    _title: 'Leave'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'
+    
+team.reinvite:
+  path: '/teams/{teamid}/{memberid}/reinvite'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::reinviteTeam'
+    _title: 'Re-Invite'
+  requirements:
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'
+
+team.participate:
+  path: '/team/participate'
+  defaults:
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::getParticipateTeam'
+    _format: json'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+team.share.media_kits:
+  path: '/team/share/media_kits'
+  defaults: 
+    _controller: '\Drupal\my_groups\Controller\MyGroupsController::team_share_media_kit'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\my_groups\Controller\MyGroupsController::access'

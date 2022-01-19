@@ -1,0 +1,47 @@
+{% if post == 'newpost' %} 
+
+{% embed '@social_media/post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+ {% block page_id_selection %}
+ <div class="facebook-page-selection">
+  <legend>Select Page</legend>
+  <select class="w-100 rounded" name="page_id" id="page_id">
+  {% for fb_page_id,page_name in data.facebook_kaboodle.fb_pages %}
+  {{data.facebook_kaboodle.selected_fb_page}}
+  {% if fb_page_id == data.facebook_kaboodle.selected_fb_page %}
+  <option value="{{fb_page_id}}" selected>{{page_name}}</option> 
+  {% else %}
+  <option value="{{fb_page_id}}">{{page_name}}</option>
+  {% endif %}
+  {% endfor %}
+  </select>
+</div> 
+{% endblock %}
+ {% block media_kit_wrapper %}
+  <div class="bg-white p-2">
+  {{data.media_kit_one}}
+    
+  </div> 
+ {% endblock %}
+ {% endembed %}
+ {% else %}
+ 
+ {% embed '@social_media/post-form.html.twig' ignore missing with {'post': 'mypost'} %} 
+ {% block app_title %} 
+ {% endblock %}
+ {% block page_id_selection %} 
+ <div class="facebook-page-selection">
+  <legend>Select Page</legend>
+  <select class="w-100 rounded" name="page_id" id="page_id"> 
+  {% for fb_page_id,page_name in data.facebook_kaboodle.fb_pages %}
+  <option value="{{fb_page_id}}">{{page_name}}</option>
+  {% endfor %}
+  </select>
+</div>
+ {% endblock %}
+  {% block media_kit_wrapper %}
+  <div class="bg-white p-2">
+    {{data.media_kit_two}}
+  </div> 
+ {% endblock %}
+ {% endembed %}
+ {% endif %}

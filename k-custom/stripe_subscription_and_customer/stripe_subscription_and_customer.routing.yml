@@ -1,0 +1,218 @@
+stripe_subscription_and_customer.all:
+  path: '/admin/config/stripe/api'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Stripe API Configuration'
+  requirements:
+    _permission: 'access administration pages'
+stripe_subscription_and_customer.subscriptions_controller_subscribe:
+  path: '/stripe_subscription_and_customer/subscribe'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\SubscriptionsController::subscribe'
+    _title: 'User Subscriptions'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.get_register_controller_stripecustomer:
+  path: '/stripe_subscription_and_customer/stripecustomer'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\GetRegisterController::stripecustomer'
+    _title: 'Stripe Cutome and Subscription'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.subscription_controller_subscription:
+  path: '/customer/subscription'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\SubscriptionController::subscription'
+    _title: 'Subscription'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.customer_controller_customer:
+  path: '/customer'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\CustomerController::customer'
+    _title: 'Customer Details'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.subscription_details_controller_getSubscriptionInformation:
+  path: '/stripe_subscription_and_customer/getSubscriptionInformation'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\SubscriptionDetailsController::getSubscriptionInformation'
+    _title: 'Subscription Details'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.customerbilling_controller_customerbilling:
+  path: '/tools/profile/{user}/billing'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\CustomerbillingController::customerbilling'
+    _title_callback: 'Drupal\user\Controller\UserController::userTitle'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+stripe_subscription_and_customer.custommerinvoices_controller_customerinvoices:
+  path: '/tools/profile/{user}/invoices'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\CustommerinvoicesController::customerinvoices'
+    _title_callback: 'Drupal\user\Controller\UserController::userTitle'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+
+stripe_subscription_and_customer.customer_portal_controller_portal:
+  path: '/customerportal/{cusid}/{uid}'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\CustomerPortalController::portal'
+    _title: 'Customer Portal'
+  requirements:
+    _permission: 'access content'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.stripe_webhooks_end_point_controller_captureNotification:
+  path: '/stripe_subscription_and_customer/endpoint/webhooks'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\StripeWebhooksEndPointController::captureNotification'
+    _title: 'Stripe Webhooks EndPoint'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.changeplan_form:
+  path: '/stripe_subscription_and_customer/form/changeplan/{pricing}/{uid}'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\ChangeplanForm'
+    _title: 'Change Plan'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.add_storage_form:
+  path: '/stripe_subscription_and_customer/form/add_storage/{pricing}/{uid}'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\AddStorageForm'
+    _title: 'Add Storage'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.cancle_account_form:
+  path: '/stripe_subscription_and_customer/form/cancle_account/{uid}'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\CancleAccountForm'
+    _title: 'Cancel Account'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.abort_cancel_form:
+  path: '/stripe_subscription_and_customer/form/cancle_account/{uid}/revert'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\AbortCancelForm'
+    _title: 'Abort Cancel'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+stripe_subscription_and_customer.ok_cancel_form:
+  path: '/stripe_subscription_and_customer/form/ok'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\OkCancelForm'
+    _title: 'Thanks'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+    
+stripe_subscription_and_customer.addupgrades_form:
+  path: '/stripe_subscription_and_customer/form/addupgrades/{uid}/{tid}'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\AddupgradesForm'
+    _title: 'Add Upgrades'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.remove_addupgrades_form:
+  path: '/stripe/form/remove_addupgrades/{uid}/{sub_id}'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\RemoveAddupgradesForm'
+    _title: 'Remove Upgrades'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.admin_configuration_form:
+  path: '/admin/config/stripe/api/configuration'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\AdminConfigurationForm'
+    _title: 'Strip API Configuration Form'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.add_upgrades_controller_upgrades:
+  path: '/admin/config/stripe/upgrades'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\AddUpgradesController::upgrades'
+    _title: 'Upgrades'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.request_cancelation_form:
+  path: '/stripe_subscription_and_customer/form/request_cancelation/{uid}/{sid}'
+  defaults:
+    _form: '\Drupal\stripe_subscription_and_customer\Form\RequestCancelationForm'
+    _title: 'RequestCancelationForm'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+stripe_subscription_and_customer.subscriptions_controller_reload:
+  path: '/stripe/reload/{user}'
+  defaults:
+    _controller: '\Drupal\stripe_subscription_and_customer\Controller\SubscriptionsController::reload'
+    _title: 'Reload Subscriptions'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'

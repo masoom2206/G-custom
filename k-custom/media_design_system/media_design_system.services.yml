@@ -1,0 +1,20 @@
+services:
+  theme.negotiator.media_design_system:
+    class: Drupal\media_design_system\Theme\ThemeNegotiator
+    tags:
+      - { name: theme_negotiator, priority: 0 }
+
+  media_design_system.menu_items:
+    class: Drupal\media_design_system\MenuItems
+    arguments: ['@menu.link_tree']
+
+  media_design_system.menu_items_twig_extension:
+    class: Drupal\media_design_system\TwigExtension\MenuItemsTwigExtension
+    arguments: ['@media_design_system.menu_items']
+    tags:
+      - { name: twig.extension }
+
+  media_design_system.termdataApi:
+    class: Drupal\media_design_system\Controller\MediaDesignController
+    tags:
+      - { name: termdataApi, priority: 0 }

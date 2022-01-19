@@ -1,0 +1,58 @@
+<div class="my-kaboodles kaboodles-dashboard my-kaboodles-web-product-edit" id="my-kaboodle-web-product-edit">
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw" id="html-article">    
+    <div class="col-lg-12 plr0">
+    {% if data.team_name %}
+      <div class="col-lg-12 member-team-name text-center">{{data.team_name}}</div>
+    {% endif %}
+      <!--product heading and menu-->
+      <div>
+        
+        <div class="text-align-left">
+          <div class="content p-1">
+              <div class="crop-wrapper">
+                <a href="javascript:void(0)" id="kmwpImageCrop" class="btn btn-primary text-uppercase font-fjalla disabled">
+                Add Image
+                </a>
+              </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-container">
+        <div class="row">
+          <div class="col-lg-3 left-panel opened-media-kit" id="left-sidebar">
+            <div class="sidebar-container media-kit-title slide-right d-none" id="media-kit-title-slide-right">
+              <span class="fas fa-caret-right image-list-caret"></span>
+            </div>
+            <div class="sidebar-container slide-left">
+              <div class="sidebar-container media-kit-title active" id="media-kit-title-slide-left">
+                <span class="media-kit-image-title">Media Kits</span>
+                <span class="fas fa-caret-left image-list-caret"></span>
+              </div>
+              <div class="sidebar-container article-media-kit-images disabled empty">
+                <div class="progress-overlay"><div class="spinner-border"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-9 right-panel" id="web-product-template">
+            {{ article_form }}
+            
+          </div>
+          <div id="web-product-template-code-tokens"></div>
+          <div id="html-article-paragraph-items">
+          {% if paragraph_items|length > 0 %}
+            {% for paragraph_item in paragraph_items %}
+              <div class="paragraph-item">
+                <input class="savedImageMedia" type="hidden" value="{{paragraph_item.imageMedia}}" />
+                <input class="savedImageCaption" type="hidden" value="{{paragraph_item.imageCaption}}" />
+                <input class="imageMediaName" type="hidden" value="{{paragraph_item.imageMediaName}}" />
+                <input class="savedMediaId" type="hidden" value="{{paragraph_item.mediaId}}" />
+              </div>
+            {% endfor %}
+          {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

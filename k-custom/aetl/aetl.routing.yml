@@ -1,0 +1,135 @@
+aetl.all:
+  path: '/admin/config/aetl/all'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'AWS ET&L configuration'
+  requirements:
+    _permission: 'administer aetl'
+aetl.settings:
+  path: '/admin/config/aetl/settings'
+  defaults:
+    _form: '\Drupal\aetl\Form\SettingsForm'
+    _title: 'Amazon Elastic Transcoder and AWS Lambda Settings'
+  requirements: 
+    _permission: 'administer aetl'
+aetl.aws_elastic_transcoder_all:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'AWS Elastic Transcoder Settings'
+  requirements:
+    _permission: 'administer aetl'
+aetl.pipelineslist:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/pipelines'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::pipelineslist'
+    _title: 'AWS Elastic Transcoder Pipelines'
+  requirements:
+    _permission: 'administer aetl'
+aetl.pipelinesadd:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/pipelines/add'
+  defaults:
+    _form: '\Drupal\aetl\Form\AddPipelineForm'
+    _title: 'Add New Pipelines'
+  requirements:
+    _permission: 'administer aetl'
+aetl.pipelinesedit:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/pipelines/{pid}/edit'
+  defaults:
+    _form: '\Drupal\aetl\Form\EditPipelineForm'
+    _title: 'Edit Pipelines'
+  requirements:
+    _permission: 'administer aetl'
+aetl.pipelinesedelete:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/pipelines/{pid}/delete'
+  defaults:
+    _form: '\Drupal\aetl\Form\DeletePipelineForm'
+    _title: 'Delete Pipelines'
+  requirements:
+    _permission: 'administer aetl'
+aetl.aws_elastic_transcoder_all_presets:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/presets/add'
+  defaults:
+    _form: '\Drupal\aetl\Form\TranscoderForm'
+    _title: 'AWS Elastic Transcoder Preset'
+  requirements:
+    _permission: 'administer aetl'
+aetl.jobbyid:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/job/{job_id}'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::jobdetailsbyid'
+    _title: 'AWS Elastic Transcoder Job Details'
+    job_id: 'all'
+  requirements:
+    _permission: 'administer aetl'
+aetl.jobsslist:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/jobs'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::jobslist'
+    _title: 'AWS Elastic Transcoder Jobs'
+  requirements:
+    _permission: 'administer aetl'
+aetl.jobsiddetails:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/jobs/{pipeline_id}'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::jobsiddetails'
+    _title: 'AWS Elastic Transcoder Jobs'
+    pipeline_id: 'all'
+  requirements:
+    _permission: 'administer aetl'
+aetl.jobadd:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/jobs/add'
+  defaults:
+    _form: '\Drupal\aetl\Form\AddJobForm'
+    _title: 'Add New Job'
+  requirements:
+    _permission: 'administer aetl'
+aetl.presetslist:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/presets'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::presetslist'
+    _title: 'AWS Elastic Transcoder Presets'
+  requirements:
+    _permission: 'administer aetl'
+aetl.presetadd:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/presetadd/add'
+  defaults:
+    _form: '\Drupal\aetl\Form\AddPresetForm'
+    _title: 'Add New Preset'
+  requirements:
+    _permission: 'administer aetl'
+aetl.autocomplete:
+  path: '/aetl/{field_name}/{count}/{pid}'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\TranscoderAutocompleteController::handleAutocomplete'
+    _format: json 
+  requirements: 
+    _permission: 'administer aetl'
+aetl.joblist:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/status/jods'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::detailsjobs'
+    _title: 'AWS Elastic Transcoder Jobs'
+  requirements:
+    _permission: 'administer aetl'
+aetl.joblistuser:
+  path: '/users/jods'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::detailsjobsuser'
+    _title: 'AWS Elastic Transcoder Jobs'
+  requirements:
+    _permission: 'administer aetl'
+aetl.fieldsettings:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/fieldsettings'
+  defaults:
+    _form: '\Drupal\aetl\Form\FieldSettingsForm'
+    _title: 'Media Field Settings'
+  requirements: 
+    _permission: 'administer aetl'
+aetl.testjobs:
+  path: '/admin/config/aetl/aws_elastic_transcoder_all/testjobs'
+  defaults:
+    _controller: '\Drupal\aetl\Controller\PagesController::updatejobstatus'
+    _title: 'AWS Elastic Transcoder Jobs'
+  requirements: 
+    _permission: 'administer aetl'

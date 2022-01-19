@@ -1,0 +1,37 @@
+ <div class="image-editor {{ediorType}}-{{presetType}}-image-editor" id="{{ediorType}}-{{presetType}}-image-editor">
+   <div class="image-editor-header d-flex" style="height: 50px;">
+     <div class="left-header">
+       <ul class="list-unstyled d-none">
+         <li class="first-child"> </li>
+         <li class="second-child"> </li>
+       </ul>
+     </div>
+     <div class="right-header" style="right:10px;position:absolute">
+       <div class="after-finished text-right" style="">
+         <span> Finished size :</span> <span class="size"></span>
+       </div>
+       <div class="controls-wrapper d-flex">
+        {# <div class="rotate-img d-flex text-center align-items-center mr-2">
+           <span class="ant-clock-rotate" style="cursor:pointer;width:30px">
+             <i class="fas fa-undo"></i>
+           </span>
+           <span class="clock-rotate" style="cursor:pointer;width:30px">
+             <i class="fas fa-redo"></i>
+           </span>
+         </div> #}
+         <div class="slider-wrapper d-flex align-items-center">
+           <span class="icon icon-image small-image icon18x24"></span>
+           <input type="range" class="cropit-image-zoom-input">
+           <span class="icon icon-image large-image icon36x24"></span>
+         </div>
+       </div>
+     </div>
+   </div>
+   <div class="cropit-preview">
+     <div class="loading-image"></div>
+   </div>
+  {# <div class="wrap-button d-flex float-right mt-2">
+     <button class="btn btn-cancel cancel-export mr-2 disabled" data-mediaKit="" data-preset="{{presetType}}" data-mid="">Cancel</button>
+     <button class="btn btn-primary export disabled" data-mediaKit="" data-preset="{{presetType}}" data-mid="">Save</button>
+   </div> #}
+ </div>

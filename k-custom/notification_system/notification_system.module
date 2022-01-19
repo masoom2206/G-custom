@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file notification_system.module
+ */
+
+/*
+ * hook_theme()
+ */
+function notification_system_theme($existing, $type, $theme, $path){
+	return [
+	  'notification_mail_template' => [
+		  'variables' => [
+		    'mail_body' => NULL,
+		    'first_name' => NULL,
+		    'mail_logo' => NULL,
+        'mail_year' => NULL,
+		  ],
+	  ]
+	];
+}
+
+/**
+ * Implements hook_mail().
+ */
+function notification_system_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+
+	$message['from'] = 'support@kaboodleMedia.com';
+	$message['body'][] = $params['message'];
+  /*
+  switch ($key) {
+    case 'Teams':
+      //$message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = 'Kaboodle Media - Teams notification';
+      break;
+		
+		case 'Social Media Manager':
+      $message['subject'] = 'Kaboodle Media - Social Media Manager notification';
+      break;
+			
+		case 'Subscription':
+      $message['subject'] = 'Kaboodle Media - Subscription notification';
+      break;
+			
+		case 'Video Manager':
+      $message['subject'] = 'Kaboodle Media - Video Manager notification';
+      break;
+  }
+  */
+  $message['subject'] = $key;
+}
+
+/**
+ * Global function for user real first name
+ */
+function user_real_first_name($uid){
+	$user = \Drupal\user\Entity\User::load($uid);
+	$pfname = $user->get('field_preferred_first_name')->value;	
+	$fname = $user->get('field_first_name')->value;
+	$real = ucfirst($fname);
+	if(!empty($pfname)){
+		$real = ucfirst($pfname);
+	}
+	
+	return $real;
+}

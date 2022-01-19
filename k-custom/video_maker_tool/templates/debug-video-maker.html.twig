@@ -1,0 +1,116 @@
+<div class="my-kaboodles kaboodles-dashboard">
+  <div class="kaboodles-container d-flex w-100 ff-rw">
+    <div class="col-lg-12" id="debug-video-maker">
+      <div class="row">
+        <div class="col-lg-6 text-left">
+          <b>Debug the following steps of video maker process:</b>
+          <ol>
+            <li><a href="{{ path('cron.video.maker.generate.init', {'vid': variables.video.video_id}) }}" target="_blank">Initiate video making / save media files to temporary directory</li>
+            <li><a href="{{ path('cron.video.maker.photo.clip.edit') }}" target="_blank">Crop image and generate video clip</li>
+            <li><a href="{{ path('cron.video.maker.video.clip.edit') }}" target="_blank">Crop video and convert into mp4</li>
+            <li><a href="{{ path('cron.maker.apply.transition') }}" target="_blank">Apply transition between video clips</li>
+            <li><a href="{{ path('cron.video.maker.join.clips') }}" target="_blank">Join video clips if required</li>
+            <li><a href="{{ path('cron.video.maker.transcode') }}" target="_blank">Send video to AWS Trans-code</li>
+            <li><a href="{{ path('cron.video.maker.finish.transcode') }}" target="_blank">Finish Trans-code video</li>
+          </ol>
+          
+          <b>Cleanup data for reprocessing:</b>
+          <ul>
+            <li><a href="{{ path('debug.video.maker.cleanup', {'video_id': variables.video.video_id}) }}" target="_blank">Cleanup</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4 text-left">
+          <table class="table debug-video-maker" id="debug-video">
+            <tbody>
+              <tr>
+                <td width="40%">Video Name:</td>
+                <td>{{ variables.video.video_name }}</td>
+              </tr>
+              <tr>
+                <td>Video Preset:</td>
+                <td>{{ variables.video.media_preset_id }}</td>
+              </tr>
+              <tr>
+                <td>Video Render Status:</td>
+                <td>{{ variables.video.render_status }}</td>
+              </tr>
+              <tr>
+                <td>Video Processing Phase:</td>
+                <td>{{ variables.video.processing_phase }}</td>
+              </tr>
+              <tr>
+                <td>Generated Video:</td>
+                <td>{% if variables.video.video_url|trim is not empty %}<a href="{{ variables.video.video_url }}" target="_blank"><img src="/modules/custom/video_maker_tool/images/aws-s3.png" width="20"></a>{% endif %}</td>
+              </tr>
+              <tr>
+                <td>Media ID:</td>
+                <td>{{ variables.video.video_media_id }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-lg-2 text-right">
+          <a href="{{ path('debug.video.maker.listing') }}" class="btn btn-light">Go Back</a>
+        </div>
+      </div>
+
+      <table class="table debug-video-maker">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">MID</th>
+            <th scope="col">Type</th>
+            <th scope="col">FID</th>
+            <th scope="col">Video Clip Path</th>
+            <th scope="col">Transition Video</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sbclip in variables.media %}
+          <tr>
+            <td>{{ sbclip.id }}</td>
+            <td>{{ sbclip.mid }}</td>
+            <td>{{ sbclip.type }}</td>
+            <td>{{ sbclip.fid }}</td>
+            <td>{{ sbclip.video_clip_path }}</td>
+            <td>{% if sbclip.transition_video_s3fsurl|trim is not empty %}<a href="{{ sbclip.transition_video_s3fsurl }}" target="_blank">{{ sbclip.transition_video }}</a>{% else %} {{ sbclip.transition_video }} {% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <table class="table debug-video-maker">
+        <thead>
+          <tr>
+            <th scope="col" width="3%">#</th>
+            <th scope="col">Command</th>
+            <th scope="col" width="4%">Output</th>
+            <th scope="col" width="15%">Stages</th>
+            <th scope="col" width="5%">Status</th>
+            <th scope="col" width="10%">Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stage in variables.processing_stages %}
+          <tr>
+            <td>{{ stage.id }}</td>
+            <td>{{ stage.command }}</td>
+            <td>{% if stage.output|trim is not empty %}<a href="{{ stage.output }}" target="_blank"><img src="/modules/custom/video_maker_tool/images/aws-s3.png" width="20"></a>{% endif %}</td>
+            <td>{{ stage.stage }}</td>
+            <td>{{ stage.status }}</td>
+            <td>{{ stage.created }}</td>
+          </tr>
+          {% if stage.status == 'fail' %}
+          <tr class="command-error">
+            <td>&nbsp;</td>
+            <td colspan="5">{{ stage.errors }}</td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>  
+      
+    </div>
+  </div>
+</div>
+

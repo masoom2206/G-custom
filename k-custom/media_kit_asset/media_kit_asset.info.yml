@@ -1,0 +1,6 @@
+name: Media Kit Asset
+description: Media Kit Asset
+package: Kaboodle
+
+type: module
+core: 8.x

@@ -1,0 +1,45 @@
+image_asset_editor.image_editor:
+  path: '/tools/image_editor/{media}'
+  defaults:
+    _controller: '\Drupal\image_asset_editor\Controller\ImageAssetEditorController::getImageAssetEditor'
+    _title: 'image asset editor'
+  options:
+    parameters:
+      media:
+        type: entity:media
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access' 
+    
+image_asset_editor.free_image_converter:
+  path: '/image-converter'
+  defaults:
+    _controller: '\Drupal\image_asset_editor\Controller\ImageAssetEditorController::freeImageConverter'
+    _title: 'Free Social Media Image Converter'
+  requirements:
+    _access: 'TRUE' 
+
+image_asset_editor.free_image_converter_download:
+  path: '/image-converter/file/{encripted_string}'
+  defaults:
+    _controller: '\Drupal\image_asset_editor\Controller\ImageAssetEditorController::freeImageConverterDownload'
+    _title: 'Free Social Media Image Converter - Download'
+  requirements:
+    _access: 'TRUE' 
+
+image_asset_editor.free_image_converter_download_file:
+  path: '/image-download-path/{icid}'
+  defaults:
+    _controller: '\Drupal\image_asset_editor\Controller\ImageAssetEditorController::downloadConvertedImage'
+  methods: [GET]  
+  requirements:
+    _access: 'TRUE'        
+
+image_asset_editor.free_image_converter_submit:
+  path: '/image-converter-submit'
+  defaults:
+    _controller: '\Drupal\image_asset_editor\Controller\ImageAssetEditorController::freeImageConverterSubmit'
+    _title: 'free image converter submit'
+  methods: [POST]    
+  requirements:
+    _access: 'TRUE'    

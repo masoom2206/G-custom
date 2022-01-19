@@ -1,0 +1,7 @@
+name: Notification System
+type: module
+description: This module provides functionality of generating notifications when certain events occur.
+package: Notification
+core: '8.x'
+version: '8.x-1.0'
+project: 'notification_system'

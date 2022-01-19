@@ -1,0 +1,4 @@
+services:
+  social_media.social_media_controller:
+    class: Drupal\social_media\Controller\SocialMediaController
+    arguments: ['@twig']

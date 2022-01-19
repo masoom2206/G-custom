@@ -1,0 +1,10 @@
+name: Autocomplete Advanced
+type: module
+description: Enhanced autocomplete using Jquery UI autocomplete.
+package: User interface
+core: 8.x
+
+# Information added by Drupal.org packaging script on 2019-10-31
+version: '8.x-1.0'
+project: 'autocomplete_advanced'
+datestamp: 1572533294

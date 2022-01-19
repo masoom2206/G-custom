@@ -1,0 +1,114 @@
+{% if data.team_query%}
+  {% set team, muid = '?team=' ~ data.team_query.gid, '&muid=' ~ data.team_query.muid %}
+  {% set team_query = team ~ muid %}
+{% else %}
+  {% set team_query = '' %}
+{% endif %}
+
+{% for key,value in data.tweets %} {% if value.id is defined %} <div class="post-content-area mb-2">
+  <div class="border wrap-post-content-area bg-white" style="border-radius:10px">
+   <div class="post-content-first-half pt-3"> {# tweet operation dropdown such as delete #} <div class="post-operation-block">
+        <i class="fas fa-ellipsis-h"></i>
+        <div class="post-operation-content" style="display: none;">
+          <div class="post-operation-wrapeer p-2">
+            <ul class="list-unstyled">
+              <li>
+                <a class="delete-tweet" data-tweetId="{{value.id}}" style="display: block;border: none;background: transparent;" href="/twitter/destroy/{{value.id}}{{team_query}}">Delete </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div> {# tweet operation dropdown such as delete #} {% if value.retweeted_status is defined %} {% if value.retweeted == 1 %} <div class="user-retweeted fade-content pl-3" style="width:50%;font-size:14px">
+        <img class="action-icon" src="/modules/custom/social_media/images/twitter/retweet.png" alt="icon" style="width: 14px;height: auto;">You Retweeted
+      </div> {% endif %} <div class="tweet-user-info tweet-header pl-3 pr-3">
+        <img src="{{value.retweeted_status.user.profile_image_url_https}}" style="width:40px;height:40px;" class="rounded-circle float-left" alt="pic">
+        <div class="twitter-owner-name float-left">
+          <strong>{{value.retweeted_status.user.name}}</strong>
+          <span>@{{value.retweeted_status.user.screen_name}}</span>
+          <span>{{ value.retweeted_status.created_at|date('F d') }}</span>
+        </div>
+      </div>
+      <div class="main-tweet-region float-none pl-5 ">
+        <div class="message-block">
+          <div class="post-text">
+            <span class="post-text-next">
+              {{value.retweeted_status.full_text|raw}}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="post-content-second-half mt-3 d-inline-bloc"> {% if value.extended_entities.media|length > 0 %} {% for key, media in value.extended_entities.media %} {% if media.type == 'photo' %} {% if value.extended_entities.media|length == 1 %} {% set custom_style  = 'width:100%;' %} {% else %} {% if value.extended_entities.media|length is odd %} {% if key == 0 %} {% set custom_style  = 'width:100%;' %} {% else %} {% set custom_style  = 'width:50%;' %} {% endif %} {% else %} {% set custom_style  = 'width:50%;' %} {% endif %} {% endif %} <img src="{{media.media_url_https}}" alt="media" class="custom-tweet-image float-left" style="{{custom_style}}"> {% endif %} {% if media.type == 'animated_gif' %} <video class="w-100" autoplay loop muted controls poster="{{media.media_url_https}}">
+          <source type="{{media.video_info.variants.0.content_type}}" src="{{media.video_info.variants.0.url}}">
+        </video> {% endif %} {% if media.type == 'video' %} <video class="w-100" autoplay loop muted controls poster="{{media.media_url_https}}">
+          <source type="{{media.video_info.variants.1.content_type}}" src="{{media.video_info.variants.1.url}}">
+        </video> {% endif %} {% endfor %} {% endif %} </div> {% else %} <div class="tweet-user-info tweet-header pl-3 pr-3">
+        <img src="{{value.user.profile_image_url_https}}" style="width:40px;height:40px;" class="rounded-circle float-left" alt="pic">
+        <div class="twitter-owner-name float-left">
+          <strong>{{value.user.name}}</strong>
+          <span>@{{value.user.screen_name}}</span>
+          <span>{{ value.created_at|date('F d') }}</span>
+        </div>
+      </div>
+      <div class="main-tweet-region float-none pl-5 ">
+        <div class="message-block">
+          <div class="post-text">
+            <span class="post-text-next">
+              {{ value.full_text|raw }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="post-content-second-half mt-3 d-inline-bloc"> {% if value.extended_entities.media|length > 0 %} {% for key, media in value.extended_entities.media %} {% if media.type == 'photo' %} {% if value.extended_entities.media|length == 1 %} {% set custom_style  = 'width:100%;' %} {% else %} {% if value.extended_entities.media|length is odd %} {% if key == 0 %} {% set custom_style  = 'width:100%;' %} {% else %} {% set custom_style  = 'width:50%;' %} {% endif %} {% else %} {% set custom_style  = 'width:50%;' %} {% endif %} {% endif %} <img src="{{media.media_url_https}}" alt="media" class="custom-tweet-image float-left" style="{{custom_style}}"> {% endif %} {% if media.type == 'animated_gif' %} <video class="w-100" autoplay loop muted controls poster="{{media.media_url_https}}">
+          <source type="{{media.video_info.variants.0.content_type}}" src="{{media.video_info.variants.0.url}}">
+        </video> {% endif %} {% if media.type == 'video' %} <video class="w-100" autoplay loop muted controls poster="{{media.media_url_https}}">
+          <source type="{{media.video_info.variants.1.content_type}}" src="{{media.video_info.variants.1.url}}">
+        </video> {% endif %} {% endfor %} {% endif %} </div> {% if value.is_quote_status == 1 %} <div class="quated-tweet-wrapper ml-5 mt-2"> {% if value.quoted_status is defined %} <div class="tweet-user-info tweet-header pl-3 pr-3">
+          <img src="{{value.quoted_status.user.profile_image_url_https}}" style="width:20px;height:20px;" class="rounded-circle float-left" alt="pic">
+          <div class="twitter-owner-name float-left">
+            <strong>{{value.quoted_status.user.name}}</strong>
+            <span>@{{value.quoted_status.user.screen_name}}</span>
+            <span>{{ value.quoted_status.created_at|date('F d') }}</span>
+          </div>
+        </div>
+        <div class="twitter-content-original pl-3 pr-3" style="clear:both">
+          {{value.quoted_status.full_text}}
+        </div>
+        <div class="post-content-second-half d-inline-bloc mt-3"> {% if value.quoted_status.extended_entities.media|length > 0 %} {% for key1, media_quated in value.quoted_status.extended_entities.media %} {% if media_quated.type == 'photo' %} {% if value.quoted_status.extended_entities.media|length == 1 %} {% set custom_style  = 'width:100%;' %} {% else %} {% if value.quoted_status.extended_entities.media|length is odd %} {% if key1 == 0 %} {% set custom_style  = 'width:100%;' %} {% else %} {% set custom_style  = 'width:50%;' %} {% endif %} {% else %} {% set custom_style  = 'width:50%;' %} {% endif %} {% endif %} <img src="{{media_quated.media_url_https}}" alt="media" class="custom-tweet-image float-left" style="{{custom_style}}"> {% endif %} {% if media_quated.type == 'animated_gif' %} <video class="w-100" autoplay loop muted controls poster="{{media_quated.media_url_https}}">
+            <source type="{{media_quated.video_info.variants.0.content_type}}" src="{{media_quated.video_info.variants.0.url}}">
+          </video> {% endif %} {% if media.type == 'video' %} <video class="w-100" autoplay loop muted controls poster="{{media.media_url_https}}">
+            <source type="{{media.video_info.variants.1.content_type}}" src="{{media.video_info.variants.1.url}}">
+          </video> {% endif %} {% endfor %} {% endif %} </div> {% else %} <div class="fade-content p-2">This tweet is unavailable.</div> {% endif %}
+      </div> {% endif %} {% endif %} <div class="twitter-engaged mt-2 mb-2 d-flex text-center float-none" style="clear:both">
+        <span style="width:25%;" class="tweet-comments">
+          <div class="twitter-engage-hover-effec">
+            <a class="twitter-engage-hover-effect" data-toggle="modal" data-target="#modal-twitter-comments-replies-{{value.id}}" style="display: inline;border: none;background: transparent;" href="#">
+              <img class="action-icon" src="/modules/custom/social_media/images/twitter/twitter-comment.png" alt="icon">
+              <span class="counted"></span>
+            </a>
+          </div>
+        </span> {# start comments replies modal #} {% embed '@social_media/twitter/twitter-comments-replies.html.twig' ignore missing  %} {% endembed %} {# closed comments replies modal #} <span style="width:25%; " class="tweets-retweets">
+          <span class="tweets-retweets-wrapped twitter-engage-hover-effect" style="cursor: pointer;">
+            <img class="action-icon" src="/modules/custom/social_media/images/twitter/retweet.png" alt="icon">
+            <span class="counted">{{value.retweet_count}}</span> {# start tweet untweet modal #} {% embed '@social_media/twitter/twitter-tweet-retweet.html.twig' ignore missing  %} {% endembed %} {# closed tweet untweet modal #} </span>
+        </span> {% if value.favorited == 1 %} <span style="width:25%;" class="liked tweets-likes">
+          <a href="/favorites/destroy/{{value.id}}{{team_query}}" class="twitter-engage-hover-effect" style="text-decoration: none;">
+            <img class="action-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-liked-128px.png" alt="icon">
+            <span class="counted">{{value.favorite_count}}</span>
+          </a>
+        </span> {% else %} <span style="width:25%;" class="tweets-likes">
+          <a href="/favorites/create/{{value.id}}{{team_query}}" class="twitter-engage-hover-effect" style="text-decoration: none;">
+            <img class="action-icon" src="/modules/custom/social_media/images/twitter/twitter-like-black.png" alt="icon">
+            <span class="counted">{{value.favorite_count}}</span>
+          </a>
+        </span> {% endif %} <span style="width:25%; " class="tweet-other">
+          <div class="twitter-engage-hover-effec">
+            <a class="twitter-engage-hover-effect" data-toggle="modal" data-target="#send-tweet-via-dm-{{value.id}}" style="display: inline;border: none;background: transparent;" href="#">
+              <img class="action-icon" src="/modules/custom/social_media/images/twitter/message-icon.png" alt="icon">
+            </a>
+          </div>
+          <span class="counted"></span>
+        </span> {# start tweet send via dm modal #} {% embed '@social_media/twitter/twitter_tweet_send_via_DM.html.twig' ignore missing  %} {% endembed %} {# closed tweet send via dm modal #}
+      </div>
+    </div>
+  </div>
+</div> {% endif %} {% endfor %}

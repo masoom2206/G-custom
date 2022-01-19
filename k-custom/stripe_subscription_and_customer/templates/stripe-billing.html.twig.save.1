@@ -1,0 +1,39 @@
+<div class="col-sm-12 d-flex align-content-start flex-wrap">
+  <div class="col-sm-12 p-5">
+    <div class="col-sm-12">
+      <h1>Your Current Billing:</h1>
+      <div class="col-sm-12">Customer ID:  {{ billing.customer.id }}</div>
+      <div class="col-sm-12">Email Id: {{ billing.customer.email }}</div>
+      <br/>
+      <h3>Current plan:</h3>
+      <div class="col-sm-12"><h2>{{ billing.subscription.items.data.0.plan.nickname }}</h2></div>
+      <div class="col-sm-12"><b>{{ billing.subscription.items.data.0.plan.amount_decimal/100 | number_format(2, '.', ',') }} {{ billing.subscription.items.data.0.plan..currency }} per {{ billing.subscription.items.data.0.plan.interval }}</b></div>
+      <div class="col-sm-12">Current Period Start:  {{ billing.subscription.current_period_start |date("m/d/Y")}}</div>
+      <div class="col-sm-12">Current Period End:  {{ billing.subscription.current_period_end |date("m/d/Y")}}</div>
+      <a class="btn btn-secondary" href="{{ path('stripe_subscription_and_customer.customer_portal_controller_portal', {'cusid': billing.customer.id}) }}">{{ 'Change Subscription'|t }}</a> | <a class="btn btn-danger" href="{{ path('stripe_subscription_and_customer.customer_portal_controller_portal', {'cusid': billing.customer.id}) }}">{{ 'Cancel Subscription'|t }}</a>
+    </div>
+  </div>
+  <div class="col-sm-12 p-5">
+   <span style="display: inline-block;vertical-align: middle;margin-right: 25px;"><h1>Change Plan</h1></span><a target="_blank" href="/plan">Compare Plans</a>
+    {% for item in billing.items %}
+        <div class="p-1"><a href="/stripe_subscription_and_customer/form/changeplan/{{ item.pricing_id_test }}" class="btn-primary btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}'data-backdrop="true" >{{ item.name }}</a><span>${{ item.subscription_rate }} per month</span></div>
+    {% endfor %}
+   <span class="small-text">Rates for plan changes take effect on your next billing date</span>
+  </div>
+  <div class="col-sm-12 p-5">
+    <h1>Add Upgrades</h1>
+    <div class="col-sm-12 p-1"><a href="/stripe_subscription_and_customer/form/add_storage/storage" class="btn-primary btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}'data-backdrop="true" >Add Media Vault Storage</a><span>$5 per month(100GB additional space)</span></div>
+    <span class="small-text p-1">Billing for upgrads take effects on your next billing date</span>
+  </div>
+  <div class="col-sm-12 p-5">
+    <h1>Payment Method:</h1>
+    <span class="small-text p-1">View and update your credit card and other billing information</span>
+    <div class="col-sm-12 p-1"><a class="btn btn-primary" target="_blank" href="{{ path('stripe_subscription_and_customer.customer_portal_controller_portal', {'cusid': billing.customer.id}) }}">{{ 'View / Update Payment Method'|t }}</a></div>
+  </div>
+  <div class="col-sm-12 p-5">
+   <h1>Cancel Account</h1>
+   <span class="small-text p-1">Account cancelations take effect on your next billing date</span>
+   <div class="col-sm-12 p-1"><a href="/stripe_subscription_and_customer/form/cancle_account" class="btn-primary btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}'data-backdrop="true" >Cancel Account</a></div>
+  </div>
+</div>
+

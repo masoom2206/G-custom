@@ -1,0 +1,11 @@
+{% if data.team_query%}
+  {% set team, muid = '?team=' ~ data.team_query.gid, '&muid=' ~ data.team_query.muid %}
+  {% set team_query = team ~ muid %}
+{% else %}
+  {% set team_query = '' %}
+{% endif %}
+{% if data.tweets.last_trace_tweet != -1 %}
+ <div class="load-more ajax-loadnext-post">
+  <a class="btn btn-primary" href="/twitter/get_latest_tweet/{{data.tweets.last_trace_tweet}}{{team_query}}">LOAD MORE</a>
+</div>
+{% endif %}

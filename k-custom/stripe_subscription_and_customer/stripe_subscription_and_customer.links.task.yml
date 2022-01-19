@@ -1,0 +1,13 @@
+kaboodle_user.profile.edit : # The first plugin ID
+  route_name: kaboodle_user.profile.edit  
+  title: 'Profile Settings'
+  base_route: kaboodle_user.profile.edit
+stripe_subscription_and_customer.custommerinvoices_controller_customerinvoices: # The second plugin ID
+  route_name: stripe_subscription_and_customer.custommerinvoices_controller_customerinvoices
+  title: 'Invoices'
+  base_route: kaboodle_user.profile.edit
+  weight: 100
+stripe_subscription_and_customer.customerbilling_controller_customerbilling: # The second plugin ID
+  route_name: stripe_subscription_and_customer.customerbilling_controller_customerbilling
+  title: 'Billing'
+  base_route: kaboodle_user.profile.edit

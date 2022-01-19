@@ -1,0 +1,2 @@
+stripe_subscription_and_customer:
+  uid: "$uid"

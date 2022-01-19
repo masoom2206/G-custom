@@ -1,0 +1,217 @@
+<div class="my-kaboodles kaboodles-dashboard">
+  <div class="video-maker-layout kaboodles-container d-flex w-100 ff-rw">
+    <div class="col-lg-12">
+    {% if variables.team_query %}
+      <div class="col-lg-12 member-team-name text-center">{{variables.team_name}}</div>
+      <form name="video-maker" id="video-maker" action="/tools/video/maker/save?team={{variables.team_query.gid}}&uid={{variables.team_query.muid}}" method="POST" onsubmit="return validateVideoForm()">
+    {% else %}
+      <form name="video-maker" id="video-maker" action="/tools/video/maker/save" method="POST" onsubmit="return validateVideoForm()">
+    {% endif %}
+        <!--product heading and menu-->
+        <div>
+          <div class="header-box bb">
+            <div class="bgw action-box">
+              <div class="bgw d-flex w-100 space-bw product-header-container">
+                <div class="product-heading">Video Maker</div>
+                <div class="actions">
+                  <button type="submit" id="save" name="op" value="save" class="button form-submit btn btn-secondary font-fjalla">SAVE</button>
+                  <button type="submit" id="preview" name="op" value="preview" class="button form-submit btn btn-secondary font-fjalla">SAVE &amp; PREVIEW</button>
+                  <!--Revert-->
+                  <a href="javascript:void(0)" id="revert-vmt" class="btn btn-secondary text-uppercase font-fjalla">Revert</a>
+                  <button type="button" id="render" name="op" value="renders" class="button form-submit btn btn-secondary font-fjalla text-uppercase disabled">Render</button>
+                  <a href="javascript:void(0)" id="cancel-vmt" class="btn btn-primary text-uppercase font-fjalla">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="km-video-maker-tool" class="clearfix">
+          <!-- Media Kit -->
+          <div class="media-kit-pane">
+            <div class="media-box-vmt">
+              {{ variables.mks }}
+            </div>
+          </div>
+          <!-- Preview -->
+          <div class="preview-pane">
+            <div class="preview-box-vmt" id="media-crop-preview-box">
+              <div id="media-cropper">
+                <div class="cropit-preview">
+                  <canvas id="vmt-canvas-video-editor"></canvas>
+                </div>
+              </div>
+              <div class="preview-area-footer">
+                <div id="finished-size"></div>
+                <div id="estimated-duration"> Duration: 00:00</div>
+              </div>
+            </div>
+          </div>
+          <!-- Properties -->
+          <div class="properties-pane">
+            <div class="properties-box-vmt">
+              <div class="properties-heading">Properties</div>
+              <nav class="custom-nav-layout vmt-properties-tabs">
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                  <a class="nav-item nav-link profile active" id="properties-profile-tab" data-toggle="tab" href="#properties-profile" role="tab" aria-controls="nav-video-kit" aria-selected="false">Profile</a>
+                  <a class="nav-item nav-link soundtrack" id="properties-soundtrack-tab" data-toggle="tab" href="#properties-soundtrack" role="tab" aria-controls="nav-audio-kit" aria-selected="true">Soundtrack</a>
+                  {#<a class="nav-item nav-link voverlay disabled" id="properties-overlay-tab" data-toggle="tab" href="#properties-overlay" role="tab" aria-controls="nav-audio-kit" aria-selected="true">Overlay</a>#}
+                  <a class="nav-item nav-link clip" id="properties-clip-tab" data-toggle="tab" href="#properties-clip" role="tab" aria-controls="nav-photo-kit" aria-selected="false">Clip</a>
+                  <a class="nav-item nav-link vtext" id="properties-text-tab" data-toggle="tab" href="#properties-text" role="tab" aria-controls="nav-audio-kit" aria-selected="true">Video&nbsp;Slides</a>
+                  <a class="nav-item nav-link transition" id="properties-transition-tab" data-toggle="tab" href="#properties-transition" role="tab" aria-controls="nav-audio-kit" aria-selected="true">Transition</a>
+                </div>
+              </nav>
+              
+              <div class="tab-content">
+                <div class="tab-pane fade show active" id="properties-profile" role="tabpanel" aria-labelledby="properties-profile-tab">
+                  <div class="tb-tab-content" id="properties-profile-content-section">
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="VideoName">Video Name</label>
+                        <input type="text" class="form-control" name="video_name" id="video_name" placeholder="Video Name">
+                        <span class="error" id="video_name_error"></span>
+                        <hr class="video-maker">
+                      </div>
+                      <div class="form-group">
+                        <label for="VideoPreset">Video Preset</label>
+                        <select name="media_preset" id="media_preset" class="rounded">
+                          <option value="0">-- Video Preset --</option>
+                          {% for preset in variables.media_preset %}
+                          <option value="{{ preset.tid }}">{{ preset.name }}</option>
+                          {% endfor %}
+                        </select>
+                        <hr class="video-maker">
+                      </div>
+                      {% if variables.useradmin == 1 %}
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="save_as_template" id="save_as_template" value="1">
+                        <label class="form-check-label" for="SaveTemplate">Save as template</label>
+                      </div>
+                      {% endif %}
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="transcoder-specs">Transcoder Specs</div>
+                      <textarea name="transcoder_specs" class="transcoder-specs-desc" id="transcoder-specs-desc"></textarea>
+                    </div>
+                  </div>
+                  
+                  </div>
+                </div>
+                
+                <div class="tab-pane fade" id="properties-clip" role="tabpanel" aria-labelledby="properties-clip-tab">
+                  <div class="tb-tab-content" id="properties-clip-content-section"></div>
+                </div>
+                
+                <div class="tab-pane fade" id="properties-transition" role="tabpanel" aria-labelledby="properties-transition-tab">
+                  <div class="tb-tab-content" id="properties-transition-content-section">
+                    <!--
+                    <div class="transition-duration-box">
+                      <div><input type="checkbox" name="first_clip_transition" id="first-clip-transition" value="1"> Fade-in first clip</div>
+                      <div><input type="checkbox" name="last_clip_transition" id="last-clip-transition" value="1"> Fade-out last clip</div>
+                      <div><input type="checkbox" name="opt_out_transition" id="opt-out-transition" value="1" class="disabled"> Opt-out here</div>
+                    </div>
+                    -->
+                    <div class="transition-box">
+                      <div class="transition-between-clips">
+                        <div class="transition-clips">Transition setting</div>
+                        <div class="transition-duration">
+                          <div class="duration">Duration:</div>
+                          <div class="duration-option">
+                            <select name="transition_duration" id="transition-duration" class="form-control">
+                              {% for duration in variables.transition_duration %}
+                              <option value="{{ duration }}">{{ duration|number_format(2) }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      
+                        <div class="transition-options">
+                          <div><input type="radio" name="transition_option" class="transition-option" id="transition-option-0" data-src="" value="0" checked> None</div>
+                          {% set pimg = '' %}
+                          {% for transition in variables.transitions %}
+                          <div><input type="radio" name="transition_option" class="transition-option" id="transition-option-{{ transition.id }}" value="{{ transition.id }}" data-src="{{ transition.transition_preview }}"> {{ transition.name }}</div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                      <div class="transition-preview" id="transition-preview">{% if pimg is not empty %}<img src="{{ pimg }}" border="0">{% endif %}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="tab-pane fade" id="properties-soundtrack" role="tabpanel" aria-labelledby="properties-soundtrack-tab">
+                  <div class="tb-tab-content" id="properties-soundtrack-content-section">
+				  <div class="sound-track row">
+                    <div class="empty-track p-27 text-align-center w-100">Select an audio file<br> from your Media kits.</div>
+					</div>
+                  </div>
+				  <div id="replace-dialog-sound">
+                   <div>Are you sure you want to replace the current video with this selection?</div>
+                  </div>
+                </div>
+                
+                <div class="tab-pane fade" id="properties-text" role="tabpanel" aria-labelledby="properties-text-tab">
+                  <div class="tb-tab-content p-2" id="properties-text-content-section">
+                    <p>INSTRUCTIONS:</p>
+                    <p>You may create title, text, and other custom video slides in your Kaboodle projects. Click the button below to access your Kaboodles and create Video Slides.</p>
+                    <p>Once created, the Video Slides will be available in your Images selector on the left for the applicable Media Kit(s).</p>
+                    <p>Simply add a Video Slide image like any other image to the story board.</p>
+                    <p><a href="/tools/my-kaboodles/{{variables.uid}}" class="btn btn-primary filter-btn text-uppercase align-baseline font-fjalla">MY KABOODLES</a></p>
+                  </div>
+                </div>
+                
+                {#<div class="tab-pane fade" id="properties-overlay" role="tabpanel" aria-labelledby="properties-overlay-tab">
+                  <div class="tb-tab-content" id="properties-overlay-content-section">
+                    Overlay
+                  </div>
+                </div>#}
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Story Board -->
+        <div class="story-board">
+          <ul id="story-board-elements" class="list-inline">
+            <li class="list-inline-item not-sortable">
+              <div class="first-button-transition button-transition" id="transition-0-0-box">
+                <img src="/modules/custom/video_maker_tool/images/transition.png" border="0"/>
+                <input type="hidden" name="transition[0]" value="0">
+              </div> 
+            </li>
+            <li id="add-video-photo" class="list-inline-item not-sortable">
+              <div class="drop-video-photo"><button type="button">SELECT VIDEO OR PHOTO</button></div>
+            </li>
+          </ul>
+        </div>
+        <div>&nbsp;</div>
+        <input type="hidden" name="video_id" id="video-id" value="0">
+        <input type="hidden" name="selected_mid" id="selected-mid" value="0">
+        <input type="hidden" name="selected_rid" id="selected-rid" value="0">
+        <input type="hidden" name="transition_mid" id="transition-mid" value="">
+        <input type="hidden" name="transition_rid" id="transition-rid" value="">
+        <input type="hidden" name="media_type" id="media-type" value="media">
+      </form>
+      
+      <div id="video-preset-dialog" title="Video Preset">
+        <fieldset>
+          <label for="name">Please select a Video Preset from the options below. You may change this later.</label>
+          <select name="video_preset" id="video_preset" class="rounded">
+            <option value="0">-- Video Preset --</option>
+            {% for preset in variables.media_preset %}
+            <option value="{{ preset.tid }}">{{ preset.name }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+      </div>
+      <div id="cancel-dialog">
+        <div>If you cancel you will lose any unsaved changes. Are you sure?</div>
+      </div>
+      <div id="revert-dialog"></div>
+      <div id="vmt-professional-modal" title="Video Preset"></div>
+      
+    </div>
+  </div>
+</div>
+
+

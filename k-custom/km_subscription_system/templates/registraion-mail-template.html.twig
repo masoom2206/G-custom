@@ -1,0 +1,20 @@
+{% set body = {
+	'#type':   'processed_text',
+	'#text':    mail_body,
+	'#format':  'full_html',
+} %}
+<table cellspacing="15" cellpadding="0" align="center" style="max-width:600px; font-family: 'Open Sans', 
+sans-serif; font-size: 14px; color: #3b3b3b;">
+	<tr style="display: block;"><td style="border: none;"><img src="{{ mail_logo }}" width="auto" height="auto" alt="Kaboodle Media Logo" title="Kaboodle Media"/></td></tr>
+	<tr style="display: block;"><td style="border: none;"><p>{{ body }}</p><p>-The Kaboodle Media team</p></td></tr>
+	<tr><td style="border-bottom:1px solid #023364;"></td></tr>
+</table>
+<table align="center" cellspacing="0" cellpadding="0" style="max-width:500px;">
+	<tr align="center"><td style="font-family: 'Open Sans', sans-serif; font-size: 12px; color: #424242;">
+		<p>This message is a notification 
+		pertaining to a Kaboodle Media&trade; feature in which you participate. To make sure that future 
+		notifications are delivered to your inbox, and not to your junk 
+		folder, please add "support@kaboodlemedia.com" to your email address book.</p>
+		<p>Kaboodle Media&trade; is owned and operated by Escalet Inc., Concord, CA.</p><p>&copy; {{ mail_year }} Escalet, Inc. All rights reserved.</p></td>
+	</tr>
+</table>

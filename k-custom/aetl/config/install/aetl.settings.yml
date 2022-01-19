@@ -1,0 +1,7 @@
+aetl_access_key: ''
+aetl_secret_key: ''
+aetl_use_instance_profile: false
+aetl_credentials_file: ''
+aetl_in_bucket: ''
+aetl_out_bucket: ''
+aetl_region: us-west-2

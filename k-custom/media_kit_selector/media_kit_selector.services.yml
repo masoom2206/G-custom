@@ -1,0 +1,5 @@
+services:
+  media.kit.selector:
+    class: Drupal\media_kit_selector\Controller\MediakitSelectorController
+  media.preset:
+    class: Drupal\media_kit_selector\Controller\MediaPresetController

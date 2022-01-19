@@ -1,0 +1,172 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the media_web_system module.
+ */
+
+/**
+ * Implements hook_update_N().
+ */
+function media_web_system_update_8701() {
+	// web product templates
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table_name = 'web_product_templates';
+  $table_schema = [
+    'description' => 'web product templates',
+    'fields' => [
+      'id' => [
+        'description' => "id",
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'parent_id' => [
+        'description' => "parent",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'product_id' => [
+        'description' => "product",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'node_id' => [
+        'description' => "node",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'user_id' => [
+        'description' => "user",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'media_id' => [
+        'description' => "media",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'name' => [
+        'description' => "template name",
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'length' => 150,
+      ],
+      'template_file_name' => [
+        'description' => "template file name",
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'length' => 150,
+      ],
+      'description' => [
+        'description' => 'description',
+        'type' => 'text',
+        'not null' => TRUE,
+      ],
+      'template_group' => [
+        'description' => "template group",
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'length' => 150,
+      ],
+      'template_base_html' => [
+        'description' => 'template base html',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'medium',
+      ],
+      'template_variables' => [
+        'description' => 'template variables',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'medium',
+      ],
+      'preview_image' => [
+        'description' => "preview image",
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'length' => 150,
+      ],
+      'tags' => [
+        'description' => 'tags',
+        'type' => 'text',
+        'not null' => TRUE,
+      ],
+      'template_type' => [
+        'description' => 'template type',
+        'type' => 'int',
+        'default' => 1,
+        'size' => 'tiny',
+      ],
+      'template_status' => [
+        'description' => 'Status',
+        'type' => 'int',
+        'default' => 1,
+        'size' => 'tiny',
+      ],
+      'created' => [
+        'description' => 'Created Time',
+        'type' => 'int',
+      ],
+      'modified' => [
+        'description' => 'Modified Time',
+        'type' => 'int',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  $schema->createTable($table_name, $table_schema);
+  
+  // web templates favorite
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table_name = 'web_templates_favorite';
+  $table_schema = [
+    'description' => 'web templates favorite',
+    'fields' => [
+      'id' => [
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'node_id' => [
+        'description' => "node",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'template_id' => [
+        'description' => "template",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'user_id' => [
+        'description' => "user",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'is_favorite' => [
+        'description' => 'favorite',
+        'type' => 'int',
+        'default' => 0,
+        'size' => 'tiny',
+      ],
+      'modified' => [
+        'description' => 'Modified Time',
+        'type' => 'int',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  $schema->createTable($table_name, $table_schema); 
+}

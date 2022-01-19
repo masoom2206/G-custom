@@ -1,0 +1,7 @@
+name: Media Design System
+type: module
+description: This module provides functionality kaboodle media products and design tools.
+package: Media
+core: '8.x'
+version: '8.x-1.0'
+project: 'media_design_system'

@@ -1,0 +1,93 @@
+{{ attach_library('stripe_subscription_and_customer/stripe_subscription_and_customer') }}
+<div class="col-sm-12 d-flex align-content-start flex-wrap">
+  <div class="col-sm-12 p-5">
+    <div class="col-sm-12 rounded-border">
+      <h1>Your Current Billing:</h1>
+      {# <div class="col-sm-12 p-1 small text-white">
+      {% if  (billing.all.status == 'trialing') %}
+      <span class="bg-info p-1">Trial ends, <b>{{ billing.all.trial_end | date("M d") }}</b></span>  
+   {% endif %}
+   {% if  (billing.all.canceled_at != '') %}
+    <span class="bg-secondary p-1">Cancel at, <b>{{ billing.all.cancel_at | date("M d, Y i:s a") }}</b></span>
+   {% endif %}
+    </div> #}
+      <div class="col-sm-12">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>{{ billing.subscription.items.data.0.plan.nickname }}</td>
+              <td>${{ (billing.subscription.items.data.0.plan.amount_decimal/100) | number_format(2, '.', ',') }}</td>
+              <td></td>
+            </tr>
+            {% for upgrad in billing.user_add_upgrades %}
+              <tr>
+                <td>{{ upgrad.name }}</td>
+                <td>${{ (upgrad.price/100) | number_format(2, '.', ',') }}</td>
+                <td><a href="/contact?action=billing_storage_cancel_request" class="ml-3 media-delete btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}' data-backdrop="true" >Delete</a></td>
+              </tr>
+            {% endfor %}
+            <tr>
+              <td>Total monthly</td>
+              <td>${{ ((billing.subscription.items.data.0.plan.amount_decimal + billing.subscription.items.data.1.plan.amount_decimal)/100) | number_format(2, '.', ',') }}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-sm-12">Next billing date:  {{ billing.subscription.current_period_end |date("m/d/Y")}}</div>
+    </div>
+  </div>
+  {% if (billing.expertUser == 0) %}
+  <div class="col-sm-12 p-5">
+    <span style="display: inline-block;vertical-align: middle;" class="mr-3"><h1>Change Plan</h1></span><a target="_blank" href="/plans">Compare Plans</a>
+    {% for item in billing.items %}
+      {% if (item.name != 'Reinstate At Professional Level' and item.name != 'Reinstate At Expert Level') %}
+        {% if (item.pricing_id != billing.currentplan) and (billing.all.canceled_at == '') %}
+          <div class="p-1"><a href="/stripe_subscription_and_customer/form/changeplan/{{ item.tid }}/{{ billing.uid  }}" class="mr-3 btn-primary btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}' data-backdrop="true" >{{ item.name }}</a><span>${{ item.subscription_rate }} per month</span></div>
+        {% else %}
+          <div class="p-1"><a href="#" class="mr-3 btn-primary btn disabled use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}' data-backdrop="true" >{{ item.name }}</a><span>${{ item.subscription_rate }} per month</span></div>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+   <span class="small-text p-1 font-italic">Rates for plan changes take effect on your next billing date</span>
+  </div>
+  {% endif %}
+  <div class="col-sm-12 p-5">
+    <h1>Add Upgrades</h1>
+      {% for itemu in billing.add_upgrades %}
+        {% if  (itemu.status == 1 and billing.all.canceled_at == '' ) %}
+          <div class="col-sm-12 p-1">
+          <a href="/stripe_subscription_and_customer/form/addupgrades/{{ billing.uid }}/{{ itemu.tid }}" class="mr-3 btn-primary btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}' data-backdrop="true" >Add Media Vault Storage</a>
+          <span>${{ (itemu.price/100) | number_format(2, '.', ',') }} per month ({{ itemu.storage }}GB additional space)</span></div>
+        {% else %}
+          <div class="col-sm-12 p-1">
+          <a href="#" class="mr-3 disabled btn-primary btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}' data-backdrop="true" >Add Media Vault Storage</a>
+          <span>${{ (itemu.price/100) | number_format(2, '.', ',') }} per month ({{ itemu.storage }}GB additional space)</span></div>
+        {% endif %}
+      {% endfor %}
+    <span class="small-text p-1 font-italic">Billing for upgrades take effects on your next billing date</span>
+  </div>
+  <div class="col-sm-12 p-5">
+    <h1>Payment Method:</h1>
+    <div class="col-sm-12 p-1"><a class="mr-3 btn btn-primary" target="_blank" href="{{ path('stripe_subscription_and_customer.customer_portal_controller_portal', {'cusid': billing.customer.id, 'uid' : billing.uid }) }}">{{ 'View / Update Payment Method'|t }}</a></div>
+    <span class="small-text p-1 font-italic">View and update your credit card and other billing information</span>
+  </div>
+  <div class="col-sm-12 p-5">
+   <h1>Cancel Account</h1>
+    {% if  (billing.all.cancel_at == '') %}    
+      <div class="col-sm-12 p-1"><a href="/stripe_subscription_and_customer/form/cancle_account/{{  billing.uid  }}" class="mr-3 btn-primary btn use-ajax use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}' data-backdrop="true" >Cancel Account</a></div>
+    {% else %}
+      <div class="col-sm-12 p-1">Your subscription will be canceled at the end of your current billing cycle: <b>{{ billing.all.cancel_at | date("M d, Y") }}</b></div>
+      <div class="col-sm-12 p-1"><a href="/stripe_subscription_and_customer/form/cancle_account/{{  billing.uid  }}/revert" class="mr-3 btn-primary btn use-ajax use-ajax" data-dialog-type="modal" data-dialog-options='{"width":500, "heigh":600}' data-backdrop="true" >Don't Cancel</a></div>
+    {% endif %}
+    <span class="small-text p-1 font-italic">Account cancelations take effect on your next billing date</span>
+  </div>
+</div>
+<style>
+.ui-dialog .ui-dialog-titlebar {
+  display:none !important;
+}
+.ui-dialog h1{
+  text-align:center;
+}
+</style>

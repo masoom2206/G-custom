@@ -1,0 +1,57 @@
+{% if variables.options.mk_select == 1 %}
+<div class="media-kit-options w-100" id="media-kit-options-{{ variables.options.element_id }}"></div>
+<input type="hidden" id="mediakitid-{{ variables.options.element_id }}" value="0">
+{% endif %}
+
+{% if variables.options.search == 1 %}
+<div class="media-kit-search w-100" id="media-kit-search-{{ variables.options.element_id }}"></div>
+{% endif %}
+
+<nav class="custom-nav-layout mks-media-kit-tabs">
+  <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+    {% if variables.options.tabs.video is not empty %}
+    <a class="nav-item nav-link {% if variables.options.tabs.video.active == 1 %} active {% endif %}" id="nav-video-kit-tab-{{ variables.options.element_id }}" data-toggle="tab" href="#nav-video-kit-{{ variables.options.element_id }}" role="tab" aria-controls="nav-video-kit" aria-selected="false">Video</a>
+    {% endif %}
+    
+    {% if variables.options.tabs.photo is not empty %}
+    <a class="nav-item nav-link {% if variables.options.tabs.photo.active == 1 %} active {% endif %}" id="nav-photo-kit-tab-{{ variables.options.element_id }}" data-toggle="tab" href="#nav-photo-kit-{{ variables.options.element_id }}" role="tab" aria-controls="nav-photo-kit" aria-selected="false">Images</a>
+    {% endif %}
+    
+    {% if variables.options.tabs.audio is not empty %}
+    <a class="nav-item nav-link {% if variables.options.tabs.audio.active == 1 %} active {% endif %}" id="nav-audio-kit-tab-{{ variables.options.element_id }}" data-toggle="tab" href="#nav-audio-kit-{{ variables.options.element_id }}" role="tab" aria-controls="nav-audio-kit" aria-selected="true">Audio</a>
+    {% endif %}
+    {% if variables.options.tabs.text is not empty %}
+    <a class="nav-item nav-link {% if variables.options.tabs.text.active == 1 %} active {% endif %}" id="nav-text-kit-tab-{{ variables.options.element_id }}" data-toggle="tab" href="#nav-text-kit-{{ variables.options.element_id }}" role="tab" aria-controls="nav-text-kit" aria-selected="true">Text</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="tab-content media-kit-selector" id="tab-content-{{ variables.options.element_id }}">
+  {% if variables.options.tabs.video is not empty %}
+  <div class="tab-pane fade {% if variables.options.tabs.video.active == 1 %} show active {% endif %}" id="nav-video-kit-{{ variables.options.element_id }}" role="tabpanel" aria-labelledby="nav-video-kit-tab-{{ variables.options.element_id }}">
+    <div class="tb-tab-content" id="video-{{ variables.options.element_id }}"></div>
+    <div class="mks-spinner overlay"><div class="spinner-loader"></div></div>
+  </div>
+  {% endif %}
+  
+  {% if variables.options.tabs.photo is not empty %}
+  <div class="tab-pane fade {% if variables.options.tabs.photo.active == 1 %} show active {% endif %}" id="nav-photo-kit-{{ variables.options.element_id }}" role="tabpanel" aria-labelledby="nav-photo-kit-tab-{{ variables.options.element_id }}">
+    <div class="tb-tab-content" id="photo-{{ variables.options.element_id }}"></div>
+    <div class="mks-spinner overlay"><div class="spinner-loader"></div></div>
+  </div>
+  {% endif %}
+  
+  {% if variables.options.tabs.audio is not empty %}
+  <div class="tab-pane fade {% if variables.options.tabs.audio.active == 1 %} show active {% endif %}" id="nav-audio-kit-{{ variables.options.element_id }}" role="tabpanel" aria-labelledby="nav-audio-kit-tab-{{ variables.options.element_id }}">
+    <div class="tb-tab-content" id="audio-{{ variables.options.element_id }}"></div>
+    <div class="mks-spinner overlay"><div class="spinner-loader"></div></div>
+  </div>
+  {% endif %}
+  
+  {% if variables.options.tabs.text is not empty %}
+  <div class="tab-pane fade {% if variables.options.tabs.text.active == 1 %} show active {% endif %}" id="nav-text-kit-{{ variables.options.element_id }}" role="tabpanel" aria-labelledby="nav-text-kit-tab-{{ variables.options.element_id }}">
+    <div class="tb-tab-content" id="text-{{ variables.options.element_id }}"></div>
+    <div class="mks-spinner overlay"><div class="spinner-loader"></div></div>
+  </div>
+  {% endif %}
+</div>

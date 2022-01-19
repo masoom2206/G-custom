@@ -1,0 +1,73 @@
+{#% include 'breadcrumbs.html.twig' %#}
+<div class="my-kaboodles kaboodles-dashboard">
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw">
+    <div class="col-lg-2 left-block">
+      {% include 'leftnav.html.twig' %}
+    </div>
+    
+    <div class="col-lg-10 plr0">
+      <!--product heading and menu-->
+      <div>
+        <div class="header-box">
+          <div class="bgw d-flex w-100 space-bw product-header-container">
+            <div class="product-heading">My Saved {{ product.name }}s</div>
+          </div>
+        </div>
+        <div class="tools-header bb">
+          <div class="header-box">
+            <div class="bgw d-flex w-100 space-bw tool-box">
+              <div class="search"><span><img src="/modules/custom/km_product/images/search.png" height="20"></span> <span class="separator">|</span> <span class="txt-fld"><input type="text" name="search" placeholder="Search File"></span></div>
+              <div>
+                <span><img src="/modules/custom/km_product/images/timesort-active.png" height="32"></span> 
+                <span><img src="/modules/custom/km_product/images/az-inactive.png" height="32"></span>
+                <span><img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="32"></span> 
+                &nbsp; &nbsp; &nbsp;
+                <span><img src="/modules/custom/km_product/images/gridview-active.png" height="32"></span> 
+                <span><img src="/modules/custom/km_product/images/listview-inactive.png" height="32"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="header-box bb"><div class="bgw action-box"><span><input type="checkbox" name="product"> Select All</span> | <span><img src="/modules/custom/km_product/images/download-bottom.png" width="10"> Download Selected</span> | <span><img src="/modules/custom/km_product/images/trash.png" width="9"> Delete Selected</span> | <span><a href="/tools/media/vault/{{user.uid}}">Media Vault</a></span> | <span><a href="/tools/media/kit/{{user.uid}}/{{default_kit}}">Media Kits</a></span></div></div>
+      </div>
+      
+      <div class="product-box">
+        <div class="product-container d-flex w-100 ff-rw">
+        </div>
+      </div>
+      
+      
+      <div>
+        <div class="header-box">
+          <div class="bgw product-header-container">
+            <div class="product-heading">{{ product.name }} Templates</div> 
+          </div>
+        </div>
+        <div class="tools-header bb">
+          <div class="header-box">
+            <div class="bgw d-flex w-100 space-bw tool-box">
+              <div class="search"><span><img src="/modules/custom/km_product/images/search.png" height="20"></span> <span class="separator">|</span> <span class="txt-fld"><input type="text" name="search" placeholder="Search File"></span></div>
+              <div>
+                <span><img src="/modules/custom/km_product/images/timesort-active.png" height="32"></span> 
+                <span><img src="/modules/custom/km_product/images/az-inactive.png" height="32"></span>
+                <span><img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="32"></span> 
+                &nbsp; &nbsp; &nbsp;
+                <span><img src="/modules/custom/km_product/images/gridview-active.png" height="32"></span> 
+                <span><img src="/modules/custom/km_product/images/listview-inactive.png" height="32"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-box">
+        <div class="product-container d-flex w-100 ff-rw">
+          
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+

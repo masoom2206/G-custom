@@ -1,0 +1,381 @@
+social_media.facebook_post:
+  path: '/facebook_post/{fb_page_id}/{mids}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::facebook_post_publish'
+    _title: 'Facebook post through API test'
+  requirements:
+    _access: 'TRUE'
+
+social_media.FBPageCatagoriesAvail:
+  path: '/FBPageCatagoriesAvail/{keyword}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::FBPageCatagoriesAvail'
+  methods: [GET]   
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+social_media.get_media_preset:
+  path: '/getMediaPreset'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::getMediaPreset'
+    _title: 'get media preset'
+  methods: [GET]    
+  requirements:
+    _user_is_logged_in: 'TRUE'
+        
+social_media.get_media_url:
+  path: '/getMediaUrl/{mid}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::getMediaUrl'
+    _title: 'get media preset'
+  methods: [GET]    
+  requirements:
+    _access: 'TRUE'
+    
+social_media.login_link:
+  path: '/social_media_login_link/{social_media_id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::social_media_login_link'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+social_media.getAvailableFeatures:
+  path: '/getAvailableFeatures/{social_nedia_id}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::getAvailableFeatures'
+  methods: [GET]   
+  requirements:
+    _user_is_logged_in: 'TRUE'  
+  options:
+    parameters:
+      social_nedia_id:
+        type: entity:taxonomy_term    
+    
+social_media.FB_object_like:
+  path: '/FB_post_like/{fb_page_id}/{fb_object_id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::setFbObjectLike'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE' 
+    
+social_media.FB_comments_publish:
+  path: '/Fb_comments/{fb_page_id}/{fb_object_id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::FbPublishComments'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE' 
+    
+
+social_media.FB_post_op:
+  path: '/FB_post_op/{fb_page_id}/{fb_post_id}/{op}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::fbPostOperation'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'  
+    
+social_media.FB_Page_info_update:
+  path: '/FB_Page_info_update/{fbPageId}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::fbPageInfoUpdate'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.FB_Page_image_update:
+  path: '/FB_Page_image_update/{fbPageId}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::fbPageImageUpdate'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.FB_comments_replies_load_more:
+  path: '/FBCommentsRepliesLoadMore'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::FBCommentsRepliesLoadMore'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.FB_get_post:
+  path: '/FbGetPost/{fb_page_id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::getFacebookPost'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE'
+    
+    
+social_media.getstart_page:
+  path: '/tools/social/media/{user}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::get_start_page'
+    _title: 'Social Media Manager'
+  requirements:
+    _custom_access: '\Drupal\media_vault_tool\Controller\MediaKitController::media_access'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+
+
+social_media.main_page:
+  path: '/tools/social/media/{user}/{appName}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::main_page'
+    _title: 'Social Media Manager'
+    appName: 0
+  requirements:
+    _custom_access: '\Drupal\media_vault_tool\Controller\MediaKitController::media_access'
+  options:
+    parameters:
+      user:
+        type: entity:user
+      appName:
+        type: entity:taxonomy_term
+    no_cache: 'TRUE'
+
+social_media.schedule_settings:
+  path: '/save-schedule-settings'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::save_schedule_settings'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+social_media.social_network_settings:
+  path: '/save-social-network-settings'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::save_social_network_settings'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.get_social_media_post:
+  path: 'get-social-media-post/{user}/{network_id}/{page}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::get_social_media_posts'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      user:
+        type: entity:user
+
+social_media.delete_social_media_post:
+  path: 'delete-social-media-post/{sid}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::delete_social_media_posts'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.get_social_media_post_by_postID:
+  path: 'get_social_media_post_by_postID'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::get_social_media_post_by_postID'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+social_media.get_social_media_post_by_date:
+  path: 'get-social-media-post-by-date/{network_id}/{type}/{page}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::get_social_media_post_by_date'
+    page: 'NULL'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'   
+
+social_media.update_social_media_post:
+  path: 'update-social-media-post'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::update_social_media_post'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.tags:
+  path: '/get-media-tags'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::get_media_tags'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+
+social_media.all:
+  path: '/admin/config/social_media'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Social Media Configuration'
+  requirements:
+    _permission: 'access administration pages'
+
+social_media.api_settings:
+  path: '/admin/config/social_media/api_settings'
+  defaults:
+    _form: '\Drupal\social_media\Form\ApiSettingsForm'
+    _title: 'Social Media API'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+    
+social_media.twitter_tweet_favourites:
+  path: 'favorites/{action}/{tweet_id}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::twitter_tweet_favourites'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'   
+
+social_media.twitter_retweet:
+  path: 'twitter/{action}/{tweet_id}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::twitter_retweet'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+social_media.twitter_retweet_with_comment:
+  path: 'twitter-retweet-with-comment'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::twitter_retweet_with_comment'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.twitter_getretweet_loadmore:
+  path: 'twitter/get_latest_tweet/{max_id}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::get_latest_tweet'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.twitter_send_tweet_via_DM:
+  path: 'twitter/send_tweet_via_DM'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::send_tweet_via_DM'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'  
+    
+social_media.twitter_search_user:
+  path: 'twitter_search_user/{key}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::search_twitter_users'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.twitter_follower_following:
+  path: 'twitter_friendships/{action}/{target_user_id}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::twitter_follow_unfollow_users'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'  
+
+social_media.twitter_comments_replies:
+  path: 'twitter_comments_replies/{tweet_id}'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::twitter_comments_replies'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+social_media.twitter_update_profile:
+  path: 'twitter_update_profile'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::twitter_update_profile'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.twitter_update_profile_image:
+  path: 'twitter_profile_image_upload'
+  defaults:
+    _controller: '\Drupal\social_media\Controller\SocialMediaTwitterController::twitter_profile_image_upload'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE' 
+    
+social_media.insta_get_post:
+  path: '/InstaGetPost/{instagram_accout_id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::getInstagramPosts'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE' 
+
+social_media.insta_publish_comments:
+  path: '/InstaPublishComments/{instagram_media_id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::publishInstagramComments'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE' 
+   
+social_media.insta_single_post:
+  path: '/InstaSinglePost/{instagram_media_id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::getSingleInstagramPost'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE'
+   
+social_media.insta_load_more_comments:
+  path: '/InstaLoadMoreComments'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::instaLoadMoreComments'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE'
+
+social_media.insta_delete_comments_replies:
+  path: '/InstaDeleteComments/{id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::instaDeleteComments'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE' 
+
+social_media.insta_enable_disable_comments:
+  path: '/InstaIsEnabledComment/{id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::instaIsEnabledComment'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE'
+
+social_media.insta_replies_comments:
+  path: '/InstaRepliesComment/{id}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::instaRepliesComment'
+  methods: [POST]
+  requirements:
+   _user_is_logged_in: 'TRUE'    
+
+social_media.instagram_Page_info_update:
+  path: '/instagram_Page_info_update/{stPageId}'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaInstagramController::instagramPageInfoUpdate'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_media.test_exception:
+  path: '/test_exception'
+  defaults: 
+    _controller: '\Drupal\social_media\Controller\SocialMediaController::test_exception'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    

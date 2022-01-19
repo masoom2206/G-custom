@@ -1,0 +1,7 @@
+stripe-subscriptions.subscription:
+  path: '/subscription'
+  defaults:
+    _controller: '\Drupal\stripe-supscription\Controller\HelloController::content'
+    _title: 'Subscription'
+  requirements:
+    _permission: 'manage own subscription'

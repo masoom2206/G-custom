@@ -1,0 +1,313 @@
+videomaker.add:
+  path: '/tools/video/maker/add'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::addVideo'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+videomaker.edit:
+  path: '/tools/video/maker/{video_id}'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::editVideo'
+    _title: 'Video Maker'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\video_maker_tool\Access\ProductAccess::access_video'
+    
+videomaker.save:
+  path: '/tools/video/maker/save'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoActionController::saveVideo'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+videomaker.render:
+  path: '/tools/video/maker/render'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoActionController::renderVideo'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+videomaker.render.edit:
+  path: '/tools/video/maker/render/edit'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoActionController::editRenderVideo'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'  
+    
+videomaker.delete:
+  path: '/tools/video/maker/{video_id}/delete'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoActionController::deleteVideo'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\video_maker_tool\Access\ProductAccess::access_video'
+    
+videomaker.mediapreset:
+  path: '/videomaker/media/preset/{mediapresetid}'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::getMediaPresetProperties'
+  options:
+    parameters:
+      mediapresetid:
+        type: entity:taxonomy_term
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+videomaker.video.list:
+  path: '/tools/video/{user}'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::manageVideo'
+    _title: 'Video Maker'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _custom_access: '\Drupal\video_maker_tool\Access\ProductAccess::access_product'
+
+videomaker.tags:
+  path: '/tools/video/tags/{user}'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\TagsController::getPrivateTags'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_tags_access'
+ 
+videomaker.create_tags:
+  path: '/tools/video/create/tags'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\TagsController::createPrivateTags'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_tags_access'
+   
+videomaker.remove_tags:
+  path: '/tools/video/remove/tags'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\TagsController::removePrivateTags'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_tags_access'
+    
+videomaker.mks:
+  path: '/tools/media/select/{user}'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\MKSController::getMKS'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\video_maker_tool\Access\ProductAccess::access_product'
+    
+videomaker.preset.media:
+  path: '/tools/video/maker/preset-media'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::getPresetMedia'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+videomaker.populate.transition:
+  path: '/tools/video/maker/populate/transition'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::populateTransition'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'    
+    
+cron.video.maker.generate.init:
+  path: '/tools/video/maker/init'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\GenerateVideoController::initVideoMaking'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+    
+cron.video.maker.photo.clip.edit:
+  path: '/tools/video/maker/photo/clip/edit'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\GenerateVideoController::editPhotoClip'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+    
+cron.video.maker.video.clip.edit:
+  path: '/tools/video/maker/video/clip/edit'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\GenerateVideoController::editVideoClip'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+    
+cron.maker.apply.transition:
+  path: '/tools/video/maker/apply/transition'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\GenerateVideoController::applyTransition'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+    
+cron.video.maker.join.clips:
+  path: '/tools/video/maker/join/clips'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\GenerateVideoController::joinVideoClips'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+    
+cron.video.maker.transcode:
+  path: '/tools/video/maker/transcode'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\GenerateVideoController::transcodeVideo'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+    
+cron.video.maker.finish.transcode:
+  path: '/tools/video/maker/finish/transcode'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\GenerateVideoController::finishTranscode'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+    
+video.maker.mediadata:
+  path: 'mediainfo/{media}'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::mediaInfo'
+  options:
+    parameters:
+      media:
+        type: entity:media  
+  methods: [GET]   
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access'  
+
+video.maker.media.favorite:
+  path: '/tools/video/favorite/{media}'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::makeFavorite'
+  options:
+    parameters:
+      media:
+        type: entity:media  
+  methods: [POST]   
+  requirements:
+    media: '[0-9]+'
+    _custom_access: '\Drupal\media_vault_tool\Access\MediaAccess::custom_media_edit_access'
+
+debug.video.maker.processing:
+  path: '/tools/video/maker/debug/{video_id}/processing'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoDebugController::processingDetail'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\video_maker_tool\Access\ProductAccess::access_video'
+
+debug.video.maker.cleanup:
+  path: '/tools/video/maker/cleanup/{video_id}/processing'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoDebugController::cleanupProcessing'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\video_maker_tool\Access\ProductAccess::access_video'
+    
+debug.video.maker.listing:
+  path: '/tools/video/maker/debug'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoDebugController::listingVideo'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    #_user_is_logged_in: 'TRUE' 
+    _permission: 'access administration pages'
+
+debug.video.maker.process:
+  path: '/tools/video/maker/debug/process'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoDebugController::debugProcess'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+debug.video.maker.transition:
+  path: '/tools/video/maker/debug/transition'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoDebugController::debugTransition'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+videomaker.preview:
+  path: '/tools/video/maker/preview'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\ClassPreviewVideo::preview'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+test.video.maker.save.files:
+  path: '/tools/video/maker/test/save/files'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoTestController::saveMediaFiles'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'    
+    
+videomaker.populate.transitioneffectsave:
+  path: '/tools/video/maker/populate/propertiesave'
+  defaults:
+    _controller: '\Drupal\video_maker_tool\Controller\VideoMakerController::PropertieSave'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    

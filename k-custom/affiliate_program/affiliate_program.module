@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Contains affiliate_program.module.
+ */
+
+/**
+ * Implements hook_mail().
+ */
+function affiliate_program_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+  switch ($key) {
+    case 'new_affiliate_application':
+      $message['from'] = "support@kaboodlemedia.com";
+      $message['subject'] = $params['subject'];
+      $message['body'][] = $params['message'];
+      break;
+  }
+}

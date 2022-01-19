@@ -1,0 +1,211 @@
+media_design_system.kmds.design:
+  path: '/kmds/design/{user}/{media_term}'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::products'
+    _title: 'Media Design System'
+    use_in_kmds: 1
+    user: 0
+    media_term: 0
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_access: 'TRUE'
+
+media_design_system.kmds.group.design:
+  path: '/kmds/design/group/{user}/{media_term}'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::groupProducts'
+    _title: 'Media Design System'
+    use_in_kmds: 1
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_access: 'TRUE'
+
+media_design_system.kmds.library:
+  path: '/kmds/design/{user}/{media_term}/{taxonomy_term}'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::productLibrary'
+    _title: 'Library'
+    _title_callback: '\Drupal\media_design_system\Controller\MediaDesignController::getTitle'
+  options:
+    no_cache: 'TRUE'
+    query:
+      type: ''
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    #_access: 'TRUE'
+    _user_is_logged_in: 'TRUE'
+    media_term: \d+
+    taxonomy_term: \d+
+
+media_design_system.kmds.productApi:
+  path: '/kmds/product-group'
+  defaults: 
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::getAllProductgroups'
+  methods: [GET]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_access: 'TRUE'
+
+media_design_system.kmds.termdataApi:
+  path: '/termdata/{tid}'
+  defaults: 
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::getTermdata'
+  methods: [GET]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_access: 'TRUE'
+
+media_design_system.kmds.tokendataApi:
+  path: '/tokendata'
+  defaults: 
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::getTokenData'
+  methods: [GET]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_access: 'TRUE'
+
+media_design_system.kmds.createTokenData:
+  path: '/createtokendata'
+  defaults: 
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::createTokenData'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _role: 'administrator'
+
+media_design_system.kmds.productTypeApi:
+  path: '/kmds/product-type/{parent_term_id}'
+  defaults: 
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::getAllProductTypesOfGroup'
+  methods: [GET]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_access: 'TRUE'
+
+media_design_system.kmds.productLibraryApi:
+  path: '/kmds/product-library/{product_type}'
+  defaults: 
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::getAllProductLibrariesOfType'
+  methods: [GET]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    #_access: 'TRUE'
+
+media_design_system.kmds.design.create:
+  path: '/kmds/design/tool'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::createDesign'
+    _title: 'Template Designer'
+  options:
+    no_cache: 'TRUE'
+    query:
+      d: ''
+  requirements:
+    _role: 'administrator'
+    #_custom_access: '\Drupal\media_design_system\Controller\MediaDesignController::kmds_tool_access'
+
+media_design_system.kmds.design.createx:
+  path: '/kmds/design/toolx'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::createDesignx'
+    _title: 'Template Designer'
+  options:
+    no_cache: 'TRUE'
+    query:
+      d: ''
+  requirements:
+    _role: 'administrator'
+    #_custom_access: '\Drupal\media_design_system\Controller\MediaDesignController::kmds_tool_access'
+media_design_system.kmds.template.exportdesign:
+  path: '/kmds/design/toolx/{design_id}'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::redirectToDesignx'
+    _title: 'Redirect To Designx'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _role: 'administrator'
+
+media_design_system.kmds.template.exportdesign:
+  path: '/kmds/json-data/{design_id}'
+  defaults:
+    #_controller: '\Drupal\media_design_system\Controller\MediaDesignController::exportTemplateJson'
+    _controller: '\Drupal\km_product\Controller\TemplatesController::getTemplateJson'
+    _title: 'Export Template Json'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _role: 'administrator'
+
+media_design_system.kmds.design.imageurl:
+  path: '/kmds/design-tool/images'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::convertImageToURL'
+    _title: 'convertImageToURL'
+    methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    #_access: 'TRUE'
+    _user_is_logged_in: 'TRUE'
+    _format: json
+
+media_design_system.static_image_upload:
+  path: '/kmds/design-tool/static-image-upload'
+  defaults: 
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::StaticImageUpload'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+media_design_system.all:
+  path: '/admin/config/kmdstool'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'KMDS Designer Tool'
+  requirements:
+    _permission: 'access administration pages'
+
+media_design_system.kmdsapi_settings_form:
+  path: '/admin/config/kmdstool/kmds-api-settings'
+  defaults:
+    _form: '\Drupal\media_design_system\Form\kmdsApiSettingsForm'
+    _title: 'KMDS Tool Api Settings'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+media_design_system.media_kit_images:
+  path: '/media_kit_images/{user}'
+  defaults:
+    _controller: '\Drupal\media_design_system\Controller\MediaDesignController::media_kit_images'
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'

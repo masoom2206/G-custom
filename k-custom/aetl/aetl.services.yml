@@ -1,0 +1,4 @@
+services:
+  aetl:
+    class: Drupal\aetl\AetlService
+    arguments: ['@database', '@config.factory']

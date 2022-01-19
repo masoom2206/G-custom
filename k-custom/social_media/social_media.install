@@ -1,0 +1,258 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_media module.
+ */
+
+/**
+ * Implements hook_update_N().
+ */
+function social_media_update_8705() {
+	$database = \Drupal::database();
+	$schema = $database->schema();
+	$table_name = 'social_media';
+  $table_schema = [
+    'description' => 'Social Media posts and their configurations',
+    'fields' => [
+			'id' => [
+        'description' => "Post Id",
+        'type' => 'serial',
+        'not null' => TRUE,
+				'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+				'unsigned' => TRUE,
+      ],
+      'social_media_name' => [
+        'description' => "Social Media name",
+        'type' => 'varchar',
+        'not null' => TRUE,
+				'length' => 50,
+      ],
+      'text' => [
+        'description' => 'Post Content',
+        'type' => 'text',
+        'not null' => TRUE,
+      ],
+      'media_kit_id' => [
+        'description' => 'media kit id',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'data' => [
+        'description' => 'Schedule data',
+        'type' => 'blob',
+      ],
+      'status' => [
+        'description' => 'Social Media Status',
+        'type' => 'varchar',
+        'not null' => TRUE,
+				'length' => 20,
+      ],
+      'created' => [
+        'description' => 'Created Time',
+        'type' => 'int',
+      ],
+    ],
+		'primary key' => ['id'],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+  
+  $database = \Drupal::database();
+	$schema = $database->schema();
+	$table_name = 'social_media_posts';
+	
+  $table_schema = [
+    'description' => 'Social Media post files',
+    'fields' => [
+			'id' => [
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+				'unsigned' => TRUE,
+      ],
+      'sid' => [
+        'description' => "It refers to the social_media Post Id",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'mid' => [
+        'description' => "Media node id",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'schedule_type' => [
+        'description' => 'Schedule settings option',
+        'type' => 'varchar',
+        'not null' => TRUE,
+				'length' => 15,
+      ],
+      'manual_datetime' => [
+        'description' => 'Manual Settings datetime',
+        'type' => 'int',
+      ],
+      'auto_select' => [
+        'description' => 'Auto Scheduler type',
+        'type' => 'varchar',
+				'length' => 20,
+      ],
+      'auto_day' => [
+        'description' => 'Auto Scheduler day',
+        'type' => 'varchar',
+        'length' => 255,
+      ],
+      'auto_time' => [
+        'description' => 'Auto Scheduler time',
+        'type' => 'varchar',
+        'length' => 5,
+      ],
+    ],
+		'primary key' => ['id'],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+}
+function social_media_update_8706() {
+  	$database = \Drupal::database();
+	  $schema = $database->schema();
+	  $table_name = 'social_media_connection_status';
+    $table_schema = [
+        'description' => 'Social Media Manager, coneection status',
+        'fields' => [
+          'id' => [
+             'description' => "Primary Key",
+             'type' => 'serial',
+             'not null' => TRUE,
+				     'unsigned' => TRUE,
+          ],
+          'termID' => [
+             'description' => 'Social Media Item ID',
+             'type' => 'int',
+             'not null' => TRUE,
+				     'unsigned' => TRUE,
+          ],
+          'uid' => [
+             'description' => 'User ID',
+             'type' => 'int',
+             'not null' => TRUE,
+				     'unsigned' => TRUE,
+          ],
+          'status' => [
+             'description' => '1->Active, 0->Available',
+             'type' => 'int',
+          ],           
+        
+        ], 
+        'primary key' => ['id'],         
+    ];
+    $schema->createTable($table_name, $table_schema); 
+}
+function social_media_update_8710() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	
+	$ufid = [
+		'type' => 'varchar',
+		'description' => "unique form ID",
+		'length' => 50,
+		'not null' => FALSE,
+	 ];
+    $schema->addField('social_media', 'ufid', $ufid);
+	
+	$is_published = [
+     'description' => 'check if post is published in social media or not',
+     'type' => 'int',
+	 'size' =>'tiny',
+	 'default' => 0,
+    ];
+    $schema->addField('social_media', 'is_published', $is_published);
+	
+	
+}
+function social_media_update_8711() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	
+	$token_access = [
+        'description' => 'social media token and other details',
+        'type' => 'blob',
+      ];
+	$schema->addField('social_media_connection_status', 'token_access', $token_access);  
+}
+
+function social_media_update_8712() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	
+	$status = [
+        'description' => '1->Active, 0->Inactive',
+        'type' => 'int',
+	    'size' =>'tiny',
+	    'default' => 0,
+      ];
+	$schema->addField('social_media_connection_status', 'status', $status);  
+}
+function social_media_update_8715() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	$page_id = [
+        'description' => 'If social media has multi page.',
+        'type' => 'varchar',
+	    'length' => 30,
+      ];
+	  $schema->addField('social_media', 'page_id', $page_id);
+	$schedule_type = [
+        'description' => 'Schedule settings option',
+        'type' => 'varchar',
+	    'length' => 15,
+      ];
+	  $schema->addField('social_media', 'schedule_type', $schedule_type);
+      $scheduled_timestamp = [
+        'description' => 'Schedules datetime',
+        'type' => 'int',
+      ];
+    $schema->addField('social_media', 'scheduled_timestamp', $scheduled_timestamp);
+
+}
+function social_media_update_8716() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	$sm_post_id = [
+        'description' => 'Social Media Post Id after send to Social Media',
+        'type' => 'varchar',
+	    'length' => 50,
+      ];
+	  $schema->addField('social_media', 'sm_post_id', $sm_post_id);
+
+}
+function social_media_update_8717() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	$mids = [
+        'description' => 'Media Ids, Comma Separeted',
+        'type' => 'varchar',
+	    'length' => 50,
+      ];
+	  $schema->addField('social_media', 'mids', $mids);
+
+}
+function social_media_update_8718() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	$scheduled_bubble = [
+     'description' => 'flag to maintain enabled/disable schedular for post in edit mode.  ',
+     'type' => 'int',
+	 'size' =>'tiny',
+	 'default' => 0,
+    ];
+	  $schema->addField('social_media', 'scheduled_bubble', $scheduled_bubble);
+
+}

@@ -1,0 +1,6 @@
+km_subscription_system.mailsetting_form:
+  title: 'Subscription Mail'
+  route_name: km_subscription_system.mailsetting_form
+  description: 'Subscription Mail'
+  parent: system.admin_config_system
+  weight: 99

@@ -1,0 +1,67 @@
+<?php
+
+namespace Drupal\generate_pdf\Form;
+
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use TCPDF;
+
+/**
+ * Class AddFontForm.
+ */
+class AddFontForm extends FormBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'add_font_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form['drop_file_ttf_or_otf'] = [
+      '#type' => 'plupload',
+      '#title' => $this->t('Drop file: ttf or otf'),
+      '#description' => $this->t('With this converter you can convert your fonts for the php TCPDF library.'),
+      '#weight' => '0',
+    ];
+    $form['default_location_for_font_save'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Default location for font save'),
+      '#maxlength' => 128,
+      '#size' => 128,
+      '#weight' => '0',
+    ];
+    $form['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Submit'),
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    foreach ($form_state->getValues() as $key => $value) {
+      // @TODO: Validate fields.
+    }
+    parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Display result.
+    foreach ($form_state->getValues() as $key => $value) {
+      \Drupal::messenger()->addMessage($key . ': ' . ($key === 'text_format'?$value['value']:$value));
+    }
+    //    $fontname = new \Com\Tecnick\Pdf\Font\Import('/home/old-cbone/kb/kaboodle/font/Alice.ttf');
+    
+  }
+}

@@ -1,0 +1,16 @@
+{
+    "name": "stripe_subscription_and_customer",
+    "type": "drupal-module",
+    "description": "Stripe Subscription and Customer Portal",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/stripe_subscription_and_customer",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/stripe_subscription_and_customer",
+        "source": "http://cgit.drupalcode.org/stripe_subscription_and_customer",
+    },
+    "require": {
+        "stripe/stripe-php": "^6.40",
+    }
+},

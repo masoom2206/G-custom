@@ -1,0 +1,71 @@
+.checkbox-container span.custom-label{
+    margin-left:25px;
+}
+.checkbox-container .checkmark{
+    //top: 2px !important;
+}
+.background-check .checkbox-container .checkmark {
+    top: -3px !important;
+    left: -25px;
+}
+
+/* coppied  from media_vault_tool.css but we need to add this in global css for checkbox design*/
+.checkbox-container{
+    display: block;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #2196F3;
+    border: 1px solid #2196F3;
+}
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 17px;
+    width: 17px;
+    background-color: #eee;
+    border: 1px solid #606060;
+}
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+.checkbox-container .checkmark:after {
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+.checkbox-container.disabled, ul li.disabled, .disabled {
+    opacity: .4;
+    pointer-events: none;
+}
+.upload-file-custom .media_filelist {
+	    height: auto;
+}
+.custom-btn{color:#fff !important}

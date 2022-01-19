@@ -1,0 +1,68 @@
+	 <div class="wrap-engagement">
+     {% block app_title2 %}
+       <div class="d-flex border bg-white p-2 rounded" style="display:none!important">
+	     <div class="socialmedia-title rounded">
+	       <img width="29" src="{{ appIconSrc }}" alt="{{ appName }}">
+	       <span>{{ appName}}</span>
+	     </div>
+	   </div> 
+       {% endblock %} 
+       {% block page_id_selection %}
+       {% if appName == 'Facebook' %}
+         <div class="col-lg-7 col-xs-12 col-sm-12" style="display:none!important">
+	       <div class="row facebook-page-selection">
+	         <legend>Select Page</legend>
+	          <select class="w-100 rounded" name="page_id" id="page_id">
+               {% for fb_page_id,page_name in data.facebook_kaboodle.fb_pages %}
+                {% if fb_page_id == data.facebook_kaboodle.selected_fb_page %}
+                  <option value="{{fb_page_id}}" selected>{{page_name}}</option> 
+                {% else %} 
+                  <option value="{{fb_page_id}}">{{page_name}}</option>
+                {% endif %}
+               {% endfor %}
+             </select>
+	       </div>
+	     </div>
+       {% endif %}
+       {% if appName == 'Instagram' %}
+         <div class="col-lg-7 col-xs-12 col-sm-12" style="display:none!important">
+	       <div class="row account_id-selection">
+            <div class="current-insta-account d-none">{{data.instagram_kaboodle.selected_account}}</div>
+	        {# <legend>Select Account</legend>
+	         <select class="w-100 rounded" name="accountid" id="instaAccount_id">
+              {% for account_id,account_details in data.instaAccounts %}
+                 {% if account_id == data.instagram_kaboodle.selected_account %}
+                   <option value="{{account_id}}" selected>{{account_details.username}}</option>
+                  {% else %}
+                   <option value="{{account_id}}">{{ account_details.username }}</option>
+                  {% endif %}  
+              {% endfor %}
+             </select> #}
+	       </div>
+	      </div>
+       {% endif %}
+       {% endblock %}
+       <div class="engagement-inner-contents">
+       {% if appName == 'Facebook' %}
+         {% embed '@social_media/facebook/facebook-profile.html.twig' ignore missing %}
+         {% endembed %}
+         {% embed '@social_media/engagement_inner.html.twig' ignore missing %}
+         {% endembed %}
+       {% endif %}
+       
+       {% if appName == 'Instagram' %}
+         {% embed '@social_media/instagram/instagram-engagement-inner.html.twig' ignore missing %}
+         {% endembed %}
+       {% endif %}
+       
+       {% if appName == 'Twitter' %}
+         {% embed '@social_media/twitter/twitter-profile.html.twig' ignore missing %}
+         {% endembed %}
+         {% embed '@social_media/twitter/twitter_engagement_inner.html.twig' ignore missing %}
+         {% endembed %}
+         {% embed '@social_media/twitter/twitter_tweet_load_more.html.twig' ignore missing with {'max_id': data.tweets.last_trace_tweet} %}
+         {% endembed %}
+       {% endif %} 
+       
+       </div>
+	 </div>

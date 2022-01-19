@@ -1,0 +1,17 @@
+{
+  "name": "generate_pdf",
+  "type": "drupal-module",
+  "description": "This module use for gnerate pdf form fabricjs json",
+  "keywords": [
+  ],
+  "homepage": "https://www.drupal.org/project/generate_pdf",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/generate_pdf",
+    "source": "http://cgit.drupalcode.org/generate_pdf",
+  },
+  "required" : {
+    "tecnickcom/tcpdf": "6.3.5",
+    "tecnickcom/tc-lib-pdf-font": "^1.7"
+  }
+}

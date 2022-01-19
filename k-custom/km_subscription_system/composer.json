@@ -1,0 +1,13 @@
+{
+    "name": "km_subscription_system",
+    "type": "drupal-module",
+    "description": "Kaboodle Media Subscription System",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/km_subscription_system",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/km_subscription_system",
+        "source": "http://cgit.drupalcode.org/km_subscription_system",
+    },
+}

@@ -1,0 +1,90 @@
+.custom-comment-box textarea:focus,
+.custom-comment-reply-box textarea:focus,
+.custom-comment-edit textarea:focus {
+  border-radius: 20px;
+  border: none;
+  overflow: hidden;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  /*remove the resize handle on the bottom right*/
+  padding: 5px
+}
+.custom-center{
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+.custom-comment-box textarea,
+.custom-comment-reply-box textarea,
+.custom-comment-edit textarea {
+  border-radius: 20px;
+  border: none;
+  overflow: hidden;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  /*remove the resize handle on the bottom right*/
+  padding: 5px
+}
+
+.post-medias .custom-post-styles {
+
+  border: 2px solid #f2f2f2;
+  padding: 2px;
+  border-radius: 10px;
+  float: left;
+  cursor: pointer;
+}
+
+.post-medias .custom-post-styles:hover {
+  opacity: .5;
+}
+
+.post-medias .more-images {
+  position: absolute;
+  top: 200px;
+  right: 0;
+}
+
+.post-medias .more-images .count-rest-image {
+  color: #fff;
+  font-size: 3em;
+  position: relative;
+  top: 60px;
+}
+
+.comment-replies-look .comment-action-wrap {
+  width: 80% !important;
+}
+.facebook-block-wraper{
+    margin-left: -15px;
+    margin-right: -15px;
+    border: 1px solid #fff;
+}
+.facebook-block-wraper .profile-pic{
+    position:absolute;
+    bottom: 25%;
+    left: 2%;
+    width: 120px;
+    height: 120px;
+}
+.facebook-block-wraper .profile-pic img{
+    height: 120px;
+    border: 2px solid grey;
+    padding: 5px;
+    width: 100%;
+    background: #ffffff;
+    }
+.facebook-profile-banner {
+    margin-bottom: 50px;
+}
+.facebook-profile-content {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}    

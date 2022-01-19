@@ -1,0 +1,42 @@
+kaboodle_user.user_custom_profile:
+  path: '/my-account'
+  defaults:
+    _controller: '\Drupal\kaboodle_user\Controller\UserCustomController::user_edit_profile'
+    _title: 'Profile Settings'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+kaboodle_user.get:
+  path: '/user/{user}/get'
+  defaults:
+    _controller: '\Drupal\kaboodle_user\Controller\UserCustomController::getUser'
+    _title: 'User Raw Data'
+  options:
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+kaboodle_user.reset.pass:
+  path: '/reset-password'
+  defaults:
+    _form: '\Drupal\user\Form\UserPasswordForm'
+    _title: 'Reset your password'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _maintenance_access: TRUE
+
+kaboodle_user.profile.edit:
+  path: '/tools/profile/{user}'
+  defaults:
+    _entity_form: 'user.default'
+    _title_callback: 'Drupal\user\Controller\UserController::userTitle'
+  options:
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\my_groups\Access\UserAccessCheck::profileAccess'

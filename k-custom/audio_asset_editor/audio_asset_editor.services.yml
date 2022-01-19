@@ -1,0 +1,3 @@
+services:
+  audioAsset.editor:
+    class: Drupal\audio_asset_editor\Controller\AudioAssetEditorController

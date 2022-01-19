@@ -1,0 +1,203 @@
+{% for key,value in data.fb_posts.fb_post_modified %} <div class="post-content-area mb-2">
+  <div class="border wrap-post-content-area bg-white" style="border-radius:10px"> 
+
+    {% if value.attachments.data.0 is defined %}
+      {% if value.attachments.data.0.type == 'cover_photo' %}
+        {% set postaction = ' updated their cover photo.' %}
+        {% set datadeleted = 0 %}
+        {% set cancel_class = 'd-none' %}
+         {% set ok_class = 'no-confirm-fb-postdelete' %}
+        {% elseif value.attachments.data.0.type == 'profile_media' %}
+         {% set postaction = ' updated their profile picture.' %}
+         {% set datadeleted = 0 %}
+         {% set cancel_class = 'd-none' %}
+         {% set ok_class = 'no-confirm-fb-postdelete' %}
+        {% else %}
+         {% set postaction = '' %}
+         {% set datadeleted = 1 %}
+         {% set cancel_class = 'display' %}
+         {% set ok_class = 'confirm-fb-postdelete' %}
+      {% endif %} 
+      {% else %}
+       {% set postaction = '' %}
+       {% set datadeleted = 1 %}
+       {% set cancel_class = 'display' %}
+       {% set ok_class = 'confirm-fb-postdelete' %}
+    {% endif %}
+    {% if data.team_query%}
+      {% set team, muid = '?team=' ~ data.team_query.gid, '&muid=' ~ data.team_query.muid %}
+      {% set team_query = team ~ muid %}
+    {% else %}
+      {% set team_query = '' %}
+    {% endif %}
+
+    <div class="post-content-first-half pl-3 pr-3 pt-3">
+      <div class="post-header d-flex">
+        <div class="page-id d-none">{{data.fb_posts.page_id}}</div>
+        <div class="current_user_profile d-none">{{data.fb_posts.profile_pic.data.url}}</div>
+        <img src="{{ value.from.profile_pic.data.url}}" class="rounded-circle" alt="pic" width="40" height="40">
+        <div class="username-post-date w-100 pl-2" style="margin-top:-5px">
+          <span class="username"><b>{{ value.from.name }}</b>{{ postaction }}</span>
+          <span class="post-operation-block float-right">
+            <i class="fas fa-ellipsis-h"></i>
+            <div class="post-operation-content">
+              <div class="post-operation-wrapeer p-2">
+                <ul class="list-unstyled">
+                  <li>
+                    <a class="delete-post" data-deleted = "{{datadeleted}}" href="/Fb_post_op/{{data.fb_posts.page_id}}/{{value.fb_postid}}/delete{{team_query}}">Delete From Page </a>
+                  </li> {#   <li><a href="/fb_post_op/{{data.fb_posts.page_id}}/{{value.fb_postid}}/edit{{team_query}}">Edit Post</a></li> #}
+                </ul>
+              </div>
+            </div>
+          </span>
+          <br> {% if value.admin_creator is not empty %}
+           <span class="publisher-post-date" style="font-size:14px">Published by <a href="{{value.admin_creator.link}}">{{value.admin_creator.name}}</a>
+            {{ value.created_date }} at {{value.created_time}}
+          </span>
+          {% else %}
+          <span class="publisher-post-date" style="font-size:14px">{{ value.created_date }} at {{value.created_time}} </span>
+          {% endif %}
+        </div>
+      </div> 
+      {% if value.message is not empty %}
+       {% set messageLength = (value.message|raw |nl2br| length) %} 
+           {#
+		     <div class="message-block">
+			   {% if messageLength > 100 %}
+			     <p class="post-text" >{{value.message|raw  }}
+				    <span class="post-text-next d-none">{{value.message|raw }}</span>
+				    <a href='' class="view-more-less"> View More</a>
+				 </p>
+			   {% else %}
+				<p class="post-text">{{value.message|raw}}</p>
+			   {% endif %}
+		     </div>
+			 #}
+             <p class="post-text">{{value.message|raw}}</p>
+       {% endif %}
+    </div>
+    <div class="post-content-second-half">
+      <div class="post-medias" style="position:relative">
+      {% for key_attach,value_attach in value.attachments.data %}
+       {% if value_attach.subattachments is defined %}
+        {% for key_subattach,value_subattach in value_attach.subattachments.data %}
+         {% if value_subattach.type == 'photo' %}
+          {% if key_subattach < 3 %}
+           {% if value_attach.subattachments.data|length == 2 %}
+             {% set custom_style  = 'width:50%;' %}
+           {% else %}
+           {% if key_subattach == 0 %}
+             {% set custom_style  = 'width:100%;' %}
+           {% else %}
+         {% set custom_style  = 'width:50%;' %}
+       {% endif %}
+     {% endif %}
+      <img class="custom-post-styles" style="{{custom_style}}" src="{{value_subattach.media.image.src}}" alt="img"> {% elseif key_subattach == 4 %} <div class="more-images custom-post-styles text-center" style="width:50%">
+          <span class="count-rest-image">+{{value_attach.subattachments.data|length - 3 }}</span>
+        </div> {% endif %} {% elseif value_subattach.type == 'video' %} <video class="video-play-on-scroll" width="100%" height="240" controls muted>
+          <source src="{{value_subattach.media.source}}" type="video/mp4">
+        </video> {% endif %} {% endfor %} {% else %} {% if value_attach.type == 'photo' %} <img class="w-100 custom-post-styles" src="{{value_attach.media.image.src}}" alt="img"> {% elseif value_attach.type == 'video_autoplay' %} <video class="video-play-on-scroll" width="100%" height="240" controls muted>
+          <source src="{{value_attach.media.source}}" type="video/mp4">
+        </video> {% elseif value_attach.type == 'video_inline' %} <video class="video-play-on-scroll" width="100%" height="240" controls muted>
+          <source src="{{value_attach.media.source}}" type="video/mp4">
+        </video> 
+        {% elseif value_attach.type == 'cover_photo'%} 
+        <img class="custom-post-styles" style="width:100%" src="{{value_attach.media.image.src}}" alt="img">
+        {% elseif value_attach.type == 'profile_media'%} 
+        <img class="rounded-circle custom-center" style="height:auto;" src="{{value_attach.media.image.src}}" alt="img"> 
+        {% elseif value_attach.type == 'life_event'%}
+        <div class="life-event-caption">{{value.caption}} </div> 
+        {% elseif value_attach.type == 'share' %}
+         {% if value_attach.media.source is defined %}
+          <iframe width="100%" height="240" src="{{value_attach.media.source}}"></iframe> 
+          {% else %}
+         <img class="w-100 custom-post-styles" src="{{value_attach.media.image.src}}" alt="img">
+        {% endif %} <a href="{{value_attach.target.url}}">
+          <div class="post-image-captions bg-f2f2f2 pl-3 pr-3 pb-2" style="border-bottom: 2px solid #f2f2f2">
+            <div class="image-link">{{value.caption}}</div>
+            <div class="caption-title"><b>{{value_attach.title}}</b></div>
+            <div class="caption-description">
+              {{value_attach.description}}
+            </div>
+          </div>
+        </a> {% endif%} {% endif %} {% if value_attach.type == 'life_event' %} <div class="life-event-caption">{{value.caption}}</div>
+        <div class="life-event-description">{{value_attach.description}}</div> {% endif%} {% endfor %}
+      </div>
+    </div>
+    <div class="post-content-third-half" style="clear:both">
+      <div class="post-actions p-3">
+        <div class="wrap-post-actions">
+          <div class="user-reactions d-flex align-items-center " style="height:50px">
+            <span class="user-liked w-50"> {% if value.like.likes.summary.has_liked ==1 %} <img class="action-icon like-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-liked-128px.png" alt="icon"> {% if value.like.likes.summary.total_count > 1 %} <span class="like-text user-liked-all" style="padding-left:2px">
+                <span class="first-part"> you and </span>
+                <span class="like-counter"> {{value.like.likes.summary.total_count - 1}}</span>
+                <span class="third-part"> others </span>
+              </span> {% else %} <span class="like-text user-liked-all" style="padding-left:2px">
+                <span class="first-part">you </span>
+                <span class="like-counter"></span>
+                <span class="third-part"></span>
+              </span> {% endif %} {% else%} {% if value.like.likes.summary.total_count == 1 %} <img class="action-icon like-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-liked-128px.png" alt="icon">
+              <span class="like-text" style="padding-left:2px">
+                <span class="first-part"> </span>
+                <span class="like-counter"> {{value.like.likes.summary.total_count}}</span>
+                <span class="third-part"></span>
+              </span> {% elseif value.like.likes.summary.total_count > 1 %} <img class="action-icon like-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-liked-128px.png" alt="icon">
+              <span class="like-text" style="padding-left:2px">
+                <span class="first-part"> </span>
+                <span class="like-counter"> {{value.like.likes.summary.total_count}}</span>
+                <span class="third-part"></span>
+              </span> {% elseif value.like.likes.summary.total_count == 0 %} <img class="action-icon like-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-liked-128px.png" alt="icon">
+              <span class="like-text" style="padding-left:2px">
+                <span class="first-part"> </span>
+                <span class="like-counter"> {{value.likes.like.summary.total_count}}</span>
+                <span class="third-part"></span>
+              </span> {% endif %} {% endif %} </span>
+            <span class="user-comments-share w-50 text-right">
+              <span class="comment-post">
+                <a href="#">
+                  <span class="counter"> {{ value.comments.summary.total_count }} </span>
+                  <label>Comments</label>
+                </a>
+              </span> {% if value.shares is defined %} <span class="shared-post">
+                <span class="counter"> {{ value.shares.count }} </span>
+                <label>Shares<label> {% endif %} </span>
+            </span>
+          </div>
+          <div class="user-actions d-flex align-items-center" style="height:50px;border-top:2px solid #f2f2f2; border-bottom: 2px solid #f2f2f2">
+            <span class="likes-custom text-center" style="width:50%">
+              <a href="/FB_post_like/{{data.fb_posts.page_id}}/{{value.fb_postid}}{{team_query}}"> {% if value.like.likes.summary.has_liked ==1 %} <img class="action-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-liked-128px.png" alt="icon"> {% else %} <img class="action-icon" src="/modules/custom/social_media/images/FacebookIcons/Thumb-Icon-32363b.png" alt="icon"> {% endif %} <span style="padding-left:2px">Like</span>
+              </a>
+            </span>
+            <span class="comment-custom text-center" style="width:50%">
+              <a href="#">
+                <img class="action-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-comment-32363b-128px.png" alt="icon">
+                <span style="padding-left:2px"> Comment</span>
+              </a>
+            </span>
+			<!--
+            <span class="share-custom text-center" style="width:33.33%">
+              <a href="#">
+                <img class="action-icon" src="/modules/custom/social_media/images/FacebookIcons/Facebook-Share-32363b-128px.png" alt="icon">
+                <span style="padding-left:2px">Share</span>
+              </a>
+            </span>
+			-->
+          </div>
+          <div class="comment-area pt-2 d-none">
+            <div class="displayed-comments"> {% embed '@social_media/facebook/facebook-comments.html.twig' ignore missing with {'value_comment_data': value.comments} %} {% endembed %} </div> {% block comment_box %} <div class="comment-boxes d-flex">
+              <img style="border: 2px solid #f2f2f2" src="{{data.fb_posts.profile_pic.data.url}}" class="rounded-circle" alt="pic" width="40" height="40">
+              <div class="custom-comment-box w-100" style="padding-left:2px">
+                <a class="post-comment-link d-none" href="/Fb_comments/{{data.fb_posts.page_id}}/{{value.fb_postid}}{{team_query}}"></a>
+                <textarea class="w-100 bg-f2f2f2" style="border-radius:20px" id="comment-box" rows="1" placeholder="Write a comment.."></textarea>
+              </div>
+            </div> {% endblock %} {% if value.comments.paging.next %} {% block load_comments %} <div class="load-more comments-block">
+              <a href="{{ value.comments.paging.next }}">Load Previous Comments</a>
+            </div> {% endblock %} {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> {% endfor %} {% if data.fb_posts.next is defined %} <div class="load-more ajax-loadnext-post">
+  <a class="btn btn-primary" href="{{data.fb_posts.next}}">Load More</a>
+</div> {% endif %}

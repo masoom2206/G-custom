@@ -1,0 +1,10 @@
+name: Stripe Subscription
+type: module
+description: Subscription integration with Stripe.
+project: stripe_subscription
+package: Stripe
+core: 8.x
+configure: admin/config/stripe/subscription
+
+dependencies: 
+  - stripe

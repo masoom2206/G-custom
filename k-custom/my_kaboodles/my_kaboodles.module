@@ -1,0 +1,146 @@
+<?php
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\Entity\Node;
+
+use Drupal\user\Entity\User;
+use Drupal\media\Entity\Media;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Component\Utility\Html;
+/*
+ * @file
+ * My Kaboodles page template
+*/
+function my_kaboodles_theme($existing, $type, $theme, $path) {
+  return [
+    'my_kaboodles_template' => [
+      'variables' => [
+        'foo' => NULL, 
+        'data' => array(), 
+        'archived_data' => array(), 
+        'uid' => NULL,
+        'archive' => NULL,
+        'shared_block' => NULL,
+        'pager' => array(),
+      ],
+    ],
+    'my_kaboodles_shared_template' => [
+      'variables' => [
+        'foo' => NULL, 
+        'data' => array(), 
+        'uid' => NULL,
+        'pager' => array(),
+      ],
+    ],
+    'my_kaboodles_dashboard' => [
+      'variables' => [
+        'data' => array(), 
+        'kaboodle_title' => NULL,
+        'kaboodle_title_cap' => NULL,
+        'team' => array(),
+        'user_detail' => array(),
+        'nid' => NULL,
+        'product_details' => array(),
+        //'pps_lists' => array(),
+        'dashboard_links' => array(),
+        'dashboard_links2' => array(),
+        'service_id' => NULL,
+        'product_status_icon' => NULL,
+        'professional_user' => NULL,
+      ],
+    ],
+    'my_kaboodles_notifications' => [
+      'variables' => [
+        'data' => array(), 
+        'kaboodle_title' => NULL,
+        'node' => array(),
+        'uid' => NULL,
+        'pager' => array(),
+      ],
+    ],
+		'all_notifications' => [
+      'variables' => [
+        'data' => array(), 
+        'kaboodle_title' => NULL,
+        'table' => array(),
+        'uid' => NULL,
+        'user' => array(),
+        'pager' => array(),
+      ],
+    ],
+    'all_products' => [
+      'variables' => [
+        'data' => array(), 
+        'kaboodle_title' => NULL,
+        'table' => array(),
+        'uid' => NULL,
+        'user' => array(),
+        'pager' => array(),
+      ],
+    ],
+    'my_kaboodles_reports' => [
+      'variables' => [
+        'data' => array(), 
+        'kaboodle_title' => NULL,
+        'node' => array(),
+        'pager' => array(),
+      ],
+    ],
+    'subscription_pricing_template' => [
+      'variables' => [
+        'data' => array(), 
+        'subscription_title' => NULL,
+        'uid' => NULL,
+        'items' => array(),
+        'items2' => array(),
+        'feature_list_name' => NULL,
+        'feature_list_description' => NULL,
+        'block_professional_text' => NULL,
+        'block_expert_text' => NULL,
+        'display' => NULL,
+      ],
+    ],
+    'reactivate_subscription_pricing_template' => [
+      'variables' => [
+        'data' => array(), 
+        'subscription_title' => NULL,
+        'uid' => NULL,
+        'full_name' => NULL,
+        'items' => array(),
+        'items2' => array(),
+        'feature_list_name' => NULL,
+        'feature_list_description' => NULL,
+        'block_professional_text' => NULL,
+        'block_expert_text' => NULL,
+        'display' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_mail_alter().
+ */
+function my_kaboodles_mail_alter(&$message) {
+  switch ($message['key']) {
+    case 'page_mail':
+    case 'page_copy':
+    case 'cancel_confirm':
+    case 'password_reset':
+    case 'register_admin_created':
+    case 'register_no_approval_required':
+    case 'register_pending_approval':
+    case 'register_pending_approval_admin':
+    case 'status_activated':
+    case 'status_blocked':
+    case 'status_canceled':
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+      foreach ($message['body'] as $key => $body) {
+        $message['body'][$key] = new FormattableMarkup($body, []);
+      }
+      break;
+
+  }
+}

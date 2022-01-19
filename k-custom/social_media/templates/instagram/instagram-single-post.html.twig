@@ -1,0 +1,100 @@
+<div class="col-lg-10 instagram-single-post" style="font-size:14px" data-postId = "{{data.single_insta_post.id}}">
+  <div class="modal-header-single-insta">
+    <div class="btn btn-cancel close-modal float-right">close</div>
+   </div>
+    <div class="row insta-single-post-wrap">
+    
+    <div class="col-lg-8 media-sections">
+     <div class="insta-media">
+      {% if data.single_insta_post.media_type == 'IMAGE' %}
+       <img class="w-100" src="{{data.single_insta_post.media_url}}">
+      {% endif %}
+      {% if data.single_insta_post.media_type == 'CAROUSEL_ALBUM' %}
+        <div id="multi-photo-carousal-0" class="owl-carousel owl-theme">
+        {% for key1,value1 in data.single_insta_post.children.data %}
+         <div class="item">
+         {% if value1.media_type == 'IMAGE'  %}
+         <img class="w-100" src="{{value1.media_url}}">
+         {% endif %}
+         {% if value1.media_type == 'VIDEO'  %}
+         <video width="100%" controls>
+          <source src="{{value1.media_url}}" type="video/mp4">
+         </video>
+         {% endif %}
+         </div>
+       {% endfor %}
+       </div>
+      {% endif %}
+      {% if data.single_insta_post.media_type == 'VIDEO'  %}
+        <video width="100%" controls>
+         <source src="{{data.single_insta_post.media_url}}" type="video/mp4">
+        </video>
+      {% endif %}
+      
+      </div>
+    </div>
+    <div class="col-lg-4 comment-sections p-0">
+      <div class="insta-captions  d-flex align-items-center">
+        <div class="float-left" style="width:80%">
+         <!--<img class="rounded-circle" width="40" height="40" alt="pic" src="https://instagram.fakx1-1.fna.fbcdn.net/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=instagram.fakx1-1.fna.fbcdn.net&_nc_ohc=FICg3YM1jeEAX_ex-Yc&oh=1cb04c2c4804c69fc127146405a78b72&oe=6010CC8F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+         -->
+         <i class="fas fa-user-circle"></i>
+          <b>{{data.single_insta_post.username}}</b>
+         </div>
+         <div class="insta-single-post-op text-center float-right" style="width:20%">
+          <i class="fas fa-ellipsis-h"></i>
+          <ul class="list-unstyled insta-single-post-op-content" style="display:none;">
+          <li>
+            {% if data.single_insta_post.is_comment_enabled ==  'true' %}
+             <span data-url="{{data.single_insta_post.id}}" data-action ="0"> Disable Comments </span>
+              {% else %}
+             <span data-url="{{data.single_insta_post.id}}" data-action ="1"> Enable Comments </span>
+            {% endif %}  
+          </li>
+          </ul>
+         </div>
+         
+      </div>
+      
+      <div class="displayed-comments">
+        <div class="displayed-comments-wrap">
+         <ul class = "list-unstyled comment-area">
+          {% if value.caption is defined %}
+           <li class=" mb-2 ">
+             <!--<img class="rounded-circle" width="20" height="20" alt="pic" src="https://instagram.fakx1-1.fna.fbcdn.net/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=instagram.fakx1-1.fna.fbcdn.net&_nc_ohc=FICg3YM1jeEAX_ex-Yc&oh=1cb04c2c4804c69fc127146405a78b72&oe=6010CC8F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+             -->
+             <b>{{data.single_insta_post.username}}</b> 
+             {{data.single_insta_post.caption}} 
+             <br>
+          </li>
+           {% endif %}
+           {% embed '@social_media/instagram/instagram-comments.html.twig' ignore missing %}
+           {% endembed %}
+         </ul>
+         {% if data.single_insta_post.comments.paging.next is defined %}
+          <div class="load-more-comment ajax-loadnext-comment">
+           <div class="more-comment" data-next = {{data.single_insta_post.comments.paging.next}}>+</div>
+          </div>
+        {% endif %}
+        </div>
+      </div>
+      
+      <hr>
+      <div class="insta-insight-icon pb-2 pl-2">
+        <i class="far fa-heart"></i>
+        <i class="fas fa-comment"></i>
+        {% if data.single_insta_post.like_count > 0 %}
+       <span class="likes-count">
+        {{data.single_insta_post.like_count}} Likes
+       </span><br>
+       {% endif %}
+      </div>
+       {% if data.single_insta_post.is_comment_enabled ==  'true' %} 
+      <div class="insta-comments mb-3" style="position:relative" data-username = "{{data.single_insta_post.username}}" data-instaMediaId = "{{data.single_insta_post.id}}">
+       <div class="insta-comment" placeholder="Add a comment..." contenteditable="true"></div>
+       <div class="post-comment font-fjalla disabled">POST</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

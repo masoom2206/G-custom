@@ -1,0 +1,8 @@
+name: Media Vault Tool
+type: module
+description: This module provides functionality to manage uploaded files.
+package: Media
+core: '8.x'
+version: '8.x-1.0'
+project: 'media_vault_tool'
+configure: media_vault_tool.adminsettings

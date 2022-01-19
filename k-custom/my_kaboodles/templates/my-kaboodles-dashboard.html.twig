@@ -1,0 +1,151 @@
+<!--
+<i class="fas fa-chevron-down"></i>
+<i class="fas fa-chevron-up"></i>
+<i class="fas fa-check-square"></i>
+<i class="far fa-circle"></i>
+<i class="fas fa-arrow-alt-circle-right"></i>
+<i class="fas fa-exclamation"></i>
+
+-->
+<!--<nav class="navbar navbar-expand-sm kaboodles-breadcrumbs">
+  <a href="/my-kaboodles/{{user_detail.uid}}">My Kaboodles</a>&nbsp;&gt;&gt;&nbsp;{{kaboodle_title}} Dashboard
+</nav>-->
+<div class="my-kaboodles kaboodles-dashboard">
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw">
+    <div class="col-lg-2 left-block">
+      <div class="dashboard-menu">
+        <div class="user-details">
+          <div class="profile-url"><img src="{{user_detail.profile_url}}" /></div>
+          <div class="user-name">{{user_detail.user_name}}</div>
+        </div>
+        {% if team.kaboodle_owner_view == true %}
+        {#
+				 <div class="products-progress">Site Tools</div>
+        <ul class="kaboodle-dashboard-links-new">
+          {% for links in dashboard_links %}
+            <li><a href="{{links.link}}">{{links.title}}</a></li>
+          {% endfor %}
+          <!--<li><a href="/tools/my-kaboodles/{{user_detail.uid}}">My Kaboodles</a></li>
+          <li><a href="/kmds/design/{{user_detail.uid}}">Media Designer</a></li>
+          <li><a href="/tools/media/vault/{{user_detail.uid}}">Media Vault</a></li>
+          <li><a href="/tools/mwa/{{user_detail.uid}}">Mobile Web Apps</a></li>
+          <li><a href="/tools/social-media/{{user_detail.uid}}">Social Media Manager</a></li>
+          <li><a href="/tools/video/{{user_detail.uid}}">Video Maker</a></li>
+          <li><a href="/tools/notifications/{{ user_detail.uid }}">Notifications</a></li>-->
+        </ul>
+        #}
+				{% endif %}
+       {# <div class="kaboodle-dashboard active">{{kaboodle_title}}</div> #}
+        {# <ul class="kaboodle-dashboard-links-new2">
+         {% for links in dashboard_links2 %}
+            <li><a href="{{links.link}}">{{links.title}}</a></li>
+          {% endfor %}
+        </ul>#}
+        
+        {% if product_details %}
+          <!--<div class="products-progress"><a href="javascript:void(0);">Default Media Kit</a></div>
+          <div class="products-progress"><a href="javascript:void(0);">Edit Kaboodle Settings</a></div>-->
+          <div class="kaboodle-dashboard active">{{kaboodle_title}}</div>
+          <ul>
+           {% if team.kaboodle_owner_view == true %}
+          <li><img src="{{ product_status_icon }}" height="15" width="15"/>
+          <a href="{{ dashboard_links2[1].link }}">{{ dashboard_links2[1].title }}</a>
+          </li>
+          {% endif %}
+          {% for product in product_details %}
+            <li>
+							<img src="{{ product.product_status_icon }}" height="15" width="15"/>
+							{% if product.status == 1 %}
+                {% if (professional_user == 1) and (product.name == 'Email Newsletter' or product.name == 'Reusable Content Block' or product.name == 'Video Slides' or product.name == 'Web Page')  %}
+                  <a href="javascript:void(0);" class="professional-user-modal">{{ product.name }}</a>
+                {% elseif product.path_override != NULL %}
+                  <a href="{{ product.path_override[0]['value'] }}">{{ product.name }}</a>
+                {% else %}
+                  <a href="{{ product.url }}">{{ product.name }}</a>
+                {% endif %}
+						 {% else %}
+							{{ product.name }}
+						{% endif %}
+              <!--<div class="pps-status">{{ product.pps_status }}</div>-->
+            </li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-10 right-block">
+      <div class="kaboodles-top-block">
+        <!--kaboodles heading and menu-->
+        <div class="my_kaboodle-head ai-center d-inlineflex w-100 space-bw">
+          <div class="kaboodles-heading">
+            <h1>{{kaboodle_title_cap}} DASHBOARD</h1>
+          </div>
+					
+				{% if team %}
+					<div class="kaboodles-team">
+					{% if team.kaboodle_owner_view == false and team.kaboodle_member_view == true and team.referenced_team_owner_name is not empty %}
+            <div>Shared by: &nbsp; <a class="team-link" href="/user/{{team.referenced_team_owner_uid}}/contact">{{ team.referenced_team_owner_name }}</a></div>
+					{% endif %}
+					{% if team.referenced_team_name is not empty %}
+						<div>Team: &nbsp; <a class="team-link" href="/team/{{team.referenced_team_id}}/members">{{ team.referenced_team_name }}</a></div>
+					{% endif %}
+          </div>
+        {% endif %}
+        </div>
+      </div>
+      <div class="kaboodles-container d-flex w-100 ff-rw">
+      {% if product_details %}
+        {% for product in product_details %}
+          <div class="kaboodle">
+            <div class="offset-1">
+              <div class="card">
+                <div class="cover-image">
+                  {% if (professional_user == 1) and (product.name == 'Email Newsletter' or product.name == 'Reusable Content Block' or product.name == 'Video Slides' or product.name == 'Web Page')  %}
+                    <a href="javascript:void(0);" class="professional-user-modal"><img class="cover-image" width="100%" src="{{ product.ActiveCellFileUrl }}" /></a>
+                  {% elseif product.path_override != NULL %}
+                    <a href="{{ product.path_override[0]['value'] }}"><img class="cover-image" width="100%" src="{{ product.ActiveCellFileUrl }}" /></a>
+                  {% else %}
+									  <a href="{{ product.url }}"><img class="cover-image" width="100%" src="{{ product.ActiveCellFileUrl }}" /></a>
+                  {% endif %}
+                </div>
+                <div class="card-body kaboodle-title">                 
+									<img src="{{ product.product_status_icon }}" height="20" width="20"/>
+									{% if product.status == 1 %}
+                    {% if (professional_user == 1) and (product.name == 'Email Newsletter' or product.name == 'Reusable Content Block' or product.name == 'Video Slides' or product.name == 'Web Page')  %}
+                      <a href="javascript:void(0);" class="professional-user-modal">{{ product.name }}</a>
+                     {% elseif product.path_override != NULL %}
+                       <a href="{{ product.path_override[0]['value'] }}">{{ product.name }}</a>
+                     {% else %}
+									     <a href="{{ product.url }}">{{ product.name }}</a>
+                     {% endif %}
+									{% else %}
+									<span class="">{{ product.name }}</span>
+									{% endif %}
+									<div class="pps-status">{{ product.description|raw }}</div>
+                  <!--<div class="pps-status">
+										<select autocomplete="off" id="pps-status" class="pps-select form-select form-control" onchange="updatePPS(this)" data-node="{{ nid }}">
+											{% for pps_list in pps_lists %}
+												{% if pps_list.tid == product.pps_status_tid %}
+												<option selected="selected" value="{{ pps_list.tid }}">{{ pps_list.name }}</option>
+												{% else %}
+												<option value="{{ pps_list.tid }}">{{ pps_list.name }}</option>
+												{% endif %}
+											{% endfor %}
+										</select>
+									</div>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="default_message text-center">
+          <span>No kaboodles dashboard have been found.</span>
+        </div>
+      {% endif %}
+      </div>
+      <div class="service-id">{{service_id}}</div>
+    </div>
+  </div>
+</div>
+<div class="my-kaboodles-pager">{{pager}}</div>

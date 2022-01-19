@@ -1,0 +1,34 @@
+button.ui-button.ui-corner-all.ui-widget.ui-button-icon-only.ui-dialog-titlebar-close{display: none !important;}
+#affiliate-application-form-wrapper{width: 60%; margin: auto;}
+#affiliate-application-form-wrapper .affiliate-company-info{padding: 0;}
+#affiliate-application-form-wrapper .account-info > div {display: inline-block;}
+#affiliate-application-form-wrapper .account-info .label{width: 31%; vertical-align: top;}
+#affiliate-application-form-wrapper .account-info .affiliate-link{width: 53%;}
+#affiliate-application-form-wrapper .account-info .user-id {width: 10%;}
+#affiliate-application-form-wrapper .form-group input.form-text, #affiliate-application-form-wrapper .form-group input.form-email {width: 58%;display: inline-block;}
+#affiliate-application-form-wrapper .form-group label {width: 30%;}
+#affiliate-application-form-wrapper .affiliate-com-domain .form-item-com-domain1 select {width: 38%; display: inline-block;}
+#affiliate-application-form-wrapper .affiliate-com-domain fieldset.form-group{display: inline-block;}
+#affiliate-application-form-wrapper .affiliate-com-domain fieldset.form-item-com-domain1{display: inline-block; width: 50%;}
+#affiliate-application-form-wrapper .affiliate-com-domain .form-item-com-domain2 input{width: 81%;}
+#affiliate-application-form-wrapper .affiliate-com-domain fieldset.form-item-com-domain2{display: inline-block; width: 47%;}
+#affiliate-application-form-wrapper .affiliate-com-domain fieldset.form-group label{width: 60%;}
+#affiliate-application-form-wrapper .affiliate-address-city .form-item-address-city{
+  display: inline-block;
+  width: 51%;
+}
+#affiliate-application-form-wrapper .affiliate-address-city .form-item-address-city label{width: 59%;}
+#affiliate-application-form-wrapper .affiliate-address-city .form-item-address-city input.form-text{width: 39%;}
+#affiliate-application-form-wrapper .affiliate-address-city .form-item-address-state{width: 22%; display: inline-block;}
+#affiliate-application-form-wrapper .affiliate-address-city .form-item-address-zip{width: 25%; display: inline-block;}
+#affiliate-application-form-wrapper .form-item-emp-count .form-item-emp-count input{width: 20%;}
+#affiliate-application-form-wrapper .hr{border: 1px solid #ced4da; margin: 20px 0;}
+#affiliate-application-form-wrapper .affiliate-term-check, #affiliate-application-form-wrapper .save-affiliate-application {margin-left: 31%;}
+#affiliate-application-form-wrapper .account-info.approved{padding: 10px 0;}
+#affiliate-application-form-wrapper .affiliate-link-details{border: 1px solid #c3c3c3; border-radius: 10px; padding: 0 2px;}
+#affiliate-application-form-wrapper .copy-link-code1, #affiliate-application-form-wrapper .copy-link-code2, #affiliate-application-form-wrapper .affiliate-link-copy{width: 15%;}
+#affiliate-application-form-wrapper .affiliate-link-copy a.btn.btn-primary{padding: 6px 29px;}
+#affiliate-application-form-wrapper .affiliate-banner1, #affiliate-application-form-wrapper .affiliate-banner2{width: 53%;}
+#affiliate-application-form-wrapper .form-item-paypal-email label.js-form-required.form-required:after {
+  display: none;
+}

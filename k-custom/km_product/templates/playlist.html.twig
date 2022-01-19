@@ -1,0 +1,301 @@
+{#% include 'breadcrumbs.html.twig' %#}
+<div class="my-kaboodles kaboodles-dashboard">
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw">
+    <div class="col-lg-2 left-block">
+      {% include 'leftnav.html.twig' %}
+    </div>
+    
+    <div class="col-lg-10 plr0" id="kmds-product-container">
+      <!--product heading and menu-->
+      <div>
+        <div class="header-box">
+          <div class="bgw d-flex w-100 space-bw product-header-container">
+            <div class="product-heading">My Saved {{ product.name }}s</div>
+          </div>
+        </div>
+        <div class="tools-header bb">
+          <div class="header-box">
+            <div class="bgw d-flex w-100 space-bw tool-box">
+              <div class="search"><span><img src="/modules/custom/km_product/images/search.png" height="20"></span> <span class="separator">|</span> <span class="txt-fld"><input type="text" name="search" id="saved-template-search" placeholder="Search File"></span></div>
+              <div>
+                <span class="time-sort"><img src="/modules/custom/km_product/images/timesort-active.png" height="32" class="time-sort time-active" item-class="saved-{{ view_style }}-template"></span> 
+                <span class="az-sort"><img src="/modules/custom/km_product/images/az-inactive.png" height="32" class="az-sort az-inactive" item-class="saved-{{ view_style }}-template"></span>
+                 &nbsp; &nbsp; &nbsp;
+                <span class="filter-favorite"><img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="32" class="favorite inactive" item-class="saved-{{ view_style }}-template"></span>
+                <!--<span><img src="/modules/custom/km_product/images/logo-button-inactive.png" height="32" class="admin-template inactive" item-class="saved-{{ view_style }}-template">-->                
+                &nbsp; &nbsp; &nbsp;
+                <span>
+                {% if view_style == 'grid' %}
+                  <img src="/modules/custom/km_product/images/gridview-active.png" height="32">
+                {% else %}
+                  <a href="{{ path('<current>') }}?view=grid"><img src="/modules/custom/km_product/images/gridview-inactive.png" height="32"></a>
+                {% endif %}
+                </span> 
+                <span>
+                {% if view_style == 'list' %}
+                  <img src="/modules/custom/km_product/images/listview-active.png" height="32">
+                {% else %}
+                  <a href="{{ path('<current>') }}?view=list"><img src="/modules/custom/km_product/images/listview-inactive.png" height="32"></a>
+                {% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="header-box bb"><div class="bgw action-box"><span>Media Vault</span> | <span>Media Kits</span></div></div>
+      </div>
+      {% if user_templates|length == 0 %}
+      <div class="product-box">
+        <div class="product-container d-flex w-100 ff-rw">
+          <div class="empty-product">You currently have no saved {{ product.name}}s.<br> 
+             Please choose a template below to get started
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="product-box">
+        <div class="product-container d-flex w-100 ff-rw">
+         {% if view_style == 'grid' %}
+          {% for template in user_templates %}
+          <div class="product-grid saved-grid-template" data-time="{{ template.modified }}" data-title="{{ template.name }}" data-uid="{{ template.user_id }}" data-favorite="{{ template.favorite }}">
+            <div class="offset-0">
+              <div class="card">
+                <div class="cover-image">
+                  {% if (template.preview_image is not empty) and (template.preview_image != 'null') %}
+                  <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes'}) }}"><img src="/wptemplates/images/{{ template.preview_image }}"></a>
+                  {% endif %}
+                </div>
+                <div class="card-body">
+                  <div class="grid-title">
+                    <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes'}) }}">{{ template.name }}</a>
+                    <dd class="d-none">{{ template.tags }}</dd>
+                  </div>
+                  <div class="wp-description">{{ template.description }}</div>
+                  <div class="timestamp">Modified {{ template.modified|date("m/d/y h:i A") }}</div>
+                  <div class="grid-action-btns">
+                    <span><a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes'}) }}"><img src="/modules/custom/km_product/images/edit-icon.png" height="20"></a></span>
+                    <span class="preview" tid="{{ template.id }}"><img src="/modules/custom/km_product/images/expand.png" height="20"></span>
+                    
+                    <span class="favorite-template">
+                    {% if template.favorite == 1 %}
+                      <img src="/modules/custom/km_product/images/heart-active-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite active" view="grid" kmds="0">
+                    {% else %}
+                      <img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite inactive" view="grid" kmds="0">
+                    {% endif %}
+                    </span>
+                    
+                     {% if professional_user == 1 %}
+                      <span class="icon-tmp"><a href="javascript:void(0);" class="professional-user-modal"><img src="/modules/custom/km_product/images/clone-icon.png" height="20"></a></span>
+                    {% else %}
+                      <span class="icon-tmp"><a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes', 'clone': 'yes'}) }}"><img src="/modules/custom/km_product/images/clone-icon.png" height="20"></a></span>
+                    {% endif %}
+                    {% if template.km_render == '0' %}
+                    <span class="download-template inactive">
+                      <img src="/modules/custom/km_product/images/arrow-alt-bottom-848688.png" height="20" tid="{{ template._id }}" nid="{{ node.nid }}" class="download inactive" view="grid" kmds="0" km-render="{{template.km_render}}">
+                    </span>
+                    {% else %}
+                    <span class="download-template active">
+                      <a href="{{template.km_render}}" id="download-km-template" class="download-link" download>
+                        <img src="/modules/custom/km_product/images/arrow-alt-bottom-3b3b3b.png" height="20" tid="{{ template._id }}" nid="{{ node.nid }}" class="download active" view="grid" kmds="0" km-render="{{template.km_render}}">
+                      </a>
+                    </span>
+                    {% endif %}
+                    
+                    <span class="delete-template"><a href="{{ path('product.template.delete', {'template_id': template.id}) }}" id="{{ template.id }}" view="grid"><img src="/modules/custom/km_product/images/trash.png" height="20"></a></span>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+       {% endif %}
+       {% if view_style == 'list' %}
+        <table id="product_list_view" class="table table-hover table-striped media-table">
+          <thead>
+            <tr>
+              <th width="10%">Photo</th>
+              <th width="30%">Title</th>
+              <th>Description</th>
+              <th width="18%" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for template in user_templates %}
+          <tr class="list-table-view saved-list-template item-group media-row active-list-temp" data-key="3" data-time="{{ template.modified }}" data-title="{{ template.name }}" data-temptags="Canham Camera 9-14-20" data-uid="{{ template.user_id }}" data-favorite="{{ template.favorite }}">
+            <td class="temp-design media-data text-center">
+              <div class="template-static-image">
+                {% if (template.preview_image is not empty) and (template.preview_image != 'null') %}
+                <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes'}) }}"><img src="/wptemplates/images/{{ template.preview_image }}" class="lib-title text-center static-image" alt="{{ template.name }}" title="{{ template.name }}" width="auto" height="48" data-style="list"></a>
+                {% endif %}
+              </div>
+            </td>
+            <td class="temp-content media-data">
+              <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes'}) }}" class="design-template-link">{{ template.name }}</a>
+              <dd class="d-none">{{ template.tags }}</dd>
+            </td>
+            <td class="temp-content media-data"><div class="temp-created">{{ template.description }}</div></td>
+            <td class="temp-action media-data text-center">
+              <span class="icon-tmp"><a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes'}) }}"><img src="/modules/custom/km_product/images/edit-icon.png" height="20"></a></span>
+             <span class="icon-tmp preview" tid="{{ template.id }}"><img src="/modules/custom/km_product/images/expand.png" height="20"></span>
+              <span class="icon-tmp favorite-template">
+              {% if template.favorite == 1 %}
+                <img src="/modules/custom/km_product/images/heart-active-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite active" view="list" kmds="0">
+              {% else %}
+                <img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite inactive" view="list" kmds="0">
+              {% endif %}
+              </span>
+              {% if professional_user == 1 %}
+                <span class="icon-tmp"><a href="javascript:void(0);" class="professional-user-modal"><img src="/modules/custom/km_product/images/clone-icon.png" height="20"></a></span>
+              {% else %}
+                <span class="icon-tmp"><a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmproduct': 'yes', 'clone': 'yes'}) }}"><img src="/modules/custom/km_product/images/clone-icon.png" height="20"></a></span>
+              {% endif %}
+              <span class="icon-tmp delete-template"><a href="{{ path('product.template.delete', {'template_id': template.id}) }}" id="{{ template.id }}" view="list"><img src="/modules/custom/km_product/images/trash.png" height="20"></a></span>
+               {% if template.km_render == '0' %}
+                    <span class="download-template inactive">
+                      <img src="/modules/custom/km_product/images/arrow-alt-bottom-848688.png" height="20" tid="{{ template._id }}" nid="{{ node.nid }}" class="download inactive" view="grid" kmds="0" km-render="{{template.km_render}}">
+                    </span>
+                    {% else %}
+                    <span class="download-template active">
+                      <a href="{{template.km_render}}" id="download-km-template" class="download-link" download>
+                        <img src="/modules/custom/km_product/images/arrow-alt-bottom-3b3b3b.png" height="20" tid="{{ template._id }}" nid="{{ node.nid }}" class="download active" view="grid" kmds="0" km-render="{{template.km_render}}">
+                      </a>
+                    </span>
+                    {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+         
+          </tbody>
+        </table>
+        {% endif %}
+        </div>
+      </div>
+     {% endif %} 
+      
+      <div>
+        <div class="header-box">
+          <div class="bgw product-header-container">
+            <div class="product-heading">{{ product.name }} Templates</div> 
+          </div>
+        </div>
+        <div class="tools-header bb">
+          <div class="header-box">
+            <div class="bgw d-flex w-100 space-bw tool-box">
+              <div class="search"><span><img src="/modules/custom/km_product/images/search.png" height="20"></span> <span class="separator">|</span> <span class="txt-fld"><input type="text" name="search" id="kmds-template-search" placeholder="Search File"></span></div>
+              <div>
+                <span class="time-sort"><img src="/modules/custom/km_product/images/timesort-active.png" height="32" class="time-sort time-active" item-class="kmds-{{ view_style }}-template"></span> 
+                <span class="az-sort"><img src="/modules/custom/km_product/images/az-inactive.png" height="32" class="az-sort az-inactive" item-class="kmds-{{ view_style }}-template"></span>
+                 &nbsp; &nbsp; &nbsp;
+                <span class="filter-favorite"><img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="32" class="favorite inactive" item-class="kmds-{{ view_style }}-template"></span> 
+                <span><img src="/modules/custom/km_product/images/logo-button-inactive.png" height="32" class="admin-template inactive" item-class="kmds-{{ view_style }}-template">
+                </span>  
+                &nbsp; &nbsp; &nbsp;
+                <span>
+                {% if view_style == 'grid' %}
+                  <img src="/modules/custom/km_product/images/gridview-active.png" height="32">
+                {% else %}
+                  <a href="{{ path('<current>') }}?view=grid"><img src="/modules/custom/km_product/images/gridview-inactive.png" height="32"></a>
+                {% endif %}
+                </span> 
+                <span>
+                {% if view_style == 'list' %}
+                  <img src="/modules/custom/km_product/images/listview-active.png" height="32">
+                {% else %}
+                  <a href="{{ path('<current>') }}?view=list"><img src="/modules/custom/km_product/images/listview-inactive.png" height="32"></a>
+                {% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-box">
+        <div class="product-container d-flex w-100 ff-rw">
+         {% if view_style == 'grid' %}
+          {% for template in templates %}
+          <div class="product-grid kmds-grid-template" data-time="{{ template.modified }}" data-title="{{ template.name }}" data-uid="{{ template.user_id }}" data-favorite="{{ template.favorite }}">
+            <div class="offset-0">
+              <div class="card">
+                <div class="cover-image">
+                  {% if (template.preview_image is not empty) and (template.preview_image != 'null') %}
+                  <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmds': 'yes'}) }}"><img src="/wptemplates/images/{{ template.preview_image }}"></a>
+                  {% endif %}
+                </div>
+                <div class="card-body">
+                  <div class="grid-title">
+                    <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmds': 'yes'}) }}">{{ template.name }}</a>
+                    <dd class="d-none">{{ template.tags }}</dd>
+                  </div>
+                  <div class="wp-description">{{ template.description }}</div>
+                  <div class="timestamp">&nbsp;<!--Modified {{ template.modified|date("m/d/y h:i A") }}--></div>
+                  <div class="grid-action-btns">
+                    <span><a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmds': 'yes'}) }}"><img src="/modules/custom/km_product/images/edit-icon.png" height="20"></a></span>
+                    <span><img src="/modules/custom/km_product/images/expand.png" height="20" onclick="previewProductImage('/wptemplates/images/{{ template.preview_image }}')"></span>
+                    <span class="favorite-template">
+                    <span class="favorite-template">
+                    {% if template.favorite == 1 %}
+                      <img src="/modules/custom/km_product/images/heart-active-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite active" view="grid" kmds="1">
+                    {% else %}
+                      <img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite inactive" view="grid" kmds="1">
+                    {% endif %}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% endif %}
+        
+        {% if view_style == 'list' %}
+        <table id="product_list_view" class="table table-hover table-striped media-table">
+          <thead>
+            <tr>
+              <th width="10%">Photo</th>
+              <th width="30%">Title</th>
+              <th>Description</th>
+              <th width="12%" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for template in templates %}
+          <tr class="list-table-view kmds-list-template item-group media-row active-list-temp" data-key="3" data-time="{{ template.modified }}" data-title="{{ template.name }}" data-temptags="Canham Camera 9-14-20" data-uid="{{ template.user_id }}" data-favorite="{{ template.favorite }}">
+            <td class="temp-design media-data text-center">
+              <div class="template-static-image">
+                {% if (template.preview_image is not empty) and (template.preview_image != 'null') %}
+                <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmds': 'yes'}) }}"><img src="/wptemplates/images/{{ template.preview_image }}" class="lib-title text-center static-image" alt="{{ template.name }}" title="{{ template.name }}" width="auto" height="48" data-style="list"></a>
+                {% endif %}
+              </div>
+            </td>
+            <td class="temp-content media-data">
+              <a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmds': 'yes'}) }}" class="design-template-link">{{ template.name }}</a>
+              <dd class="d-none">{{ template.tags }}</dd>
+            </td>
+            <td class="temp-content media-data"><div class="temp-created">{{ template.description }}</div></td>
+            <td class="temp-action media-data text-center">
+              <span class="icon-tmp"><a href="{{ path('product.edittemplate', {'node': node.nid, 'producttype': product.id, 'template_id': template.id, 'kmds': 'yes'}) }}"><img src="/modules/custom/km_product/images/edit-icon.png" height="20"></a></span>
+              <span><img src="/modules/custom/km_product/images/expand.png" height="20" onclick="previewProductImage('/wptemplates/images/{{ template.preview_image }}')"></span>
+                    <span class="favorite-template">
+              <span class="icon-tmp favorite-template">
+              {% if template.favorite == 1 %}
+                <img src="/modules/custom/km_product/images/heart-active-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite active" view="list" kmds="1">
+              {% else %}
+                <img src="/modules/custom/km_product/images/heart-inactive-icon.svg" height="20" tid="{{ template.id }}" nid="{{ node.nid }}" class="favorite inactive" view="list" kmds="1">
+              {% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+         
+          </tbody>
+        </table>
+        {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

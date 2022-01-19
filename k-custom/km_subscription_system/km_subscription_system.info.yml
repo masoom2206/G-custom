@@ -1,0 +1,5 @@
+name: 'KM Subscription System'
+type: module
+description: 'Kaboodle Media Subscription System'
+core: 8.x
+package: 'Custom'

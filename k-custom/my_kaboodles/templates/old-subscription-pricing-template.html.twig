@@ -1,0 +1,94 @@
+{{ attach_library('core/drupal.dialog.ajax') }}
+<div class="content">
+  <h1 class="js-quickedit-page-title title" uid="{{uid}}">{{subscription_title}}</h1>
+</div>
+<div class="subscription-pricing row">
+  <table>
+    <tr class="feature-header">
+      <td class="features-label">
+        <div class="features-title">{{feature_list_name}}</div>
+        <div class="features-description">{{feature_list_description}}</div>
+      </td>
+      {% if items %}
+        {% for item in items %}
+        <td class="features-content">
+          <div class="subscription-plan-title">{{item.name}}</div>
+          <div class="subscription-plan-rate">
+            {% if item.subscription_rate == 0 %}
+              <div class="subscription-rate"><span>FREE</span></div>
+            {% else %}
+              <div class="subscription-rate"><span class="doller">$</span><span>{{item.subscription_rate}}</span>/mo</div>
+            {% endif %}
+          </div>
+          {% if item.name == 'Enterprise' %}
+            <div class="user-register-button"><a href="{{item.link_url}}" class="subscription-button sign-up-inquire use-ajax" data-dialog-type="modal" data-dialog-options='{"width":500, "heigh":600}' >{{item.link_label}}<span class="disclaimer">{{item.link_sub_label}}</span></a></div>
+          {% else %}
+            <div class="user-register-button"><a href="{{item.link_url}}" class="subscription-button sign-up-inquire use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}'>{{item.link_label}}<span class="disclaimer">{{item.link_sub_label}}</span></a></div>
+          {% endif %}
+        </td>
+        {% endfor %}
+      {% endif %}
+    </tr>
+      {% if items2 %}
+        {% for item2 in items2 %}
+          <tr>
+            <td class="features-label">{{item2.name}}</td>
+            {% if item2.role_availability.content_creator.check_mark == 1 %}
+              <td class="features-content"><img src="/modules/custom/my_kaboodles/css/images/{{item2.role_availability.content_creator.limitation}}" width="18"></td>
+            {% else %}
+              <td class="features-content">{{item2.role_availability.content_creator.limitation}}</td>
+            {% endif %}
+            {% if item2.role_availability.advanced_content_creator.check_mark == 1 %}
+              <td class="features-content"><img src="/modules/custom/my_kaboodles/css/images/{{item2.role_availability.advanced_content_creator.limitation}}" width="18"></td>
+            {% else %}
+              <td class="features-content">{{item2.role_availability.advanced_content_creator.limitation}}</td>
+            {% endif %}
+            {% if item2.role_availability.enterprise.check_mark == 1 %}
+              <td class="features-content"><img src="/modules/custom/my_kaboodles/css/images/{{item2.role_availability.enterprise.limitation}}" width="18"></td>
+            {% else %}
+              <td class="features-content">{{item2.role_availability.enterprise.limitation}}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      {% endif %}
+    <tr>
+      <td class="features-label">&nbsp;</td>
+      {% if items %}
+        {% for item in items %}
+        <td class="features-content">
+            <div class="user-register-button"><a href="{{item.link_url}}" class="subscription-button sign-up-inquire use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}'>{{item.link_label}}<span class="disclaimer">{{item.link_sub_label}}</span></a></div>
+        </td>
+        {% endfor %}
+      {% endif %}
+    </tr>
+  </table>
+</div>
+<!--<div class="subscription-pricing row">
+  {% if items %}
+    {% for item in items %}
+      <div class="subscription-plan col-xs-3 col-sm-3">
+        <div class="subscription-plan-content">
+          <div class="subscription-plan-title">{{item.name}}</div>
+          <div class="subscription-plan-rate">
+            {% if item.subscription_rate == 0 %}
+              <div class="subscription-rate"><span>FREE</span></div>
+            {% else %}
+              <div class="subscription-rate"><span class="doller">$</span><span>{{item.subscription_rate}}</span>/mo</div>
+            {% endif %}
+          </div>
+          <div class="subscription-plan-description">{{item.description}}</div>
+          <ul class="subscription-feature-list">
+            {% for feature_list in item.feature_list %}
+              <li class="feature-list">&#10003;&nbsp;{{feature_list.value}} </li>
+            {% endfor %}
+          </ul>
+        </div>
+          {% if item.name == 'Pro Content Creator' %}
+            <div class="user-register-button"><a href="{{item.link_url}}" class="subscription-button use-ajax" data-dialog-type="modal"data-dialog-options='{"width":500, "heigh":600}'>{{item.link_label}}<span class="disclaimer">No credit card req.</span></a></div>
+          {% else %}
+            <div class="user-register-button"><a href="{{item.link_url}}" class="subscription-button sign-up-inquire use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}'>{{item.link_label}}</a></div>
+          {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>-->

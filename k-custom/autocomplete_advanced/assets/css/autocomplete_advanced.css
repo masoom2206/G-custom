@@ -1,0 +1,255 @@
+@CHARSET "UTF-8"; ul.ui-autocomplete {
+  max-height: 240px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 3px;
+}
+
+a.autocomplete-advanced-single:hover {
+  text-decoration: none;
+}
+
+.ui-autocomplete .ui-menu-item a {
+  color: black;
+  display: block;
+}
+
+.ui-autocomplete .ui-menu-item a:hover {
+  text-decoration: none;
+  background: #0072b9;
+  color: white;
+}
+
+.ui-autocomplete .ui-state-hover {
+  background-color: #3875d7;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #3875d7), color-stop(90%, #2a62bc));
+  background-image: -webkit-linear-gradient(top, #3875d7 20%, #2a62bc 90%);
+  background-image: -moz-linear-gradient(top, #3875d7 20%, #2a62bc 90%);
+  background-image: -o-linear-gradient(top, #3875d7 20%, #2a62bc 90%);
+  background-image: -ms-linear-gradient(top, #3875d7 20%, #2a62bc 90%);
+  background-image: linear-gradient(top, #3875d7 20%, #2a62bc 90%);
+  color: #fff;
+  padding: 0;
+  margin: 0;
+}
+
+.autocomplete-advanced-container {
+  display: inline-block;
+  position: relative;
+  padding: 0;
+  border: 1px solid #cccccc;
+  background: no-repeat -38px -22px, -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
+  background: no-repeat -38px -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  border-radius: .25rem;  
+}
+div.autocomplete-advanced-container input.autocomplete-advanced-form {
+  background: #fff no-repeat -38px -22px;
+  padding: 4px 5px 4px 5px;
+  border: none;
+}
+
+div.autocomplete-advanced-container input.autocomplete-advanced-form-single {
+  width: 90%;
+  border: none;
+  background: no-repeat -38px -22px, -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
+  background: no-repeat -38px -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+}
+
+.autocomplete-advanced-search {
+  margin: 0px 0px 4px 0px;
+  padding: 3px 4px;
+  position: relative;
+  white-space: nowrap;
+  z-index: 1010;
+}
+
+span.autocomplete-advanced-value-delete {
+  display: inline-block;
+  float: right;
+  background: url('x.png') no-repeat center;
+  width: 6px;
+  width: 6px;
+  /* Prevent text selection. */
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.autocomplete-advanced-single-open {
+  border: 1px solid #aaa;
+  -webkit-box-shadow: 0 1px 0 #fff inset;
+  -moz-box-shadow: 0 1px 0 #fff inset;
+  -o-box-shadow: 0 1px 0 #fff inset;
+  box-shadow: 0 1px 0 #fff inset;
+  background-color: #eee;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0 );
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #eeeeee), color-stop(80%, #ffffff));
+  background-image: -webkit-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
+  background-image: -moz-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
+  background-image: -o-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
+  background-image: -ms-linear-gradient(top, #eeeeee 20%, #ffffff 80%);
+  background-image: linear-gradient(top, #eeeeee 20%, #ffffff 80%);
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-bottomright: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/*input.autocomplete-advanced-closed {
+}*/
+
+div.autocomplete-advanced-multiple {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 13px;
+  position: relative;
+  background-color: #ffffff;
+  background: #fff no-repeat -38px -22px;
+  background: no-repeat -38px -22px, -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
+  background: no-repeat -38px -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background: no-repeat -38px -22px, linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  border: 1px solid #aaaaaa;
+  cursor: text;
+  height: auto !important;
+  margin: 0 !important;
+  overflow: hidden;
+  padding: 0 !important;
+  position: relative;
+  /*line-height: 15pt;*/
+  width: 100%;
+  cursor: text;
+}
+
+div.autocomplete-advanced-container > input.autocomplete-advanced-form {
+  border: 3px none;
+  width: 50px;
+  margin-left: 5px;
+  float: left;
+}
+
+div.autocomplete-advanced-throbber {
+  width: 16px;
+  float: right;
+  height: 50%;
+}
+
+.autocomplete-advanced-closed {
+  background: url("../images/throbber.gif") no-repeat 100% 6px;
+}
+
+.autocomplete-advanced-open {
+  background: url("../images/throbber.gif") no-repeat 100% -14px;
+}
+
+.autocomplete-advanced-item {
+  float: left;
+  background-clip: padding-box;
+  /*background-color: #e4e4e4;*/
+  background-image: -moz-linear-gradient(center top , #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  /*border: 1px solid #aaaaaa;*/
+  /*border-radius: 3px 3px 3px 3px;*/
+  /*box-shadow: 0 0 2px #ffffff inset, 0 1px 0 rgba(0, 0, 0, 0.05);*/
+  color: #333333;
+  cursor: pointer;
+  line-height: 12px;
+  /*margin: 3px 0 3px 5px;*/
+  padding: 12px 3px 0px 3px;
+  position: relative;
+}
+
+.autocomplete-advanced-item::before {
+  content: '#';
+}
+
+.autocomplete-advanced-item:hover {
+  text-decoration: line-through;
+}
+
+.autocomplete-advanced-item-delete {
+  background: url("../images/x.png") no-repeat;
+  display: block;
+  font-size: 1px;
+  height: 8px;
+  position: absolute;
+  right: 3px;
+  top: 10px;
+  width: 12px;
+}
+.autocomplete-advanced-item-focus {
+  background: none repeat scroll 0 0 #d4d4d4;
+}
+
+.autocomplete-advanced-highlight-char {
+  color: inherit;
+  font-weight: bold;
+}
+
+/* RTL styling */
+[dir="rtl"] span.autocomplete-advanced-value-delete {
+  float: left;
+}
+
+[dir="rtl"] div.autocomplete-advanced-multiple {
+  padding: 4px 5px;
+}
+
+[dir="rtl"] input.autocomplete-advanced-form.autocomplete-advanced-multiple {
+  margin-left: 0;
+  margin-right: 5px;
+  float: right;
+}
+
+[dir="rtl"] div.autocomplete-advanced-throbber {
+  float: left;
+}
+
+[dir="rtl"] .autocomplete-advanced-closed {
+  background-position: 0 6px;
+}
+
+[dir="rtl"] .autocomplete-advanced-open {
+  background-position: 0 -14px;
+}
+
+[dir="rtl"] .autocomplete-advanced-item {
+  float: right;
+  margin: 3px 5px 3px 0;
+  padding: 3px 5px 3px 20px;
+}
+
+[dir="rtl"] .autocomplete-advanced-item-delete {
+  position: absolute;
+  right: auto;
+  left: 3px;
+}
+
+/* Custom CSS */
+input.autocomplete-advanced-form {
+  box-shadow: none !important;
+  height: 20px;
+  margin: 8px 0 !important;
+}
+input.autocomplete-advanced-form:focus {
+  box-shadow: none;
+}
+.tdlt {
+  text-decoration: line-through;
+}
+div#page-wrapper div.field--widget-autocomplete-advanced {
+ /*  padding: 0 30px; */
+}

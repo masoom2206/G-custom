@@ -1,0 +1,69 @@
+<?php
+// ffmpeg setting variables
+define('TEMP_DIR', 'temporary://vmt');
+define('FFMPEG_PATH', exec('which ffmpeg'));
+define('FFPROBE_PATH', exec('which ffprobe'));
+
+/*
+ * @file
+ * Kaboodle product templates
+*/
+function video_maker_tool_theme($existing, $type, $theme, $path) {  
+  return [
+    'video-maker-tool-add' => ['variables' => [
+      'variables' => NULL,
+      ]
+    ],
+    'video-maker-tool-edit' => ['variables' => [
+      'variables' => NULL,
+      ]
+    ],
+    'video-listing' => ['variables' => [
+      'variables' => NULL,
+      ]
+    ],
+    'media-kit-service' => ['variables' => [
+      'variables' => NULL,
+      ]
+    ],
+    'debug-video-maker' => ['variables' => [
+      'variables' => NULL,
+      ]
+    ],
+    'debug-video-listing' => ['variables' => [
+      'variables' => NULL,
+      ]
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_html().
+ *
+ */
+function video_maker_tool_preprocess_html(&$variables) {
+  // add a class to the body class.
+  if(\Drupal::routeMatch()->getRouteName() == 'video.maker.debug') {
+    $variables['attributes']['class'][] = 'video-maker-debug-page';
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ *
+ */
+function video_maker_tool_media_update($media) {
+  $media_type = $media->bundle();
+  if($media_type == 'video') {
+    if($media->field_media_source_type->value == 'generated'){
+      // update final video and status
+      \Drupal::database()->update('vmt_videos')
+        ->condition('video_media_id', $media->id())
+        ->fields([  
+          'video_name' => $media->getName(),
+        ])
+        ->execute();
+    }
+  }
+}
+

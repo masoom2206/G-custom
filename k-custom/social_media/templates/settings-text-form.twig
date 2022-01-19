@@ -1,0 +1,63 @@
+<div class="{{appName|lower}}-text-form profile-text-form w-100">
+  <div class="wrap-text-form" style="margin-bottom: 35px;"> {% for fieldName,fieldValue in data.settings_field %}
+  {% if (fieldValue.enabled == '1') and (fieldValue.type == 'text')  %}
+  {% if fieldValue.value is defined %}
+  {% set rows = fieldValue.value | length / 40 %} 
+  {% else %}
+  {% set rows = 1 %}
+  {% endif %}
+  {% if 1 > rows %}
+   {% set rows = 1 %}
+  {% endif %}
+  
+  <div class="{{fieldName|replace({' ': '-'})|lower }}-field w-100 custom-fields">
+      <div class="d-flex align-items-center justify-content-between">
+        <legend>{{fieldName}}</legend>
+        <img src="{{appIconSrc}}" alt="Twitter" width="20" height="20">
+        {% if fieldValue.char_limit %}
+        <div class=" pl-1 d-flex">
+          <span class="textcount">{{fieldValue.value|length}}</span>
+          <span class="textcount-separator">/</span>
+          <span class="textcount-limit">{{fieldValue.char_limit}}</span>
+        </div>
+        {% endif %}
+      </div>
+      <textarea class="w-100" rows="{{rows |round(0, 'ceil')}}" style="overflow:hidden; resize:none;">{{fieldValue.value}}</textarea>
+      <span class="text-area-desc fade-content hidden">{{fieldValue.specifications | raw}}</span>
+    </div> 
+    {% endif %}
+    {% if (fieldValue.enabled == '1') and (fieldValue.type == 'auto_complete')  %} 
+    <div class="custom-auto-complete {{fieldName|replace({' ': '-'})|lower }}-field w-100">
+      <legend>{{fieldName}}</legend>
+      <div class="wrapper-autocomplete">
+        <div class="selected-items">
+          <ul class="list-unstyled"> {% for index, val_auto in fieldValue.value %} <li>
+              <span class="item-id d-none">{{val_auto.id}}</span>
+              <span class="item-name">{{val_auto.name}}</span>
+              <span style="padding-left:5px;cursor:pointer;" class="item-cancel hidden">X</span>
+            </li>
+            {% endfor %}
+            </ul>
+        </div>
+        <input type="text w-100" id="custom-auto" name="custom-auto" class="search-user hidden" placeholder="Search {{fieldName}}" style="background:#f2f2f2;width:100%">
+      </div>
+      <div class="item-lists">
+        <ul class="list-unstyled">
+        </ul>
+      </div>
+    </div> 
+    {% endif %} 
+    {% endfor%}
+    </div> 
+    {% if data.settings_field is not empty %}
+    <div class="newpost-button" style="position:absolute; bottom:10px">
+    <button id="save-profile" class="btn btn-primary mr-2  social-media-save-profile">submit to {{appName}} </button>
+    <button id="cancel" class="btn btn-primary social-media-cancel-profile" >CANCEL</button>
+  </div> 
+  {# cancel profile modal #}
+
+  {# cancel profile modal #}
+  {% else %}
+  <p> No text fields are enabled to Update. Please ask to Admin to enable these settings.</p> 
+  {% endif %}
+</div>

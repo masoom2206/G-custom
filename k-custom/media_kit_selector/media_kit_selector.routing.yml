@@ -1,0 +1,8 @@
+mks.react:
+  path: '/mks/react'
+  defaults:
+    _controller: '\Drupal\media_kit_selector\Controller\MediakitSelectorController::getReact'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'

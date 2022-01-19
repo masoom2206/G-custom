@@ -1,0 +1,61 @@
+{#
+ {{ media_vault_oploader_title }}
+ {% for key,value in doubles %}
+  Key : {{ key }}
+  Value : {{ value }}
+{% endfor %}
+#}
+<div class="d-flex" style="margin: 6px;">
+  <div class="col-10 pl-0"><span>IMPORTANT: Only upload files that you have the legal right to use. See our <a class="text-decoration-none" href="/policy/copyright">copyright policy</a> for details. Looking for stock media? <a class="text-decoration-none" href="/knowledgebase/stock-media">Click here</a>.</span></div>
+  <div class="col-2 pr-0 text-uppercase text-align-right"><a class="text-decoration-none" id="media-vault-link" href="/tools/media/vault/{{uid}}">Media Vault</a></div>
+</div>
+<div id="media-vault-wrapper" class="row-p" style="min-height: 300px; margin-bottom: 30px;">
+  <nav>
+    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+			<a class="nav-item nav-link active" id="nav-audio-tab" data-toggle="tab" href="#nav-audio" role="tab" aria-controls="nav-audio" aria-selected="true">Audio</a>
+      <a class="nav-item nav-link" id="nav-photo-tab" data-toggle="tab" href="#nav-photo" role="tab" aria-controls="nav-photo" aria-selected="false">Images</a>
+      <a class="nav-item nav-link" id="nav-text-tab" data-toggle="tab" href="#nav-text" role="tab" aria-controls="nav-text" aria-selected="false">Docs</a>
+      <a class="nav-item nav-link" id="nav-video-tab" data-toggle="tab" href="#nav-video" role="tab" aria-controls="nav-video" aria-selected="false">Videos</a>
+    </div>
+		<div class="div-spacer"></div>
+  </nav>
+  <div class="tab-content px-3 px-sm-0" id="nav-tabContent">
+    <!--- Audio secion -->
+    <div class="tab-pane fade show active" id="nav-audio" role="tabpanel" aria-labelledby="nav-audio-tab">
+      <div class="media-vault-uploader-data">
+        <div class="tab-content" id="inner-tab-contents">
+          <div class="tab-pane fade show active" id="media-top-box-audio" role="tabpanel" aria-labelledby="nav-audio-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-photo" role="tabpanel" aria-labelledby="nav-photo-tab">
+			<div class="media-vault-uploader-data">
+        <div class="tab-content" id="inner-tab-contents">
+          <div class="tab-pane fade show active" id="media-top-box-photo" role="tabpanel" aria-labelledby="nav-photo-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>			
+    </div>
+    <div class="tab-pane fade" id="nav-text" role="tabpanel" aria-labelledby="nav-text-tab">
+			<div class="media-vault-uploader-data">
+        <div class="tab-content" id="inner-tab-contents">
+          <div class="tab-pane fade show active" id="media-top-box-text" role="tabpanel" aria-labelledby="nav-text-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-video" role="tabpanel" aria-labelledby="nav-video-tab">
+			<div class="media-vault-uploader-data">
+        <div class="tab-content" id="inner-tab-contents">
+          <div class="tab-pane fade show active" id="media-top-box-video" role="tabpanel" aria-labelledby="nav-video-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

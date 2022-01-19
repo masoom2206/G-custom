@@ -1,0 +1,113 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall functions for the km_subscription_system module.
+ *
+ * This file contains the functions required to perform install and
+ * uninstall operations.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * @ingroup km_subscription_system
+ */
+function km_subscription_system_install() {
+
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * It's good to clean up after ourselves.
+ *
+ * @ingroup km_subscription_system
+ */
+function km_subscription_system_uninstall() {
+  $db_connection = \Drupal::database();
+  $db_connection->schema()->dropTable('km_subscription_system');
+}
+
+/**
+ * Implements hook_schema().
+ *
+ * @ingroup km_subscription_system
+ */
+function km_subscription_system_schema() {
+  $schema['km_subscription_system'] = [
+    'description' => 'Stores km subscription data for create user.',
+    'fields' => [
+      'id' => [
+        'description' => "Auto increment id.",
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'fname' => [
+        'description' => 'First Name',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'lname' => [
+        'description' => 'Last Name',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'email' => [
+        'description' => 'Email ID',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'username' => [
+        'description' => 'Username ID',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'password' => [
+        'description' => 'Password',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'randomcode' => [
+        'description' => 'Code for activaion',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'stype' => [
+        'description' => 'Subscription Type',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'status' => [
+        'description' => 'This column simply holds random values',
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'created' => [
+        'description' => 'This column simply holds random values',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  return $schema;
+}

@@ -1,0 +1,11 @@
+<?php
+/*
+ * @file
+ * Media Kit Selector
+*/
+function media_kit_selector_theme($existing, $type, $theme, $path) {  
+  return [
+    'media-kit-selector'    => ['variables' => ['variables' => NULL]],
+    'react'    => ['variables' => ['variables' => NULL]],
+  ];
+}

@@ -1,0 +1,450 @@
+<?php
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Access\AccessResult;
+
+/**
+ * Implements hook_entity_operation().
+ */
+function my_groups_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  $entity_type_id = $entity->getEntityTypeId();
+  if($entity_type_id === 'group'){
+    $operations['nodes']['title'] = t('Team Content');
+  }
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function my_groups_preprocess_page(&$variables) {
+  $route = \Drupal::routeMatch()->getRouteName();
+  //echo $route;
+  $roles = \Drupal::currentUser()->getRoles();
+  if(in_array('administrator', $roles)){
+    //$variables['#attached']['library'][] = 'my_groups/jqueryui';
+  }
+}
+
+
+function my_groups_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
+  $uid = \Drupal::currentUser()->id();
+  $current_path = \Drupal::service('path.current')->getPath();
+  $args  = explode('/',$current_path);
+  
+  if($form_id == 'group_team_add_form'){
+		$gid = empty($args[2]) ? 0 : $args[2];
+    $form['label']['widget'][0]['value']['#title'] = t('Team Name');
+    $form['actions']['submit']['#value'] = t('Create Team');
+		//hide field_member_media_kits from team add form
+		$form['field_member_media_kits']['#access'] = false;
+  }
+  
+  if($form_id == 'group_team_edit_form'){
+		$gid = empty($args[3]) ? 0 : $args[3];
+    $form['label']['widget'][0]['value']['#title'] = t('Team Name');
+    $form['actions']['submit']['#suffix'] = '<a href="/my-account/'.$uid.'/teams" class="button" data-drupal-selector="edit-cancel" id="edit-cancel">Cancel</a> ';
+		if(is_numeric($gid)){
+			$form['field_member_media_kits']['#access'] = false;
+		}
+  }
+  
+  if($form_id == 'group_content_team-group_membership_add_form'){
+		$form['#attached']['library'][] = 'my_groups/team_autocomplete';		
+    $gid = empty($args[2]) ? 0 : $args[2];
+		$form['group_id'] = [
+			'#type' => 'hidden',
+			'#value' => $gid,
+		];
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Name');
+    $form['entity_id']['widget'][0]['target_id']['#selection_handler'] = 'team_members';
+    $form['entity_id']['widget'][0]['target_id']['#selection_settings']['team_id'] = $gid;
+    
+    $form['actions']['submit']['#suffix'] = '<a href="/team/'.$gid.'/members" class="button" data-drupal-selector="edit-cancel" id="edit-cancel">Cancel</a>';
+    // Custom form submit handler has been added for including message on pop up Task #6020 Point 12
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+        $form['actions'][$action]['#submit'][] = 'my_groups_member_add_form_submit';
+      }
+    }
+		//echo'<pre>';
+		//print_r($form['entity_id']['widget'][0]['target_id']);
+		//echo'</pre>';
+  }
+  
+  if($form_id == 'group_content_team-group_membership_edit_form'){
+    $gid = empty($args[2]) ? 0 : $args[2];
+    $form['actions']['submit']['#suffix'] = '<a href="/team/'.$gid.'/members" class="button" data-drupal-selector="edit-cancel" id="edit-cancel">Cancel</a> ';
+    // Custom form submit handler has been added for including message on pop up Task #6020 Point 12
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+        $form['actions'][$action]['#submit'][] = 'my_groups_member_edit_form_submit';
+      }
+    }
+  }
+  
+  if($form_id == 'group_team_delete_form'){
+    $url = Url::fromRoute('team.listing', ['user' => $uid]);
+    $form_state->setRedirectUrl($url);
+  }
+  
+  if($form_id == 'contact_message_personal_form'){
+    $uid = empty($args[2]) ? 0 : $args[2];
+    $recipient_name = getUserName($uid);
+    
+    $form['recipient'] = [
+      '#type' => 'item',
+      '#title' => t('To'),
+      '#value' => $uid,
+      '#plain_text' => $recipient_name,
+    ];
+  }
+}
+
+/**
+ * Implements hook_user_format_name_alter().
+ */
+function my_groups_user_format_name_alter(&$name, $account) {
+  $user = \Drupal\user\Entity\User::load($account->id());
+  if (isset($user)) {
+	  $preferred_first_name = $user->get('field_preferred_first_name')->value;
+	  $first_name = $user->get('field_first_name')->value;
+	  $last_name = $user->get('field_last_name')->value;
+	  if(empty($preferred_first_name)){
+		$name = $first_name.' '.$last_name;
+	  }else{
+		$name = $preferred_first_name.' '.$last_name;
+	  }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page_title().
+ */
+function my_groups_preprocess_page_title(&$variables) {
+  $route = \Drupal::routeMatch()->getRouteName();
+  $current_path = \Drupal::service('path.current')->getPath();
+  $args  = explode('/',$current_path);
+  //echo $route;
+  
+  switch($route){
+    case 'entity.group.add_form':
+      $variables['title'] = t('Add Team');
+    break;
+    
+    case 'entity.group_content.add_form':
+      $gid = empty($args[2]) ? 0 : $args[2];
+      $team = getTeam($gid);
+      if($team){
+        $variables['title'] = "$team: Add Member";
+      }
+    break;
+    
+    case 'entity.group.edit_form':
+      $gid = empty($args[3]) ? 0 : $args[3];
+      $team = getTeam($gid);
+      if($team){
+        $variables['title'] = "$team: Edit";
+      }
+    break;
+    
+    case 'team.members':
+      $gid = empty($args[2]) ? 0 : $args[2];
+      $team = getTeam($gid);
+      if($team){
+        $variables['title'] = "$team: Members";
+      }
+    break;
+    
+    case 'view.group_members.page_1':
+      $gid = empty($args[2]) ? 0 : $args[2];
+      $team = getTeam($gid);
+      if($team){
+        $variables['title'] = "$team: Members";
+      }
+    break;
+    
+    case 'entity.group_content.edit_form':
+      $gid = empty($args[2]) ? 0 : $args[2];
+      $mid = empty($args[4]) ? 0 : $args[4];
+      $team = getTeam($gid);
+      $member_name = getMemberName($mid);
+      if($team){
+        $variables['title'] = "$team: MEMBER EDIT: $member_name";
+      }
+    break;
+    
+    case 'entity.group.delete_form':
+      $gid = empty($args[3]) ? 0 : $args[3];
+      $team = getTeam($gid);
+      $variables['title'] = "Are you sure you want to delete the team: $team?";
+    break;
+    
+    case 'entity.group_content.delete_form':
+      $mid = empty($args[4]) ? 0 : $args[4];
+      $member_name = getMemberName($mid);
+      $variables['title'] = "Are you sure you want to delete: $member_name?";
+    break;
+    
+    default:
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function my_groups_menu_local_tasks_alter(&$data, $route_name) {
+  $roles = \Drupal::currentUser()->getRoles();
+  //echo '<pre>'; print_r($roles); echo '</pre>'; die();
+  //echo $route_name;
+  foreach ($data['tabs'] as $key => $tab) {
+    if(array_key_exists('group.list', $tab)){
+      unset($data['tabs'][$key]['group.list']);
+    }
+  }
+  
+  // remove tabs from group pages
+  if(in_array($route_name, array('view.group_members.page_1', 'entity.group.edit_form', 'entity.group_content.edit_form', 'entity.group.delete_form', 'entity.group_content.delete_form'))) {
+    unset($data['tabs'][0]);
+  }
+  
+  // remove tabs for users only
+  if(!in_array('administrator', $roles) && in_array($route_name, array('entity.user.contact_form'))){
+    unset($data['tabs'][0]);
+  }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function my_groups_menu_local_actions_alter(&$local_actions) {
+  //echo '<pre>'; print_r($local_actions); echo '</pre>';
+}
+/**
+ * Implements hook_node_access().
+ */
+function my_groups_node_access(\Drupal\node\NodeInterface $node, $op, \Drupal\Core\Session\AccountInterface $account) {
+  $uid = \Drupal::currentUser()->id();
+  $type = $node->getType();
+  if ($op == 'view') {
+    if ($uid > 1) {
+      $types = array('media_kit', 'media_vault', 'kaboodle', 'metadata_preset', 'branding_preset');
+      $current_path = \Drupal::service('path.current')->getPath();
+      $args = explode('/',$current_path);
+      if (in_array($type, $types) && $args[1] == 'node' && is_numeric($args[2]) && !isset($_GET['_format'])) {
+        return AccessResult::forbidden();
+      }
+    }
+    else {
+      if ($type == 'page' || $type == 'article' || $type == 'home_page_public' || $type == 'knowlege_base_article') {
+        return AccessResult::allowed();
+      }
+      else {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+}
+
+/**
+ * get team name
+ */
+function getTeam($gid){
+  $team = \Drupal::database()->select('groups_field_data', 'g')
+    ->fields('g', ['label'])
+    ->condition('g.id', $gid, '=')
+    ->condition('g.type', 'team', '=')
+    ->execute()->fetchField();
+    
+  return $team; 
+}
+
+/**
+ * get team owner name
+ */
+function getTeamOwner($gid){
+  $team = \Drupal::database()->select('groups_field_data', 'g')
+    ->fields('g', ['uid'])
+    ->condition('g.id', $gid, '=')
+    ->condition('g.type', 'team', '=')
+    ->execute()->fetchField();
+    
+  return $team; 
+}
+
+/**
+ * get confirmed team members uid
+ */
+function getConfirmedTeamMembers($gid){
+  $query = \Drupal::database()->select('group_content_field_data', 'g');
+	$query->leftJoin('team_membership_status', 'tms', "tms.team_id = g.gid AND tms.member_id = g.entity_id");
+	$query->condition('g.gid', $gid, '=');
+	$query->condition('g.type', 'team-group_membership', '=');
+	$query->condition('tms.status', 1, '=');
+	$query->fields('g', ['entity_id']);
+	$members = $query->execute()->fetchAll();
+	return $members; 
+}
+
+/**
+ * get confirmed team members uid
+ */
+function getConfirmedTeams($uid){
+  $teams = \Drupal::database()->select('group_content_field_data', 'gm')
+			  ->join('team_membership_status', 'tms', "tms.team_id = gm.gid AND tms.member_id = gm.entity_id")
+        ->fields('gm', ['gid'])
+        ->condition('gm.entity_id', $uid, '=')
+        ->condition('gm.type', 'team-group_membership', '=')
+				->condition('tms.status', 1, '=')
+        ->groupBy('gm.gid')
+        ->execute()->fetchAll();
+	return $teams; 
+}
+
+/**
+ * get member name
+ */
+function getMemberName($mid){
+  $member = \Drupal::database()->select('group_content_field_data', 'gm');
+  $member->join('user__field_first_name', 'ufn', 'ufn.entity_id = gm.entity_id');
+  $member->join('user__field_last_name', 'uln', 'uln.entity_id = gm.entity_id');
+  $member->addExpression("CONCAT(ufn.field_first_name_value, ' ', uln.field_last_name_value)", 'user_name');
+  $member->condition('gm.type', 'team-group_membership', '=');
+  $member->condition('gm.id', $mid, '=');
+  $result = $member->execute();
+  $user = $result->fetchObject();
+  if(!empty($user)) {
+    return $user->user_name;
+  }else{
+    return;
+  }
+}
+
+/**
+ * get user name
+ */
+function getUserName($uid){
+  $user = \Drupal::database()->select('user__field_first_name', 'ufn');
+  $user->join('user__field_last_name', 'uln', 'uln.entity_id = ufn.entity_id');
+  $user->addExpression("CONCAT(ufn.field_first_name_value, ' ', uln.field_last_name_value)", 'user_name');
+  $user->condition('ufn.entity_id', $uid, '=');
+  $result = $user->execute();
+  $user = $result->fetchObject();
+  if(!empty($user)) {
+    return $user->user_name;
+  }else{
+    return;
+  }
+}
+
+
+/**
+ * get team
+ */
+function getTeams($uid){
+  $teams = \Drupal::database()->select('groups_field_data', 'g');
+	//$query->leftJoin('team_membership_status', 'tms', "tms.team_id = g.gid");
+  $teams->fields('g', ['id', 'label']);
+  $teams->condition('g.type', 'team', '=');
+  $teams->condition('g.uid', $uid, '=');
+	//$teams->condition('tms.status', 1, '=');
+  
+  $result = $teams->execute();
+  return $result->fetchAll();
+}
+
+/**
+ * get confirmed teams excluding owner of user
+ */
+function getConfirmedTeamsNotOwner($uid){
+  $teams_query = db_select('groups_field_data', 't');
+	$teams_query->join('group_content_field_data', 'm', 't.id = m.gid');
+	$teams_query->join('team_membership_status', 'tm', 'm.gid = tm.team_id AND m.entity_id = tm.member_id');
+	$teams_query->fields('t', ['id', 'label']);
+	$teams_query->condition('t.type', 'team', '=');
+	$teams_query->condition('m.type', 'team-group_membership', '=');
+	$teams_query->condition('m.entity_id', $uid, '=');
+	$teams_query->condition('t.uid', $uid, '!=');
+	$teams_query->condition('tm.status', 1, '=');
+	$teams = $teams_query->execute()->fetchAll();
+  return $teams;
+}
+
+function getOwnTeams($uid){
+  $teams = \Drupal::database()->select('groups_field_data', 'g');
+  $teams->fields('g', ['id', 'label']);
+  $teams->condition('g.type', 'team', '=');
+  $teams->condition('g.uid', $uid, '=');
+  $result = $teams->execute();
+  return $result->fetchAll();
+}
+
+function getInvitedTeams($uid){
+  $teams = \Drupal::database()->select('group_content_field_data', 'gm');
+  $teams->join('team_membership_status', 'tm', 'gm.gid = tm.team_id AND gm.entity_id = tm.member_id');
+  $teams->fields('gm', ['gid']);
+  $teams->condition('gm.type', 'team-group_membership', '=');
+  $teams->condition('gm.entity_id', $uid, '=');
+  $teams->condition('tm.status', 1, '=');
+  $result = $teams->execute();
+  return $result->fetchAll();
+}
+
+/* function getAllTeamMembers($gid){
+  $query = \Drupal::database()->select('group_content_field_data', 'g');
+	$query->leftJoin('team_membership_status', 'tms', "tms.team_id = g.gid AND tms.member_id = g.entity_id");
+	$query->condition('g.gid', $gid, '=');
+	$query->condition('g.type', 'team-group_membership', '=');
+	$query->condition('tms.status', [1,2,3], 'IN');
+	$query->fields('g', ['entity_id']);
+	$members = $query->execute()->fetchAll();
+	return $members; 
+} */
+/**
+ * Implements hook_preprocess_HOOK().
+ * This function has been implemented For Remove the prepended "Team" from all confirmation modals Task #6020 Point 11
+ * @param $variables
+ */
+function my_groups_preprocess_status_messages(&$variables) {
+  if(isset($variables['message_list']['status'])){
+    $status_messages = $variables['message_list']['status'];
+    foreach($status_messages as $delta => $message) {
+      $message_arr = explode(" ",$message);
+      if($message_arr[0] == 'Team'){
+        $update_string = substr(strstr($message," "), 1);
+        $variables['message_list']['status'][$delta] = $update_string;
+       }
+        
+      }
+    }
+}
+/**
+ * @param array $form
+ * @param FormStateInterface $form_state
+ */
+function my_groups_member_add_form_submit(array $form, FormStateInterface $form_state){
+	$uid = $form_state->getValue('entity_id')[0]['target_id'];
+	$gid = $form_state->getValue('group_id');
+	$invite =\Drupal::service('my_groups.team.shared_kits')->InviteTeam($gid, $uid);
+	
+/* 	$member_name = user_real_name($uid);
+  \Drupal::messenger()->addStatus(t("$member_name has been invited.")); 
+	$url = Url::fromRoute('team.members', ['group' => $gid]);
+  $form_state->setRedirectUrl($url); */	
+}
+
+/**
+ * @param array $form
+ * @param FormStateInterface $form_state
+ */
+function my_groups_member_edit_form_submit(array $form, FormStateInterface $form_state){
+	$current_path = \Drupal::service('path.current')->getPath();
+  $args  = explode('/',$current_path);
+	$mid = 0;
+	if(isset($args[4]) && is_numeric($args[4])){
+		$mid = $args[4];
+	}
+	$member_name = getMemberName($mid);
+  \Drupal::messenger()->addStatus(t("$member_name has been saved."));
+}

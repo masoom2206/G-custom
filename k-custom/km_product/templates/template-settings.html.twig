@@ -1,0 +1,272 @@
+<!--{% include 'breadcrumbs.html.twig' %}-->
+<div class="my-kaboodles kaboodles-dashboard my-kaboodles-product-edit">
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw">
+    <div class="col-lg-2 left-block">
+      {% include 'leftnav.html.twig' %}
+    </div>
+    
+    <div class="col-lg-10 plr0">
+      <!--product heading and menu-->
+      <div>
+        <div class="header-box">
+          <div class="bgw d-flex w-100 space-bw product-header-container">
+            <!--<div class="product-heading">{{ product.name }} <span class="template-id"> - Template: {{ product.template_id }}</span></div>-->
+            <div class="product-heading">{{ product.name }}</div>
+            <div class="template-name-buttons">
+              <input type="hidden" id="save_km_template" value="0" />
+              {% if product.pro_id is not empty %}
+                <button onclick="productCanvasPageImage()" type="submit" id="render_km_template" name="op" value="edit" class="button form-submit btn btn-primary font-fjalla">Render</button>
+              {% else %}
+                <button onclick="productCanvasPageImage()" type="submit" id="render_km_template" name="op" value="edit" class="button form-submit btn btn-primary font-fjalla" disabled>Render</button>
+              {% endif %}
+              <button onclick="saveUserTemplate()" type="submit" id="saveUserTemplate" name="op" value="save" class="button form-submit btn btn-primary font-fjalla">Save</button>
+              <a href="/tools/kaboodle/dashboard/{{node.nid}}" class="btn btn-primary text-uppercase font-fjalla return-cancel-edit-template">Return to Dashboard</a>
+              <a href="/tools/my-kaboodles/{{user.uid}}" class="btn btn-primary text-uppercase font-fjalla return-cancel-edit-template">Cancel</a>
+            </div>
+          </div>
+          <div class="bgw d-flex w-100 space-bw design-template-name-id-container">
+            <div class="design-template-name-id">
+              <div class="design-template-name">Design:&nbsp;<span class="design-name">{{product.temp_name}}</span></div>
+              <div class="design-template-id">Design ID:&nbsp;<span class="design-id">{{product.temp_id}}</span></div>
+            </div>
+            <div class="template-name-input">
+              <div class="name-input">
+                <span class="product-name">Product Name:&nbsp;</span>
+                <input type="text" placeholder="Enter a name" class="template-name-field" id="userTemplateName"/><span class="required">&nbsp;*</span>
+              </div>
+              <div class="product-id-container">
+                <span class="product-id">Product ID:&nbsp;</span>
+                <span class="product-id-value">{{ product.pro_id }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tools-header btb">
+          <div class="header-box lh35">
+            <div class="bgw" id="toolbar">
+              {% include 'topnav.html.twig' %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-container">
+        <div class="row">
+          <div class="col-lg-3 left-panel opened-media-kit" id="left-sidebar">
+            <div class="sidebar-container media-kit-title slide-right d-none" id="media-kit-title-slide-right">
+              <span class="fas fa-caret-right image-list-caret"></span>
+            </div>
+            <div class="sidebar-container slide-left">
+              <div class="sidebar-container media-kit-title active" id="media-kit-title-slide-left">
+                <span class="media-kit-image-title">Media Kits</span>
+                <span class="fas fa-caret-left image-list-caret"></span>
+              </div>
+              <div class="sidebar-container media-kit-images disabled empty">
+                <div class="progress-overlay"><div class="spinner-border"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-9 right-panel">
+            <div id="canvas-container" class="km-product">
+              <!--Adding font for canvas-->
+              <div id="canvasFontFamily" style="height:0;">
+                <span style="font-family: 'Abel'">&nbsp;</span>
+                <span style="font-family: 'Abril Fatface'">&nbsp;</span>
+                <span style="font-family: 'Alegreya'">&nbsp;</span>
+                <span style="font-family: 'Alice'">&nbsp;</span>
+                <span style="font-family: 'Alice Light'">&nbsp;</span>
+                <span style="font-family: 'Amaranth'">&nbsp;</span>
+                <span style="font-family: 'Amatic SC'">&nbsp;</span>
+                <span style="font-family: 'Baloo'">&nbsp;</span>
+                <span style="font-family: 'Cantarell'">&nbsp;</span>
+                <span style="font-family: 'Cantarell Bold'">&nbsp;</span>
+                <span style="font-family: 'Cherry Cream Soda'">&nbsp;</span>
+                <span style="font-family: 'Corben'">&nbsp;</span>
+                <span style="font-family: 'Coustard Ultra'">&nbsp;</span>
+                <span style="font-family: 'Coustard'">&nbsp;</span>
+                <span style="font-family: 'CQ Mono'">&nbsp;</span>
+                <span style="font-family: 'Dancing Script'">&nbsp;</span>
+                <span style="font-family: 'Dancing Script Bold'">&nbsp;</span>
+                <span style="font-family: 'Dosis'">&nbsp;</span>
+                <span style="font-family: 'Dosis Bold'">&nbsp;</span>
+                <span style="font-family: 'Dosis SemiBold'">&nbsp;</span>
+                <span style="font-family: 'Dosis ExtraBold'">&nbsp;</span>
+                <span style="font-family: 'Dosis Light'">&nbsp;</span>
+                <span style="font-family: 'Dosis ExtraLight'">&nbsp;</span>
+                <span style="font-family: 'Dosis Medium'">&nbsp;</span>
+                <span style="font-family: 'Droid Serif'">&nbsp;</span>
+                <span style="font-family: 'EB Garamond'">&nbsp;</span>
+                <span style="font-family: 'EB Garamond Bold'">&nbsp;</span>
+                <span style="font-family: 'Elsie'">&nbsp;</span>
+                <span style="font-family: 'Exo'">&nbsp;</span>
+                <span style="font-family: 'Exo Black'">&nbsp;</span>
+                <span style="font-family: 'Exo Bold'">&nbsp;</span>
+                <span style="font-family: 'Exo Italic'">&nbsp;</span>
+                <span style="font-family: 'Exo Light'">&nbsp;</span>
+                <span style="font-family: 'Exo Medium'">&nbsp;</span>
+                <span style="font-family: 'Exo Thin'">&nbsp;</span>
+                <span style="font-family: 'Fjalla One'">&nbsp;</span>
+                <span style="font-family: 'Grand Hotel'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans Bold'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans Light'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans Light Italic'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans SemiBold'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans SemiBold Italic'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans Thin'">&nbsp;</span>
+                <span style="font-family: 'Josefin Sans Thin Italic'">&nbsp;</span>
+                <span style="font-family: 'Lato'">&nbsp;</span>
+                <span style="font-family: 'Lato Medium'">&nbsp;</span>
+                <span style="font-family: 'Lato Black'">&nbsp;</span>
+                <span style="font-family: 'Lato Bold'">&nbsp;</span>
+                <span style="font-family: 'Lato Light'">&nbsp;</span>
+                <span style="font-family: 'Lato Thin'">&nbsp;</span>
+                <span style="font-family: 'Leckerli One'">&nbsp;</span>
+                <span style="font-family: 'Libre Baskerville'">&nbsp;</span>
+                <span style="font-family: 'Libre Baskerville Bold'">&nbsp;</span>
+                <span style="font-family: 'Libre Baskerville Italic'">&nbsp;</span>
+                <span style="font-family: 'Lora'">&nbsp;</span>
+                <span style="font-family: 'Medula One'">&nbsp;</span>
+                <span style="font-family: 'Merriweather'">&nbsp;</span>
+                <span style="font-family: 'Merriweather Bold'">&nbsp;</span>
+                <span style="font-family: 'Merriweather Light'">&nbsp;</span>
+                <span style="font-family: 'Merriweather Black'">&nbsp;</span>
+                <span style="font-family: 'Montserrat'">&nbsp;</span>
+                <span style="font-family: 'Montserrat Black'">&nbsp;</span>
+                <span style="font-family: 'Montserrat Hairline'">&nbsp;</span>
+                <span style="font-family: 'Montserrat Italic'">&nbsp;</span>
+                <span style="font-family: 'Montserrat Bold'">&nbsp;</span>
+                <span style="font-family: 'Montserrat Light'">&nbsp;</span>
+                <span style="font-family: 'Montserrat SemiBold'">&nbsp;</span>
+                <span style="font-family: 'Montserrat Thin'">&nbsp;</span>
+                <span style="font-family: 'Muli'">&nbsp;</span>
+                <span style="font-family: 'Muli Bold'">&nbsp;</span>
+                <span style="font-family: 'Muli Light'">&nbsp;</span>
+                <span style="font-family: 'Muli Light Italic'">&nbsp;</span>
+                <span style="font-family: 'Nobile'">&nbsp;</span>
+                <span style="font-family: 'Nobile Bold'">&nbsp;</span>
+                <span style="font-family: 'Nobile Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Nobile Italic'">&nbsp;</span>
+                <span style="font-family: 'Noto Sans'">&nbsp;</span>
+                <span style="font-family: 'Noto Sans Bold'">&nbsp;</span>
+                <span style="font-family: 'Noto Sans Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Noto Sans Italic'">&nbsp;</span>
+                <span style="font-family: 'Open Sans'">&nbsp;</span>
+                <span style="font-family: 'Open Sans Bold'">&nbsp;</span>
+                <span style="font-family: 'Open Sans Italic'">&nbsp;</span>
+                <span style="font-family: 'Open Sans Light'">&nbsp;</span>
+                <span style="font-family: 'Open Sans Semibold'">&nbsp;</span>
+                <span style="font-family: 'Open Sans Condensed Light'">&nbsp;</span>
+                <span style="font-family: 'Oswald'">&nbsp;</span>
+                <span style="font-family: 'Oswald Bold'">&nbsp;</span>
+                <span style="font-family: 'Oswald Light'">&nbsp;</span>
+                <span style="font-family: 'Oswald SemiBold'">&nbsp;</span>
+                <span style="font-family: 'Palanquin Dark Bold'">&nbsp;</span>
+                <span style="font-family: 'Philosopher'">&nbsp;</span>
+                <span style="font-family: 'Philosopher Bold'">&nbsp;</span>
+                <span style="font-family: 'Philosopher Italic'">&nbsp;</span>
+                <span style="font-family: 'Philosopher Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Playfair Display Black'">&nbsp;</span>
+                <span style="font-family: 'Playfair Display Bold'">&nbsp;</span>
+                <span style="font-family: 'Playfair Display Italic'">&nbsp;</span>
+                <span style="font-family: 'Playfair Display'">&nbsp;</span>
+                <span style="font-family: 'Playfair Display Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Poppins'">&nbsp;</span>
+                <span style="font-family: 'Poppins Black'">&nbsp;</span>
+                <span style="font-family: 'Poppins Bold'">&nbsp;</span>
+                <span style="font-family: 'Poppins Light'">&nbsp;</span>
+                <span style="font-family: 'Poppins SemiBold'">&nbsp;</span>
+                <span style="font-family: 'Poppins Thin'">&nbsp;</span>
+                <span style="font-family: 'PT Sans'">&nbsp;</span>
+                <span style="font-family: 'PT Sans Narrow'">&nbsp;</span>
+                <span style="font-family: 'PT Sans Narrow Bold'">&nbsp;</span>
+                <span style="font-family: 'Quattrocento Sans'">&nbsp;</span>
+                <span style="font-family: 'Quattrocento Sans Bold'">&nbsp;</span>
+                <span style="font-family: 'Quattrocento Sans Italic'">&nbsp;</span>
+                <span style="font-family: 'Quattrocento Sans Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Raleway'">&nbsp;</span>
+                <span style="font-family: 'Raleway Black'">&nbsp;</span>
+                <span style="font-family: 'Raleway Bold'">&nbsp;</span>
+                <span style="font-family: 'Raleway Italic'">&nbsp;</span>
+                <span style="font-family: 'Raleway Light'">&nbsp;</span>
+                <span style="font-family: 'Raleway SemiBold'">&nbsp;</span>
+                <span style="font-family: 'Raleway Thin'">&nbsp;</span>
+                <span style="font-family: 'Roboto'">&nbsp;</span>
+                <span style="font-family: 'Roboto Black'">&nbsp;</span>
+                <span style="font-family: 'Roboto Bold'">&nbsp;</span>
+                <span style="font-family: 'Roboto Thin'">&nbsp;</span>
+                <span style="font-family: 'Roboto Regular'">&nbsp;</span>
+                <span style="font-family: 'Roboto Condensed'">&nbsp;</span>
+                <span style="font-family: 'Roboto Condensed Bold'">&nbsp;</span>
+                <span style="font-family: 'Roboto Condensed Light'">&nbsp;</span>
+                <span style="font-family: 'Roboto Condensed Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Roboto Condensed Light Italic'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Black'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Thin'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Light'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Extra Light'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Bold'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Semi Bold'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Extra Bold'">&nbsp;</span>
+                <span style="font-family: 'Roboto Slab Medium'">&nbsp;</span>
+                <span style="font-family: 'Sansita'">&nbsp;</span>
+                <span style="font-family: 'Six Caps'">&nbsp;</span>
+                <span style="font-family: 'Source Sans Pro'">&nbsp;</span>
+                <span style="font-family: 'Space Mono'">&nbsp;</span>
+                <span style="font-family: 'Space Mono Bold'">&nbsp;</span>
+                <span style="font-family: 'Space Mono Italic'">&nbsp;</span>
+                <span style="font-family: 'Spirax'">&nbsp;</span>
+                <span style="font-family: 'Vollkorn'">&nbsp;</span>
+                <span style="font-family: 'Vollkorn Bold'">&nbsp;</span>
+                <span style="font-family: 'Vollkorn Italic'">&nbsp;</span>
+                <span style="font-family: 'Vollkorn Semibold'">&nbsp;</span>
+                <span style="font-family: 'Vollkorn Bold Italic'">&nbsp;</span>
+                <span style="font-family: 'Wendy One'">&nbsp;</span>
+              </div>
+              <div style="position:relative; padding: 19px 0 0 19px;" id="canvas-wrapper">
+                <canvas id="c" width="2400" height="2400" class="lower-canvas" style="position: absolute; width: 1366px; height: 412px; left: 0px; top: 0px; touch-action: none; user-select: none;" data-id="c1"></canvas>
+              </div>
+              <!--Ruler Start-->
+              <div class="kmds-g-ruler d-none">
+                <div class="g-ruler-widget horizontal">
+                  <canvas id="kmds-top-ruler" width="1366" height="19"></canvas>
+                  <div class="mouse-marker"></div>
+                </div>
+                <div class="g-ruler-widget vertical">
+                  <canvas id="kmds-left-ruler" width="19" height="1366"></canvas>
+                  <div class="mouse-marker"></div>
+                </div>
+                <div class="g-ruler-widget-px">
+                  <span>px</span>
+                </div>
+              </div>
+              <!--Ruler End-->
+              <input type="hidden" id="user_template_id" value="" />
+              <input type="hidden" id="parent_template_id" value="0" />
+              <input type="hidden" id="user_node_nid" value="{{node.nid}}" />
+              <input type="hidden" id="user_node_uid" value="{{user.uid}}" />
+              <input type="hidden" id="template_owner" value="" />
+              <input type="hidden" id="page_bleed" value="1" />
+              <input type="hidden" id="pageWidth" value="0" />
+              <input type="hidden" id="pageHeight" value="0" />
+              <input type="hidden" id="user_action" value="{{data.user_action}}" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+/*
+  //var kitchensink = { };
+  var canvas = new fabric.Canvas('c', {
+		backgroundColor : "#eaeaea  ",
+		//backgroundColor : "#f8f8f8",
+		preserveObjectStacking: true,
+	});
+ // fabric.Object.prototype.objectCaching = false;
+ */
+</script>

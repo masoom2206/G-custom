@@ -1,0 +1,13 @@
+{
+    "name": "public_home_page",
+    "type": "drupal-module",
+    "description": "Custom Public Home Page",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/public_home_page",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/public_home_page",
+        "source": "http://cgit.drupalcode.org/public_home_page",
+    },
+}

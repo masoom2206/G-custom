@@ -1,0 +1,211 @@
+<div class="section t-section km-view-section d-flex" id="wp-toolbar">
+  <!--Textbox tool-->
+  {% if data.edit_properties == 1 %}
+  <div class="toolbar-button textbox-tool d-flex d-none">
+    <div class="textbox-title d-none">Text&nbsp;<span class="fas fa-play image-list-caret"></span></div>
+    <div class="textbox-fonts">
+      <select class="w-100 rightProp" id="txt-font-family" data-pro="fontFamily" data-right-prop="fontFamily">
+        <option style="font-family:American Typewriter" value="American Typewriter">American Typewriter</option>
+        <option style="font-family:Andale Mono" value="Andale Mono">Andalé Mono</option>
+        <option style="font-family:Arial" value="Arial">Arial</option>
+        <option style="font-family:Arial Black" value="Arial Black">Arial Black</option>
+        <option style="font-family:Bradley Hand" value="Bradley Hand">Bradley Hand</option>
+        <option style="font-family:Brush Script MT" value="Brush Script MT">Brush Script MT</option>
+        <option style="font-family:Comic Sans MS" value="Comic Sans MS">Comic Sans MS</option>
+        <option style="font-family:Courier" value="Courier">Courier</option>
+        <option style="font-family:Didot" value="Didot">Didot</option>
+        <option style="font-family:Impact" value="Impact">Impact</option>
+        <option style="font-family:Georgia" value="Georgia">Georgia</option>
+        <option style="font-family:Lucida Console" value="Lucida Console">Lucida Console</option>
+        <option style="font-family:Luminari" value="Luminari">Luminari</option>
+        <option style="font-family:Monaco" value="Monaco">Monaco</option>
+        <option style="font-family:Tahoma" value="Tahoma">Tahoma</option>
+        <option style="font-family:Times New Roman" value="Times New Roman">Times New Roman</option>
+        <option style="font-family:Trebuchet MS" value="Trebuchet MS">Trebuchet MS</option>
+        <option style="font-family:Verdana" value="Verdana">Verdana</option>
+      </select>
+    </div>
+    <div class="textbox-style">
+      <select data-property="preset-font-style" class="w-100" id="txt-font-style">
+        <option value="300#N">Light</option>
+        <option value="300#I">Light Italic</option>
+        <option value="400#N">Regular</option>
+        <option value="400#I">Regular Italic</option>
+        <option value="600#N">Semi-Bold</option>
+        <option value="600#I">Semi-Bold Italic</option>
+        <option value="700#N">Bold</option>
+        <option value="700#I">Bold Italic</option>
+        <option value="800#N">Extra-Bold</option>
+        <option value="800#I">Extra-Bold Italic</option>
+      </select>
+    </div>
+    <div class="textbox-size">
+      <div class="dropdown">
+        <input value="24" id="txt-font-size" data-pro="fontSize" data-right-prop="fontSize" onclick="textSizeList()" class="dropbtn w-100 p-1" />
+        <div id="myDropdown" class="dropdown-content">
+          <div class="option-item" datavalue="6">6 px</div>
+          <div class="option-item" datavalue="7">7 px</div>
+          <div class="option-item" datavalue="8">8 px</div>
+          <div class="option-item" datavalue="9">9 px</div>
+          <div class="option-item" datavalue="10">10 px</div>
+          <div class="option-item" datavalue="11">11 px</div>
+          <div class="option-item" datavalue="12">12 px</div>
+          <div class="option-item" datavalue="14">14 px</div>
+          <div class="option-item" datavalue="18">18 px</div>
+          <div class="option-item" datavalue="21">21 px</div>
+          <div class="option-item" datavalue="24">24 px</div>
+          <div class="option-item" datavalue="36">36 px</div>
+          <div class="option-item" datavalue="48">48 px</div>
+          <div class="option-item" datavalue="66">60 px</div>
+          <div class="option-item" datavalue="72">72 px</div>
+        </div>
+        <span class="dropdown-content-icon" onclick="textSizeList()"><i class="fas fa-chevron-down"></i></span>
+      </div>
+    </div>
+    <div class="textbox-color d-flex">
+      <div class="border-left"></div>
+      <div id="color-label">Color</div>
+      <label class="ml-2 text-left w-25">
+        <input type="text" id="kmds-color-fill" class="kmds-color-section apri wpjscolor active" data-right-prop="fill" data-pro="kmdstextcolor" data-value="fill" value="#000000" readonly="">
+      </label>
+    </div>
+    <div class="text-alignments d-flex">
+      <div class="border-left"></div>
+      <div class="text-align-left">
+        <div class="content">
+          <button data-value="left" data-right-prop="textAlign" data-pro="textAlign" value="left" id="align-left" class="align apri rightProp" data-property="align-left" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Align Left" data-original-title="" title="">
+            <span class="fas fa-align-left"></span>
+          </button>
+        </div>
+      </div>
+      <div class="text-align-center">
+        <div class="content">
+          <button data-value="center" data-right-prop="textAlign" data-pro="textAlign" value="center" id="align-center" class="align apri rightProp g-active" data-property="align-center" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Align Center" data-original-title="" title="">
+            <span class="fas fa-align-center"></span>
+          </button>
+        </div>
+      </div>
+      <div class="text-align-right">
+        <div class="content">
+          <button data-value="right" data-right-prop="textAlign" data-pro="textAlign" value="right" id="align-right" class="align apri rightProp" data-property="align-right" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Align Right" data-original-title="" title="">
+            <span class="fas fa-align-right"></span>
+          </button>
+        </div>
+      </div>
+      <div class="text-align-justify">
+        <div class="content">
+          <button data-value="justify" data-right-prop="textAlign" data-pro="textAlign" value="justify" id="align-justify" class="align apri rightProp" data-property="align-justify" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Align Justify" data-original-title="" title="">
+            <span class="fas fa-align-justify"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  <div class="km-user-action textbox-action d-flex" user-action="all-user">
+    <span class="object-action delete-element" obj_sec="textbox-action" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Delete element" data-original-title="" title="">&nbsp;</span>
+  </div>
+  </div>
+  {% endif %}
+  
+  <!--Image tool-->
+  <div class="toolbar-button image-tool d-flex d-none">
+    <div class="image-title d-none">Image&nbsp;<span class="fas fa-play image-list-caret"></span></div>
+    <div class="image-crop-wrapper">
+      <div class="crop-wrapper">
+        <img src="/modules/custom/km_product/images/imageeditor-3b3b3b-128px.png" id="kmwpImageCrop" class="km-image-crop active" width="25" height="auto" />
+      </div>
+    </div>
+    <div class="border-left"></div>
+    <div class="km-user-action image-action d-flex" user-action="all-user">
+      <span class="object-action delete-element" obj_sec="image-action" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Delete element" data-original-title="" title="">&nbsp;</span>
+    </div>
+  </div>
+  
+  <!--Shape tool-->
+  {% if data.edit_properties == 1 %} 
+  <div class="toolbar-button shape-tool d-flex d-none">
+    <div class="shape-title d-none">Shape&nbsp;<span class="fas fa-play image-list-caret"></span></div>
+    <div class="shape-fill shape-tool-width">
+      <div class="shape-fill-title km-title display-inline">Fill</div>
+      <div class="ml-2 text-left display-inline">
+        <input type="text" id="kmds-shape-fill" class="kmds-shape-section apri wpjscolor km-input" data-right-prop="fill" data-pro="kmdsshapefill" data-value="fill" value="#ffffff" readonly="" style="background-color: rgb(240, 239, 239); color: rgb(255, 255, 255);" />
+      </div>
+    </div>
+    <div class="border-left"></div>
+    <div class="shape-border shape-tool-width">
+      <div class="shape-fill-title km-title display-inline">Border</div>
+      <div class="ml-2 text-left display-inline">
+        <input type="text" id="kmds-shape-border" class="kmds-shape-border-section apri wpjscolor km-input" data-right-prop="stroke" data-pro="kmdsshapeborder" data-value="stroke" value="#000000" readonly="" style="background-color: rgb(40, 128, 230); color: rgb(0, 0, 0);" />
+      </div>
+      <div class="align-items-center display-inline">
+        <input type="text" class="rightProp km-input" id="shape-border-stroke-num" value="1"><span class="border-unit">&nbsp;px</span>
+      </div>
+    </div>
+    <div class="km-user-action shape-action d-flex" user-action="all-user">
+      <span class="object-action delete-element" obj_sec="textbox-action" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Delete element" data-original-title="" title="">&nbsp;</span>
+    </div>
+  </div>
+  {% endif %}
+  
+  <div class="toolbar-button km-brand-tool d-none">
+    <div class="km-brand">
+      <label class="d-flex">
+        <input type="checkbox" id="km-shape-brand" value="1" class="form-checkbox"/>
+        <label class="checkb" for="km-shape-brand"></label>
+        <span class="ml-2">Brand</span>
+      </label>
+    </div>
+  </div>
+  
+  {% if(product.name == 'Online Gallery' or product.name == 'Playlist')%}
+  <div data-product_type ="{{product.name}}" class="kn-product-start" style="display: flex;position: absolute;right: 0;align-items: center;">
+    <div class="image-crop-wrapper km-start">
+      <div class="crop-wrapper">
+       {% if data.template.product_id is empty %} 
+        <img src="/modules/custom/km_product/images/media-kit-icon.png" id="kmStart" class="km-image-crop active disabled-kmstart" width="25" height="auto" />
+        {% else %}
+         <img src="/modules/custom/km_product/images/media-kit-icon.png" id="kmStart" class="km-image-crop active" width="25" height="auto" />
+        {% endif %}
+      </div>
+    </div>
+    <div class="image-crop-wrapper km-lock">
+      <div class="crop-wrapper">
+
+       {# <img src="/modules/custom/km_product/images/imageeditor-3b3b3b-128px.png" id="kmImageCrop" class="km-image-crop active" width="25" height="auto" /> #}
+       <!-- <i class="fas fa-lock" style="cursor: pointer;"></i> -->
+       <img src="/modules/custom/km_product/images/lock-848688.png" style="pointer-events: none;" class="km-image-crop active" width="25" height="auto" />
+      </div>
+    </div>
+    <div class="image-crop-wrapper kn-delete">
+      <div class="crop-wrapper">
+       {% if data.template.product_id is empty %} 
+              <img src="/modules/custom/km_product/images/trash.png" id="kmDeleteProduct" class="km-image-crop active disabled" width="25" height="auto" style=" opacity: 0.4!important;pointer-events: none;" />
+              {% else %}
+              <img src="/modules/custom/km_product/images/trash.png" id="kmDeleteProduct" class="km-image-crop active km2" width="25" height="auto" style="" data-title ="{{data.template.product_name}}" data-url="/km/product/template/{{data.template.product_id}}/delete" data-redirect="/km/product/{{data.template.node_id }}/{{product.id}}/template/select?view=grid" />
+              {% endif %}
+      </div>
+    </div>
+  </div> 
+  <div id="mod-playlist-gallery"></div>
+  <div id="mod-playlist-gallery-conf"></div>  
+  {% endif %}
+  <!--
+  <div class="toolbar-button d-flex d-none" id="wp-object-action-button">
+    <div class="km-user-action d-flex" id="btn-lock-unlock">
+      <span class="wp-object-action lock" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Unlock object" data-original-title="" title="">&nbsp;</span>
+      <span class="wp-object-action unlock d-none" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Lock object" data-original-title="" title="">&nbsp;</span>
+    </div>
+    <div class="km-user-action d-flex" id="btn-clone-object">
+      <span class="wp-object-action add-new" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Add new object" data-original-title="" title="">&nbsp;</span>
+    </div>
+    <div class="km-user-action d-flex" id="btn-bring-forward">
+      <span class="wp-object-action bringforward" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Bring forward object" data-original-title="" title="">&nbsp;</span>
+    </div>
+    <div class="km-user-action d-flex" id="btn-send-backward">
+      <span class="wp-object-action sendbackward" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Send backward object" data-original-title="" title="">&nbsp;</span>
+    </div>
+    <div class="km-user-action d-flex" id="btn-delete-object">
+      <span class="wp-object-action delete" onmouseover="tooltipfn(this)" data-km-toggle="tooltip" data-placement="bottom" data-title="Delete object" data-original-title="" title="">&nbsp;</span>
+    </div>
+  </div>
+  -->
+</div>

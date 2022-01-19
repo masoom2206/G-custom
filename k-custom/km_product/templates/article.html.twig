@@ -1,0 +1,57 @@
+<div class="my-kaboodles kaboodles-dashboard">
+<!--nav tabs -->
+<div class="kaboodles-mid-block">
+  <div class="custom-nav-layout">
+    <nav>
+      <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-active-tab" data-toggle="tab" href="#nav-active" role="tab" aria-controls="nav-active" aria-selected="true">Active</a>
+        <a class="nav-item nav-link" id="nav-shared-tab" data-toggle="tab" href="#nav-shared" role="tab" aria-controls="nav-shared" aria-selected="false">Shared</a>      
+      </div>
+      <div class="div-spacer"></div>
+    </nav>
+  </div>
+    <!--tab content -->
+  <div class="tab-content" id="nav-kaboodleContent">
+      <!--- Active section -->
+    <div class="tab-pane fade show active pt-20" id="nav-active" role="tabpanel" aria-labelledby="nav-active-tab">
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw" id="html-article">
+    <div class="col-lg-12 plr0" id="kmds-product-container">
+      <div class="row">
+        <div class="col-lg-8 text-left"><a href="/tools/html-article/add" class="btn btn-primary text-uppercase font-fjalla mr-4">Add HTML Article</a></div>
+        <div class="col-lg-4 text-right search-box-tool article-list">
+          <span><img src="/modules/custom/km_product/images/search.png" width="20"></span>
+          <span><input type="text" id="filter-article" class="form-control filter pl-1" data-filetype="article" placeholder="Enter Search"/><span class="clear-text d-none">x</span></span>
+          <span><button id="filter-by-favo-article" type="button" class="filter-favo round-button media-favo-676767 inactive"></button></span>
+          <span><button type="submit" class="btn btn-primary text-uppercase font-fjalla mr-4" onclick="searchHtmlArticle();">Apply</button></span>
+        </div>
+      </div>
+      {{ data.build }}
+    </div>
+  </div>
+</div>
+    <!--- Shared section -->
+			<div class="tab-pane fade pt-20" id="nav-shared" role="tabpanel" aria-labelledby="nav-shared-tab">
+        {% if data.team_query %}
+          <div class="member-content">
+            <div class="col-lg-12 member-team-name text-center">{{data.team_name}}</div>
+            <div class="row">
+              <div class="col-lg-8 text-left"><a href="/tools/html-article/add?team={{data.team_query.gid}}&uid={{data.team_query.muid}}" class="btn btn-primary text-uppercase font-fjalla mr-4">Add HTML Article</a></div>
+              <div class="col-lg-4 text-right search-box-tool article-list">
+                <span><img src="/modules/custom/km_product/images/search.png" width="20"></span>
+                <span><input type="text" id="filter-member-article" class="form-control filter pl-1" data-filetype="article" placeholder="Enter Search"/><span class="clear-member-text d-none">x</span></span>
+                <span><button id="filter-by-member-favo-article" type="button" class="filter-favo round-button media-favo-676767 inactive"></button></span>
+                <span><button type="submit" class="btn btn-primary text-uppercase font-fjalla mr-4" onclick="searchHtmlMemberArticle();">Apply</button></span>
+              </div>
+            </div>
+            {{ data.member_article }}
+          </div>
+          <div class="member-teams d-none">{{ data.build_teams }}</div>
+        {% else %}
+          <div class="member-teams">{{ data.build_teams }}</div>
+        {% endif %}
+      </div>
+  </div>
+  <!--tab content end-->
+</div>
+
+</div>

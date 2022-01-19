@@ -1,0 +1,82 @@
+{% for key,value in data.insta_posts.data %}
+ <div class="post-content-area mb-2" data-postId = "{{value.id}}">
+  <div class="border wrap-post-content-area bg-white" style="border-radius:10px"> 
+     <div class="media-owner pt-2 pb-2 pl-2">
+      <span class="owner-profile-pic">
+      <!--<img class="rounded-circle" width="40" height="40" alt="pic" src="https://instagram.fakx1-1.fna.fbcdn.net/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=instagram.fakx1-1.fna.fbcdn.net&_nc_ohc=FICg3YM1jeEAX_ex-Yc&oh=1cb04c2c4804c69fc127146405a78b72&oe=6010CC8F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+      -->
+      <i class="fas fa-user-circle"></i>
+      </span>
+      <span>{{value.username}}</span>
+     </div>
+     <div class="insta-media">
+      {% if value.media_type == 'IMAGE' %}
+       <img class="w-100" src="{{value.media_url}}">
+      {% endif %}
+      {% if value.media_type == 'CAROUSEL_ALBUM' %}
+        <div id="multi-photo-carousal-{{key}}" class="owl-carousel owl-theme">
+        {% for key1,value1 in value.children.data %}
+         <div class="item">
+         {% if value1.media_type == 'IMAGE'  %}
+         <img class="w-100" src="{{value1.media_url}}">
+         {% endif %}
+         {% if value1.media_type == 'VIDEO'  %}
+         <video width="100%" controls>
+          <source src="{{value1.media_url}}" type="video/mp4">
+         </video>
+         {% endif %}
+         </div>
+       {% endfor %}
+       </div>
+      {% endif %}
+      {% if value.media_type == 'VIDEO'  %}
+        <video width="100%" controls>
+         <source src="{{value.media_url}}" type="video/mp4">
+        </video>
+      {% endif %}
+      
+      </div>
+      <div class="insta-insight-icon p-2 d-flex align-items-center">
+       <div class="insta-post-likes-count d-flex align-items-center pr-2">
+          <span class="likes-count pr-2">
+            {{value.like_count}} 
+          </span>
+          <i class="far fa-heart" style="font-size:20px"></i>
+        </div>
+        <div class="insta-post-comments-count d-flex align-items-center">
+        <span class="comments-count pr-2">
+        {{value.comments_count}}
+        </span>
+        <i class="fas fa-comment" style="font-size:20px"></i>
+        </div>
+      </div>
+      {% if value.caption is defined %}
+      <div class="insta-captions pt-2 pb-2 pl-2">
+        <span><b>{{value.username}}</b></span>
+        <span>{{value.caption}}</span>
+      </div>
+      {% endif %}
+       <div class="insta-insight pt-2 pb-2 pl-2">
+           <span class="comments-count view-all-modal">
+            <div data-instaMediaId = "{{value.id}}" class="all-comments"> View all </div>
+           </span>   <br>
+       {% if value.comments_count > 0 %}
+           <ul class = "list-unstyled">
+           {% for comment_key,comment_value in value.comments.data %}
+             <li><b>{{comment_value.username}}</b> {{comment_value.text}}
+             </li>
+            {% endfor %}
+           </ul> 
+       {% endif %}
+       </div>
+       {% if value.is_comment_enabled ==  'true' %} 
+          <div class="insta-comments mb-3" style="position:relative" data-username = "{{value.username}}" data-instaMediaId = "{{value.id}}">
+           <div class="insta-comment" placeholder="Add a comment..." contenteditable="true"></div>
+           <div class="post-comment font-fjalla disabled">POST</div>
+          </div>
+       {% endif %}
+
+ 
+  </div>
+ </div> 
+ {% endfor %}

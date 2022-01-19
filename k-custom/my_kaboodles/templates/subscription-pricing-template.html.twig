@@ -1,0 +1,88 @@
+{{ attach_library('core/drupal.dialog.ajax') }}
+{% if display != '' %}
+<div class="container mt-3">
+	<div class="row justify justify-content-center">
+		<div class="w-50 text-center">
+			<div class="plan-desc">{{feature_list_description}}</div>
+		</div>
+  </div>
+  <div class="row justify-content-center mt-5 mb-5 ml-2 mr-2">
+    {% if items %}
+			{% for item in items %}
+				<div class="plans-row text-center mr-6">
+          {% if (display == 'Professional' and item.name == 'Professional') %}
+          <div class="caps-on h2 text-center bg-023364 color-white plans-heading current_items">{{item.name}}<div class="current">(current)</div></div>
+          {% elseif (display == 'Expert' and item.name == 'Expert') %}
+          <div class="caps-on h2 text-center bg-023364 color-white plans-heading current_items">{{item.name}}<div class="current">(current)</div></div>
+          {% else %}
+          <div class="caps-on h2 text-center bg-023364 color-white plans-heading">{{item.name}}</div>
+          {% endif %}
+					{% if item.subscription_rate == 0 %}						
+						<div class="p-2">							
+							<span class="rate">FREE!</span>
+						</div>
+					{% else %}
+						<div class="p-2">
+							<span class="doller">$</span>
+							<span class="rate">{{item.subscription_rate}}</span>
+							<span class="rate-per">/mo</span>
+						</div>
+					{% endif %}
+					<div class="w-300 m-auto color-black">
+						{% if item.name == 'Professional' %}
+						{{ block_professional_text }}
+						{% endif %}
+					</div>
+					<div class="w-340 m-auto color-black">
+						{% if item.name == 'Expert' %}
+						 {{ block_expert_text }}
+						{% endif %}					 
+					</div>
+					<div>
+						{% if item.name == 'Enterprise' %}
+							<div class="user-register-button plan-link"><a href="{{item.link_url}}" class="subscription-button sign-up-inquire use-ajax" data-dialog-type="modal" data-dialog-options='{"width":auto, "heigh":600}' data-backdrop="true" >{{item.link_label}}</a></div>
+						{% else %}
+            {% if (display == 'Expert' or display == 'Professional') %}
+             <div class="user-register-button plan-link"><a href="/tools/profile/{{ uid}}/billing"  class="subscription-button sign-up-inquire">MANAGE SUBSCRIPTION</a></div>
+            {% else %}
+            <div class="user-register-button plan-link"><a href="{{item.link_url}}" class="subscription-button sign-up-inquire use-ajax" data-dialog-type="modal"  data-dialog-options='{"width":500, "heigh":600}'data-backdrop="true" >{{item.link_label}}</a></div>
+            {% endif %}
+					 {% endif %}
+					</div>
+					{% if item.name == 'Professional' %}
+						{% for key_pfl,items_pfl in item.Professional_feature_list %}
+              {% if key_pfl == 'Tease line' %}
+                 <div class="p-cells tease_line">{{items_pfl}}</div>
+              {% elseif (key_pfl == 'Free Trial') and (display == 'Expert' or display == 'Professional') %}
+               <div class="p-cells d-none">{{items_pfl}}</div>
+              {% else %}
+                <div class="p-cells">{{items_pfl}}</div>
+              {% endif %}
+              {% if key_pfl == 'Free Trial' %}
+              <hr>
+              {% endif %}
+						{% endfor %}
+					{% endif %}
+					{% if item.name == 'Expert' %}
+						{% for key_efl,items_efl in item.expert_feature_list %}
+              {% if key_efl == 'Tease line' %}
+                <div class="p-cells tease_line">{{items_efl}}</div>
+              {% elseif (key_efl == 'Free Trial') and (display == 'Expert' or display == 'Professional') %}
+               <div class="p-cells d-none">{{items_efl}}</div>
+              {% else %}
+                <div class="p-cells">{{items_efl}}</div>
+              {% endif %}
+              {% if key_efl == 'Free Trial' %}
+              <hr>
+              {% endif %}
+						{% endfor %}
+					{% endif %}
+				</div>
+			{% endfor %}
+		{% endif %}
+  </div>
+</div>
+{% else %}
+<p>Placeholder node for 403 Access Denied</p>
+{% endif %} 
+

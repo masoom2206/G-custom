@@ -1,0 +1,6 @@
+name: Media Kit Selector
+description: Media Kit Selector
+package: Kaboodle
+
+type: module
+core: 8.x

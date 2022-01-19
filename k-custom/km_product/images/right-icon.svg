@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="8px" height="16px" viewBox="0 0 8 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.3 (67297) - http://www.bohemiancoding.com/sketch -->
+    <title>right</title>
+    <desc>Created with Sketch.</desc>
+    <g id="MAILER" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="02---Mailer---product-screen" transform="translate(-306.000000, -290.000000)" fill="#2A2F34" fill-rule="nonzero">
+            <g id="Group-19" transform="translate(0.000000, 53.000000)">
+                <g id="top-mailer" transform="translate(240.000000, 235.000000)">
+                    <g id="Group-22">
+                        <g id="Group-16" transform="translate(0.000000, 2.000000)">
+                            <path d="M73.2145692,15.999965 C72.9984089,15.999485 72.7912086,15.9127649 72.6385684,15.7588447 L66.6705609,9.57083684 C65.7764797,8.63739565 65.7764797,7.16107378 66.6705609,6.22763259 L72.6385684,0.168104902 C72.9880089,-0.103575443 73.4904095,-0.0390953608 73.7608099,0.311945085 C73.9787301,0.594665444 73.9843301,0.988105943 73.7745699,1.27706631 L67.8065623,7.36875404 C67.5016019,7.68123444 67.5016019,8.18139507 67.8065623,8.49387547 L73.7745699,14.6658833 C74.0793703,14.9622037 74.0875303,15.4505243 73.7926499,15.7567647 C73.7867299,15.7630047 73.7806499,15.7690847 73.7745699,15.7750047 C73.6233697,15.9190049 73.4230494,15.999645 73.2145692,15.999965 Z" id="right" transform="translate(70.004299, 7.999982) rotate(-180.000000) translate(-70.004299, -7.999982) "></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

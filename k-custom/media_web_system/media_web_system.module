@@ -1,0 +1,96 @@
+<?php
+/*
+ * @file
+ * KMDS page template
+*/
+function media_web_system_theme($existing, $type, $theme, $path) {
+  return [
+    'web-product-template' => [
+      'variables' => [
+        'variables' => NULL,
+        'form' => NULL,
+      ],
+      'render element' => 'form'
+    ],
+    'web-product' => [
+      'variables' => [
+        'variables' => NULL,
+        'form' => NULL,
+      ],
+      'render element' => 'form'
+    ],
+    'web-product-templates' => ['variables' => [
+        'variables' => NULL,
+      ],
+    ],
+    'header' => ['variables' => [
+        'variables' => NULL,
+      ],
+    ],
+    'right' => ['variables' => [
+        'variables' => NULL,
+      ],
+    ],
+    'blocks' => ['variables' => [
+        'variables' => NULL,
+      ],
+    ],
+    'left' => ['variables' => [
+        'variables' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+* Implements hook_mail().
+*/
+function media_web_system_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+  switch ($key) {
+    case 'email_flyer':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('Email Flyer: @title', array('@title' => $params['subject']), $options);
+      $message['body'][] = $params['message'];
+    break;
+  }
+}
+
+// info on tool tip
+function n_knowledge_base_i_pattern($page_name){
+	$result = [];
+	$page_array = [];
+	$site_config = \Drupal::config('system.site');
+	$server_name = strtolower($site_config->get('site_server_name'));
+	$dev = ['Email Flyers' => 1082];
+	
+	$staging = ['Email Flyers' => 451];
+	
+	$prod = ['Email Flyers' => 454];
+	
+	if($server_name == 'dev'){
+		$page_array = $dev;
+	} else if($server_name == 'staging'){
+		$page_array = $staging;		
+	} else {
+		$page_array = $prod;
+	}
+	
+	$nid = isset($page_array[$page_name]) ? $page_array[$page_name] : 0;
+	$node = \Drupal::service('entity.manager')->getStorage('node')->load($nid);
+	$field_modal_text = $node->get('field_modal_text')->value;
+	$formatted_modal_text = $field_modal_text;
+	if(!empty($field_modal_text)){
+		$format = $node->get('field_modal_text')->format;
+		foreach ($node->field_modal_text as $i => $delta) {   
+			$formatted_modal_text = (string) \Drupal::service('renderer')->render($delta->view(array('type' => $format)));
+		}		
+	}
+	$result = [$node->getTitle(), $formatted_modal_text, $nid];
+	
+	return $result;
+}
+
+

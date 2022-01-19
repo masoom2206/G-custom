@@ -1,0 +1,38 @@
+{% for comment_key,comment_value in data.single_insta_post.comments.data %}
+ <li class="comment-item mb-2 mt-2">
+ <!--<img class="rounded-circle" width="20" height="20" alt="pic" src="https://instagram.fakx1-1.fna.fbcdn.net/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=instagram.fakx1-1.fna.fbcdn.net&_nc_ohc=FICg3YM1jeEAX_ex-Yc&oh=1cb04c2c4804c69fc127146405a78b72&oe=6010CC8F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+ -->
+ <b>{{comment_value.username}}</b> 
+  {{comment_value.text}} 
+ <br>
+  <div class="insta-single-post-insights ml-2 mt-2">
+    <span class="likes-against-comment" data-commentID={{comment_value.id}}>{{comment_value.like_count}} Likes</span>
+    <span class="replies-against-comment" data-commentID={{comment_value.id}} data-username = {{comment_value.username}}>Reply</span>
+    <span class="delete-comment" data-commentID={{comment_value.id}} data-username = {{comment_value.username}}>Delete</span>
+  </div>
+  {# if there are replies against comments #}
+   <div class="comment-replies-section mt-3" style="font-size:13px">
+   {% if comment_value.replies %}
+    <div class="hide-replies d-flex mt-2" style="cursor:pointer">
+     <i style="font-size:20px;color:#3b3b3b;" class="caret-icon pr-1 fas fa-caret-up"></i><span style="color:#023364;">Replies</span>
+    </div>
+     <div class="comment-replies-section-wrap">
+     <ul class="list-unstyled replies-section">
+         {% embed '@social_media/instagram/instagram-replies.html.twig' ignore missing %}
+         {% endembed %}
+     </ul>
+        {% if comment_value.replies.paging.next is defined %}
+         <div class="load-more-replies ajax-loadnext-comment">
+           <div class="more-replies" data-next = {{comment_value.replies.paging.next}}>+</div>
+          </div>
+        {% endif %}
+     </div>
+  {% endif %}
+        <!-- reply box -->
+       <div class="insta-comments-replies mb-3 d-none" style="position:relative" data-username = "{{comment_value.username}}" data-instaCommentId = "{{comment_value.id}}">
+        <div class="insta-comment-replies" placeholder="Add a reply..." contenteditable="true"></div>
+        <div class="post-comment-replies font-fjalla">POST</div>
+      </div>
+     </div>
+ </li>
+{% endfor %}

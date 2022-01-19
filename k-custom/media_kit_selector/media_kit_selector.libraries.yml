@@ -1,0 +1,29 @@
+media.kit.selector:
+  js:
+    js/media_kit_selector.js: {}
+    
+media.kit:
+  js:
+    js/media_kit.js: {}
+
+media.mks:
+  js:
+    js/mks_media_kit.js: {}
+
+media.kit.global:
+  js:
+    js/reactapps.js: {}
+    js/reactapp_mkoptions.js: {}
+    js/reactapp_search.js: {}
+    js/reactapp_audio.js: {}
+    js/reactapp_video.js: {}
+    js/reactapp_photo.js: {}
+    js/reactapp_text.js: {}
+  css:
+    theme:
+      css/media_kit_selector.css: {}
+    
+media.kit.reactab:
+  js:
+    js/reacta.js: {}
+    js/reactb.js: {}

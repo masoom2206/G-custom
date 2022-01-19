@@ -1,0 +1,68 @@
+mediawebsystem.product:
+  path: '/kmds/design/web'
+  defaults:
+    _controller: '\Drupal\media_web_system\Controller\MediaWebSystemController::webProduct'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+mediawebsystem.product.template:
+  path: '/kmds/design/web/{tid}'
+  defaults:
+    _controller: '\Drupal\media_web_system\Controller\MediaWebSystemController::webProductTemplate'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+mediawebsystem.product.template.save:
+  path: '/kmds/design/web/product/save'
+  defaults:
+    _controller: '\Drupal\media_web_system\Controller\MediaWebSystemController::saveProductTemplate'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+mediawebsystem.product.templates:
+  path: '/kmds/design/web/{user}/{mtid}/{ptid}'
+  defaults:
+    _controller: '\Drupal\media_web_system\Controller\MediaWebSystemController::webProductTemplates'
+    _title: 'Product Templates'
+  options:
+    no_cache: 'TRUE'
+    query:
+      type: ''
+    parameters:
+      user:
+        type: entity:user
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    mtid: \d+
+    ptid: \d+
+
+mediawebsystem.web_text_editor_form:
+  path: '/open-web-editor-modal-form'
+  defaults:
+    _form: '\Drupal\media_web_system\Form\WebTextEditorForm'
+  requirements:
+    _access: 'TRUE'
+    
+mediawebsystem.send.email:
+  path: '/kmds/design/web/product/send/email'
+  defaults:
+    _controller: '\Drupal\media_web_system\Controller\WebTemplateController::sendMail'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    
+mediawebsystem.test:
+  path: '/kmds/design/web/product/template/test'
+  defaults:
+    _controller: '\Drupal\media_web_system\Controller\WebTemplateController::testWebProductTemplate'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'

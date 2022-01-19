@@ -1,0 +1,47 @@
+react.min:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react.min.js: {}
+
+react:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react.js: {}
+
+react.dom.min:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react-dom.min.js: {}
+
+axios:
+  js:
+    /libraries/reactjs/build/axios.min.js: {}
+
+data_table:
+  js:
+    //cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js: {}
+
+kaboodle_js:
+  js:
+    js/my_kaboodles.js: {}
+  css:
+    theme:
+      css/notifications_list.css: {}
+
+global:
+  version: VERSION
+  js:
+    js/my_kaboodles.js: {}
+  css:
+    theme:
+      css/my_kaboodles.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+my_kaboodle_js:
+  js:
+    js/my_kaboodles.js: {}
+  css:
+    theme:
+      css/my_kaboodles.css: {}

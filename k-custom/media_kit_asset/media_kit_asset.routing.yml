@@ -1,0 +1,24 @@
+media_kit_asset.file_converter_download:
+  path: '/file-retriever/{encripted_string}'
+  defaults:
+    _controller: '\Drupal\media_kit_asset\Controller\MediaKitAssetEditorController::ImageConverterDownload'
+    _title: 'SHARED FILE DOWNLOAD'
+  requirements:
+    _access: 'TRUE' 
+    
+media_kit_asset.file_create_download:
+  path: '/savefile/{fids}/{type}'
+  defaults:
+    _controller: '\Drupal\media_kit_asset\Controller\MediaKitAssetEditorController::ImageConverterSave'
+    _title: 'Save Media Kit files IN S3'
+  requirements:
+    _access: 'TRUE' 
+media_kit_asset.file_download:
+  path: '/mekiakit-download-path/{fids}'
+  defaults:
+    _controller: '\Drupal\media_kit_asset\Controller\MediaKitAssetEditorController::ImageDownloadCon'
+    _title: 'Save Media Kit files IN S3'
+  requirements:
+    _access: 'TRUE'    
+    
+  

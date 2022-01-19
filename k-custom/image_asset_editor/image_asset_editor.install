@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_media module.
+ */
+
+/**
+ * Implements hook_update_N().
+ */
+
+function image_asset_editor_update_8701() {
+  	$database = \Drupal::database();
+	  $schema = $database->schema();
+	  $table_name = 'free_image_converter';
+    $table_schema = [
+        'description' => 'Free Image Converter',
+        'fields' => [
+          'icid' => [
+             'description' => "image conversion id - primary key",
+             'type' => 'serial',
+             'not null' => TRUE,
+		     'unsigned' => TRUE,
+          ],
+          'email' => [
+             'description' => 'user email address',
+             'type' => 'varchar',
+             'not null' => TRUE,
+			 'length' => 50,
+          ],
+          'time_stamp' => [
+            'description' => 'time stamp',
+            'type' => 'int',
+          ],
+		  's3_path' => [
+             'description' => 'converted image path',
+             'type' => 'varchar',
+             'not null' => TRUE,
+			 'length' => 256,
+          ],
+		  'status' => [
+			'description' => 'Status',
+			'type' => 'varchar',
+			'not null' => TRUE,
+			'default' => 'pending',
+			'length' => 20,
+		  ],           
+        
+        ], 
+        'primary key' => ['icid'],         
+    ];
+    $schema->createTable($table_name, $table_schema); 
+}
+function image_asset_editor_update_8702() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	
+	$encripted_string = [
+        'description' => 'encripted string',
+        'type' => 'varchar',
+        'not null' => TRUE,
+		'length' => 256,
+      ];
+	$schema->addField('free_image_converter', 'encripted_string', $encripted_string);  
+}
+

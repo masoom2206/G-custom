@@ -1,0 +1,12 @@
+<?php
+/*
+ * @file
+ * Image Editor 
+*/
+function image_asset_editor_theme($existing, $type, $theme, $path) {  
+  return [
+    'image_asset_editor' => ['variables' => ['data' => NULL,] ],
+	'free_image_asset_editor' =>['variables' => ['data' => NULL,] ],
+	'free_image_asset_editor_download' =>['variables' => ['data' => NULL,] ],
+  ];
+}

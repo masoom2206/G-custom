@@ -1,0 +1,24 @@
+<div class="download-image-page-wrapper text-center">
+<div class="download-image-page" style="padding-top: 40px; padding-bottom: 40px;">
+{#<div class="download-button d-none">
+<a id='download-link' href="{{data.url}}" download>download</a>
+</div>#}
+<div class="page-message">
+{{data.message}}
+</div>
+<div class="another-img-converter-link">
+<a href="{{base_url}}/image-converter">Click here to convert another image</a>
+</div>
+</div>
+{% if data.access_file == 1 %}
+<div class="after-download  d-none">
+<div class="after-download-message">
+{{data.after_download_message|raw}}
+</div>
+<div class="another-img-converter-link">
+<a href="{{base_url}}/image-converter">Click here to convert another image</a>
+</div>
+</div>
+{% endif %}
+</div>
+

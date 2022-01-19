@@ -1,0 +1,17 @@
+kaboodle_user.login:
+  route_name: user.login
+  base_route: kaboodle_user.reset.pass
+  title: 'Log in'
+  weight: -17
+
+kaboodle_user.register:
+  route_name: user.register
+  base_route: kaboodle_user.reset.pass
+  title: 'Create new account'
+  weight: -16
+
+kaboodle_user.pass:
+  route_name: kaboodle_user.reset.pass
+  base_route: kaboodle_user.reset.pass
+  title: 'Reset your password'
+  weight: -15

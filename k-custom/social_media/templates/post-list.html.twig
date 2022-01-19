@@ -1,0 +1,56 @@
+{% if data.posts is empty %} <div>
+  <p class="p-1"> </p>
+</div> {% else %} {% for key,value in data.posts %} {% if key is even %} {% set defaultClass = 'white-bg' %} {% else %} {% set defaultClass = '' %} {% endif %} <div class="listing-post-wrap {{defaultClass}} p-1 w-100" style="overflow:hidden">
+  <div class="d-flex">
+    <div class="post-media-thumb-col"> {% if value.thumnail_type == 'image'%} <img src={{ value.defaultthubnail }} alt="md" style="width:48px"> {% endif %} {% if value.thumnail_type == 'video' %} <video id="" style="width:48px">
+        <source src={{ value.defaultthubnail }}>
+      </video> {% endif %} {% if value.thumnail_type == 'audio' %} <audio id="audio-kit" class="" controls>
+        <source src={{ value.defaultthubnail }}>
+      </audio>
+      <button type="button" class="audio-play-button"></button> {% endif %} {% if value.thumnail_type == 'text' %} <span>
+        <embed class="" src="{{ value.defaultthubnail }}">
+      </span> {% endif %}
+    </div>
+    <div class="post-desc-col">
+      <div class="wrap-post-desc-col pl-1">
+        <div class="cal-post-content" style="font-size:70%">
+          <span class="post-date-formate" style="font-weight:600">{{ value.timestamp|date('l, F d, Y') }}</span><br>
+          <span class="text-ellipse"> {{value.title}} </span>
+        </div> 
+      </div>
+    </div>
+  </div>
+  <div class="custom-postskaboodle-operation">
+    <ul class="list-unstyled d-flex float-left" style="margin-bottom: 0;">
+    {% if value.is_published == 0 %}
+    {% if value.status == 'Draft' %}
+     {% set modaltype = 'Draft' %}
+    <li><a href="#"> <img src="/modules/custom/social_media/images/clock-icon-inactive.png" alt="inactive-clock" width="14" height="14"> </a></li>
+    {% elseif value.status == 'Scheduled' %}
+     {% set modaltype = 'Scheduled' %}
+    <li><a href="#"> <img src="/modules/custom/social_media/images/clock-icon-active.png" alt="clock" width="14" height="14"> </a></li>
+    {% endif %}
+    {% else %}
+    <li> <a href="#"><img src={{appIconSrc}} alt="edit" width="14" height="14"></a> </li>
+	<!--
+      <li><a href="#"> <img src="/modules/custom/social_media/images/ad-icon-active.png" alt="ad" width="14" height="14"></a> </li> 
+	  -->
+      {% endif %}
+    </ul>
+    <ul class="list-unstyled d-flex float-right" style="margin-bottom: 0;">
+    {% if value.is_published == 1 %} 
+    <li class="disable edit-post"> <img src="/modules/custom/social_media/images/pencil-848688_gray.png" alt="edit" width="14" height="14"></li>
+    {% else %}
+    <li class="enable edit-post"> <a id="edit-post" data-networkName = "{{appName}}" data-sid = "{{value.sid}}"><img src="/modules/custom/social_media/images/edit-icon.png" alt="edit" width="14" height="14"></a> </li>
+    {% endif %}
+    <li class="enable clone-post"> <a id="clone-post" data-networkName = "{{appName}}" data-sid = "{{value.sid}}"><img src="/modules/custom/social_media/images/clone-icon.png" alt="clone" width="14" height="14"></a> </li>
+    {% if value.is_published == 1 %}
+    <li class="disable delete-post"><a id="delete-post"><img src="/modules/custom/social_media/images/trash-848688.png" alt="trash" width="14" height="14"></a></li>
+    {% else %}
+    <li class="enable delete-post"><a id="delete-post" data-modalType = "{{modaltype}}" data-networkName = "{{appName}}" data-sid = "{{value.sid}}">
+     <img src="/modules/custom/social_media/images/trash-3b3b3b.png" alt="trash" width="14" height="14"></a>
+    </li>
+    {% endif %}
+    </ul>
+  </div>
+</div> {% endfor %} {% endif %}

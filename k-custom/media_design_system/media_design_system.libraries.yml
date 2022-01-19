@@ -1,0 +1,99 @@
+react.min:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react.min.js: {}
+
+react:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react.js: {}
+
+react.dom.min:
+  version: VERSION
+  js:
+    /libraries/reactjs/build/react-dom.min.js: {}
+
+axios:
+  js:
+    /libraries/reactjs/build/axios.min.js: {}
+konva:
+  js:
+    /libraries/konva/konva.min.js: {}
+
+kmds_design:
+  js:
+    js/kmds_design.js: {}
+
+kmds_library:
+  js:
+    js/kmds_library.js: {}
+
+global:
+  version: VERSION
+  css:
+    theme:
+      css/media_design.css: {}
+      /modules/custom/media_vault_tool/css/media_vault_tool.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+bootstrap_cdn:
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js: {}
+    //stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js: {}
+  css:
+    component:
+      //maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css: {}
+
+kmds_design_tool:
+  version: VERSION
+  type: module
+  js:
+    /modules/custom/media_vault_tool/js/jquery-ui.min.js: {}
+    js/kmds_design_tool.js: {}
+    js/save_template.js: {}
+    js/colorPicker/default-picker.min.js: {}
+    
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+kmds_design_toolx:
+  version: VERSION
+  js:
+    /modules/custom/media_vault_tool/js/jquery-ui.min.js: {}
+    /modules/custom/social_media/js/jquery.cropit.js: {}
+    /modules/custom/km_product/js/kmdsFontsLoad.js: {}
+    /modules/custom/km_product/js/SmartObjectGuides.js: {}
+    # /modules/custom/media_vault_tool/js/lightgallery-all.min.js: {}
+    js/keyword_js/magicsuggest.js: {}
+    #js/fontFaceOnLoad/fontfaceonload.js: {}
+    js/rangeslider.min.js: {}
+    js/kmdsPageTrimBox.js: {}
+    js/rangeslider.js: {}
+    js/RulersGuides.js: {}
+    js/VectorShapes.js: {}
+    js/kmds_design_toolx.js: {}
+    js/kmdsImageCrop.js: {}
+    js/kmds_multipage_toggle.js: {}
+    js/save_template.js: {}
+  css:
+    theme:
+      # /modules/custom/media_vault_tool/css/lightgallery.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+fabric:
+  js:
+    /libraries/fabric/fabric.min.js: {}
+kmds_ruler:
+  js:
+    js/kmds_ruler.js: {}
+colorPicker:
+  js:
+    /libraries/colorPicker/jQuery_implementation/jQueryColorPicker.min.js: {}
+    /libraries/colorPicker/jQuery_implementation/jqColor.js: {}
+  css:
+    theme:
+      /libraries/colorPicker/jQuery_implementation/jqColor.css: {}

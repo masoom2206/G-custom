@@ -1,0 +1,5 @@
+name: kaboodle user
+description: kaboodle user custom features
+package: Custom
+type: module
+core: 8.x

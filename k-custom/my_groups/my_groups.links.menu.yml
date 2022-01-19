@@ -1,0 +1,14 @@
+system.admin_group:
+  title: 'Groups'
+  description: 'Find and manage groups, group types and group settings.'
+  route_name: 'team.listing'
+  parent: 'system.admin'
+  weight: 3
+  class: '\Drupal\my_groups\Plugin\Menu'
+
+entity.group.collection:
+  title: 'List'
+  description: 'Find and manage groups, group types and group settings.'
+  route_name: 'team.listing'
+  parent: 'system.admin_group'
+  class: '\Drupal\my_groups\Plugin\Menu'

@@ -1,0 +1,99 @@
+<?php
+
+namespace Drupal\stripe_subscription_and_customer\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\taxonomy\Entity\Term;
+/**
+ * Class CustomerbillingController.
+ */
+class CustomerbillingController extends ControllerBase {
+
+  /**
+   * Customerbilling.
+   *
+   * @return string
+   *   Return Hello string.
+   */
+  public function customerbilling($user) {
+    //$user = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
+      // get role feture
+      $vocabulary_name = 'role_features';
+      $query = \Drupal::entityQuery('taxonomy_term');
+      $query->condition('vid', $vocabulary_name);
+      $query->sort('weight');
+      $tids = $query->execute();
+      $terms = Term::loadMultiple($tids);
+      $items = [];
+      $config = $this->config('stripe_api.settings');
+      $mode = $config->get('mode');
+      foreach ($terms as $term) {
+        $term_id = $term->id();
+       // if($term_id != $role_exclude) {
+          $term_Name = $term->getName();
+          if($mode == 'live') {
+            $pricing_id = $term->get('field_stripe_pricing_id_monthly_')->getValue();
+          } else {
+            $pricing_id = $term->get('field_stripe_test_pricing_id_mon')->getValue();
+          }
+          $subscription_rate = $term->get('field_monthly_subscription_rate')->getValue();
+          $link_url = $term->get('field_sign_up_url')->getValue();
+          $link_label = $term->get('field_sign_up_button_label')->getValue();
+          $link_sub_label = $term->get('field_sign_up_button_sub_label')->getValue();
+          if(isset($pricing_id['0']['value'])) {
+            $items[$term_id] = array(
+              'tid' => $term_id,
+              'name' => $term_Name,
+              'subscription_rate' => isset($subscription_rate['0']['value']) ? $subscription_rate['0']['value'] : 0,
+              'pricing_id' => $pricing_id['0']['value'],
+            );
+          }
+        //}
+      }
+      $add_upgrades = 'add_upgrades';
+      $query = \Drupal::entityQuery('taxonomy_term');
+      $query->condition('vid', $add_upgrades);
+      $query->sort('weight');
+      $add_upgrades_tids = $query->execute();
+      $add_upgrades_terms = Term::loadMultiple($add_upgrades_tids);
+      $add_upgrades_items = [];
+      foreach ($add_upgrades_terms as $term) {
+        $term_id = $term->id();
+        $term_Name = $term->getName();
+        $add_upgrades_items[] = array(
+          'tid' => $term_id,
+          'name' => $term_Name,
+        );
+      }
+    $customer_id = $user->get('stripe_customer_id')->value;
+    
+    $upgrades
+    if (isset($customer_id) && !empty($customer_id)) {
+      $subscription_id = $user->get('stripe_subscription_id')->value;
+      $subscription = \Drupal::service('stripe_subscription_and_customer.stripe_api')->retrieveSubscription($subscription_id);
+      $billing['all'] = $subscription;
+      $currentplan = $subscription->items->data[0]['plan']['id'];
+      $customer = \Drupal::service('stripe_subscription_and_customer.stripe_api')->retrieveCustomers($customer_id);
+      $pyamentmethod = \Drupal::service('stripe_subscription_and_customer.stripe_api')->retrievepaymentMethods($customer_id);
+      $billing['customer'] = $customer;
+      $billing['pyamentmethod'] = $pyamentmethod;
+      $billing['subscription'] = $subscription;
+      $billing['items'] = $items;
+      $billing['currentplan'] = $currentplan;
+      $billing['uid'] = $user->Id();
+      $billing['add_upgrades'] = $add_upgrades_items;
+      return [
+        '#theme' => 'stripe_billing',
+        '#billing' => $billing,
+      ];
+    } else {
+     return [
+       '#markup' => 'No Plan found'
+     ];
+
+    }
+  }
+
+}
+
+

@@ -1,0 +1,6 @@
+audio_asset.editor:
+  js:
+    js/audio_asset_editor.js: {}
+  css:
+    theme:
+      css/audio_asset_editor.css: {}  

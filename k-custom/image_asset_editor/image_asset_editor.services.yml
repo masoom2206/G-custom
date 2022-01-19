@@ -1,0 +1,3 @@
+services:
+  imageAsset.editor:
+    class: Drupal\image_asset_editor\Controller\ImageAssetEditorController

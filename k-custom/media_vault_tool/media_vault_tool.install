@@ -1,0 +1,252 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the media_vault_tool module.
+ */
+
+/**
+ * Implements hook_update_N().
+ */
+function media_vault_tool_update_8702() {
+	$database = \Drupal::database();
+	$schema = $database->schema();
+	$table_name = 'media_kit_sorting';
+	
+  $table_schema = [
+    'description' => 'Sorting order of Media kits',
+    'fields' => [
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'nid' => [
+        'description' => "Node ID",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'sort_number' => [
+        'description' => 'Nodes order number for sorting.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+    'indexes' => [
+      'id' => ['uid', 'nid'],
+    ],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function media_vault_tool_update_8703() {
+	$database = \Drupal::database();
+	$schema = $database->schema();
+	$table_name = 'media_vault_sorting';
+	
+  $table_schema = [
+    'description' => 'Sorting order of Media vault',
+    'fields' => [
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'mid' => [
+        'description' => "Media ID",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'type' => [
+        'description' => "Media Type",
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'sort_number' => [
+        'description' => 'Nodes order number for sorting.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+    'indexes' => [
+      'id' => ['uid', 'mid'],
+    ],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function media_vault_tool_update_8706() {
+  $key_value = \Drupal::keyValue('entity.storage_schema.sql');
+  $key_name = 'file.field_schema_data.type';
+  $storage_schema = $key_value->get($key_name);
+  $storage_schema['file_managed']['fields']['type']['not null'] = TRUE;
+  $key_value->set($key_name, $storage_schema);
+}
+
+/**
+ * Creating media_preset Table
+ */
+function media_vault_tool_update_8707() {
+	$database = \Drupal::database();
+	$schema = $database->schema();
+	$table_name = 'media_preset';
+	
+  $table_schema = [
+    'description' => 'Cloned Media as preset',
+    'fields' => [
+      'preset_mid' => [
+        'description' => "New preset Id",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'cloned_mid' => [
+        'description' => "Media Id which is being cloned",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'preset' => [
+        'description' => 'Preset term name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+			'bundle' => [
+        'description' => 'Media type',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+			'entity_id' => [
+        'description' => 'Node id on which media preset is being referenced',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+    'indexes' => [
+      'id' => ['preset_mid', 'cloned_mid'],
+    ],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+}
+
+/**
+ * Updates allowed values for field_role_feature.
+ */
+function media_vault_tool_update_8708(&$sandbox) {
+  // Queries for relevant paragraphs already using that field.
+  $pids = \Drupal::entityQuery('paragraph')
+    ->condition('type', 'feature_list')
+    ->condition('field_role_feature', 'enterprise')
+    ->execute();
+		
+  // Loads queried paragraphs.
+  $paragraphs = \Drupal\paragraphs\Entity\Paragraph::loadMultiple($pids);
+  // Updates field_role_feature values.
+  // Replaces any “enterprise” values with “designer”.
+  $updated_value_map = [
+    'enterprise' => 'designer',
+  ];
+  /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
+  foreach ($paragraphs as $paragraph) {
+    $paragraph
+      ->set('field_role_feature', $updated_value_map[$paragraph->field_role_feature->value])
+      ->save();
+  }
+
+  // Updates field storage config for field_role_feature.
+  $old_config = \Drupal\field\Entity\FieldStorageConfig::loadByName('paragraph', 'field_role_feature');
+  $new_config = $old_config->createDuplicate();
+  $new_config->original = $new_config;
+  $new_config->enforceIsNew(FALSE);
+  $new_config
+    ->setSetting('allowed_values', [
+      'content_creator' => 'Professional',
+      'advanced_content_creator' => 'Expert',
+      'designer' => 'Designer',
+    ])
+    ->save();
+}
+function media_vault_tool_update_8710() {
+	$database = \Drupal::database();
+	$schema = $database->schema();
+	$table_name = 'ffmpeg_queue';
+	 $table_schema = [
+	'description' => 'ffmeg queue process',
+    'fields' => [
+		'id' => [
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+	    'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+		'unsigned' => TRUE,
+      ],
+	  'mid' => [
+        'description' => "User's Media.",
+        'type' => 'int',
+        'not null' => TRUE,
+		'unsigned' => TRUE,
+      ],
+	   'unique_id' => [
+        'description' => 'unique_id',
+        'type' => 'text',
+        'not null' => TRUE,
+      ],
+	   'created' => [
+        'description' => 'Created Time',
+        'type' => 'int',
+      ],
+	  ],
+	  'primary key' => ['id'],
+	  ];
+	  $schema->createTable($table_name, $table_schema);
+}
+function media_vault_tool_update_8711() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	$preset = [
+        'description' => 'preset id',
+        'type' => 'text',
+      ];
+	  $schema->addField('ffmpeg_queue', 'preset', $preset);
+	 $status = [
+     'description' => '',
+     'type' => 'int',
+	 'size' =>'tiny',
+	 'default' => 0,
+    ];
+	$schema->addField('ffmpeg_queue', 'status', $status);
+}
+
+function media_vault_tool_update_8712() {
+	$database = \Drupal::database();
+    $schema = $database->schema();
+	$preset = [
+        'description' => 'preset id',
+        'type' => 'text',
+		'size' =>'tiny',
+		
+      ];
+	  $schema->addField('ffmpeg_queue', 'preset', $preset);
+	   $unique_id = [
+        'description' => 'unique_id',
+        'type' => 'text',
+		'size' =>'tiny',
+        'not null' => TRUE,
+      ];
+	$schema->addField('ffmpeg_queue', 'unique_id', $unique_id);
+}

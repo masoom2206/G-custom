@@ -1,0 +1,12 @@
+jqueryui:
+  js:
+    js/jquery-ui.min.js: {}
+  css:
+    theme:
+      css/jquery-ui.css: {}
+team:
+  js:
+    js/team.js: {}
+team_autocomplete:
+  js:
+    js/team-autocomplete.js: {}

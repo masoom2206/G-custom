@@ -1,0 +1,104 @@
+social_media.main:
+  js:
+    js/social_media.js: {}
+    /modules/custom/media_vault_tool/js/lightgallery-all.min.js: {}
+  css:
+    theme:
+      /modules/custom/media_vault_tool/css/lightgallery.css: {}
+      css/social_media.css: {}
+      /modules/custom/media_vault_tool/css/media_vault_tool.css: {}
+      /modules/custom/media_vault_tool/css/media_kit.css: {}
+
+datetimepicker:
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js: {}
+  css:
+    theme:
+      //cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css: {}    
+      
+mediatags:
+  js:
+    js/tokenize2.js: {}
+  css:
+    theme:
+      css/tokenize2.css: {}
+      
+fullCalender:
+  js:
+    js/moment.min.js: {}
+    js/fullcalendar.js: {}
+    
+  css:
+    theme:
+      css/fullcalendar.min.css: {}
+      css/customcalendar.css: {}
+      
+
+social_media _get_start:
+  js: 
+    js/social_media_get_start.js: {}
+  css:
+    theme:
+      css/social_media.css: {}
+      css/social_media_get_start.css: {} 
+      
+social_media_image_editor:
+  js: 
+    js/jquery.cropit.js: {}
+  css:
+    theme:
+      css/social_media_image_editor.css: {}
+    
+      
+social_media_facebook:
+  js: 
+    js/social_media_facebook.js: {}
+  css:
+    theme:
+      css/social_media_facebook.css: {}
+      
+      
+social_media_instagram:
+  js: 
+    js/social_media_instagram.js: {}
+  css:
+    theme:
+      css/social_media_instagram.css: {} 
+
+social_media_twitter:
+  js: 
+    js/social_media_twitter.js: {}
+  css:
+    theme:
+      css/social_media_twitter.css: {} 
+
+social_media_atWho:
+  js: 
+    js/jquery.caret.min.js: {}
+    js/jquery.atwho.min.js: {}
+  css:
+    theme:
+      css/jquery.atwho.min.css: {}
+      
+owl_carousal:
+  js:
+    owl/owl.carousel.js: {}
+  css:
+    theme:
+      owl/assets/owl.theme.default.css: {}
+      owl/assets/owl.carousel.css: {}
+              
+      
+      
+social_media_jquery_custom:
+  js:
+    js/jquery-3.4.1.min.js: { minified: true, weight: -20 }
+       
+      
+      
+      
+      
+        
+      
+            
+        

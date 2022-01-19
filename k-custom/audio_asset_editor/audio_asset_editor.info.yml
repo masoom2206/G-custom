@@ -1,0 +1,6 @@
+name: Audio Asset Editor
+description: Audio Asset Editor As a Service
+package: Kaboodle
+
+type: module
+core: 8.x

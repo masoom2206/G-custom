@@ -1,0 +1,327 @@
+<div class="custom-media-video-edit-form" style="border-top:2px solid #f2f2f2">
+  <div class="media-edit-form-wrapper " id="media-edit-form-wrapper" style="margin-top:15px;">
+    <div class="media-edit-form-content">
+      <div class="media-content">
+        <div class="d-flex">
+          <div class="video-editor-block" style="width:65%; border-right:2px solid #f2f2f2">
+            <div class="wrap-video-editor-block" style="margin-right:15px; border-bottom:2px solid #f2f2f2;height:100%">
+              <div class="video-editor video-my-editor" id="video-my-editor">
+               <div class="video-editor-header" style="margin-bottom: 28px;position: relative; ">
+                <div class="right-header d-flex justify-content-between align-items-center" style="height:50px;">
+                 <div class="justify-content-start" style="width:45%">
+                  <ul class="list-unstyled d-flex align-items-center justify-content-end" style="width:100%; margin:0 auto;">
+                    <li class="" style="; margin-right:10px">
+                     <div class="form-group" style="margin-bottom:4px">
+                      <label for="mediaPreset" style="margin-bottom:0px">Select preset</label>
+
+                      <select name="mediaPreset" id="mediaPreset" style=" height: 30px;">
+                     <!-- <option value="-1" selected>Original Video</option> -->
+
+                         {% for preset in data.media_preset %}
+                          {% if preset.tid == data.media_data.preset_id %}
+                           <option value="{{preset.tid}}" selected>{{preset.name}}</option> 
+                           {% else %}
+                           <option value="{{preset.tid}}">{{preset.name}}</option>
+                          {% endif %}
+                         {% endfor %}
+                      </select>
+                      </div> 
+                    </li>
+
+                   </ul>                    
+                 </div>
+ <div class="justify-content-end editor-prop" style="position: absolute;right: 0; bottom: 0;">
+        <ul class="list-unstyled d-flex align-items-center" style="margin-block-end: 0!important;">
+        <li class="align-items-center bg-colr-editor" style="padding-right: 10px;"><span class="pr-1">Background </span>
+        <input type="text" maxlength="1" size="1" id="colorSelector" style="background:#000000;" readonly="">
+        </li>
+        <div class="center-line" style=""></div>
+        <li class="d-none ratatr-vdo" style="">
+            <div class="d-flex align-items-center">
+          </div> 
+          <div class="rotate-vdo d-flex text-center align-items-center">
+              <span class="ant-clock-rotate" style="cursor:pointer;width: 30px;">
+              <i class="fas fa-undo"></i>
+            </span>
+            <span class="clock-rotate" style="cursor:pointer;width: 30px;">
+              <i class="fas fa-redo"></i>
+            </span>
+          </div>
+        </li>
+         <div class="center-line d-none" style=""></div>
+        <li class="scalr-vdo" style="padding-left: 10px;">
+          <div class="controls-wrapper video-zoom-slider " style="float: right;">
+            <div class="slider-wrapper d-flex align-items-center">
+              <span class="icon icon-image small-image icon18x24"></span>
+              <input type="range" class="range-slider" value="0" min="0" max="1" step="0.01">
+              <span class="icon icon-image large-image icon36x24"></span>
+              <button type="button" class="btn invisible" data-toggle="tooltip" data-html="true" title="Some blurring may occur" style="padding:0;padding-left:5px;">
+                 <i class="fas fa-exclamation-triangle"></i>
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      </div>                 
+                
+                </div>
+               </div>
+               
+               <div class="video-editor-content-area" style="margin: 0 auto;">
+                 <div class="video-displayed" style="">
+                   <div id="stage" data-previeScale = "" style="margin: 0 auto;">
+                    <video id="video-editor-pane" data-fid = "{{data.media_data.original_fid}}">
+                      <source src="{{data.media_data.mid_url}}" type="video/mp4"> 
+                      <source src="{{data.media_data.mid_url}}" type="video/ogg">
+                       <source src="{{data.media_data.mid_url}}" type="video/WebM">					  
+                      <source src="{{data.media_data.mid_url_callback}}" type="video/mp4">        
+                    </video>
+                    <div class="custom-video-control-wrapper" style="display:none">
+                      <div class="custom-video-controls d-flex">
+                      <div class="video-play-wrap d-flex mr-4">
+                          <div class="video-play-pause mr-2">
+                           <i class="fas fa-play"></i>
+                          </div>
+                          <div class = "video-duration">
+                           <span class="current"></span>/<span class="duration"></span>
+                          </div>
+                      </div>
+                      <div class="video-audie-control-wrap d-flex">
+                         <div class="video-audie-control mr-2">
+                          <i class="fa fa-volume-up" aria-hidden="true"></i>
+                         </div>
+                        <div class="volumeBarRange d-none">
+                         <input type="range" class="range-slider" min="0" max="1" value="1" step="0.01">
+                       </div>
+                      </div>
+
+                      </div>
+                      <div class="progressBar" style="">
+                         <div class="timeBar"></div>
+                      </div>
+                  </div>
+                  </div>
+
+                 </div>
+                 <div class="slider-range-wrap">
+                 <div class="video-duration-slider" id="video-duration-slider" style="position:relative"> </div>
+                 <div class="crop-duration">
+                  <div class="crop-duration-input d-flex">
+                   <div class="form-group vdo-starting-point">
+                    <label for="starting-point">Start point:</label>
+                    <input type="number" class="form-control starting-point " id="starting-point" aria-describedby="" value="" readonly>
+                  </div>
+                  <div class="form-group vdo-end-point">
+                    <label for="ending-point">End point:</label>
+                    <input type="number" class="form-control ending-point " id="ending-point" aria-describedby="" value="" readonly>
+                  </div>
+                   <div class="form-group result">
+                    <label for="result">Duration:</label>
+                    <input type="number" class="form-control result " id="result" aria-describedby="" value="" readonly>
+                  </div>
+                  <!--<a class="export">export</a> -->
+                  </div>
+                
+                 </div>
+                 
+                </div>
+              </div>
+                 
+            </div>
+          </div>
+          </div>
+          <div class="video-field-block" style="width:35%">
+           <form name="video-editor-form" class="d-fle" id="video-editor-form" action="" method="POST">
+            <div class="wrap-video-field-block" style="margin-left:15px">
+               <div class="form-group d-none ">
+                <span class="original-file-name">{{data.media_data.file_name}}</span>
+               </div>
+              <div class="form-group d-flex favo-icon">
+                <span>File name: </span> <span class="file-name pl-1"> {{data.media_data.file_name}}</span>
+                <div class="checkbox"> {% if data.media_data.favorite == '1'  %} <input type="checkbox" id="favo" checked> {% else %} <input type="checkbox" id="favo"> {% endif %} <label for="favo">hearts</label>
+                </div>
+              </div>
+              <div class="form-group d-none">
+                <label for="title-original">Title</label>
+                <input type="text" class="form-control title-original" id="title-original" aria-describedby="title" value="{{data.media_data.name}}">
+              </div>              
+              <div class="form-group title-field">
+                <label for="title">Title</label>
+                <input type="text" class="form-control title-field" id="title" aria-describedby="title" value="{{data.media_data.name}}">
+              </div>
+              <div class="form-group original-file-type-field">
+                <label for="">Loaded file type: <span class="og-file-type">{{data.media_data.original_file_type }}</span>
+                <span>({{data.media_data.file_duration}})</span></label>
+              </div>
+              <div class="form-group file-size-field">
+                <label for="">File size: <span class="file-size">{{data.media_data.file_size }}</span>
+              </div>
+              <div class="form-group max-duration">
+                <label for="">Max duration: <span class="max-duration">{{data.media_data.max_video_duration }} sec</span>
+              </div>
+               <div class="form-group video-thumbnail-field" align="left">
+                  <label for="v-thumb">Video thumbnail</label>
+                  <div class="d-flex align-items-center">
+                      
+                      {% if data.media_data.thumbnail.type == 'default' %}
+					  <div class="preview-thumbnails default"><img src="/modules/custom/media_vault_tool/img/video.png" alt="img" width="100"></div>
+                       <div class="preview-file-name d-none">
+                        <span class="file-name"></span>
+                         <span class="file-size"></span>
+                       </div>
+                       <div class="custom-thumbnail-field">
+                         <input type="file" id="v-thumb" class="" name="files[]" />
+                       <!--  <div class="thumbnail-validation-desc d-none">
+                          one file only.<br>
+                          2 mb limit. <br>
+                          Allowed type: png,jpg,jpeg
+                         </div>
+						 -->
+                       </div>
+                       
+                      <div class="remove-thumbnails">
+                       <input type="submit" value="Remove" class="remove-preview-thumbnail button d-none js-form-submit form-submit">
+                      </div>
+                      {% else %}
+					  
+					  <div class="preview-thumbnails no-default">
+					   <img data-fid = "{{data.media_data.thumbnail.fid}}" src="{{data.media_data.thumbnail.file_url}}" alt="img" width="100">
+					  </div>
+                       <div class="preview-file-name">
+                        <span class="file-name">{{data.media_data.thumbnail.file_name}}</span>
+                         <span class="file-size"></span>
+                       </div>                      
+                      <!-- <div class="preview-file-name">{{data.media_data.thumbnail.file_name}}</div> -->
+                        <div class="custom-thumbnail-field d-none">
+                         <input type="file" id="v-thumb" class="" name="files[]" />
+                       <!-- <div class="thumbnail-validation-desc d-none">
+                          one file only.<br>
+                          2 mb limit. <br>
+                          Allowed type: png,jpg,jpeg
+                         </div>
+						 -->
+                       </div> 
+                      <div class="remove-thumbnails">
+                       <input type="submit" value="Remove" class="remove-preview-thumbnail button js-form-submit form-submit">
+                      </div>
+                      {% endif %}
+                      
+                  </div>
+                </div>
+                <div class="form-group available-thumbs-field">
+                    <label>Available thumbnails</label>
+                    {% if data.media_data.thumbs_selection is empty %} 
+                      <div class="no-available-thumbnails">
+                        Note: Additional thumbnail options will be available after encoding.
+                      </div>
+                      {% else %}
+                     <div class="wrapped-all-checkboxes-thumbs pt-2 d-flex" style="overflow:auto">
+                      {% for target_id,file in data.media_data.thumbs_selection %}                    
+                          <div class="checkbox mr-3">
+                            <label class="checkbox-container">
+                            <input type="checkbox" value="{{target_id}}" class="box-check"style="">
+                              <span class="checkmark"></span>
+                              <span class="customlabel">
+                              <img data-fid = "{{file.fid}}" src="{{file.file_url}}" alt="img">
+                              </span>
+                            </label>
+                          </div>
+                      {% endfor %}
+                    </div>                      
+                    {% endif %}
+                </div>
+              <div class="form-group archieve-field">
+                <div class="checkbox"> {% if data.media_data.achived == '1'  %}
+                <label class="checkbox-container"><input type="checkbox" class="box-check" value="1" checked style="">
+                  <span class="custom-label">Archived</span>
+                 <span class="checkmark"></span>
+                </label>
+                {% else %}
+                <label class="checkbox-container"><input type="checkbox" class="box-check" value="1" style="">
+                  <span class="custom-label">Archived</span>
+                 <span class="checkmark"></span>
+                </label>
+                {% endif %}
+                </div>
+              </div>
+              <div class="form-group genre-field ">
+                  <label for="genre-field" style="margin-bottom:0px">Genre</label><br>
+                  <select name="genre-field" id="genre-field" style=" height: 24px;">
+                   <option value="-1" selected>-None-</option>
+                   {% for genre_id,genre in data.media_data.genre_terms %}
+                     {% if genre.selected == 1 %}
+                       <option value="{{genre_id}}" selected>{{genre.name}}</option>
+                     {% else %}
+                     {% endif %}
+                       <option value="{{genre_id}}">{{genre.name}}</option>
+                   {% endfor %}
+                  </select>
+               </div>    
+              <div class="form-group tags-field">
+                <span class="d-none tags">{{data.media_data.tags}}</span>
+                <label for="tags">Tags</label>
+                <input type="text" class="form-control tags" id="tags" name="tags" value="{{data.media_data.tags}}">
+              </div>
+              <div class="form-group description-field">
+                <label for="description">Description</label>
+                <textarea class="form-control description" aria-label="With textarea">{{data.media_data.description}}</textarea>
+              </div>
+              <div class="form-group copyright-field">
+                <label for="copyright">Copyright number</label>
+                <input type="text" class="form-control copyright" id="copyright" aria-describedby="copyright" value="{{data.media_data.copyright}}">
+              </div>
+              <div class="form-group media-kit-field">
+                <label>Assigned Media Kits</label>
+                <div class="wrapped-all-checkboxes"> {% for kit in data.media_kit %} {% set checked = 0 %}
+                <div class="checkbox">
+                {% for usedkit in data.media_data.used_mkit %}
+                 {% if kit.nid == usedkit.nid %}
+                 {% set checked = 1 %}
+                 {% endif %}
+                {% endfor %} 
+                
+                {% if checked == 1%}
+                    {% if kit.nid ==  data.default_kit %}
+                    <label class="checkbox-container disabled">
+                    <input type="checkbox" value="{{kit.nid}}" class="box-check" checked style="" disabled>
+                      <span class="custom-label">{{kit.title}}</span>
+                      <span class="checkmark"></span>
+                    </label>
+                    {% else %}
+                    <label class="checkbox-container">
+                    <input type="checkbox" value="{{kit.nid}}" class="box-check" checked style="">
+                      <span class="custom-label">{{kit.title}}</span>
+                      <span class="checkmark"></span>
+                    </label>
+                    {% endif %}
+                    
+                {% else %}
+                <label class="checkbox-container">
+                <input type="checkbox" value="{{kit.nid}}" class="box-check" style="">
+                  <span class="custom-label">{{kit.title}}</span>
+                 <span class="checkmark"></span>
+                </label>
+                {% endif %}
+                </div> 
+                {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="video-edit-form-footer" style="margin-top:10px;float:right;"> <button class="btn video-edit-form-cancel font-fjalla btn-cancel" data-mid="{{data.media_data.mid}}" data-dismiss="modal">CANCEL</button>
+              <button class="btn btn-primary video-edit-form-save" data-dismiss="modal" data-mid="{{data.media_data.mid}}">SAVE</button>
+              <button class="btn btn-primary video-edit-form-save-new" data-dismiss="modal" data-mid="{{data.media_data.mid}}">SAVE AS NEW VIDEO</button>
+            </div>
+           <div id="vdo-editor-dialog">
+            
+           </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div> {% raw %} <script>
+
+</script> {% endraw %}

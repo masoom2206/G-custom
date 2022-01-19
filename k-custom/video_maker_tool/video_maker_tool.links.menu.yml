@@ -1,0 +1,11 @@
+video_maker_tool.debug.all:
+  title: 'Video Maker Tool'
+  description: 'Debug all the 7 steps of video making process'
+  parent: system.admin_config
+  route_name: debug.video.maker.listing
+  weight: 105
+video_maker_tool.debug.listing:
+  title: 'Debug Video Making Process'
+  route_name: debug.video.maker.listing
+  description: 'Debug all the 7 steps of video making process'
+  parent: video_maker_tool.debug.all

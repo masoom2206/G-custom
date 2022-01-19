@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains generate_pdf.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function generate_pdf_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the generate_pdf module.
+    case 'help.page.generate_pdf':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module use for gnerate pdf form fabricjs json') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function generate_pdf_theme() {
+  return [
+    'generate_pdf' => [
+      'render element' => 'children',
+    ],
+  ];
+}

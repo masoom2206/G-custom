@@ -1,0 +1,48 @@
+aetl.all:
+  title: 'AWS ET&L configuration'
+  description: 'Welcome AWS admin'
+  parent: system.admin_config
+  route_name: aetl.all
+  weight: 99
+aetl.settings:  
+  title: 'Welcome AWS configuration'
+  route_name: aetl.settings
+  description: 'Welcome AWS admin'
+  parent: aetl.all
+  weight: 99
+aetl.joblist:  
+  title: 'All submited Jobs details'
+  route_name: aetl.joblist
+  description: 'All submited Jobs details'
+  parent: aetl.all
+  weight: 99
+aetl.aws_elastic_transcoder_all:
+  title: 'AWS Elastic Transcoder Settings'
+  description: 'Welcome AWS admin'
+  parent: aetl.all
+  route_name: aetl.aws_elastic_transcoder_all
+  weight: 100
+aetl.pipelineslist:
+  title: 'AWS Elastic Transcoder Pipelines'
+  description: 'AWS Elastic Transcoder Pipelines'
+  parent: aetl.aws_elastic_transcoder_all
+  route_name: aetl.pipelineslist
+  weight: 101
+aetl.pipelinesadd:
+  title: 'Add New Pipelines'
+  description: 'Add New Pipelines'
+  parent: aetl.pipelineslist
+  route_name: aetl.pipelinesadd
+  weight: 104
+aetl.jobsslist:
+  title: 'AWS Elastic Transcoder Jobs'
+  description: 'AWS Elastic Transcoder Jobs'
+  parent: aetl.aws_elastic_transcoder_all
+  route_name: aetl.jobsslist
+  weight: 102
+aetl.presetslist:
+  title: 'AWS Elastic Transcoder Presets'
+  description: 'AWS Elastic Transcoder Presets'
+  parent: aetl.aws_elastic_transcoder_all
+  route_name: aetl.presetslist
+  weight: 103

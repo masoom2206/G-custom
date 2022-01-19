@@ -1,0 +1,72 @@
+product_style:
+  css:
+    theme:
+      css/product.css: {}
+  js:
+    js/km_product.js: {}
+    js/products.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings    
+km_product_style:
+  css:
+    theme:
+      css/product.css: {}
+      /libraries/colorPicker/jQuery_implementation/jqColor.css: {}
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js: {}
+    //cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/js/lightgallery.js: {}
+    /libraries/colorPicker/jQuery_implementation/jQueryColorPicker.min.js: {}
+    /libraries/colorPicker/jQuery_implementation/jqColor.js: {}
+    /modules/custom/media_design_system/js/rangeslider.min.js: {}
+    /modules/custom/media_design_system/js/rangeslider.js: {}
+    /modules/custom/media_design_system/js/kmdsPageTrimBox.js: {}
+    js/km_product_canvas_type.js: {}
+    js/kmdsFontsLoad.js: {}
+    js/km_product_edit.js: {}
+    js/km_product.js: {}
+    js/products.js: {}
+    js/kaboodleUndoRedo.js: {}
+    js/SmartObjectGuides.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings    
+km_product_image_editor:
+  js: 
+    /modules/custom/social_media/js/jquery.cropit.js: {}
+    
+web.product:
+  css:
+    theme:
+      css/product.css: {}
+      css/webproduct.css: {}
+      /libraries/colorPicker/jQuery_implementation/jqColor.css: {}
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js: {}
+    //cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/js/lightgallery.js: {}
+    /libraries/colorPicker/jQuery_implementation/jQueryColorPicker.min.js: {}
+    /libraries/colorPicker/jQuery_implementation/jqColor.js: {}
+    /modules/custom/media_design_system/js/rangeslider.min.js: {}
+    /modules/custom/media_design_system/js/rangeslider.js: {}
+    js/wpFontsLoad.js: {}
+    js/html2pdf.bundle.min.js: {}
+    js/html2canvas.min.js: {}
+    js/km_product.js: {}
+    js/km_html_article_product.js: {}
+    js/webproduct.js: {}
+    js/webproduct_edit.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+html.article:
+  css:
+    theme:
+      /modules/custom/media_vault_tool/css/lightgallery.css:
+  js:
+    js/lightgallery.js: {}
+    js/htmlarticle.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+    

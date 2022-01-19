@@ -1,0 +1,9 @@
+<ul class="list-unstyled"> {% for index,value in result %} <li> {% if value.following == 1 %} <span class="" style="margin-left: 20px;font-size: 14px;"><i style="padding-right:10px" class="fa fa-user"></i>Following</span> {% endif %} <div class="wrap-items">
+      <img src="{{value.profile_image_url_https}}" class="rounded-circle border-images float-left" alt="pic">
+      <div>
+        <div class="screen-name"><strong>{{value.name}}</strong> {% if value.verified == 1 %} <img src="https://img.icons8.com/color/48/000000/verified-account.png" style=" height: 20px;"> {% endif %} </div>
+        <div class="user-name">@{{value.screen_name}}</div>
+        <div class="user-id d-none">{{value.id}}</div>
+      </div>
+    </div>
+  </li> {% endfor %} </ul>

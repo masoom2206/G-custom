@@ -1,0 +1,24 @@
+aetl.settings:
+  type: config_object
+  mapping:
+    aetl_access_key:
+      type: string
+      label: 'Amazon Web Services Access Key'
+    aetl_secret_key:
+      type: string
+      label: 'Amazon Web Services Secret Key'
+    aetl_use_instance_profile:
+      type: boolean
+      label: 'Use EC2 Instance Profile Credentials'
+    aetl_credentials_file:
+      type: string
+      label: 'Custom Credentials File Location'
+    aetl_in_bucket:
+      type: string
+      label: 'S3 Input Bucket Name'
+    aetl_out_bucket:
+      type: string
+      label: 'S3 Output Bucket Name'      
+    aetl_region:
+      type: string
+      label: 'S3 Region'

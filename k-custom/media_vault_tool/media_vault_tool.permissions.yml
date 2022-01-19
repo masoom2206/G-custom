@@ -1,0 +1,20 @@
+Media Vault Tool:
+  description: 'Administer Media Vault tool.'
+  title: 'Administer Media Vault tool'
+  restrict access: TRUE
+Media Vault Tool Upload:
+  description: 'Media Vault assets upload'
+  title: 'Media Vault tool assets upload permission'
+  restrict access: TRUE
+Delete Media Kit:
+  description: 'Delete Media Kit Permission.'
+  title: 'Delete Media Kit Permission'
+  restrict access: TRUE
+Remove Kaboodle Reference:
+  description: 'Remove Kaboodle Reference Permission.'
+  title: 'Remove Kaboodle Reference Permission'
+  restrict access: TRUE
+Media Vault File Delete:
+  description: 'File Delete Permission.'
+  title: 'File Delete Permission'
+  restrict access: TRUE

@@ -1,0 +1,14 @@
+{% for reply_key,reply_value in comment_value.replies.data %}
+  <li class=" reply-item">
+     <!--<img class="rounded-circle" width="20" height="20" alt="pic" src="https://instagram.fakx1-1.fna.fbcdn.net/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=instagram.fakx1-1.fna.fbcdn.net&_nc_ohc=FICg3YM1jeEAX_ex-Yc&oh=1cb04c2c4804c69fc127146405a78b72&oe=6010CC8F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+     -->
+     <b>{{reply_value.username}}</b> 
+     {{reply_value.text}} 
+     <br>
+     <div class="insta-single-post-insights ml-2 mt-2">
+       <span class="likes-against-comment" data-commentID="{{reply_value.id}}">{{reply_value.like_count}} Likes</span>
+       <span class="replies-against-comment" data-commentID={{reply_value.id}} data-username = "{{reply_value.username}}">Reply</span>
+       <span class="delete-comment" data-commentID={{reply_value.id}}>Delete</span>
+     </div>  
+ </li>
+{% endfor %}

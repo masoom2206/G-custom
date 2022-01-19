@@ -1,0 +1,105 @@
+<div class="image-editor photo-image-editor" id="photo-image-editor">
+  <div class="image-editor-header" style="margin-bottom: 28px;position: relative; ">
+    <div class="right-header d-flex justify-content-between align-items-center" style="height:50px;">
+     <div class="justify-content-start" style="width:45%">
+     
+      <ul class="list-unstyled d-flex align-items-center justify-content-en" style="width:100%; margin:0 auto;">
+        <li class="" style="width:70%; margin-right:10px">
+         <div class="form-group" style="margin-bottom:4px">
+          <label for="mediaPreset" style="margin-bottom:0px">Select preset</label>
+          <select name="mediaPreset" id="mediaPreset" style=" height: 30px;">
+           <!-- <option value="-1">Full Original Image</option> -->
+			{% for preset in data.media_preset %} 
+			 <option value="{{preset.tid}}">{{preset.name}}</option> 
+			{% endfor %}
+          </select>
+          </div>
+        </li>
+
+        <li class="text-center" style="">
+          <!-- <div class="checkbox custom-size"> 
+             <label class="checkbox-container" style="margin-top: 20px;margin-bottom: 0;">
+             <input type="checkbox" class="box-check" style="">
+                <span class="custom-label">Custom size</span>
+                <span class="checkmark"></span>
+             </label>
+           </div> -->
+             <div id="custom-size-modal" title="custom size">
+               <form class="form-inline" style="margin:0 auto; height:100%">
+                  <div class="form-group" style="width:50%">
+                    <label for="width">w:</label>
+                    <input type="number" class="form-control ml-1" id="width" style="width:78%">
+                  </div>
+                  <div class="form-group" style="width:50%">
+                    <label for="height"><span class="mr-1" style="margin-top:-2px">x</span> h:</label>
+                    <input type="number" class="form-control ml-1 mr-1" id="height" style="width:78%">
+                     <label>px</label>
+                  </div>
+                </form>  
+             </div>
+        </li>
+        </ul>
+        </div>
+        <div class="center-lin"></div>
+        <div class="justify-content-end" style="position: absolute;right: 0; bottom: 0;">
+        <ul class="list-unstyled d-flex align-items-center" style="margin-block-end: 0!important;">
+        <li class="align-items-center d-flex " style="padding-right: 10px;">
+		   <div class="checkbox background-check"> 
+             <label class="checkbox-container" style="">
+             <input type="checkbox" class="box-check" style="">
+               <!-- <span class="custom-label"> </span> -->
+                <span class="checkmark"></span>
+             </label>
+           </div>
+		 <div class="bg-wrap disabled">  
+		<span class="pr-1">Background </span>
+        <input type="text" maxlength="1" size="1" id="colorSelector" style="background:#000000;" />
+		</div>
+        </li>
+        <div class="center-line" style=""></div>
+        <li class="" style="">
+            <div class="d-flex align-items-center">
+               
+          </div> 
+          <div class="rotate-img d-flex text-center align-items-center">
+           {# <span style="cursor:pointer;width: 30px;">
+              <i class="fas fa-exchange-alt"></i>
+            </span>
+            <span style="cursor:pointer;width: 30px;">
+              <i class="fas fa-exchange-alt" style="transform: rotate(90deg);"></i>
+            </span> #}
+            <span class="ant-clock-rotate" style="cursor:pointer;width: 30px;">
+              <i class="fas fa-undo"></i>
+            </span>
+            <span class="clock-rotate" style="cursor:pointer;width: 30px;">
+              <i class="fas fa-redo"></i>
+            </span>
+          </div>
+        </li>
+        <div class="center-line"></div>
+        <li class="" style="padding-left: 10px;">
+        <div class="d-none">
+          <span> Preset Dimensions</span>
+          <span class="size"></span>
+          </div>
+          <div class="controls-wrapper" style="float: right;">
+            <div class="slider-wrapper d-flex align-items-center">
+              <span class="icon icon-image small-image icon18x24"></span>
+              <input type="range" class="cropit-image-zoom-input">
+              <span class="icon icon-image large-image icon36x24"></span>
+              <button type="button" class="btn invisible" data-toggle="tooltip" data-html="true" title="Some blurring may occur" style="padding:0;padding-left:5px;">
+                 <i class="fas fa-exclamation-triangle"></i>
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      </div>
+    </div>
+  </div>
+  <div class="original-image" data-blob="" data-fid="" data-original="1"></div>
+  <canvas id="myCanvas" style="display:none;margin:0 auto; max-width:100%"> </canvas> 
+  <div class="cropit-preview"">
+   
+  </div>
+</div>

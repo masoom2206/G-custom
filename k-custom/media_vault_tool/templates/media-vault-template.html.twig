@@ -1,0 +1,68 @@
+{#
+ {{ media_vault_title }}
+ {% for key,value in doubles %}
+  Key : {{ key }}
+  Value : {{ value }}
+{% endfor %}
+#}
+{% if media_archive == 0 %}
+<div style="margin: 6px;position: absolute;top: -64px;left: 170px;"><a id="uploader-link" href="/tools/media/vault/{{uid}}/upload" class="btn btn-primary text-uppercase" style="padding: 2px 15px;">Upload</a></div>
+{% endif %}
+<div id="media-vault-wrapper" class="row-p" style="min-height: 300px;margin-bottom: 30px;">
+  <nav>
+    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+			<a class="nav-item nav-link active" id="nav-audio-tab" data-toggle="tab" href="#nav-audio" role="tab" aria-controls="nav-audio" aria-selected="true">Audio</a>
+      <a class="nav-item nav-link" id="nav-photo-tab" data-toggle="tab" href="#nav-photo" role="tab" aria-controls="nav-photo" aria-selected="false">Images</a>
+      <a class="nav-item nav-link" id="nav-text-tab" data-toggle="tab" href="#nav-text" role="tab" aria-controls="nav-text" aria-selected="false">Docs</a>
+      <a class="nav-item nav-link" id="nav-video-tab" data-toggle="tab" href="#nav-video" role="tab" aria-controls="nav-video" aria-selected="false">Videos</a>
+    </div>
+		<div class="div-spacer"></div>
+  </nav>
+  <div class="tab-content px-3 px-sm-0" id="nav-tabContent">
+    <!--- Audio secion -->
+    <div class="tab-pane fade show active" id="nav-audio" role="tabpanel" aria-labelledby="nav-audio-tab">
+      <div id="audio-select-box-element-wrapper" class="options-disable"></div>
+      <div class="media-vault-data">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="nav-master-audio-detail" role="tabpanel" aria-labelledby="nav-audio-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-photo" role="tabpanel" aria-labelledby="nav-photo-tab">
+      <div id="photo-select-box-element-wrapper" class="options-disable"></div>
+      <!--- Photo data secion -->
+      <div class="media-vault-data">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="nav-master-photo-detail" role="tabpanel" aria-labelledby="nav-photo-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-text" role="tabpanel" aria-labelledby="nav-text-tab">
+      <div id="text-select-box-element-wrapper" class="options-disable"></div>
+      <!--- Text data secion -->
+      <div class="media-vault-data">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="nav-master-text-detail" role="tabpanel" aria-labelledby="nav-text-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-video" role="tabpanel" aria-labelledby="nav-video-tab">
+      <div id="video-select-box-element-wrapper" class="options-disable"></div>
+      <!--- Video data secion -->
+      <div class="media-vault-data">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="nav-master-video-detail" role="tabpanel" aria-labelledby="nav-video-presets-tab">
+            <div class="km-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="mod-media-gallery-conf"></div>

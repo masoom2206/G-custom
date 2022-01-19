@@ -1,0 +1,207 @@
+.week-start-on{
+  width:200px;
+  background:#fff;
+  position:absolute;
+  z-index: 999;
+  right: 0;
+  top: 35px;
+  box-shadow: 5px 5px 5px 5px gray;
+}
+.week-start-on .arrow-down{
+    right: 10px;
+    position: absolute;
+    top: -7px;
+    width: 0; 
+    height: 0; 
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #fff;
+
+} 
+.fc-startWeek-button{
+  background: url('../images/weeksetting_icon.png') no-repeat center !important;
+  background-size: 15px !important;
+  display:block;
+}
+.fc-header-toolbar {
+    margin-bottom: 0 !important;
+    background: #fff !important;
+    height: 35px;
+    border-bottom: 1px solid #f2f2f2;
+    
+  }
+#calendar thead > tr {
+    border-bottom: none !important;
+}
+.fc table{
+    font-size: 10px !important;
+}
+.fc-unthemed thead {
+    border-color: #fff!important;
+}
+.fc-content-skeleton tr{
+	background: #fff !important;
+	border: none !important;
+}
+
+.fc-basic-view .fc-body .fc-row {
+    /*min-height: 0;*/
+}
+.fc-row .fc-content-skeleton {
+	
+    padding-bottom: 0px !important;
+}
+ .fc-unthemed td, .fc-unthemed th, .fc-unthemed thead {
+    border-color: #fff; 
+}
+.selected-day, .fc-highlight{
+	background: #E75E00 !important;
+    border-radius: 50%;
+    color: #fff;
+	opacity: 1;
+}
+.fc-basic-view .fc-day-number {
+    padding: 0px !important; 
+	 width: 40px;
+    float: right;
+    height: 30px;
+	line-height: 1;
+    padding-top: 10px !important;
+  
+}
+.fc-basic-view .fc-day-number .is-event{
+	height: 5px;
+    width: 5px;
+    background-color: #00acee;
+    border-radius: 50%;
+    display: inline-block;
+}  
+
+.fc-month-view tr{
+	background: #fff !important;
+}
+ .fc-state-default{
+  text-transform: uppercase;
+  background: none !important;
+  color: gray !important;
+  border: none !important;
+ } 
+.fc-toolbar h2 ,
+.fc-button .fc-icon{
+font-size: 1em;
+color: gray;
+}
+.fc-content-skeleton table tbody{display:none;}
+.fc-toolbar h2 {
+  margin: 0;
+  vertical-align: middle;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+background-color: transparent;
+border: 1px solid transparent;
+padding: .4em .65em;
+font-size: 1em;
+line-height: 1.5;
+}
+.fc-prev-button.fc-state-default,
+.fc-prev-button.fc-state-default,
+.fc-prev-button.fc-state-default,
+.fc-today-button.fc-state-default{
+ padding-left: 0px !important;
+ padding-right: 0px !important;}
+}
+.fc-ltr .fc-basic-view .fc-day-top .fc-day-number {
+    float: none;
+    font-size: 10px;
+}
+.fc .fc-row .fc-content-skeleton table, .fc .fc-row .fc-content-skeleton td, .fc .fc-row .fc-helper-skeleton td {
+
+    text-align: center;
+}
+.fc-view table{
+ margin: 0;
+}
+.fc-view  table tr th{
+    background: #fff!important;
+    color: #555;
+    font-weight: normal;
+    font-size: 12px;
+    border: none;
+
+}
+.fc-ltr .fc-axis {
+    text-align: center;
+}
+.fc-month-view{
+	border-bottom: 1px solid #f2f2f2!important;
+}
+
+#nav-calendar .calendar-header{
+	border-bottom: 5px solid #f2f2f2;
+	border-left: 2px solid #f2f2f2;
+    border-right: 2px solid #f2f2f2;
+	padding-right:0px !important;
+}
+.calendar-nav-layout .nav-tabs .nav-item.show .nav-link, .calendar-nav-layout .nav-tabs .nav-link.active, .calendar-nav-layout .nav-tabs .nav-link:hover {
+    border-color: #fe5b03!important;
+    color: #fe5b03 !important;
+	border-bottom: 2px solid #fe5b03!important;
+}
+.calendar-nav-layout .nav-link {
+    margin: 0.5rem 4rem 0;
+    border: unset!important;
+    border-color: transparent;
+    border-bottom: 2px solid #fff!important;
+    font-family: 'Lato'!important;
+}
+.calendar-nav-layout .nav-item {
+    margin: 0 !important;
+    padding: 0;
+}
+.calendar-nav-layout .nav-tabs {
+     border: unset!important;
+}
+.calendar-post-heading-date{
+	height:35px;
+	display:flex;
+	align-items: center;
+}
+.post-calendar-list .post-items{
+	border-top: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f2f2;
+}
+.wraped-thumbnail{
+	width: 50px;
+    height: 50px;
+    background: #f2f2f2;
+    border: 1px solid #f2f2f2;
+    border-radius: 5px;
+}
+.cal-post-operation ul li{
+	width:20px;
+	text-align:center;
+}
+.cal-post-operation ul li.enable {
+	cursor:pointer;
+}
+.post-items .cal-post-content{
+	width: 80%;
+    font-size: 80%;
+    line-height: 1.3;
+	width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+.post-items:hover{
+	background:rgb(255, 255, 219);
+}
+#calendar .fc-week .fc-today .fc-day-number{
+   /* border: 2px solid #023364;*/
+}
+
+

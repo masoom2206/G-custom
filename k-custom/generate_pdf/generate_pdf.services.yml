@@ -1,0 +1,7 @@
+services:
+  logger.channel.generate_pdf:
+    parent: logger.channel_base
+    arguments: ['generate_pdf']
+  generate_pdf.default:
+    class: Drupal\generate_pdf\GeneratePdfService
+    arguments: []

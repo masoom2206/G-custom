@@ -1,0 +1,99 @@
+              <div class="col-12 custom-my-post-headr" style="height: auto;">
+                <div class="row align-items-center" style="justify-content: space-between;">
+                 
+				  {% if appName == 'Facebook'%}
+                   <div class="col-2">
+                    <div class="row socialmedia-title1 rounded lign-items-center">
+                      <img width="24" src="{{appIconSrc}}" alt="{{appName}}">
+                     <span class="pl-1">{{appName}}</span>
+                    </div>
+                  </div>
+                  
+				  <div class="col-6">
+				        <div class="row facebook-page-selection">
+                             <div class="">Active page: </div>
+							 <select class="rounded" name="page_id" id="page_id_mypost" style="width:65%;margin:0 auto;">
+							 {% for fb_page_id,page_name in data.facebook_kaboodle.fb_pages %}
+								  {% if fb_page_id == data.facebook_kaboodle.selected_fb_page %}
+									<option value="{{fb_page_id}}" selected>{{page_name}}</option>
+									{% else %}
+									<option value="{{fb_page_id}}">{{page_name}}</option>
+								  {% endif %}
+							 {% endfor %}
+						    </select>
+						</div>
+                  </div>
+                                  
+                  {% if data.availabe_feature.myPost == 1 %}
+                      <div class="col-4">
+                        <div class="row float-right search-box">
+                           <i class="fas fa-search search-icon"></i>
+                          <input type="text" id="search-post" name="search" placeholder="search" class="search-post">
+                        </div>
+                      </div>
+                  {% endif %}
+				  {% endif %}
+                  
+                  {% if appName == 'Instagram'%}
+                   <div class="col-2l">
+                    <div class="socialmedia-title1 rounded align-items-center">
+                      <img width="24" src="{{appIconSrc}}" alt="{{appName}}">
+                     <span class="pl-1">{{appName}}</span>
+                    </div>
+                  </div>
+                    <div class="col-4l">
+                     <div class="insta-account-selection d-flex">
+                     <div class="pr-2">Active account: </div>
+                      <select class="rounded" name="account_id" id="account_id_mypost" style="margin:0 auto;">
+                      {% for account_id,account_details in data.instaAccounts %}
+                         {% if account_id == data.instagram_kaboodle.selected_account %}
+                          <option value="{{account_id}}" selected>{{account_details.username}}</option>
+                          {% else %}
+                           <option value="{{account_id}}">{{account_details.username}}</option>
+                          {% endif %}  
+                      {% endfor %}
+                      </select>
+                    </div>
+                    </div>
+                    <div class="col-3l d-flex align-items-center">
+                     {% for account_id,account_details in data.instaAccounts %}
+                         {% if account_id == data.instagram_kaboodle.selected_account %}
+                         <span class="pr-2">Linked Facebook Page: {{account_details.page_name}}</span>
+                         <a href="{{data.knowledge_base_article.value}}" target=”_blank” style="margin-top:-2px;">
+                          <img class="img-fluid" style="min-width:14px;max-width:14px" src="/themes/custom/kaboodlemedia/images/info-icon.png">
+                         </a>
+                         
+                         {% endif %}  
+                      {% endfor %}  
+                    
+                    </div>
+                    
+
+                  {% if data.availabe_feature.myPost == 1 %}
+                      <div class="col-3l">
+                        <div class="float-right search-box" style="position:relative">
+                           <i class="fas fa-search search-icon"></i>
+                          <input type="text" id="search-post" name="search" placeholder="search" class="search-post">
+                        </div>
+                      </div>
+                  {% endif %}
+                  
+                  {% endif %}
+
+                  {% if appName == 'Twitter'%}
+                        <div class="col-2">
+                        <div class="row socialmedia-title1 rounded lign-items-center">
+                          <img width="24" src="{{appIconSrc}}" alt="{{appName}}">
+                         <span class="pl-1">{{appName}}</span>
+                        </div>
+                      </div>
+                       <div class="col-4">
+                        <div class="row float-right search-box">
+                           <i class="fas fa-search search-icon"></i>
+                          <input type="text" id="search-post" name="search" placeholder="search" class="search-post">
+                        </div>
+                      </div>
+                  {% endif %}
+
+                </div>   
+              </div>

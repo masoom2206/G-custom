@@ -1,0 +1,31 @@
+onboarding.getting_started:
+  path: '/tools/my-account/{user}'
+  defaults:
+    _controller: '\Drupal\onboarding\Controller\OnBoardingController::Onboarding_dashboard'
+    _title: 'My Account Dashboard'
+    #uid: 0
+  options:
+    parameters:
+      user:
+        type: entity:user
+    no_cache: 'TRUE'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\my_groups\Access\UserAccessCheck::profileAccess'
+onboarding.download_pdf:
+  path: '/download_pdf_guide/{node}'
+  defaults: 
+    _controller: '\Drupal\onboarding\Controller\OnBoardingController::download_pdf_guide'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _access: 'TRUE'
+onboarding.mark_completed:
+  path: '/dashboard/mark-completed'
+  defaults: 
+    _controller: '\Drupal\onboarding\Controller\OnBoardingController::mark_item_completed'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'

@@ -1,0 +1,107 @@
+ <div class="col-lg-12">
+   <div class="row bg-white p-2 settings-tab-header" style="display:none">
+     <div class="hidden-content d-none">
+          <div class="appname">{{ appID }} </div>
+          {% if appID == '166' %}
+           <div class="page-id">{{data.facebook_kaboodle.selected_fb_page}}</div>
+          {% endif %}
+          {% if appID == '168' %}
+           <div class="insta-account-id">{{data.instagram_kaboodle.selected_account}}</div>
+          {% endif %}
+                      
+      </div>
+     <div class="d-flex rounded" style="display:none">
+       <div class="socialmedia-title rounded">
+         <img width="29" src="{{ appIconSrc }}" alt="{{ appName }}">
+         <span>{{ appName}}</span>
+             {% if appID == '166' %}
+            {% for fb_page_id,page_name in data.facebook_kaboodle.fb_pages %}
+            {% if fb_page_id == data.facebook_kaboodle.selected_fb_page %}
+            <span class="page-name">{{page_name}}</span> 
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            
+             {% if appID == '168' %}
+            {% for account_id,account_details in data.instaAccounts %}
+            {% if account_id == data.instagram_kaboodle.selected_account %}
+            <span class="page-name">{{account_details.username}}</span> 
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="col-lg-12">
+      {% if (data.user_profile.errors is defined or data.user_profile.error is defined)  %}
+    {% if data.user_profile.errors is defined %}
+     <div class="twitter-api-error" style="color:red;">Twitter Error Reported: {{data.user_profile.errors.0.message}}<br> Please try Later...</div>
+    {% elseif data.user_profile.error is defined  %}
+    <div class="twitter-api-error" style="color:red;">Twitter Error Reported: {{data.user_profile.error.message}}<br> Please try Later...</div>
+    {% endif %}
+    
+  {% endif %}
+   <div class="row">
+
+     <div class="col-lg-6 social-media-text-profile custom-border" style=" position:relative">
+       <div class="p-3">
+       {% include '@social_media/settings-text-form.twig' ignore missing %}
+       </div>
+     </div>
+     <div class="col-lg-6 social-media-image-profile custom-border" style="">
+       <div class="row p-3"> 
+       <div id="photo-kit-content-section-profile" class="w-100">
+        {{data.media_kit_three}}
+        </div>
+        
+       </div>
+     </div>
+     <div class="col-lg-12 mt-4 mb-5 image-editor-wrapper custom-border w-100">
+       <div class="row">
+         <div class="p-3 w-100">
+           <nav class="custom-nav-layout image-editor-nav-layout" style="width: 400px;height: 30px; position: absolute;">
+             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+             {% set counterVariableTab = 0 %}
+             {% for fieldName,fieldValue in data.settings_field %}
+             {% if (fieldValue.enabled == '1') and (fieldValue.type == 'Image')  %}
+             {% if counterVariableTab == 0 %}
+             <a style="border-right: 2px solid #f2f2f2 !important;border-radius: 0; text-align: left;" data-pId="{{fieldValue.media_preset}}" class="nav-item nav-link active " id="replace-{{fieldName|replace({' ': '-'})|lower}}" data-toggle="tab" href="#tab-replace-{{fieldName|replace({' ': '-'})|lower}}" role="tab" aria-controls="#tab-replace-{{fieldName}}" aria-selected="false" tabindex="-1">Replace {{fieldName}}</a> 
+             {% else %}
+             <a style="border-radius: 0; text-align: left; padding-left: 10px;" class="nav-item nav-link" data-pId="{{fieldValue.media_preset}}" id="replace-{{fieldName|replace({' ': '-'})|lower}}" data-toggle="tab" href="#tab-replace-{{fieldName|replace({' ': '-'})|lower}}" role="tab" aria-controls="#tab-replace-{{fieldName}}" aria-selected="false" tabindex="-1">Replace {{fieldName}}</a>
+             {% endif %}
+             {% set counterVariableTab = 1 %}
+             {% endif %}
+             {% endfor %}
+             </div>
+           </nav>
+           <div class="tab-content w-100">
+           {% set counterVariableTabContent = 0 %}
+           {% for fieldName,fieldValue in data.settings_field %}
+           {% if (fieldValue.enabled == '1') and (fieldValue.type == 'Image')  %}
+           {% set editorType = fieldName|replace({' ': '-'})|lower %}
+           {% set presetType = fieldValue.media_preset %}
+           {% if counterVariableTabContent == 0 %} 
+           <div class="{{fieldValue.media_preset}} editor-class tab-pane active show" id="tab-replace-{{fieldName|replace({' ': '-'})|lower}}" role="tabpanel" aria-labelledby="tab-replace-{{fieldName|replace({' ': '-'})|lower}}">
+           {% include '@social_media/image-editor-tools-html.twig' ignore missing with {'ediorType': editorType} %}
+               <div class="newpost-button mt-3">
+                 <button id="save-profile-image-{{appName}}" class="btn btn-primary mr-2 social-media-save-profile-{{appName}} ">submit to {{appName}} </button>
+               </div>
+           </div> 
+             {% else %}
+             <div class="{{fieldValue.media_preset}} editor-class tab-pane" id="tab-replace-{{fieldName|replace({' ': '-'})|lower}}" role="tabpanel" aria-labelledby="tab-replace-{{fieldName|replace({' ': '-'})|lower}}"> 
+             {% include '@social_media/image-editor-tools-html.twig' ignore missing with {'ediorType': editorType, 'presetType':presetType } %}
+             <div class="newpost-button mt-3">
+                 <button id="save-profile-image-{{appName}}" class="btn btn-primary mr-2 social-media-save-profile-{{appName}}">submit to {{appName}} </button>
+               </div>
+             </div>
+             {% endif %}
+             {% set counterVariableTabContent = 1%}
+             {% endif %}
+             {% endfor %}
+             </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>

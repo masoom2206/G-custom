@@ -1,0 +1,123 @@
+table{margin-top: 0 !important;}
+.search-ico {
+	background: url(../images/search-848688.png) no-repeat;
+	background-size: auto;
+	width: 23px;
+	background-size: 75%;
+	position: relative;
+	top: 3px;
+}
+.search-box .clear-text {
+	font-size: 10px;
+	position: relative;
+	right: 12px;
+	top: 2px;
+	color: #848688;
+	cursor: pointer;
+	font-family: Lato;
+	font-weight: 300;
+}
+.select-box-element ul li:first-child {
+	padding-left: 0;
+}
+.select-box-element ul li {
+	display: inline-block;
+	padding-right: 10px;
+	font-family: lato;
+	font-weight: 400;
+	padding-left: 10px;
+	line-height: 15px;
+}
+.select-box-element label.checkbox-container {
+	margin-bottom: 0;
+	display: inline-block;
+}
+.checkbox-container {
+	display: block;
+	position: relative;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.select-box-element span.desc {
+	margin-left: 25px;
+	position: relative;
+	top: 1px;
+	font-family: 'Lato bold', sans-serif;
+}
+.checkbox-container input {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
+}
+.checkbox-container {
+	cursor: pointer;
+}
+.select-box-element {
+	text-transform: uppercase;
+	font-size: 14.5px;
+}
+.checkbox-container input:checked ~ .checkmark::after {
+	display: block;
+}
+.checkbox-container .checkmark::after {
+	display: none;
+	left: 6px;
+	top: 2px;
+	width: 5px;
+	height: 10px;
+	border: solid white;
+			border-top-width: medium;
+			border-right-width: medium;
+			border-bottom-width: medium;
+			border-left-width: medium;
+	border-width: 0 2px 2px 0;
+	-webkit-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+.checkbox-container input:checked ~ .checkmark {
+	background-color: #2196F3;
+	border: 1px solid #2196F3;
+}
+.checkmark::after {
+	content: "";
+	position: absolute;
+	display: none;
+}
+.checkmark {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 17px;
+	width: 17px;
+	background-color: #eee;
+	border: 1px solid #606060;
+}
+.filter {
+	max-width: 280px !important;
+	width: 280px;
+	font-family: 'Lato' !important;
+	font-weight: 400 !important;
+	outline: none;
+	color: #3b3b3b !important;
+	max-width: 170px;
+	border-radius: 4px;
+	border: 1px solid #a5a1a1;
+}
+.height-25{ height: 25px; line-height: 12px !important; }
+
+.view-notification{
+  background: url('../images/eye.svg') no-repeat center;
+  background-size: 18px;
+	font-size: 0;
+	border: none;
+	width: 25px;
+	height: 25px;
+	text-align: center;
+	display: block;
+}

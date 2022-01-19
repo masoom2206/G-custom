@@ -1,0 +1,226 @@
+/***shadab - ***/
+.custom-media-photo-edit-form .modal, .custom-media-video-edit-form .modal
+#overlay {
+  display: block;
+  width: 100%;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+/*.wrap-dimension-type{
+    align-items: center;
+    margin-bottom: 1rem;
+}*/
+/*.wrap-dimension-type .form-group{
+    margin-bottom: 0;
+} */
+.wrap-dimension-type .center-line{
+   height: 16px;
+   border-right: 2px solid #3b3b3b;
+}
+.checkbox-container.disabled, ul li.disabled, .disabled {
+    opacity: .4;
+    pointer-events: none;
+}
+.ui-dialog .ui-dialog-buttonpane button.ui-button:first-child {
+    color: #023364 !important;
+}
+.ui-dialog .ui-dialog-buttonpane button.ui-button:first-child:hover {
+    color: #0d5296 !important;
+}
+.ui-dialog .ui-dialog-buttonpane button.ui-button:first-child:focus {
+    outline:0 !important;
+}
+
+.photo-field-block label, .video-field-block label {
+  margin-bottom: 0 !important;
+}
+
+.photo-field-block input[type="text"], .video-field-block input[type="text"] {
+  height: 30px;
+  background: #f2f2f2;
+}
+
+input:focus,
+textarea:focus,
+button:focus {
+  outline: 0;
+  box-shadow: none !important;
+}
+
+.photo-field-block textarea, .video-field-block textarea,
+.photo-field-block textarea:focus, .video-field-block textarea:focus,
+#tags_tagsinput {
+  background: #f2f2f2;
+  border: 1px solid #ced4da !important;
+}
+
+#tags_tagsinput,
+#tags_tagsinput:focus {
+   background-image: url(../img/throbber-inactive.png);
+    background-repeat: no-repeat;
+    background-position: 100% center;
+}
+
+
+.photo-field-block .wrapped-all-checkboxes, .video-field-block .wrapped-all-checkboxes, .video-field-block .no-available-thumbnails {
+  border: 1px solid #ced4da;
+  padding: 15px;
+  height: 100px;
+  overflow: auto;
+}
+
+div#cancel-media-dialog,
+div#save-media-dialog,
+div#save-form-warning {
+    height: auto!important;
+}
+div#cancel-media-dialog,
+div#save-media-dialog {
+    display:none;
+}
+
+div.tagsinput span.tag {
+    background: none;
+    color: #000000;
+    margin: -5px 2px;
+    padding: 5px 0 !important;
+}
+.tagsinput div input {
+    padding:0px !important;
+}
+
+span.tag-text:before {
+  content: '#';
+}
+
+button.tag-remove {
+  display: none !important;
+}
+
+.favo-icon input[type=checkbox] {
+  display: none;
+}
+
+.favo-icon input[type=checkbox]+label {
+  display: inline-block;
+  background: url(../images/heart-inactive-icon.svg) no-repeat right;
+  color:transparent;
+  width: 30px;
+  text-indent: -99999px;
+}
+
+.favo-icon input[type=checkbox]:checked+label {
+  background: url(../images/heart-active-icon.svg) no-repeat right;
+  display: inline-block;
+  color:transparent;
+  width: 30px;
+  text-indent: -99999px;
+}
+.checkbox-container span.custom-label{
+    margin-left:25px;
+}
+.checkbox-container .checkmark{
+    top: 2px !important;
+}
+.background-check .checkbox-container .checkmark {
+    top: -3px !important;
+    left: -25px;
+}
+
+/* coppied  from media_vault_tool.css but we need to add this in global css for checkbox design*/
+.checkbox-container{
+    display: block;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #2196F3;
+    border: 1px solid #2196F3;
+}
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 17px;
+    width: 17px;
+    background-color: #eee;
+    border: 1px solid #606060;
+}
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+.checkbox-container .checkmark:after {
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+.ui-widget.ui-widget-content {
+ overflow: auto;
+ max-height:300px
+}
+#colorSelector{color:transparent !important}
+.section-divider{
+	display: block;
+    width: 100%;
+    border: 1px solid;
+}
+.range-slider {cursor:pointer;}
+.non-expert-role{
+    background: #fff;
+    opacity: 0.3;
+    border: 2px solid #e75e00;
+    border-radius: 10px;
+    //cursor: pointer;	
+	pointer-events: none;
+}
+.professional-role-instruction{
+	color: #023364;
+    font-size: 1.5em;
+     width: 80%;
+    text-align: center;
+	position:absolute;
+    /* margin: 0 auto; */
+    top: 50%;
+	left: 50%;
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%);
+	font-weight: 600;
+}
+ .professional-role-instruction  a{
+	 text-decoration: underline;
+}
+.filter-wrapper.non-expert{
+  cursor: pointer;	
+}

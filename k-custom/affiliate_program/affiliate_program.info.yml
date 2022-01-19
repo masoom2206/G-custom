@@ -1,0 +1,5 @@
+name: 'Kaboodle Affiliate Program'
+type: module
+description: 'Kaboodle Affiliate Program'
+core: 8.x
+package: 'custom'

@@ -1,0 +1,6 @@
+services:
+  media_vault_tool.media_entity:
+    class: Drupal\media_vault_tool\Normalizer\MediaEntityNormalizer
+    arguments: ['@entity.manager']
+    tags:
+    - { name: normalizer, priority: 1 }

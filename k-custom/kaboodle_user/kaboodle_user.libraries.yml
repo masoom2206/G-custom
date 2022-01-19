@@ -1,0 +1,22 @@
+user_js:
+  js:
+    js/user.js: {}
+    
+onboarding_js:
+  js:
+    js/onboarding.js: {} 
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+onboarding_media_vault_js:
+  js:
+    js/onboarding_media_vault.js: {} 
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+onboarding_media_getting_js:
+  js:
+    js/onboarding_media_getting.js: {} 
+  dependencies:
+    - core/jquery
+    - core/drupalSettings      

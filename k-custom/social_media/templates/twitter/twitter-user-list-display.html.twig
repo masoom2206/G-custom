@@ -1,0 +1,19 @@
+{% if data.team_query%}
+  {% set team, muid = '?team=' ~ data.team_query.gid, '&muid=' ~ data.team_query.muid %}
+  {% set team_query = team ~ muid %}
+{% else %}
+  {% set team_query = '' %}
+{% endif %}
+<ul class="list-unstyled user-list-display"> {% for index,value in result %} <li>
+    <div class="wrap-items">
+      <img src="{{value.profile_image_url_https}}" class="rounded-circle border-images float-left" alt="pic">
+      <div class="float-left">
+        <div class="screen-name"><strong>{{value.screen_name}}</strong> {% if value.verified == 1 %} <img src="https://img.icons8.com/color/48/000000/verified-account.png" style=" height: 20px;"> {% endif %} </div>
+        <div class="user-name">@{{value.name}}</div>
+        <div class="user-id d-none">{{value.id}}</div>
+      </div> {% if value.following == 1 %} {# use unfollow link #} <a href="/twitter_friendships/destroy/{{value.id}}{{team_query}}" class="btn btn-primary follow-unfollow un-follow-button">Following</a> {% else %} {# use follow link #} <a href="/twitter_friendships/create/{{value.id}}{{team_query}}" class="btn btn-primary follow-unfollow follow-button">Follow</a> {% endif %}
+    </div>
+    <div class="user-bio-desc float-none">
+      <p class="fade-content">{{value.description}}</p>
+    </div>
+  </li> {% endfor %} </ul>

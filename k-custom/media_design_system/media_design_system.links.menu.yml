@@ -1,0 +1,11 @@
+media_design_system.all:
+  title: 'KMDS Designer Tool'
+  route_name: media_design_system.all
+  parent: system.admin_config
+  weight: 70  
+
+media_design_system.api_settings:
+  title: 'KMDS Tool Api Settings'
+  route_name: media_design_system.kmdsapi_settings_form
+  description: 'Configure KMDS Tool Access API.'
+  parent: media_design_system.all

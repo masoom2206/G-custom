@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the notification_system module.
+ */
+function notification_system_schema() {
+  $schema['notifications'] = [
+    'description' => 'Notification system',
+    'fields' => [
+      'notification_id' => [
+        'description' => "Notification ID (Primary Key)",
+        'type' => 'serial',
+        'not null' => TRUE,
+				'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid who receiving notification.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+			'entity_id' => [
+        'description' => "Notification settings term id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'feature_name' => [
+        'description' => 'Notification feature name.',
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+			'full_message' => [
+        'description' => 'Notification full message.',
+        'type' => 'varchar',
+        'length' => 1000,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+			'short_message' => [
+        'description' => 'Notification sort message.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+			'email' => [
+        'description' => 'Email (boolean)',
+        'type' => 'int',
+				'not null' => TRUE,
+				'size' => 'tiny',
+				'default' => 0,
+      ],
+      'created' => [
+        'description' => 'Created UNIX timestamp',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+			'changed' => [
+        'description' => 'Changed UNIX timestamp',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+    'indexes' => [
+      'id' => ['notification_id', 'uid', 'entity_id'],
+    ],
+		'primary key' => ['notification_id'],
+  ];
+  return $schema;
+}

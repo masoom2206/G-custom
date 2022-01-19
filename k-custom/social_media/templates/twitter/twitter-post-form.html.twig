@@ -1,0 +1,26 @@
+{% if post == 'newpost' %} 
+{% embed '@social_media/post-form.html.twig' ignore missing with {'post': 'newpost'} %}
+ {% block post_desc_help_desc %}
+ <span class="text-area-desc fade-content"><i>You can mention the users by start typing @...</i></span> 
+ {% endblock %} 
+  {% block media_kit_wrapper %}
+  <div class="bg-white p-2">
+  {{data.media_kit_one}}
+  </div> 
+ {% endblock %}
+
+ {% endembed %}
+ {% else %}
+ {% embed '@social_media/post-form.html.twig' ignore missing with {'post': 'mypost'} %}
+  {% block app_title %}
+  {% endblock %}
+ {% block post_desc_help_desc %}
+ <span class="text-area-desc fade-content"><i>You can mention the users by start typing @ ...</i></span> 
+ {% endblock %} 
+   {% block media_kit_wrapper %}
+  <div class="bg-white p-2">
+    {{data.media_kit_two}}
+  </div> 
+ {% endblock %}
+ {% endembed %}
+ {% endif %}

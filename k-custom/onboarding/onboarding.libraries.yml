@@ -1,0 +1,6 @@
+onboarding.main:
+  js:
+    js/onboarding.js: {}
+  css:
+    theme:
+      css/onboarding.css: {}

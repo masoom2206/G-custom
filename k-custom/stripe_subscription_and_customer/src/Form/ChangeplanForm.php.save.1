@@ -1,0 +1,138 @@
+<?php
+
+namespace Drupal\stripe_subscription_and_customer\Form;
+
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\PrivateTempStoreFactory;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Class ChangeplanForm.
+ */
+class ChangeplanForm extends FormBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'changeplan_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state, $pricing = NULL, $uid = NULL) {
+    $current_user = \Drupal::currentUser();
+    $roles = $current_user->getRoles();
+    if(in_array('administrator', $roles) || in_array('va_manager', $roles)) {
+      $uid = $uid;
+    } else if ($current_user->Id() == $uid) {
+      $uid = $uid;
+    } else {
+      $uid = $current_user->Id();
+    }
+    $user =  \Drupal\user\Entity\User::load($uid);
+    $term = Term::load($pricing);
+    $term_Name = $term->getName();
+    $field_stripe_pricing_id_monthly_ = $term->get('field_stripe_pricing_id_monthly_')->getValue();
+    $field_stripe_test_pricing_id_mon = $term->get('field_stripe_test_pricing_id_mon')->getValue();
+    $customer_id = $user->get('stripe_customer_id')->value;
+    if (isset($customer_id) && !empty($customer_id)) {
+      $subscription_id = $user->get('stripe_subscription_id')->value;
+      $subscription = \Drupal::service('stripe_subscription_and_customer.stripe_api')->retrieveSubscription($subscription_id);
+      $currentplan = $subscription->items->data[0]['plan']['id'];
+    }
+    $crrentplanname = $subscription->plan->nickname;
+    $sub_id = $subscription->id;
+    $palnsub_id = $subscription->items->data[0]->id;
+    $form['#prefix'] = '<div id="ajax_form_multistep_form"><div id="result-message result_message message"></div>';
+    $form['#suffix'] = '</div>';
+    $form['markup'] = [
+     '#markup' => '<div class="step">Are you sure you want to change from the "' .$crrentplanname . '" plan to the "' .$term_Name. '" plan? Changes will take effect immediately but you will not be billed until your next billing date.</div>'
+    ];
+    $form['sub_id'] = [
+      '#type' => 'hidden',
+      '#title' => $this->t('pricing'),
+      '#weight' => '0',
+      '#value' => $sub_id,
+    ];
+    $form['palnsub_id'] = [
+      '#type' => 'hidden',
+      '#title' => $this->t('pricing'),
+      '#weight' => '0',
+      '#value' => $palnsub_id,
+    ];
+    $form['pricing'] = [
+      '#type' => 'hidden',
+      '#title' => $this->t('pricing'),
+      '#weight' => '0',
+      '#value' => $field_stripe_test_pricing_id_mon,
+    ];
+    $form['buttons']['forward'] = array(
+      '#type' => 'submit',
+      '#value' => t('CHANGE PLAN'),
+      '#prefix' => '<div class="step1-button">',
+      '#suffix' => '</div>',
+      '#attributes' => ['class' => ['subbutton']],
+      '#ajax' => array(
+        // We pass in the wrapper we created at the start of the form
+        'wrapper' => 'ajax_form_multistep_form',
+        // We pass a callback function we will use later to render the form for the user
+        'callback' => '::ajax_form_change_plan_form_ajax_callback',
+        'event' => 'click',
+      ),
+    );
+    $form['buttons']['cancel'] = array(
+      '#type' => 'submit',
+      '#value' => t('cancel'),
+      '#prefix' => '<div class="step1-button">',
+      '#suffix' => '</div>',
+      '#limit_validation_errors' => array(),
+      '#attributes' => ['class' => ['calbutton']],
+      '#ajax' => array(
+        // We pass in the wrapper we created at the start of the form
+        'wrapper' => 'ajax_form_multistep_form',
+        // We pass a callback function we will use later to render the form for the user
+        'callback' => '::ajax_form_multistep_form_ajax_cancel',
+        'event' => 'click',
+      ),
+    );
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    foreach ($form_state->getValues() as $key => $value) {
+      // @TODO: Validate fields.
+    }
+    parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Display result.
+    foreach ($form_state->getValues() as $key => $value) {
+      \Drupal::messenger()->addMessage($key . ': ' . ($key === 'text_format'?$value['value']:$value));
+    }
+  }
+  public function ajax_form_multistep_form_ajax_cancel(array &$form, FormStateInterface $form_state, $pricing) {
+    $messages = \Drupal::messenger()->deleteAll();
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseModalDialogCommand());
+    return $response;
+  }
+  public function ajax_form_change_plan_form_ajax_callback(array &$form, FormStateInterface $form_state) {
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseModalDialogCommand());
+    $response->addCommand(new RedirectCommand('/plan'));
+    return $response;
+  }
+}

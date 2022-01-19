@@ -1,0 +1,251 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function stripe_subscription_and_customer_install() {
+  create_stripe_customer_id_field();
+}
+
+/**
+ * Adds the stripe_customer_id field to the user entity.
+ */
+function create_stripe_customer_id_field() {
+  // Add a stripe_customer_id field to the user entity.
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_storage = $entity_type_manager->getStorage('field_storage_config')->load('user.stripe_customer_id');
+  if (!$field_storage) {
+    $field_storage = $entity_type_manager->getStorage('field_storage_config')->create([
+      'entity_type' => 'user',
+      'field_name' => 'stripe_customer_id',
+      'type' => 'string',
+      'cardinality' => 1,
+      'settings' => [],
+      'status' => TRUE,
+    ]);
+    $field_storage->save();
+  }
+
+  $field = $entity_type_manager->getStorage('field_config')->load('user.user.stripe_customer_id');
+  if (!$field) {
+    $field = $entity_type_manager->getStorage('field_config')->create([
+      'field_storage' => $field_storage,
+      'bundle' => 'user',
+      'label' => t('Stripe customer ID'),
+      'settings' => [],
+    ]);
+    $field->save();
+  }
+  
+  // Add a stripe_subscription_id field to the user entity.
+  $field_storage = $entity_type_manager->getStorage('field_storage_config')->load('user.stripe_subscription_id');
+  if (!$field_storage) {
+    $field_storage = $entity_type_manager->getStorage('field_storage_config')->create([
+      'entity_type' => 'user',
+      'field_name' => 'stripe_subscription_id',
+      'type' => 'string',
+      'cardinality' => 1,
+      'settings' => [],
+      'status' => TRUE,
+    ]);
+    $field_storage->save();
+  }
+
+  $field = $entity_type_manager->getStorage('field_config')->load('user.user.stripe_subscription_id');
+  if (!$field) {
+    $field = $entity_type_manager->getStorage('field_config')->create([
+      'field_storage' => $field_storage,
+      'bundle' => 'user',
+      'label' => t('Stripe Subscription ID'),
+      'settings' => [],
+    ]);
+    $field->save();
+  }
+}
+
+
+/**
+ * Implements hook_update_N().
+ */
+function stripe_subscription_and_customer_update_8905() {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table_name = 'subscription_base_info';
+  $table_schema = [
+    'description' => 'Subscription Base Info',
+    'fields' => [
+      'id' => [
+        'description' => "Auto increment id.",
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+	      'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'subscription_id' => [
+        'description' => "Subscription's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'customer_id' => [
+        'description' => "customer's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'pricing_id' => [
+        'description' => "pricing's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'status' => [
+        'description' => "Status",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 1,
+      ],
+      'created' => [
+        'description' => 'created date',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'updated' => [
+        'description' => 'updated date',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+	  'primary key' => ['id'],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+  
+ }
+ 
+function stripe_subscription_and_customer_update_8911() {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table_name = 'upgrades_products';
+  $table_schema = [
+    'description' => 'Subscription upgrades Info',
+    'fields' => [
+      'id' => [
+        'description' => "Auto increment id.",
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+	      'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'subscription_id' => [
+        'description' => "Subscription's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'customer_id' => [
+        'description' => "customer's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'pricing_id' => [
+        'description' => "pricing's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'status' => [
+        'description' => "Status",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 1,
+      ],
+      'created' => [
+        'description' => 'created date',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'updated' => [
+        'description' => 'updated date',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+	  'primary key' => ['id'],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+  
+}
+
+
+function stripe_subscription_and_customer_update_8910() {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table_name = 'upgrades_products_cancel_request';
+  $table_schema = [
+    'description' => 'Subscription upgrades Info',
+    'fields' => [
+      'id' => [
+        'description' => "Auto increment id.",
+        'description' => "Primary Key",
+        'type' => 'serial',
+        'not null' => TRUE,
+	      'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'tid' => [
+        'description' => "Subscription's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'customer_id' => [
+        'description' => "customer's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'pricing_id' => [
+        'description' => "pricing's id.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'status' => [
+        'description' => "Status",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 3,
+      ],
+      'description' => [
+        'description' => "Status",
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'description' => 'created date',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'updated' => [
+        'description' => 'updated date',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+	  'primary key' => ['id'],
+  ];
+
+  $schema->createTable($table_name, $table_schema);
+}

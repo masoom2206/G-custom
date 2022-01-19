@@ -1,0 +1,3 @@
+services:
+  kaboodle_user.user_controller:
+    class: Drupal\kaboodle_user\Controller\UserStatusController

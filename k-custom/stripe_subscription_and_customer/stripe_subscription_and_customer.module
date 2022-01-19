@@ -1,0 +1,135 @@
+<?php
+
+/**
+ * @file
+ * Contains stripe_subscription_and_customer.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\Ajax\OpenDialogCommand;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Ajax\HtmlCommand;
+/**
+ * Implements hook_help().
+ */
+function stripe_subscription_and_customer_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the stripe_subscription_and_customer module.
+    case 'help.page.stripe_subscription_and_customer':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Stripe Subscription and Customer Portal') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function stripe_subscription_and_customer_theme($existing, $type, $theme, $path) {
+  return [
+    'stripe_subscription_and_customer' => [
+      'render element' => 'children',
+    ],
+    'stripe_billing' => [
+      'render element' => 'children',
+      'variables' => ['billing' => NULL],
+    ],
+    'stripe_invoices' => [
+      'render element' => 'children',
+      'variables' => ['invoices' => NULL],
+    ],
+  ];
+}
+
+
+/**
+ * Implements hook_mail().
+ */
+function stripe_subscription_and_customer_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+
+  switch ($key) {
+    case 'stripe_subscription_and_customer_subscription_event':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = $params['subject'];
+      $message['body'][] = $params['message'];
+      break;
+  }
+}
+
+
+function stripe_subscription_and_customer_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  if($form_id == "contact_message_feedback_form") {
+     $action = \Drupal::request()->query->get('action');
+    if ($action == "billing_storage_cancel_request") {
+      $form['#prefix'] = '<div id="ajax_form_multistep_form" class="billing_storage_cancel_request"><div class="col-sm-12"><h1>Cancel storage upgrade request</h1></div>';
+      $form['#suffix'] = '</div>';
+      $form['subject']['widget'][0]['value']['#default_value'] = 'Cancel storage upgrade request';
+      $form['message']['widget'][0]['value']['#default_value'] = 'Cancel storage upgrade request';
+
+      $form['actions']['cancel'] = [
+        '#type' => 'submit',
+        '#value' => t('cancel'),
+        '#prefix' => '<div class="d-flex"><div class="step1-button">',
+        '#suffix' => '</div>',
+        '#limit_validation_errors' => array(),
+        '#attributes' => ['class' => ['calbutton']],
+        '#ajax' => [
+          // We pass in the wrapper we created at the start of the form
+          'wrapper' => 'ajax_form_multistep_form',
+          // We pass a callback function we will use later to render the form for the user
+          'callback' => 'ajax_form_multistep_form_contact_cancel_addupgrades',
+          'event' => 'click',
+        ],
+      ];
+      unset($form['actions']['preview']);
+      $form['actions']['submit']['#ajax'] = ['callback' => 'ajax_form_multistep_form_contact_submit_addupgrades'];
+      $form['actions']['submit']['#attributes'] = ['class' => ['subbutton']];
+    }
+  }
+}
+
+
+ function ajax_form_multistep_form_contact_cancel_addupgrades(array &$form, FormStateInterface $form_state) {
+    $messages = \Drupal::messenger()->deleteAll();
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseModalDialogCommand());
+    return $response;
+  }
+  
+  function ajax_form_multistep_form_contact_submit_addupgrades(array &$form, FormStateInterface $form_state) {
+    
+    $messages = \Drupal::messenger()->deleteAll();
+    $content = "Your cancellation request has been sent.";
+    
+    \Drupal::messenger()->addMessage($content, 'status', TRUE);
+
+    $message = [
+      '#theme' => 'status_messages',
+      '#message_list' => drupal_get_messages(),
+    ];
+
+    $messages = \Drupal::service('renderer')->render($message);
+
+    
+    $options = [
+      'width' => '500',
+    ];
+    $modal_form = \Drupal::formBuilder()->getForm('\Drupal\stripe_subscription_and_customer\Form\OkCancelForm');
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseModalDialogCommand());
+    $response->addCommand(new HtmlCommand('#status-dialog', $messages));
+    //$response->addCommand(new OpenModalDialogCommand('', $modal_form, $options));
+    return $response;
+  }

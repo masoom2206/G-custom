@@ -1,0 +1,243 @@
+/* #edit-field-favorite-value {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+} */
+.favo-inactive {
+	background:url("../images/heart-inactive-icon.svg") no-repeat center;
+}
+.favo-active {
+	background: url("../images/heart-active-icon-filled.svg") no-repeat center;
+	background-size: 40%;
+}
+.favolink {
+  cursor: pointer;
+  color: transparent;
+  padding: 0 30px;
+  margin-right: -10px;
+}
+.form-item-field-favorite-value {
+  padding: 0;
+}
+#edit-submit {margin-right: 0 !important;}
+#edit-cancel { margin-left: 4px!important; }
+#edit-delete { margin-left: 4px!important; }
+
+#edit-delete, #edit-cancel, .button--danger {
+	font-family: 'Cantarell', sans-serif!important;
+	color: #023364!important;
+	font-size: 1rem!important;
+	text-decoration: none!important;
+  background-color: transparent!important;
+}
+#edit-delete:active, #edit-cancel:active, .button--danger:active {
+  color: #2077ce!important;
+}
+#edit-delete:hover, #edit-delete:focus, #edit-cancel:hover, #edit-cancel:focus, .button--danger:hover, .button--danger:focus {
+  color: #0d5296!important;
+}
+#edit-delete:hover, #edit-cancel:hover, .button--danger:hover {
+	text-decoration: underline!important;
+}
+
+/*Media library style*/
+.media-library-item--grid:before{border:none!important;}
+body.page-node-type-branding-preset .media-library-item__attributes{
+	padding: 0 0 22px 0!important;
+	width: 100%;
+	text-align: center;
+}
+body.node--type-branding-preset .media-library-item__attributes{
+	padding: 0 0 15px 0!important;
+}
+body.page-node-type-branding-preset .media-library-widget-modal .ui-widget-header .ui-dialog-title, body.node--type-branding-preset .media-library-widget-modal .ui-widget-header .ui-dialog-title, body.node--type-branding-preset #field_logo-media-library-wrapper button.media-library-open-button{
+	content: "";
+	font-size: 0 !important;
+}
+body.page-node-type-branding-preset .media-library-widget-modal .ui-widget-header .ui-dialog-title:before, body.node--type-branding-preset .media-library-widget-modal .ui-widget-header .ui-dialog-title:before, body.node--type-branding-preset #field_logo-media-library-wrapper button.media-library-open-button::before{
+	content: "ADD LOGO";
+	font-size: 1.2rem!important;
+}
+body.path-node #field_logo-media-library-wrapper button.media-library-open-button::before{
+	font-size: 1.2rem!important;
+}
+body.page-node-type-branding-preset #node-branding-preset-edit-form .media-library-selection, body.path-node #node-branding-preset-edit-form .media-library-selection{margin: 0!important;}
+
+body.page-node-type-branding-preset .ui-dialog .ui-dialog-titlebar-close, body.path-node .ui-dialog .ui-dialog-titlebar-close{
+	border-radius: 20px!important;
+  background: #fff!important;
+  color: #6b6b6b!important;
+	font-size: 16px!important;
+}
+body.path-node.node--type-branding-preset .ui-dialog .ui-dialog-titlebar-close{
+	border-radius: 20px!important;
+  background: #fff!important;
+	font-size: 16px!important;
+	display:none;
+}
+body.page-node-type-branding-preset .media-library-item--grid .field--name-thumbnail, body.node--type-branding-preset .media-library-item--grid .field--name-thumbnail{
+	background-color: #fff!important;
+}
+body.page-node-type-branding-preset .media-library-selection .media-library-item--grid{
+	width: 41%!important;
+}
+body.node--type-branding-preset .media-library-selection .media-library-item--grid article{
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+body.node--type-branding-preset .media-library-selection .media-library-item--grid, body.path-node .media-library-selection .media-library-item--grid{
+	width: 50%!important;
+}
+body.page-node-type-branding-preset .ui-dialog .ui-widget-content.ui-dialog-buttonpane .ui-dialog-buttonset button.ui-widget:nth-child(1), body.node--type-branding-preset button[type="submit"][value="Save and select"], form.js-media-library-add-form button[type="submit"][value="Save and select"]{
+	display:none !important;
+}
+body.path-node .ui-dialog .ui-widget-content.ui-dialog-buttonpane .ui-dialog-buttonset button.ui-widget:nth-child(1){
+	
+}
+
+body.page-node-type-branding-preset .ui-dialog .ui-widget-content.ui-dialog-buttonpane .ui-dialog-buttonset button.ui-widget:nth-child(2), body.node--type-branding-preset button[type="submit"][value="Save and insert"], body.path-node .ui-dialog .ui-widget-content.ui-dialog-buttonpane .ui-dialog-buttonset button.ui-widget:nth-child(2), form.js-media-library-add-form button[type="submit"][value="Save and insert"]{
+	font-family: 'Fjalla One';
+	text-transform: uppercase;
+	background-color: #e75e00!important;
+	border-color: #e75e00!important;
+	text-shadow: none!important;
+	color: #fff;
+	border: 1px solid transparent;
+	padding: .375rem 1rem;
+	font-size: 0;
+	content: "";
+	line-height: 1.5;
+	border-radius: .25rem;
+	background-image: none;
+}
+body.page-node-type-branding-preset .ui-dialog .ui-widget-content.ui-dialog-buttonpane .ui-dialog-buttonset button.ui-widget:nth-child(2):before, body.node--type-branding-preset button[type="submit"][value="Save and insert"]:before {
+	content: "";
+	font-size: 0;
+}
+body.page-node-type-branding-preset .ui-dialog .ui-widget-content.ui-dialog-buttonpane .ui-dialog-buttonset button.ui-widget:nth-child(2):after, body.node--type-branding-preset button[type="submit"][value="Save and insert"]:after, form.js-media-library-add-form button[type="submit"][value="Save and insert"]:after {
+	content: "Upload";
+	font-size: 1rem;
+}
+body.page-node-type-branding-preset .ui-widget .ui-widget, body.node--type-branding-preset .ui-widget .ui-widget {
+  font-size: 2em;
+}
+body.page-node-type-branding-preset .ui-button, body.path-node .ui-button, body.node--type-branding-preset .ui-button{
+	border: none!important;
+	background: #fff!important;
+}
+.media-library-add-form__preview{
+	background: #fff!important;
+  padding: 0!important;
+}
+
+#field_logo-media-library-wrapper .js-media-library-item button{
+	width: 30% !important;
+	min-width: 95px;
+	margin-top: 14px;
+}
+
+body.page-node-type-branding-preset #field_logo-media-library-wrapper #edit-field-logo-open-button{
+	width: 30%;
+	min-width: 95px;
+	background: #0071b8;
+	border-color: #1e5c90;
+	color: #fff;
+	text-transform: capitalize;
+}
+.w-30{
+	width: 30% !important;
+	min-width: 95px;
+}
+body.path-node.node--type-branding-preset #field_logo-media-library-wrapper #edit-field-logo-open-button{
+	width: 30%;
+	min-width: 95px;
+	background-color: #e75e00;
+	border-color: #e75e00;
+	color: #fff;
+	font-family: 'Fjalla One';
+	text-transform: uppercase;
+}
+#field_logo-media-library-wrapper {
+	width: 50%;
+	margin-top: 15px;
+}
+#media-library-add-form-wrapper .js-media-library-add-form ul li.list-group-item div{
+	width: auto;
+	float: left;
+	padding-right: 10px;
+}
+#media-library-add-form-wrapper .js-media-library-add-form ul li.list-group-item{
+	border: 0px !important;
+	border-radius: 0 !important;
+}
+#field_logo-media-library-wrapper .js-media-library-item{
+	display: flex;
+	display: -webkit-flex;
+  display: -ms-flex;
+	flex-direction: column-reverse;
+	-webkit-flex-direction: column-reverse; /* Safari 6.1 and newer */
+}
+#field_logo-media-library-wrapper .media-library-widget__toggle-weight, #field_logo-media-library-wrapper legend, #field_logo-media-library-wrapper .field-prefix, #field_logo-media-library-wrapper .media-library-widget-empty-text, #field_logo-media-library-wrapper--description{
+	display: none;
+}
+body.page-node-type-branding-preset #media-library-view, body.page-node-type-branding-preset .media-library-selected-count.js-media-library-selected-count, body.node--type-branding-preset #media-library-view, body.node--type-branding-preset .media-library-selected-count.js-media-library-selected-count, body.page-node-type-branding-preset button[type="submit"][value="Save and select"], body.node--type-branding-preset button[type="submit"][value="Save and select"], body.path-node #media-library-view{
+	display: none;
+}
+body.page-node-type-branding-preset .ui-dialog, body.node--type-branding-preset .ui-dialog, body.path-node .ui-dialog{
+	border-radius: .3rem!important;
+}
+body.page-node-type-branding-preset .ui-widget-header, body.path-node .ui-widget-header, body.node--type-branding-preset .ui-widget-header{
+	border: none!important;
+}
+body.page-node-type-branding-preset .media-library-content, body.path-node .media-library-content, body.node--type-branding-preset .media-library-content{
+	border-left: none!important;
+}
+body.page-node-type-branding-preset .ui-dialog .ui-dialog-title, body.path-node .ui-dialog .ui-dialog-title, body.node--type-branding-preset .ui-dialog .ui-dialog-title {
+	margin: 0;
+	color: #3b3b3b!important;
+	font-weight: 600;
+	-webkit-font-smoothing: antialiased;
+}
+body.page-node-type-branding-preset .ui-dialog .ui-dialog-titlebar, body.node--type-branding-preset .ui-dialog .ui-dialog-titlebar, body.path-node .ui-dialog .ui-dialog-titlebar {
+	background: #fff!important;
+	font-family: 'Cantarell', sans-serif!important;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: -1px;
+	font-size: 1.5rem!important;
+	color: #3b3b3b!important;
+	padding: 1rem 1rem!important;
+	border-bottom: 1px solid #dee2e6!important;
+	border-top-left-radius: .3rem!important;
+	border-top-right-radius: .3rem!important;
+}
+body.page-node-type-branding-preset .ui-dialog .ui-widget-content.ui-dialog-buttonpane .ui-dialog-buttonset button.ui-widget:first-child{display:none;}
+
+body.page-node-type-branding-preset .ui-dialog .ui-widget-content.ui-dialog-buttonpane{
+	margin: 0;
+	background: #fff!important;
+	padding: 1rem!important;
+	border-top: 1px solid #dee2e6;
+	border-bottom-right-radius: .3rem!important;
+	border-bottom-left-radius: .3rem!important;
+}
+body.path-node .ui-dialog .ui-widget-content.ui-dialog-buttonpane{
+	margin: 0;
+	background: #fff!important;
+	border-top: 1px solid #dee2e6;
+	border-bottom-right-radius: .3rem!important;
+	border-bottom-left-radius: .3rem!important;
+}
+body.page-node-type-branding-preset .media-library-widget-modal:focus, body.path-node .media-library-widget-modal:focus{border: 0!important;}
+body.page-node-type-branding-preset .ui-dialog .ui-widget-content.ui-dialog-content, body.path-node .ui-dialog .ui-widget-content.ui-dialog-content{
+	padding: 1rem!important;
+}

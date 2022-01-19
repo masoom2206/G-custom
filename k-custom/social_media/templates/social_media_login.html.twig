@@ -1,0 +1,19 @@
+<div class="social-media-access w-100 bg-f2f2f2 p-2">
+ {{social_media_login.html|raw}}
+ {% if (social_media_login.name == 'Facebook') or (social_media_login.name == 'Instagram') %}
+ <button id="access-button" class="btn btn-primar p-0">
+  <a href="{{social_media_login.link}}">
+          <img src="/modules/custom/social_media/images/FacebookIcons/continue-facebook-40h.png" alt="fb">
+  </a>
+ </button>
+ {% else %}
+   <button id="access-button" class="btn btn-primary p-0">
+    <a href="{{social_media_login.link}}">
+        <img class="img-fluid" style="min-width:16px;max-width:20px" src="{{social_media_login.icon}}">
+        connect with {{social_media_login.name}}
+    </a>
+  </button>
+ {% endif %}
+
+ 
+</div>

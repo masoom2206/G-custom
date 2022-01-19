@@ -1,0 +1,6 @@
+name: Video Maker Tool
+description: Video Maker Tool for making/editing video
+package: Kaboodle
+
+type: module
+core: 8.x

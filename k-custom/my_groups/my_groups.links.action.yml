@@ -1,0 +1,28 @@
+my_groups.add_group:
+  route_name: 'entity.group.add_page'
+  title: 'Add Team'
+  appears_on:
+    - 'team.listing'
+
+group.teams:
+  route_name: 'team.listing'
+  class: '\Drupal\my_groups\Plugin\Menu\LocalAction\LoginUser'
+  title: 'My Teams'
+  appears_on:
+    - 'view.group_members.page_1'
+
+group.add_team_member:
+  route_name: 'entity.group_content.add_form'
+  route_parameters:
+    plugin_id: 'group_membership'
+  class: '\Drupal\group\Plugin\Menu\LocalAction\WithDestination'
+  title: 'Add member'
+  appears_on:
+    - 'team.members'
+    
+group.myteams:
+  route_name: 'team.listing'
+  class: '\Drupal\my_groups\Plugin\Menu\LocalAction\LoginUser'
+  title: 'My Teams'
+  appears_on:
+    - 'team.members'

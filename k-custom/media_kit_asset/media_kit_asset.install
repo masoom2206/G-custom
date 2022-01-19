@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the media_kit_asset module.
+ */
+function media_kit_asset_schema() {
+  $schema['file_share'] = [
+    'description' => 'File share system',
+    'fields' => [
+      'fsid' => [
+        'description' => "file shre ID (Primary Key)",
+        'type' => 'serial',
+         'not null' => TRUE,
+		     'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => "User's uid who shared links.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+			'file_name' => [
+        'description' => "Share File Name.",
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'file_id' => [
+        'description' => 'Share file id.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'time_stamp' => [
+        'description' => 'time file created.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+			's3_path' => [
+        'description' => 'converted image path.',
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+			'ip' => [
+        'description' => 'user ip.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+			'downloads' => [
+        'description' => 'Number of time file has been downloads',
+        'type' => 'int',
+				'not null' => TRUE,
+      ],
+      'encripted_string' => [
+        'description' => 'encripted string',
+        'type' => 'varchar',
+        'length' => 256,
+				'not null' => TRUE,
+      ],
+      
+    ],
+		'primary key' => ['fsid'],
+  ];
+  return $schema;
+}
+

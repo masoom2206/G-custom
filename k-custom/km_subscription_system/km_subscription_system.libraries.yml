@@ -1,0 +1,11 @@
+multistep_form:
+  css:
+    css/multistep_form.css: {}
+  js:
+    js/jquery.validate.min.js: {}
+    js/multistep_form.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal.dialog.ajax
+    - core/jquery.form

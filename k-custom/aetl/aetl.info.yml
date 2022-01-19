@@ -1,0 +1,14 @@
+name: Amazon Elastic Transcoder and AWS Lambda
+type: module
+description: This module is provide all functionality for Amazon Elastic Transcoder and AWS Lambda in Drupal 8
+package: AWS
+dependencies:
+  - s3fs
+core: '8.x'
+project: 'aetl'
+configure: aetl.settings
+
+# Note: do not add the 'version' or 'project' properties yourself.
+# They will be added automatically by the packager on drupal.org.
+# version: 1.0
+# project: 'aetl'

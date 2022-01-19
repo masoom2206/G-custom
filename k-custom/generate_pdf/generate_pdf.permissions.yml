@@ -1,0 +1,4 @@
+administer genp:
+  title: 'Administer fonts permission'
+  description: 'Access module configuration.'
+  restrict access: FALSE

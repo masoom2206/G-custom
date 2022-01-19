@@ -1,0 +1,5 @@
+name: 'Public Home Page'
+type: module
+description: 'Custom Public Home Page'
+core: 8.x
+package: 'Custom'

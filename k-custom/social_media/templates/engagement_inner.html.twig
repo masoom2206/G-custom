@@ -1,0 +1,27 @@
+<div class="col-lg-7 col-xs-12 col-sm-12">
+  <div class="border bg-white p-2 rounded mb-2 custom-engagement-tab d-none">
+    <nav class="custom-nav-layout">
+      <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-myposts-tab" data-toggle="tab" href="#nav-list-view" role="tab" aria-controls="nav-list-view" aria-selected="true">
+          <i class="fas fa-th"></i><span style="padding-left:2px">List View</span></a>
+        <a class="nav-item nav-link" id="nav-newpost-tab" data-toggle="tab" href="#nav-grid-view" role="tab" aria-controls="nav-grid-view" aria-selected="false">
+          <i class="fas fa-th"></i><span style="padding-left:2px">Grid View</span></a>
+      </div>
+    </nav>
+  </div>
+</div>
+<div class="bg-f2f2f2">
+  <div class="col-lg-7 col-xs-12 col-sm-12">
+    <div class="tab-content">
+      <!-- list view -->
+      <div class="tab-pane fade show active row" id="nav-list-view" role="tabpanel" aria-labelledby="nav-list-view" style="font-size:14px">
+      {% embed '@social_media/facebook/facebook-post.html.twig' ignore missing with {'value_comments': value_comment.replies} %}
+      {% endembed %}
+      </div>
+      <!-- grid view -->
+      <div class="tab-pane fade show row" id="nav-grid-view" role="tabpanel" aria-labelledby="nav-grid-view">
+        <h1>grid view data insertion detail to cheche </h1>
+      </div>
+    </div>
+  </div>
+</div>

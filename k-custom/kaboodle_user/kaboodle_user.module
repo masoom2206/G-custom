@@ -1,0 +1,511 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeForm;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Render\Markup;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for user entities.
+ *
+ * Create default nodes upon new account creation
+ */
+function kaboodle_user_user_insert(\Drupal\user\UserInterface $user) {
+  $full_name = $user->get('field_first_name')->value.' '.$user->get('field_last_name')->value;
+  $mkit_name = 'All Media Assets';
+  //Insert Media Kit node.
+  $default_kit = \Drupal\node\Entity\Node::create([
+     'type' => 'media_kit',
+     'title' => $mkit_name,
+     'status ' => '1',
+     'uid' => $user->id(),
+     'field_user_ref' => $user->id(),
+    ]);
+	$default_kit->save();
+		
+  //Insert Media Vault node.
+  \Drupal\node\Entity\Node::create([
+    'type' => 'media_vault',
+    'title' => 'Media Vault for '.$full_name,
+    'status ' => '1',
+    'uid' => $user->id(),
+    'field_user_ref' => $user->id(),
+    'field_default_media_kit' => ['target_id' => $default_kit->id()],
+  ])->save();
+  
+  //Insert Branding Preset node.
+  \Drupal\node\Entity\Node::create([
+     'type' => 'branding_preset',
+     'title' => 'Branding for '.$full_name,
+     'status ' => '1',
+     'uid' => $user->id(),
+     'field_user_ref' => $user->id(),
+    ])->save();
+    
+  // Assign content_creator role upon signup.
+  //$user->addRole('content_creator');
+  //$user->save();  
+}
+
+function kaboodle_user_entity_presave(Drupal\Core\Entity\EntityInterface $entity) {
+   if ($entity->getEntityType()->id() == 'user') {
+       $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+       $roles = $user->getRoles();
+       if(!in_array('administrator', $roles)){
+         if($user->field_onboarding_user_status->value == 1){
+           $entity->set('field_onboarding_user_status', 1);
+         }
+       }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function kaboodle_user_theme($existing, $type, $theme, $path) {
+  return [
+    'user_profile_edit' => [
+      'variables' => ['user_edit_form' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_user_login().
+ * Redirect user just after login.
+ */
+function kaboodle_user_user_login($account) {
+  // The user has never logged in before.
+	$roles = $account->getRoles();
+  $uid = $account->id();
+  //to check if Getting Started workflow is completed or not
+  $status = \Drupal\onboarding\Controller\OnBoardingController::get_item_status($uid);
+  $completed_items = count(array_keys($status, "Completed"));
+  // Detect mobile device 
+  $useragent=$_SERVER['HTTP_USER_AGENT'];
+  if(preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i',$useragent)||preg_match('/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i',substr($useragent,0,4))) {
+    $device = "mobile";
+  }else{
+    $device = "desktop";
+  }
+  $site_config = \Drupal::config('system.site');
+	$server_name = strtolower($site_config->get('site_server_name'));
+  if($server_name == 'dev'){
+		$page_id = 1101;
+	} else if($server_name == 'staging'){
+		$page_id = 452;	
+	} else {
+		$page_id = 457;
+	}
+  if($device == 'mobile'){
+    $url = "/node/".$page_id;
+  }else  if (in_array('client_customer', $roles)) {
+    $url = "/";
+  }else if(in_array('content_creator', $roles) or in_array('advanced_content_creator',$roles) or in_array('enterprise',$roles) or in_array('designer',$roles)) {
+    $all_onbording_step = '3';
+    $user_object =\Drupal::service('kaboodle_user.user_controller')
+		  ->getUserStatus($account);
+    if ($user_object == 'false') {
+      $url = "/my-account"; 
+    }
+    else {
+      $url = "/tools/my-account/$uid";
+      // $account['#attached']['library'][] = 'kaboodle_user/onboarding_js';
+    }      
+  } 
+  else if($completed_items == 8) {
+    $url = "/tools/my-kaboodles/$uid";
+  }
+	else {
+    $url = "/tools/my-account/$uid";
+  }
+  $response = new Symfony\Component\HttpFoundation\RedirectResponse($url);
+  $response->send();
+  return;
+}
+
+/**
+ * Implements hook_form_alter().
+ * Node update/delete/revision Permission 
+ */
+function kaboodle_user_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $user = \Drupal::currentUser();
+  $roles = $user->getRoles();
+  $form_object = $form_state->getFormObject();
+  if ($form_object instanceof NodeForm) {
+    /** @var Drupal\Core\Session\AccountProxyInterface $user */
+    if ($user->hasPermission('administer nodes')) {
+      return;
+    }
+    $node_type = $form_object->getEntity()->bundle();
+		//revision access
+    $form['revision']['#access'] = $user->hasPermission("view $node_type revisions");
+  }
+	
+  if($form_id == 'user_pass'){
+		$form['name']['#title'] = t('Email address');
+	}
+	if($form_id == 'user_login_form'){
+		$form['name']['#title'] = t('Email address');
+	}
+	
+  if($form_id == 'user_form'){
+    $uid = $form_state->getformObject()->getEntity()->id();
+    if(in_array('administrator', $roles)){
+      // server validation
+      $form['#validate'][] = '_form_user_team_validate';
+    }else{
+      // client validation
+      $form['#attached']['library'][] = 'kaboodle_user/user_js';
+      $form['contact']['contact']['#description'] = 'Check this box to allow other users to contact you via a personal contact form which keeps your email address hidden (required to participate in Teams and/or Marketplace).';
+    }
+    // disable teams and contact checkbox
+    $form['field_teams_option']['widget']['value']['#attributes']['uid'] = $uid;
+    $form['field_teams_option']['widget']['value']['#attributes']['team'] = 0;
+    $form['contact']['contact']['#attributes']['team'] = 0;
+    
+    $form['field_name']['widget'][0]['value']['#value'] = 1;
+    //$form['field_onboarding_user_status']['widget']['value']['#default_value'] = 1;
+    // teams
+    $oteams = getOwnTeams($uid);
+    if(empty($oteams)){
+      $iteams = getInvitedTeams($uid);
+      if(!empty($iteams)){
+        // member of teams
+        $form['field_teams_option']['widget']['value']['#attributes']['disabled'] = TRUE;
+        $form['field_teams_option']['widget']['value']['#attributes']['team'] = 2;
+        //$form['field_teams_option']['widget']['value']['#default_value'] = 1;
+        
+        $form['contact']['contact']['#attributes']['disabled'] = TRUE;
+        //$form['contact']['contact']['#default_value'] = 1;
+        $form['contact']['contact']['#attributes']['team'] = 2;
+      }
+    }else{
+      // owner of teams
+      $form['field_teams_option']['widget']['value']['#attributes']['disabled'] = TRUE;
+      $form['field_teams_option']['widget']['value']['#attributes']['team'] = 1;
+      //$form['field_teams_option']['widget']['value']['#default_value'] = 1;
+      
+      $form['contact']['contact']['#attributes']['disabled'] = TRUE;
+      //$form['contact']['contact']['#default_value'] = 1;
+      $form['contact']['contact']['#attributes']['team'] = 1;
+    }
+    $form['actions']['submit']['#submit'][] = 'kaboodle_user_user_form_submit';
+  }
+}
+
+/**
+ * Implements validation
+ */
+function _form_user_team_validate(&$form, \Drupal\Core\Form\FormStateInterface $form_state){
+  $teams_option = $form_state->getValue('field_teams_option');
+  if(is_array($teams_option) && ($teams_option['value'] == 1)){
+    $contact = $form_state->getValue('contact');
+    if(empty($contact)){
+      //dd $form_state->setErrorByName('contact', t('If you wish to participate in teams please also select the "Personal contact form" checkbox.'));
+    }
+    
+    $field_address = $form_state->getValue('field_address');
+    if(empty($field_address[0]['address']['locality']) || empty($field_address[0]['address']['administrative_area'])){
+      //dd $form_state->setErrorByName('contact', t('If you wish to participate in teams, please enter values in both the "City" and "State" fields.'));
+    }
+  }
+}
+
+/**
+ * Implements submit handler
+ */
+function kaboodle_user_user_form_submit($form, FormStateInterface $form_state) {
+  $uid = $form_state->getformObject()->getEntity()->id();
+  //$user_storage = \Drupal::entityTypeManager()->getStorage('user');
+  //$user_load = $user_storage->load(\Drupal::currentUser()->id());
+  //if($user_load->field_onboarding_user_status->value == 1){
+ // $user_load->set('field_onboarding_user_status', 1);
+  //}
+ // $user_load->save();
+  // check teams and membership
+  $oteams = getOwnTeams($uid);
+  $iteams = getInvitedTeams($uid);
+  if(!empty($oteams) || !empty($iteams)){
+    // teams option
+    if($entity = $form_state->getFormObject()->getEntity()) {    
+      $entity->set('field_teams_option', 1);
+      $entity->save();
+    }
+    
+    // contact setting
+    db_update('users_data')
+    ->fields(array(
+      'value' => 1,
+    ))
+    ->condition('module', 'contact')
+    ->condition('uid', $uid)
+    ->condition('serialized', 0)
+    ->execute();
+  }else{
+    // removed outstanding declined invitations
+    $teams_option_value = $form_state->getValue('field_teams_option')['value'];
+    if($teams_option_value == 0){
+      $member = \Drupal\user\Entity\User::load($uid);
+      // get data from custom table: team_membership_status 
+      $query = \Drupal::service('database')->select('team_membership_status', 'm');
+      $query->fields('m', ['team_id']);
+      $query->condition('member_id', $uid);
+      $teams = $query->execute()->fetchAll();
+      if(!empty($teams)){
+        foreach ($teams as $team) {
+          // remove membership from team
+          if($group = \Drupal\group\Entity\Group::load($team->team_id)) {
+            $group->removeMember($member);
+          }
+        }
+      }
+      
+      // delete data from custom table: team_membership_status 
+      $query = \Drupal::service('database')->delete('team_membership_status');
+      $query->condition('member_id', $uid);
+      $query->execute();
+    }
+    
+  }
+}
+
+/**
+ *  Implements hook_node_access_records().
+ *  branding_preset node view permissions
+ */
+function kaboodle_user_node_access_records(NodeInterface $node) {
+  $grants = [];
+  // We only care about the node if it's published. We don't want to override view published permissions. 
+  if ($node->isPublished() && $node->getType() == 'branding_preset') {
+    $grants[] = [
+      'realm' => "view_branding_preset_acccess",
+      'gid' => 1,
+      'grant_view' => 1,
+      'grant_update' => 0,
+      'grant_delete' => 0,
+      'priority' => 0,
+    ];
+    $grants[] = [
+      'realm' => "view_branding_preset_acccess",
+      'gid' => 0,
+      'grant_view' => 1,
+      'grant_update' => 0,
+      'grant_delete' => 0,
+      'priority' => 0,
+    ];
+  }
+  return $grants;
+}
+
+/**
+ * Implements hook_node_grants().
+ */
+function kaboodle_user_node_grants(AccountInterface $account, $op) {
+  $grants = [];
+  if ($op == 'view') {
+    foreach (NodeType::loadMultiple() as $type) {
+      $type_id = $type->id();
+			if($type_id == 'branding_preset'){
+				if ($account->hasPermission("Branding Preset")) {
+					$grants["view_branding_preset_acccess"] = [1];
+				} else {
+					$grants["view_branding_preset_acccess"] = [0];
+				}
+			}
+    }
+  }
+  return $grants;
+}
+
+/**
+ * Implements hook_form_node_form_alter().
+ */
+function kaboodle_user_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  $nodeBundle = $node->bundle();
+	if ($node) {
+		if (empty($node->Id())) {
+			$form['actions']['submit']['#submit'][] = 'kaboodle_user_node_add_form_submit';
+			$form['actions']['publish']['#submit'][] = 'kaboodle_user_node_add_form_submit';
+			$form['actions']['unpublish']['#submit'][] = 'kaboodle_user_node_add_form_submit';
+		} else {
+			$form['actions']['submit']['#submit'][] = 'kaboodle_user_node_update_form_submit';
+			$form['actions']['publish']['#submit'][] = 'kaboodle_user_node_update_form_submit';
+			$form['actions']['unpublish']['#submit'][] = 'kaboodle_user_node_update_form_submit';
+		}
+	}
+	
+  if ($nodeBundle == 'branding_preset' && in_array($form['#form_id'], ['node_branding_preset_form', 'node_branding_preset_edit_form'])) {
+		$form['#attached']['library'][] = 'kaboodlemedia/branding_preset_style';
+		$form['#attached']['library'][] = 'kaboodlemedia/global-modal';
+		$form['#attached']['library'][] = 'kaboodlemedia/colorPicker';
+  }
+}
+
+/**
+ * Implements hook_form_user_form_alter().
+ */
+function kaboodle_user_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  $user = $form_state->getFormObject()->getEntity();
+	if ($user) {
+		if (empty($user->Id())) {
+			/* $form['actions']['submit']['#submit'][] = 'kaboodle_user_user_add_form_submit';
+			$form['actions']['publish']['#submit'][] = 'kaboodle_user_user_add_form_submit';
+			$form['actions']['unpublish']['#submit'][] = 'kaboodle_user_user_add_form_submit';
+		} else { */
+			$form['actions']['submit']['#submit'][] = 'kaboodle_user_user_update_form_submit';
+			$form['actions']['publish']['#submit'][] = 'kaboodle_user_user_update_form_submit';
+			$form['actions']['unpublish']['#submit'][] = 'kaboodle_user_user_update_form_submit';
+		}
+	}
+}
+
+/**
+ * Hide Edit tab from branding_preset node
+ */
+function kaboodle_user_menu_local_tasks_alter(&$local_tasks, $route_name) {
+  $route_match = \Drupal::routeMatch();
+  $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+  $roles = $user->getRoles();
+	if ($route_match->getRouteName() == 'entity.node.edit_form' && (in_array('administrator', $roles) == '')) {
+		$node = $route_match->getParameter('node');
+		if($node->bundle() == 'branding_preset') {
+			unset($local_tasks['tabs'][0]); 
+		}
+	}
+	
+	//unset duplicate local tabs fro login page
+	if ($route_match->getRouteName() == 'user.login') {
+		unset($local_tasks['tabs'][0]['kaboodle_user.login']);
+		unset($local_tasks['tabs'][0]['kaboodle_user.register']);
+		unset($local_tasks['tabs'][0]['kaboodle_user.pass']);
+	}
+}
+
+/**
+ * Submit handler for alter status message on submit node.
+ */
+function kaboodle_user_node_add_form_submit($form, FormStateInterface &$form_state) {
+  if ($node = $form_state->getFormObject()->getEntity()) {
+		$t_args = array(
+			'@type' => node_get_type_label($node),
+			'%title' => $node->getTitle(),
+		);
+		$msg = t('@type "%title" has been successfully created.', $t_args);
+		\Drupal::messenger()->deleteByType('status');
+		drupal_set_message(t('@type "%title" has been successfully created.', $t_args));
+  }
+}
+
+/**
+ * Submit handler for alter status message on submit node.
+ */
+function kaboodle_user_node_update_form_submit($form, FormStateInterface &$form_state) {
+  if ($node = $form_state->getFormObject()->getEntity()) {
+		$t_args = array(
+			'@type' => node_get_type_label($node),
+			'%title' => $node->getTitle(),
+		);
+		$msg = t('@type "%title" has been successfully updated.', $t_args);
+		\Drupal::messenger()->deleteByType('status');
+		drupal_set_message(t('@type "%title" has been successfully updated.', $t_args));
+  }
+}
+
+/**
+ * Submit handler for alter status message on submit user register form.
+ */
+function kaboodle_user_user_add_form_submit($form, FormStateInterface &$form_state) {
+  if ($user = $form_state->getFormObject()->getEntity()) {
+		$msg = drupal_get_message('status', true);
+		
+		\Drupal::messenger()->deleteByType('status');
+		
+		//drupal_set_message(t('User account has been successfully created.'));
+		drupal_set_message(t($msg));
+  }
+}
+
+/**
+ * Submit handler for alter status message on submit user profile form.
+ */
+function kaboodle_user_user_update_form_submit($form, FormStateInterface &$form_state) {
+  if ($user = $form_state->getFormObject()->getEntity()) {
+		$msg = t('Your account has been successfully updated.');
+		\Drupal::messenger()->deleteByType('status');
+		drupal_set_message(t('Your account has been successfully updated.'));
+  }
+}
+
+/**
+ * Implements hook_preprocess_field_multiple_value_form().
+ */
+function kaboodle_user_preprocess_field_multiple_value_form(&$variables) {
+  if($variables['element']['#field_name'] == 'field_social_media_link') {
+    kaboodle_user_remove_table_reordering($variables['table']);
+  }
+}
+
+/**
+ * Removes the ability for a table to be re-ordered.
+ */
+function kaboodle_user_remove_table_reordering(&$table) {
+  unset($table['#tabledrag']);
+
+  // Remove re-order header column
+  foreach($table['#header'] as $header_i => $header) {
+    if(is_object($header) && (string) $header == 'Order') {
+      unset($table['#header'][$header_i]);
+    }
+  }
+
+  // Loop table rows
+  foreach($table['#rows'] as &$row) {
+
+    // Remove draggable class from tr
+    $i = array_search('draggable', $row['class']);
+    if($i !== FALSE) {
+      unset($row['class'][$i]);
+    }
+
+    // Loop columns in row
+    foreach($row['data'] as $col_i => &$col) {
+
+      if(empty($col['class'])) {
+        continue;
+      }
+
+      // Remove td with drag handle
+      $i = array_search('field-multiple-drag', $col['class']);
+      if($i !== FALSE) {
+        unset($row['data'][$col_i]);
+      }
+
+      // Remove td with re-ordering select
+      $i = array_search('delta-order', $col['class']);
+      if($i !== FALSE) {
+        unset($row['data'][$col_i]);
+      }
+    }
+  }
+
+}
+
+/**
+ * Global function for user real name
+ */
+function user_real_name($uid){
+	$user = \Drupal\user\Entity\User::load($uid);
+	$pfname = $user->get('field_preferred_first_name')->value;	
+	$fname = $user->get('field_first_name')->value;
+	$lname = $user->get('field_last_name')->value;
+	$real = ucfirst($fname.' '.$lname);
+	if(!empty($pfname)){
+		$real = ucfirst($pfname). ' ' .$lname;
+	}
+	
+	return $real;
+}

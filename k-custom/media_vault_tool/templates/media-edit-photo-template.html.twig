@@ -1,0 +1,267 @@
+<div class="custom-media-photo-edit-form" style="border-top:2px solid #f2f2f2">
+   <div class="media-edit-form-wrapper " id="media-edit-form-wrapper" style="margin-top:15px;">
+      <div class="media-edit-form-content">
+         <div class="media-content">
+            <div class="d-flex">
+               <div class="photo-editor-block" style="width:70%; border-right:2px solid #f2f2f2">
+                  <div class="wrap-photo-editor-block" style="margin-right:15px; border-bottom:2px solid #f2f2f2;height:100%">
+                     {{data.editor_content}}
+                  </div>
+               </div>
+               <div class="photo-field-block" style="width:30%">
+                  <nav>
+                     <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-save-tab" data-toggle="tab" href="#nav-save" role="tab" aria-controls="nav-save" aria-selected="true">Save</a>
+                        <a class="nav-item nav-link" id="nav-adjust-tab" data-toggle="tab" href="#nav-adjust" role="tab" aria-controls="nav-adjust" aria-selected="false">Adjust</a>
+                     </div>
+                  </nav>
+                  <div class="tab-content px-3 px-sm-0" id="nav-tabContent">
+                     <div class="tab-pane fade show active pt-2" id="nav-save" role="tabpanel" aria-labelledby="nav-save-tab">
+                        <form name="image-editor-form" class="d-fle" id="image-editor-form" action="" method="POST">
+                           <div class="wrap-photo-field-block" style="margin-left:15px">
+                              <div class="form-group d-none ">
+                                 <span class="original-file-name">{{data.media_data.file_name}}</span>
+                              </div>
+                              <div class="form-group d-flex favo-icon">
+                                 <span>File name: </span> <span class="file-name pl-1"> {{data.media_data.file_name}}</span>
+                                 <div class="checkbox"> {% if data.media_data.favorite == '1'  %} <input type="checkbox" id="favo" checked> {% else %} <input type="checkbox" id="favo"> {% endif %} <label for="favo">hearts</label>
+                                 </div>
+                              </div>
+                              <div class="form-group d-none">
+                                 <label for="title-original">Title</label>
+                                 <input type="text" class="form-control title-original" id="title-original" aria-describedby="title" value="{{data.media_data.name}}">
+                              </div>
+                              <div class="form-group title-field">
+                                 <label for="title">Title</label>
+                                 <input type="text" class="form-control title-field" id="title" aria-describedby="title" value="{{data.media_data.name}}">
+                              </div>
+                              <div class="form-group original-dimensions-field">
+                                 <label for="">Loaded image dimensions: <span class="og-dim">{{data.media_data.original_dim }}</span> <span>({{data.media_data.file_size}})</span></label>
+                              </div>
+                              <div class="wrap-dimension-type d-fle">
+                                 <div class="form-group current-dimensions-field mr-2">
+                                    <label for="">Preset dimensions: <span> {{data.media_data.original_dim}}  </span> </label>
+                                 </div>
+                                 {# 
+                                 <div class="center-line"></div>
+                                 #}
+                                 <div class="form-group original-preset-type-field d-none">
+                                    <span> {{data.media_data.extenstion}}  </span>
+                                 </div>
+                                 <div class="form-group preset-type-field ml-0">
+                                    <label for="">Preset type: <span> {{data.media_data.extenstion}}  </span> </label>
+                                    <button type="button" class="btn invisible" data-toggle="tooltip" data-html="true" title="New file type differs from original" style="padding:0;padding-left:5px;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    </button>
+                                 </div>
+                              </div>
+                              {#
+                              <div class="form-group file-size-field">
+                                 <label for="">File Size: {{data.media_data.file_size}}</label>
+                              </div>
+                              #}
+                              <div class="form-group archieve-field">
+                                 <div class="checkbox"> {% if data.media_data.achived == '1'  %}
+                                    <label class="checkbox-container"><input type="checkbox" class="box-check" value="1" checked style="">
+                                    <span class="custom-label">Archived</span>
+                                    <span class="checkmark"></span>
+                                    </label>
+                                    {% else %}
+                                    <label class="checkbox-container"><input type="checkbox" class="box-check" value="1" style="">
+                                    <span class="custom-label">Archived</span>
+                                    <span class="checkmark"></span>
+                                    </label>
+                                    {% endif %}
+                                 </div>
+                              </div>
+                              <div class="form-group tags-field">
+                                 <span class="d-none tags">{{data.media_data.tags}}</span>
+                                 <label for="tags">Tags</label>
+                                 <input type="text" class="form-control tags" id="tags" name="tags" value="">
+                              </div>
+                              <div class="form-group description-field">
+                                 <label for="description">Description</label>
+                                 <textarea class="form-control description" aria-label="With textarea">{{data.media_data.description}}</textarea>
+                              </div>
+                              <div class="form-group copyright-field">
+                                 <label for="copyright">Copyright number</label>
+                                 <input type="text" class="form-control copyright" id="copyright" aria-describedby="copyright" value="{{data.media_data.copyright}}">
+                              </div>
+                              <div class="form-group media-kit-field">
+                                 <label>Assigned Media Kits</label>
+                                 <div class="wrapped-all-checkboxes">
+                                    {% for kit in data.media_kit %} {% set checked = 0 %}
+                                    <div class="checkbox">
+                                       {% for usedkit in data.media_data.used_mkit %}
+                                       {% if kit.nid == usedkit.nid %}
+                                       {% set checked = 1 %}
+                                       {% endif %}
+                                       {% endfor %} 
+                                       {% if checked == 1%}
+                                       {% if kit.nid ==  data.default_kit %}
+                                       <label class="checkbox-container disabled">
+                                       <input type="checkbox" value="{{kit.nid}}" class="box-check" checked style="" disabled>
+                                       <span class="custom-label">{{kit.title}}</span>
+                                       <span class="checkmark"></span>
+                                       </label>
+                                       {% else %}
+                                       <label class="checkbox-container">
+                                       <input type="checkbox" value="{{kit.nid}}" class="box-check" checked style="">
+                                       <span class="custom-label">{{kit.title}}</span>
+                                       <span class="checkmark"></span>
+                                       </label>
+                                       {% endif %}
+                                       {% else %}
+                                       <label class="checkbox-container">
+                                       <input type="checkbox" value="{{kit.nid}}" class="box-check" style="">
+                                       <span class="custom-label">{{kit.title}}</span>
+                                       <span class="checkmark"></span>
+                                       </label>
+                                       {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="photo-edit-form-footer" style="margin-top:10px;float:right;"> <button class="btn photo-edit-form-cancel font-fjalla btn-cancel" data-mid="{{data.media_data.mid}}" data-dismiss="modal">CANCEL</button>
+                              <button class="btn btn-primary photo-edit-form-save" data-dismiss="modal" data-mid="{{data.media_data.mid}}">SAVE</button>
+                              <button class="btn btn-primary photo-edit-form-save-new" data-dismiss="modal" data-mid="{{data.media_data.mid}}">SAVE AS NEW IMAGE</button>
+                           </div>
+                          
+                           <div id="cancel-media-dialog">
+                              <div>Are you sure you want to cancel? Any changes will be lost.</div>
+                           </div>
+                           <div id="save-media-dialog">
+                              <div>Are you sure you want to permanently replace this image? If not, or you want to create a new image, click "NO" to close this window then click  "Save as New Image".</div>
+                           </div>
+                           <div id="save-form-warning" title="">
+                           </div>
+                        </form>
+                     </div>
+                     <div class="tab-pane fade" id="nav-adjust" role="tabpanel" aria-labelledby="nav-adjust-tab" style="position:relative">
+					 {% if data.advance_access == 1 %}
+					   {% set filter_visibility = '' %}
+					   {% set filter_wrapper_class = 'expert' %}
+					    {% set instruction_visibility = 'd-none' %}
+					  {% else %}
+					  	{% set filter_visibility = 'non-expert-role' %}
+						{% set filter_wrapper_class = 'non-expert' %}
+					    {% set instruction_visibility = '' %}
+					 {% endif %}
+					    <div class="professional-role-instruction {{instruction_visibility}}">
+                         <div>The Adjust tab require an Expert level account.</div><br>
+						 <a href="/tools/profile/{{data.uid}}/billing">Click here to upgrade.</a>
+						</div>
+						<div class="filter-wrapper {{filter_wrapper_class}}">
+						
+                        <div id="Filters" class="{{filter_visibility}}">
+                           <div class="exposure-section p-2">
+                              <div class="section-name"> Exposure</div>
+                              <div class=" custom-wrapper exposure-wrapper" style="padding:20px">
+                                {# <div class="checkbox auto-level"> 
+                                    <label class="checkbox-container" style="">
+                                    <input type="checkbox" class="box-check" style="">
+                                    <span class="custom-label"> Auto levels </span> 
+                                    <span class="checkmark"></span>
+                                    </label>
+                                 </div> #}
+                                 <div class="brightness Filter mt-2">
+                                    <span >Brightness</span><br>
+                                    <div class="controls-wrapper brightness-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSetting">
+                                          <input type="range" class="range-slider range-slider-brightness w-100" data-filter="brightness" data-default="0" value="0" min="-100" max="100" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="contrast Filter mt-2">
+                                    <span>Contrast</span><br>
+                                    <div class="controls-wrapper contrast-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSetting">
+                                          <input type="range" class="range-slider range-slider-contrast w-100" data-filter="contrast" data-default="0" value="0" min="-100" max="100" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div>
+								 {#
+                                 <div class="Heighlights Filter mt-2">
+                                    <span>Heightlights</span><br>
+                                    <div class="controls-wrapper heighlights-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSettings">
+                                          <input type="range" class="range-slider range-slider-highlights w-100" data-default="0" value="0" min="-100" max="100" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="shados Filter mt-2">
+                                    <span>Shadows</span><br>
+                                    <div class="controls-wrapper shadow-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSettings">
+                                          <input type="range" class="range-slider range-slider-shadow w-100" data-default="0" value="0" min="-100" max="100" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div> #}
+                              </div>
+                           </div>
+                           <div class="section-divider"></div>
+                           <div class="color-section p-2">
+                              <div class="section-name "> Color</div>
+                              <div class="custom-wrapper" style="padding:20px">
+                                 <div class="hue Filter mt-2">
+                                    <span >Hue</span><br>
+                                    <div class="controls-wrapper hue-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSetting">
+                                          <input type="range" class="range-slider range-slider-hue w-100" data-filter="hue" data-default="0" value="0" min="0" max="100" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="saturation Filter mt-2">
+                                    <span >Saturation</span><br>
+                                    <div class="controls-wrapper saturation-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSetting">
+                                          <input type="range" class="range-slider range-slider-saturation w-100" data-filter="saturation" data-default="0" value="0" min="-100" max="100" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="section-divider"></div>
+                           <div class="blur-section Filter p-2">
+                              <div class="section-name"> Blur / Sharpen</div>
+                              <div class="custom-wrapper" style="padding:20px">
+                                 <div class="blur Filter mt-2">
+                                    <span >Blur</span><br>
+                                    <div class="controls-wrapper blur-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSetting">
+                                          <input type="range" class="range-slider range-slider-blur w-100" data-filter="stackBlur" data-default="0" value="0" min="0" max="20" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="sharpen mt-2">
+                                    <span >Sharpen</span><br>
+                                    <div class="controls-wrapper sharpen-slider pl-5 pt-2 " >
+                                       <div class="slider-wrapper d-flex align-items-center FilterSetting">
+                                          <input type="range" class="range-slider range-slider-sharpen w-100" data-filter="sharpen" data-default="0" value="0" min="0" max="100" step="1">
+                                          <span class="FilterValue">0</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="section-divider"></div>
+                        </div>
+                        </div>
+					  <div class="preview-button" style="margin-top:10px;float:right;"><button class="btn btn-primary font-fjalla caman-preview" >Apply</button></div>
+					 </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+</div> {% raw %} <script></script> {% endraw %}

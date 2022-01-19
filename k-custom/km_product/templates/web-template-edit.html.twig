@@ -1,0 +1,244 @@
+<!--{% include 'breadcrumbs.html.twig' %}-->
+<div class="my-kaboodles kaboodles-dashboard my-kaboodles-web-product-edit" id="my-kaboodle-web-product-edit">
+  <div class="kaboodles-container main-block d-flex w-100 ff-rw">
+    <div class="col-lg-2 left-block">
+      {% include 'leftnav.html.twig' %}
+    </div>
+    
+    <div class="col-lg-10 plr0">
+      <!--product heading and menu-->
+      <div>
+        <div class="header-box">
+          <div class="bgw d-flex w-100 space-bw product-header-container">
+            <div class="product-heading">{{ product.name }}</div>
+            <div class="template-name-buttons">
+              {% if (data.template.product_id is empty or data.clone == 'yes') %}
+              <button type="submit" id="edit" name="op" value="edit" class="button form-submit btn btn-primary font-fjalla disabled">Render</button>
+              {% else %}
+              <button type="submit" id="edit" name="op" value="edit" class="button form-submit btn btn-primary font-fjalla" onclick="renderWebProduct('{{ product.name }}')">Render</button>
+              {% endif %}
+              
+              <button onclick="saveHTMLTemplate()" type="submit" id="saveHTMLTemplate" name="op" value="save" class="button form-submit btn btn-primary font-fjalla">Save</button>
+              <a href="/tools/kaboodle/dashboard/{{node.nid}}" class="btn btn-primary text-uppercase font-fjalla return-cancel-edit-wp-template">Return to Dashboard</a>
+              <a href="/tools/my-kaboodles/{{user.uid}}" class="btn btn-primary text-uppercase font-fjalla return-cancel-edit-template">Cancel</a>
+            </div>
+          </div>
+          <div class="bgw d-flex w-100 space-bw design-template-name-id-container">
+            <div class="design-template-name-id">
+              <div class="design-template-name">Design:&nbsp;<span class="design-name">{{ data.template.design_name }}</span></div>
+              <div class="design-template-id">Design ID:&nbsp;<span class="design-id">{{ data.template.design_id }}</span></div>
+            </div>
+            <div class="template-name-input">
+              <div class="name-input">
+                <span class="product-name">Product Name:&nbsp;</span>
+                <input type="text" placeholder="Enter a name" class="template-name-field" name="user_template_name" id="user-template-name" value="{{ data.template.product_name }}"/><span class="required">&nbsp;*</span>
+              </div>
+              <div class="product-id-container">
+                <span class="product-id">Product ID:&nbsp;</span>
+                <span class="product-id-value">{{ data.template.product_id }}</span>
+              </div>
+            </div>
+          </div>
+          {% if product.name == 'Reusable Content Block' or product.name == 'Email Newsletter' or product.name == 'Web Page' %}
+          <div class="toolbar-search-button search-box-tool d-flex">
+            <span class="search-ico"></span>
+            <input type="text" id="filter-article" class="filter pl-1" data-filetype="article" placeholder="SEARCH BY TITLE OR TAG"/>
+            <span class="clear-text d-none">x</span>
+            <button id="filter-by-favo-article" type="button" class="filter-favo round-button media-favo-676767 inactive"></button>
+            {% if product.name == 'Web Page' %}
+              <button id="filter-btn-article" type="submit" class="btn btn-primary filter-btn text-uppercase align-baseline font-fjalla" onClick="searchHtmlArticle();">Find Content</button>
+            {% else %}
+              <button id="filter-btn-article" type="submit" class="btn btn-primary filter-btn text-uppercase align-baseline font-fjalla" onClick="searchHtmlArticle();">Find Article</button>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+        {% set replace_value_var= ' ' %}
+        {% set replace_with_value_var = '-' %}
+        {% set replace_content = product.name|replace({ (replace_value_var): replace_with_value_var }) %}
+        <div class="tools-header btb {{ replace_content|lower }}">
+          <div class="header-box lh35">
+            <div class="bgw" id="toolbar">
+              {% include 'wptopnav.html.twig' %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-container">
+        <div class="row">
+          <div class="col-lg-3 left-panel opened-media-kit" id="left-sidebar">
+            <div class="sidebar-container media-kit-title slide-right d-none" id="media-kit-title-slide-right">
+              <span class="fas fa-caret-right image-list-caret"></span>
+            </div>
+            <div class="sidebar-container slide-left">
+            {% if product.name == 'Reusable Content Block' or product.name == 'Email Newsletter' or product.name == 'Web Page' %}
+              <div class="sidebar-container media-kit-title active" id="html-article-slide-top">
+                {% if product.name == 'Email Newsletter' or product.name == 'Web Page' %}
+                  <span class="media-kit-image-title">RCB Content</span>
+                {% else %}
+                  <span class="media-kit-image-title">HTML Articles</span>
+                {% endif %}
+                <span class="fas fa-caret-down image-list-caret"></span>
+              </div>
+              <div class="sidebar-container km-html-articles empty" id="km-html-articles-list" style="display: none;">
+                <div class="progress-overlay"><div class="spinner-border"></div></div>
+              </div>
+              {% if product.name == 'Web Page' %}
+                <div class="sidebar-container media-kit-title active" id="km-playlists-slide-top">
+                  <span class="media-kit-image-title">Playlists</span>
+                  <span class="fas fa-caret-down image-list-caret"></span>
+                </div>
+                <div class="sidebar-container km-playlists empty" id="km-playlists-list" style="display: none;">
+                  <div class="progress-overlay"><div class="spinner-border"></div></div>
+                </div>
+                <div class="sidebar-container media-kit-title active" id="km-online-gallery-slide-top">
+                  <span class="media-kit-image-title">Online Gallery</span>
+                  <span class="fas fa-caret-down image-list-caret"></span>
+                </div>
+                <div class="sidebar-container km-online-gallery empty" id="km-online-gallery-list" style="display: none;">
+                  <div class="progress-overlay"><div class="spinner-border"></div></div>
+                </div>
+              {% endif %}
+              <div class="sidebar-container media-kit-title active" id="html-article-media-kit-slide-top">
+                <span class="media-kit-image-title">Media Kits</span>
+                <span class="fas fa-caret-down image-list-caret"></span>
+              </div>
+              <div class="sidebar-container media-kit-images disabled empty" style="display: none;">
+                <div class="progress-overlay"><div class="spinner-border"></div></div>
+              </div>
+            {% else %}
+              <div class="sidebar-container media-kit-title active" id="media-kit-title-slide-left">
+                <span class="media-kit-image-title">Media Kits</span>
+                <span class="fas fa-caret-left image-list-caret"></span>
+              </div>
+              <div class="sidebar-container media-kit-images disabled empty">
+                <div class="progress-overlay"><div class="spinner-border"></div></div>
+              </div>
+            {% endif %}
+            </div>
+          </div>
+          <div class="col-lg-9 right-panel" id="web-product-template">
+            {{ data.template.template_html | raw }}
+          </div>
+          <div id="web-product-template-code-tokens"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- button form on modal window -->
+{% if data.edit_properties == 1 %} 
+<div id="button-dialog" title="Button Settings">
+  <div class="form-group row">
+    <label for="button" class="col-sm-3 col-form-label">Button:</label>
+    <div class="col-sm-3">
+      <div class="row fill-color">
+        <label for="button" class="col-sm-6 col-form-label">Fill</label>
+        <div class="col-sm-6"><input type="text" id="btn-color-fill" class="btn-color-section apri wpjscolor" data-right-prop="fill" data-pro="btncolor" data-value="fill" value="#000000" readonly=""></div>
+      </div>
+    </div>
+    <div class="col-sm-1">|</div>
+    <div class="col-sm-5">
+      <div class="row border-color">
+        <label for="button" class="col-sm-3 col-form-label">Border</label>
+        <div class="col-sm-3"><input type="text" id="btn-color-border" class="btn-color-section apri wpjscolor" data-right-prop="fill" data-pro="btncolor" data-value="fill" value="#000000" readonly=""></div>
+        <div class="col-sm-6 text-right"><input type="text" class="form-control" id="btn-border-stroke-num" value="1"><span class="border-unit">px</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="buttontxt" class="col-sm-3 col-form-label">Button Text:</label>
+    <div class="col-sm-9">
+      <div class="row">
+        <div class="col-sm-8"><input type="text" class="form-control" id="btn-txt" placeholder=""></div>
+        <div class="col-sm-4 text-right">Color &nbsp; <input type="text" id="btn-color-txt" class="btn-color-section apri wpjscolor" data-right-prop="fill" data-pro="btncolor" data-value="fill" value="#000000" readonly=""></div>
+      </div>
+      
+      <!--<div class="row font-family-weight-size">
+        <div class="col-sm-5">
+          <select class="w-100 rightProp form-control" id="btn-font-family" data-pro="fontFamily" data-right-prop="fontFamily">
+            <option style="font-family:American Typewriter" value="American Typewriter">American Typewriter</option>
+            <option style="font-family:Andale Mono" value="Andale Mono">Andalé Mono</option>
+            <option style="font-family:Arial" value="Arial">Arial</option>
+            <option style="font-family:Arial Black" value="Arial Black">Arial Black</option>
+            <option style="font-family:Bradley Hand" value="Bradley Hand">Bradley Hand</option>
+            <option style="font-family:Brush Script MT" value="Brush Script MT">Brush Script MT</option>
+            <option style="font-family:Comic Sans MS" value="Comic Sans MS">Comic Sans MS</option>
+            <option style="font-family:Courier" value="Courier">Courier</option>
+            <option style="font-family:Didot" value="Didot">Didot</option>
+            <option style="font-family:Impact" value="Impact">Impact</option>
+            <option style="font-family:Georgia" value="Georgia">Georgia</option>
+            <option style="font-family:Lucida Console" value="Lucida Console">Lucida Console</option>
+            <option style="font-family:Luminari" value="Luminari">Luminari</option>
+            <option style="font-family:Monaco" value="Monaco">Monaco</option>
+            <option style="font-family:Tahoma" value="Tahoma">Tahoma</option>
+            <option style="font-family:Times New Roman" value="Times New Roman">Times New Roman</option>
+            <option style="font-family:Trebuchet MS" value="Trebuchet MS">Trebuchet MS</option>
+            <option style="font-family:Verdana" value="Verdana">Verdana</option>
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <select data-property="preset-font-style" class="w-100 form-control" id="btn-fstyle">
+            <option value="300#N">Light</option>
+            <option value="300#I">Light Italic</option>
+            <option value="400#N" selected="">Regular</option>
+            <option value="400#I">Regular Italic</option>
+            <option value="600#N">Semi-Bold</option>
+            <option value="600#I">Semi-Bold Italic</option>
+            <option value="700#N">Bold</option>
+            <option value="700#I">Bold Italic</option>
+            <option value="800#N">Extra-Bold</option>
+            <option value="800#I">Extra-Bold Italic</option>
+          </select>
+        </div>
+        <div class="col-sm-3">
+          <div class="dropdown">
+            <input value="24" id="btn-text-font-size" data-pro="fontSize" data-right-prop="fontSize" onclick="btntextSizeList()" class="dropbtn w-100 form-control" />
+            <div id="btn-size-dropdown" class="dropdown-content">
+              <div class="option-item" datavalue="6">6 px</div>
+              <div class="option-item" datavalue="7">7 px</div>
+              <div class="option-item" datavalue="8">8 px</div>
+              <div class="option-item" datavalue="9">9 px</div>
+              <div class="option-item" datavalue="10">10 px</div>
+              <div class="option-item" datavalue="11">11 px</div>
+              <div class="option-item" datavalue="12">12 px</div>
+              <div class="option-item" datavalue="14">14 px</div>
+              <div class="option-item" datavalue="18">18 px</div>
+              <div class="option-item" datavalue="21">21 px</div>
+              <div class="option-item" datavalue="24">24 px</div>
+              <div class="option-item" datavalue="36">36 px</div>
+              <div class="option-item" datavalue="48">48 px</div>
+              <div class="option-item" datavalue="66">60 px</div>
+              <div class="option-item" datavalue="72">72 px</div>
+            </div>
+            <span class="dropdown-content-icon" onclick="btntextSizeList()"><i class="fas fa-chevron-down"></i></span>
+          </div>
+        </div>
+      </div>-->
+      
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="buttontxt" class="col-sm-3 col-form-label">URL:</label>
+    <div class="col-sm-9">
+      <input type="text" class="form-control" id="url" placeholder="">
+      <small id="url" class="form-text text-muted">Include http:// | https://</small>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- text editor on modal window -->
+<div class="texteditor-dialog" id="texteditor-dialog" title="" style="padding: 0; display:none;">{{ ckeform }}</div>
+<input type="hidden" name="save_km_template" id="save_km_template" value="0" />
+<input type="hidden" name="template_id" id="template_id" value="{{data.template.id}}" />
+<input type="hidden" name="node_id" id="node_id" value="{{node.nid}}" />
+<input type="hidden" name="product_id" id="product_id" value="{{product.id}}" />
+<input type="hidden" name="render_id" id="render_id" value="{{data.template.mid}}"/>
+<input type="hidden" name="kmds" id="kmds" value="{{data.kmds}}" />
+<input type="hidden" name="clone" id="clone" value="{{data.clone}}" />
+<input type="hidden" name="color_picker" id="color-picker" value="text-color"/>
+<input type="hidden" name="image_dimensions" id="image-dimensions" value=""/>
+<input type="hidden" name="arconstraint" id="arconstraint" value="scale-crop"/>
